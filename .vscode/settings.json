@@ -3,5 +3,10 @@
         "Khor",
         "Neel",
         "Sesi"
-    ]
+    ],
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }
