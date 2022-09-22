@@ -15,4 +15,4 @@
 
 ## TypeScript
 
-* 2 spacesasdgbn
+* 2 spaces
