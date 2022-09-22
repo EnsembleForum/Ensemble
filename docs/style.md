@@ -13,5 +13,6 @@
 
 * For test functions, should be named like `def something_test(): ...`
 
-
 ## TypeScript
+
+* 2 spaces
