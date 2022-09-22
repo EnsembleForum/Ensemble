@@ -7,7 +7,7 @@
 
 * React
 
-* Figma balls
+* Figma
 
 ## Back-end
 
