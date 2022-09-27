@@ -4,6 +4,7 @@
     "editor.detectIndentation": false,
     "[python]": {
         "editor.tabSize": 4,
+        "editor.rulers": [79],
     },
     "[javascript]": {
         "editor.tabSize": 2,
