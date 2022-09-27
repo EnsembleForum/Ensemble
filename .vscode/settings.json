@@ -1,12 +1,19 @@
 {
-    "cSpell.words": [
-        "Khor",
-        "Neel",
-        "Sesi"
-    ],
+    // Linting
+    "python.linting.flake8Enabled": true,
+
+    // Testing
     "python.testing.pytestArgs": [
         "tests"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+
+    // Spell checker
+    "cSpell.words": [
+        "Khor",
+        "Neel",
+        "Sesi",
+        "werkzeug"
+    ],
 }
