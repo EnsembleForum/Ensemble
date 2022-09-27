@@ -4,7 +4,6 @@ Contains the blueprints for routes that are used for testing and debugging.
 These routes should be disabled in the production environment, perhaps using
 and environment variable to enabled/disabled them?
 """
-import logging
 from flask import Blueprint, request
 from backend.util import http_errors
 
@@ -21,7 +20,7 @@ def echo():
     except KeyError:
         raise http_errors.BadRequest('echo route requires a `value` argument')
 
-    logging.debug('ECHO', value)
+    print('[ECHO]\t\t', value)
     return {'value': value}
 
 
