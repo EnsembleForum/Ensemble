@@ -1,6 +1,32 @@
 {
-    // Linting
+    // Disable automatic indentation detection
+    // and force a tab size
+    "editor.detectIndentation": false,
+    "[python]": {
+        "editor.tabSize": 4,
+    },
+    "[javascript]": {
+        "editor.tabSize": 2,
+    },
+    "[typescript]": {
+        "editor.tabSize": 2,
+    },
+    "[typescriptreact]": {
+        "editor.tabSize": 2,
+    },
+
+    // Link up docstring template
+    "autoDocstring.customTemplatePath": "config/docstring_template.mustache",
+
+    // Enable linters
+    "python.linting.enabled": true,
+    "python.linting.flake8CategorySeverity.E": "Warning",
+    "python.linting.flake8CategorySeverity.F": "Warning",
     "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+
+    // Switch off Pylance, since we're using MyPy instead
+    "python.analysis.typeCheckingMode": "off",
 
     // Testing
     "python.testing.pytestArgs": [
@@ -10,6 +36,7 @@
     "python.testing.pytestEnabled": true,
 
     // Spell checker
+    "cSpell.language": "en",
     "cSpell.words": [
         "Khor",
         "Neel",
