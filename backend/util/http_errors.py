@@ -8,6 +8,7 @@ Definitions for HTTP exceptions used by the server
 ```py
 from backend.util import http_errors
 
+# In a request
 if request_is_bad():
     raise http_errors.BadRequest("Some useful message")
 ```
@@ -40,4 +41,9 @@ class Unauthorized(HTTPException):
 
 
 class Forbidden(HTTPException):
+    """
+    The client does not have access rights to the content; that is, it is
+    unauthorized, so the server is refusing to give the requested resource.
+    Unlike `Unauthorized`, the client's identity is known to the server.
+    """
     code = 403

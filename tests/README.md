@@ -3,14 +3,20 @@
 
 Tests to ensure the application is working correctly.
 
-## Backend
+## Running tests
+
+TODO
+
+## Types of Tests
+
+### Backend
 
 Unit tests for the backend using direct imports.
 
-## Frontend
+### Frontend
 
 Tests for the frontend.
 
-## Integration
+### Integration
 
 Integration tests for the backend, using web queries.
