@@ -80,7 +80,7 @@ class PermissionSet:
         * `bool`: whether the action is allowed
         """
 
-    def add(self, actions: set[Permission]):
+    def allow(self, actions: set[Permission]):
         """
         Add the given set of permissions to the allowed set of permissions,
         and remove any elements from the disallowed set of permissions if
@@ -90,7 +90,7 @@ class PermissionSet:
         * `actions` (`set[Permission]`): action to allow
         """
 
-    def subtract(self, actions: set[Permission]):
+    def disallow(self, actions: set[Permission]):
         """
         Add the given set of permissions to the disallowed set of permissions,
         and remove any elements from the allowed set of permissions if present.
@@ -99,7 +99,7 @@ class PermissionSet:
         * `actions`: (`set[Permission]`): actions to disallow
         """
 
-    def remove(self, actions: set[Permission]):
+    def unassign(self, actions: set[Permission]):
         """
         Unassign the given set of permissions, meaning that they will be
         derived from the parent permissions.
