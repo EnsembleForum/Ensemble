@@ -28,8 +28,8 @@ class PermissionSet:
         """
         self.__name = name
         self.__parent = parent
-        self.__added: set[Permission] = set()
-        self.__subtracted: set[Permission] = set()
+        self.__allowed: set[Permission] = set()
+        self.__disallowed: set[Permission] = set()
 
     @property
     def name(self) -> str:
@@ -79,6 +79,14 @@ class PermissionSet:
         ### Returns:
         * `bool`: whether the action is allowed
         """
+        if action in self.__allowed:
+            return True
+        if action in self.__disallowed:
+            return False
+        if self.parent is None:
+            return False
+        else:
+            return self.parent.can(action)
 
     def allow(self, actions: set[Permission]):
         """
@@ -89,6 +97,8 @@ class PermissionSet:
         ### Args:
         * `actions` (`set[Permission]`): action to allow
         """
+        self.__disallowed.difference_update(actions)
+        self.__allowed |= actions
 
     def disallow(self, actions: set[Permission]):
         """
@@ -98,6 +108,8 @@ class PermissionSet:
         ### Args:
         * `actions`: (`set[Permission]`): actions to disallow
         """
+        self.__allowed.difference_update(actions)
+        self.__disallowed |= actions
 
     def unassign(self, actions: set[Permission]):
         """
@@ -107,3 +119,5 @@ class PermissionSet:
         ### Args:
         * `actions` (`set[Permission]`): actions to remove rules on
         """
+        self.__allowed.difference_update(actions)
+        self.__disallowed.difference_update(actions)
