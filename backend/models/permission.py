@@ -21,6 +21,8 @@ class Permission(Enum):
     """User can create posts"""
     Answer = 11
     """User can create answers to posts"""
+    PostOverrideExam = 12
+    """User can create public posts, even when exam mode is enabled"""
 
     # Queues
     Delegate = 20
