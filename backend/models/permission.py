@@ -1,11 +1,14 @@
+"""
+# Backend / Models / Permission
 
-
+Contains definitions for permissions that can be granted to users.
+"""
 from enum import Enum
 
 
-class Permissions(Enum):
+class Permission(Enum):
     """
-    Contains definitions for all the permission types of users.
+    Enum containing definitions for all the permission types of users.
     """
     # Viewing
     CanView = 0
