@@ -37,7 +37,7 @@
     "python.testing.pytestEnabled": true,
 
     // Spell checker
-    "cSpell.language": "en",
+    "cSpell.language": "en-gb",
     "cSpell.words": [
         "Khor",
         "Neel",
