@@ -7,14 +7,19 @@ and environment variable to enabled/disabled them?
 from colorama import Fore
 from flask import Blueprint, request
 from backend.util import http_errors
+from backend.types.debug import IEcho
 
 debug = Blueprint('debug', 'debug')
 
 
 @debug.get('/echo')
-def echo():
+def echo() -> IEcho:
     """
-    Echo an input
+    Echo an input. This returns the given value, but also prints it to stdout
+    on the server. Useful for debugging tests.
+
+    ## Params:
+    * `value` (`str`): value to echo
     """
     try:
         value = request.args['value']
@@ -25,19 +30,19 @@ def echo():
     return {'value': value}
 
 
-@debug.post('/clear')
-def clear():
+@debug.delete('/clear')
+def clear() -> dict:
     """
-    Clear the database
+    Clear the database.
     """
     # TODO
     return {}
 
 
 @debug.post('/shutdown')
-def shutdown():
+def shutdown() -> dict:
     """
-    Initiate a server shutdown
+    Initiate a server shutdown.
     """
     print("Initiated server shutdown")
     # TODO
