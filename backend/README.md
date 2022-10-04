@@ -7,7 +7,13 @@ Code for running the backend of the program
 
 ### For debugging
 
-`ENSEMBLE_DEBUG=TRUE flask --app backend --debug run`
+With additional debugging tools (recommended):
+
+`ENSEMBLE_DEBUG=TRUE flask --debug run`
+
+Or without
+
+`flask run`
 
 ### For deployment
 
