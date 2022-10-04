@@ -2,7 +2,7 @@
 # Backend / Models / User
 """
 from .tables import TUser
-from .permissions import PermissionPreset, PermissionUser
+from .permissions import PermissionGroup, PermissionUser
 from backend.util.db_queries import id_exists, get_by_id
 from typing import cast
 
@@ -31,7 +31,7 @@ class User:
         cls,
         name_first: str,
         name_last: str,
-        permissions_base: PermissionPreset
+        permissions_base: PermissionGroup
     ) -> 'User':
         """
         Create a new user

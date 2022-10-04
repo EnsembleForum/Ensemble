@@ -8,7 +8,7 @@ permissions that inherit from the tutor permission set).
 """
 from typing import Optional
 from .permission import Permission
-from ..tables import TPermissionPreset, TPermissionUser
+from ..tables import TPermissionGroup, TPermissionUser
 from backend.util.db_queries import id_exists, get_by_id
 from abc import abstractmethod
 from typing import cast
@@ -62,7 +62,7 @@ class PermissionSet:
         """
 
 
-class PermissionPreset(PermissionSet):
+class PermissionGroup(PermissionSet):
     """
     Represents a preset permission, from which user permissions are derived.
     """
@@ -73,7 +73,7 @@ class PermissionPreset(PermissionSet):
         ### Args:
         * `id` (`int`): ID of the preset
         """
-        if not id_exists(TPermissionPreset, id):
+        if not id_exists(TPermissionGroup, id):
             raise KeyError(f"Invalid TPermissionPreset.id {id}")
         self.__id = id
 
@@ -82,9 +82,9 @@ class PermissionPreset(PermissionSet):
         cls,
         name: str,
         options: dict[Permission, Optional[bool]]
-    ) -> 'PermissionPreset':
+    ) -> 'PermissionGroup':
         """
-        Create a new permission preset
+        Create a new permission group and store it into the database
 
         ### Args:
         * `name` (`str`): name of preset
@@ -95,23 +95,23 @@ class PermissionPreset(PermissionSet):
         ### Returns:
         * `PermissionPreset`: the preset object
         """
-        val = TPermissionPreset(
+        val = TPermissionGroup(
             {
-                TPermissionPreset.name: name,
-                TPermissionPreset.allowed: [],
-                TPermissionPreset.disallowed: [],
+                TPermissionGroup.name: name,
+                TPermissionGroup.allowed: [],
+                TPermissionGroup.disallowed: [],
             }
         ).save().run_sync()
         id = cast(bool, val.id)
-        ret = PermissionPreset(id)
+        ret = PermissionGroup(id)
         ret.update_allowed(options)
         return ret
 
-    def _get(self) -> TPermissionPreset:
+    def _get(self) -> TPermissionGroup:
         """
         Return a reference to the underlying database row
         """
-        return get_by_id(TPermissionPreset, self.__id)
+        return get_by_id(TPermissionGroup, self.__id)
 
     @property
     def id(self) -> int:
@@ -145,7 +145,7 @@ class PermissionPreset(PermissionSet):
             return False
 
     def update_allowed(self, actions: dict[Permission, Optional[bool]]):
-        row = get_by_id(TPermissionPreset, self.__id)
+        row = get_by_id(TPermissionGroup, self.__id)
 
         allowed: list[int] = []
         disallowed: list[int] = []
@@ -161,13 +161,13 @@ class PermissionPreset(PermissionSet):
         row.allowed = allowed
         row.disallowed = disallowed
 
-        row.save([TPermissionPreset.allowed, TPermissionPreset.disallowed])\
+        row.save([TPermissionGroup.allowed, TPermissionGroup.disallowed])\
             .run_sync()
 
 
 class PermissionUser(PermissionSet):
     """
-    Represents a user permission, which derives from a preset.
+    Represents a user permission, which derives from a group.
     """
     def __init__(self, id: int) -> None:
         """
@@ -181,7 +181,7 @@ class PermissionUser(PermissionSet):
         self.__id = id
 
     @classmethod
-    def create(cls, parent: PermissionPreset) -> 'PermissionUser':
+    def create(cls, parent: PermissionGroup) -> 'PermissionUser':
         """
         Create a user permission set and store it into the database.
 
@@ -194,8 +194,8 @@ class PermissionUser(PermissionSet):
         val = TPermissionUser(
             {
                 TPermissionUser.parent: parent.id,
-                TPermissionPreset.allowed: [],
-                TPermissionPreset.disallowed: [],
+                TPermissionGroup.allowed: [],
+                TPermissionGroup.disallowed: [],
             }
         ).save().run_sync()
         id = cast(bool, val.id)
@@ -224,17 +224,17 @@ class PermissionUser(PermissionSet):
         raise NotImplementedError()
 
     @property
-    def parent(self) -> PermissionPreset:
+    def parent(self) -> PermissionGroup:
         """
         The parent permissions for this set
 
         ### Returns:
         * `PermissionPreset`: the parent preset
         """
-        return PermissionPreset(self._get().parent)
+        return PermissionGroup(self._get().parent)
 
     @parent.setter
-    def parent(self, new_parent: PermissionPreset):
+    def parent(self, new_parent: PermissionGroup):
         row = self._get()
         row.parent = new_parent.id
         row.save().run_sync()
@@ -249,7 +249,7 @@ class PermissionUser(PermissionSet):
             return self.parent.can(action)
 
     def update_allowed(self, actions: dict[Permission, Optional[bool]]):
-        row = get_by_id(TPermissionPreset, self.__id)
+        row = get_by_id(TPermissionGroup, self.__id)
 
         allowed: list[int] = []
         disallowed: list[int] = []
@@ -265,5 +265,5 @@ class PermissionUser(PermissionSet):
         row.allowed = allowed
         row.disallowed = disallowed
 
-        row.save([TPermissionPreset.allowed, TPermissionPreset.disallowed])\
+        row.save([TPermissionGroup.allowed, TPermissionGroup.disallowed])\
             .run_sync()

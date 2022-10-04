@@ -14,7 +14,7 @@ class _BaseTable(Table):
     id = Serial(primary_key=True)
 
 
-class TPermissionPreset(_BaseTable):
+class TPermissionGroup(_BaseTable):
     """
     Table containing preset permission definitions.
     """
@@ -29,7 +29,7 @@ class TPermissionUser(_BaseTable):
     """
     allowed = Array(Integer())
     disallowed = Array(Integer())
-    parent = ForeignKey(TPermissionPreset)
+    parent = ForeignKey(TPermissionGroup)
 
 
 class TUser(_BaseTable):
