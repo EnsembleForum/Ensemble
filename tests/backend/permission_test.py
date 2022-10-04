@@ -8,27 +8,27 @@ from backend.models import Permission, PermissionSet
 
 def test_name():
     """Can we use the name property?"""
-    s = PermissionSet('my set')
+    s = PermissionSet('my set', None, set(), set())
     assert s.name == 'my set'
 
 
 def test_all_disallowed_default():
     """Are all permissions denied by default?"""
-    s = PermissionSet('test')
+    s = PermissionSet('test', None, set(), set())
     for p in Permission:
         assert not s.can(p)
 
 
 def test_allow():
     """Can we grant permissions to users?"""
-    s = PermissionSet('test')
+    s = PermissionSet('my set', None, set(), set())
     s.allow({Permission.Post})
     assert s.can(Permission.Post)
 
 
 def test_disallow():
     """Can we disallow granted permissions?"""
-    s = PermissionSet('test')
+    s = PermissionSet('my set', None, set(), set())
     s.allow({Permission.Post})
     s.disallow({Permission.Post})
     assert not s.can(Permission.Post)
@@ -36,7 +36,7 @@ def test_disallow():
 
 def test_inherit():
     """Do permission sets correctly inherit permissions from their parent?"""
-    parent = PermissionSet('daddy')
+    s = PermissionSet('daddy', None, set(), set())
     parent.allow({Permission.Post})
     s = PermissionSet('child', parent)
     assert s.can(Permission.Post)

@@ -8,56 +8,24 @@ permissions that inherit from the tutor permission set).
 """
 from typing import Optional
 from .permission import Permission
+from ..tables import TPermissionPreset, TPermissionUser
+from backend.util.db_queries import id_exists, get_by_id
+from abc import abstractmethod
+from typing import cast
 
 
 class PermissionSet:
     """
     Contains a collection of permissions that a user has access to.
+
+    This is an abstract class. Don't instantiate it. Instead, create an
+    instance of:
+
+    * `PermissionPreset` for a preset that users can inherit from
+    * `PermissionUser` for a specific user's permissions
     """
-    def __init__(
-        self,
-        name: str,
-        parent: Optional['PermissionSet'] = None
-    ) -> None:
-        """
-        Create a permission set.
 
-        ### Args:
-        * `parent` (`Optional[PermissionSet]`, optional): permission set to
-          derive from. Defaults to `None` to derive from no permissions.
-        """
-        self.__name = name
-        self.__parent = parent
-        self.__allowed: set[Permission] = set()
-        self.__disallowed: set[Permission] = set()
-
-    @property
-    def name(self) -> str:
-        """
-        The name of the permission.
-
-        This is used to identify the permission to the user in the UI.
-
-        Read only.
-        """
-        return self.__name
-
-    @property
-    def parent(self) -> Optional['PermissionSet']:
-        """
-        The parent permission set.
-
-        Represents the permission set that this derives from. This is mainly
-        used to assign users special permissions.
-
-        Read/write.
-        """
-        return self.__parent
-
-    @parent.setter
-    def parent(self, new_parent: Optional['PermissionSet']):
-        self.__parent = new_parent
-
+    @abstractmethod
     def can(self, action: Permission) -> bool:
         """
         Returns whether this PermissionSet has the ability to perform the
@@ -79,45 +47,146 @@ class PermissionSet:
         ### Returns:
         * `bool`: whether the action is allowed
         """
-        if action in self.__allowed:
-            return True
-        if action in self.__disallowed:
-            return False
-        if self.parent is None:
-            return False
-        else:
-            return self.parent.can(action)
 
-    def allow(self, actions: set[Permission]):
+    @abstractmethod
+    def update_allowed(self, actions: dict[Permission, Optional[bool]]):
         """
         Add the given set of permissions to the allowed set of permissions,
         and remove any elements from the disallowed set of permissions if
         present.
 
         ### Args:
-        * `actions` (`set[Permission]`): action to allow
+        * `actions` (`dict[Permission, Optional[bool]]`): dictionary of
+          permissions to allow or disallow. Each Permission should be set to
+          `True` to allow, `False` to disallow, or `None` to leave as default.
         """
-        self.__disallowed.difference_update(actions)
-        self.__allowed |= actions
 
-    def disallow(self, actions: set[Permission]):
-        """
-        Add the given set of permissions to the disallowed set of permissions,
-        and remove any elements from the allowed set of permissions if present.
 
-        ### Args:
-        * `actions`: (`set[Permission]`): actions to disallow
+class PermissionPreset(PermissionSet):
+    """
+    Represents a preset permission, from which user permissions are derived.
+    """
+    def __init__(self, id: int):
         """
-        self.__allowed.difference_update(actions)
-        self.__disallowed |= actions
-
-    def unassign(self, actions: set[Permission]):
-        """
-        Unassign the given set of permissions, meaning that they will be
-        derived from the parent permissions.
+        Load a permission preset from the database
 
         ### Args:
-        * `actions` (`set[Permission]`): actions to remove rules on
+        * `id` (`int`): ID of the preset
         """
-        self.__allowed.difference_update(actions)
-        self.__disallowed.difference_update(actions)
+        if not id_exists(TPermissionPreset, id):
+            raise KeyError(f"Invalid PermissionPreset.id {id}")
+        self.__id = id
+
+    @classmethod
+    def create(
+        self,
+        name: str,
+        options: dict[Permission, Optional[bool]]
+    ) -> 'PermissionPreset':
+        """
+        Create a new permission preset
+
+        ### Args:
+        * `name` (`str`): name of preset
+
+        * `options` (`dict[Permission, Optional[bool]]`): allowed and
+          disallowed permissions.
+
+        ### Returns:
+        * `PermissionPreset`: the preset object
+        """
+        val = TPermissionPreset(
+            {
+                TPermissionPreset.name: name,
+                TPermissionPreset.allowed: [],
+                TPermissionPreset.disallowed: [],
+            }
+        ).save().run_sync()
+        id = cast(bool, val.id)
+        return PermissionPreset(id)
+
+    def _get(self) -> TPermissionPreset:
+        """
+        Return a reference to the underlying database column
+        """
+        return get_by_id(TPermissionPreset, self.__id)
+
+    @property
+    def id(self) -> int:
+        """
+        Identifier of this permission preset
+        """
+        return self.__id
+
+    @property
+    def name(self) -> str:
+        """
+        The name of the permission preset (eg 'Tutor')
+        """
+        return self._get().name
+
+    @name.setter
+    def name(self, new_name: str):
+        row = self._get()
+        row.name = new_name
+        row.save()
+
+    def can(self, action: Permission) -> bool:
+        row = self._get()
+        if action.value in row.allowed:
+            return True
+        elif action.value in row.disallowed:
+            return False
+        # IDEA: Could have a global permission which also applies to users that
+        # have not logged in?
+        else:
+            return False
+
+    def update_allowed(self, actions: dict[Permission, Optional[bool]]):
+        row = get_by_id(TPermissionPreset, self.__id)
+
+        allowed: list[int] = []
+        disallowed: list[int] = []
+
+        for act, option in actions.items():
+            if option is None:
+                continue
+            elif option:
+                allowed.append(act.value)
+            else:
+                disallowed.append(act.value)
+
+        row.allowed = allowed
+        row.disallowed = disallowed
+
+        row.save([TPermissionPreset.allowed, TPermissionPreset.disallowed])
+
+
+class PermissionUser(PermissionSet):
+    """
+    Represents a user permission, which derives from a preset.
+    """
+    def __init__(self, id: int) -> None:
+        """
+        Load a user permission set from the database
+
+        ### Args:
+        * `id` (`int`): ID of the preset
+        """
+        if not id_exists(TPermissionUser, id):
+            raise KeyError(f"Invalid PermissionUser.id {id}")
+        self.__id = id
+
+    @property
+    def id(self) -> int:
+        """
+        Identifier of this permission preset
+        """
+        return self.__id
+
+    @property
+    def owner(self) -> str:
+        """
+        The user that this permission belongs to
+        """
+        return self._get().name
