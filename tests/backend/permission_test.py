@@ -3,8 +3,7 @@
 
 Unit tests for `PermissionSet` type.
 """
-from backend.models.permission import Permission
-from backend.models.permission_set import PermissionSet
+from backend.models import Permission, PermissionSet
 
 
 def test_name():
