@@ -2,10 +2,10 @@ from flask import Blueprint
 from backend.types.user import IUserIdList
 
 
-user = Blueprint('users', 'users')
+users = Blueprint('users', 'users')
 
 
-@user.post('/register')
+@users.post('/register')
 def register() -> IUserIdList:
     """
     Register a collection of users

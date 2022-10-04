@@ -8,6 +8,8 @@ keep the code structured and maintainable.
 # Keep flake8 happy
 __all__ = [
     'debug',
+    'admin',
 ]
 
 from .debug import debug
+from .admin import admin

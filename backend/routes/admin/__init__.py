@@ -3,3 +3,17 @@
 
 Contains route definitions for functions used with administration
 """
+from flask import Blueprint
+from .permissions import permissions
+from .user import users
+
+
+admin = Blueprint('admin', 'admin')
+
+admin.register_blueprint(permissions, url_prefix='/permissions')
+admin.register_blueprint(users, url_prefix='/user')
+
+
+__all__ = [
+    'admin',
+]
