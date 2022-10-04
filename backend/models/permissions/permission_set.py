@@ -1,5 +1,5 @@
 """
-# Backend / Models / Permission Set
+# Backend / Models / Permissions / Permission Set
 
 Definition for the `PermissionSet` class which defines a set of permissions
 that a user has. It also supports derived permissions, meaning that users can

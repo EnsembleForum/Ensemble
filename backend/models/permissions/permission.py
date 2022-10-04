@@ -1,5 +1,5 @@
 """
-# Backend / Models / Permission
+# Backend / Models / Permissions / Permission
 
 Contains definitions for permissions that can be granted to users.
 """
