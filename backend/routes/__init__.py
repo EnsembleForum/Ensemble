@@ -10,4 +10,4 @@ __all__ = [
     'debug',
 ]
 
-from .debug import blueprint as debug
+from .debug import debug

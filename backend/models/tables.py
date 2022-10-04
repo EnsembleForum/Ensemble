@@ -30,7 +30,6 @@ class TPermissionUser(_BaseTable):
     allowed = Array(Integer())
     disallowed = Array(Integer())
     parent = ForeignKey(TPermissionPreset)
-    user = ForeignKey('TUser')
 
 
 class TUser(_BaseTable):

@@ -8,10 +8,10 @@ from colorama import Fore
 from flask import Blueprint, request
 from backend.util import http_errors
 
-blueprint = Blueprint('debug', 'debug')
+debug = Blueprint('debug', 'debug')
 
 
-@blueprint.get('/echo')
+@debug.get('/echo')
 def echo():
     """
     Echo an input
@@ -25,7 +25,7 @@ def echo():
     return {'value': value}
 
 
-@blueprint.post('/clear')
+@debug.post('/clear')
 def clear():
     """
     Clear the database
@@ -34,7 +34,7 @@ def clear():
     return {}
 
 
-@blueprint.post('/shutdown')
+@debug.post('/shutdown')
 def shutdown():
     """
     Initiate a server shutdown
