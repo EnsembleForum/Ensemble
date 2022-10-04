@@ -74,12 +74,12 @@ class PermissionPreset(PermissionSet):
         * `id` (`int`): ID of the preset
         """
         if not id_exists(TPermissionPreset, id):
-            raise KeyError(f"Invalid PermissionPreset.id {id}")
+            raise KeyError(f"Invalid TPermissionPreset.id {id}")
         self.__id = id
 
     @classmethod
     def create(
-        self,
+        cls,
         name: str,
         options: dict[Permission, Optional[bool]]
     ) -> 'PermissionPreset':
@@ -103,11 +103,13 @@ class PermissionPreset(PermissionSet):
             }
         ).save().run_sync()
         id = cast(bool, val.id)
-        return PermissionPreset(id)
+        ret = PermissionPreset(id)
+        ret.update_allowed(options)
+        return ret
 
     def _get(self) -> TPermissionPreset:
         """
-        Return a reference to the underlying database column
+        Return a reference to the underlying database row
         """
         return get_by_id(TPermissionPreset, self.__id)
 
@@ -129,7 +131,7 @@ class PermissionPreset(PermissionSet):
     def name(self, new_name: str):
         row = self._get()
         row.name = new_name
-        row.save()
+        row.save().run_sync()
 
     def can(self, action: Permission) -> bool:
         row = self._get()
@@ -159,7 +161,8 @@ class PermissionPreset(PermissionSet):
         row.allowed = allowed
         row.disallowed = disallowed
 
-        row.save([TPermissionPreset.allowed, TPermissionPreset.disallowed])
+        row.save([TPermissionPreset.allowed, TPermissionPreset.disallowed])\
+            .run_sync()
 
 
 class PermissionUser(PermissionSet):
@@ -174,8 +177,36 @@ class PermissionUser(PermissionSet):
         * `id` (`int`): ID of the preset
         """
         if not id_exists(TPermissionUser, id):
-            raise KeyError(f"Invalid PermissionUser.id {id}")
+            raise KeyError(f"Invalid TPermissionUser.id {id}")
         self.__id = id
+
+    @classmethod
+    def create(cls, parent: PermissionPreset) -> 'PermissionUser':
+        """
+        Create a user permission set and store it into the database.
+
+        ### Args:
+        * `parent` (`PermissionPreset`): parent permission set
+
+        ### Returns:
+        * `Self`: PermissionUser
+        """
+        val = TPermissionUser(
+            {
+                TPermissionUser.parent: parent.id,
+                TPermissionPreset.allowed: [],
+                TPermissionPreset.disallowed: [],
+            }
+        ).save().run_sync()
+        id = cast(bool, val.id)
+        ret = PermissionUser(id)
+        return ret
+
+    def _get(self) -> TPermissionUser:
+        """
+        Return a reference to the underlying database row
+        """
+        return get_by_id(TPermissionUser, self.__id)
 
     @property
     def id(self) -> int:
@@ -185,8 +216,54 @@ class PermissionUser(PermissionSet):
         return self.__id
 
     @property
-    def owner(self) -> str:
+    def user(self) -> None:
         """
         The user that this permission belongs to
         """
-        return self._get().name
+        # TODO once user data is implemented
+        raise NotImplementedError()
+
+    @property
+    def parent(self) -> PermissionPreset:
+        """
+        The parent permissions for this set
+
+        ### Returns:
+        * `PermissionPreset`: the parent preset
+        """
+        return PermissionPreset(self._get().parent)
+
+    @parent.setter
+    def parent(self, new_parent: PermissionPreset):
+        row = self._get()
+        row.parent = new_parent.id
+        row.save().run_sync()
+
+    def can(self, action: Permission) -> bool:
+        row = self._get()
+        if action.value in row.allowed:
+            return True
+        elif action.value in row.disallowed:
+            return False
+        else:
+            return self.parent.can(action)
+
+    def update_allowed(self, actions: dict[Permission, Optional[bool]]):
+        row = get_by_id(TPermissionPreset, self.__id)
+
+        allowed: list[int] = []
+        disallowed: list[int] = []
+
+        for act, option in actions.items():
+            if option is None:
+                continue
+            elif option:
+                allowed.append(act.value)
+            else:
+                disallowed.append(act.value)
+
+        row.allowed = allowed
+        row.disallowed = disallowed
+
+        row.save([TPermissionPreset.allowed, TPermissionPreset.disallowed])\
+            .run_sync()

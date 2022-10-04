@@ -29,4 +29,14 @@ class TPermissionUser(_BaseTable):
     """
     allowed = Array(Integer())
     disallowed = Array(Integer())
-    inherits_from = ForeignKey(TPermissionPreset)
+    parent = ForeignKey(TPermissionPreset)
+    user = ForeignKey('TUser')
+
+
+class TUser(_BaseTable):
+    """
+    Table containing all user data
+    """
+    name_first = Text()
+    name_last = Text()
+    permissions = ForeignKey(TPermissionUser)
