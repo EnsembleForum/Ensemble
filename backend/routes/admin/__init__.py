@@ -5,7 +5,7 @@ Contains route definitions for functions used with administration
 """
 from flask import Blueprint
 from .permissions import permissions
-from .user import users
+from .users import users
 
 
 admin = Blueprint('admin', 'admin')

@@ -14,4 +14,7 @@ def register() -> IUserIdList:
     * `users` (`list[IUserBasicDetails]`): list of user info to add
     * `group_id` (`PermissionGroupId`): permission group ID to assign all users
       to.
+
+    ## Returns:
+    * `IUserIdList`: list of new user IDs
     """

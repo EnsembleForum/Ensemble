@@ -1,15 +1,16 @@
-from flask import Blueprint
+from typing import cast
+from ..helpers import post, get, put
+from ..consts import URL
+from backend.types.identifiers import UserId, PermissionId, PermissionGroupId
 from backend.types.permissions import (
     IPermissionList,
     IPermissionValues,
     IPermissionGroupList,
 )
 
+URL = f"{URL}/admin/permissions"
 
-permissions = Blueprint('permissions', 'permissions')
 
-
-@permissions.get('/list_permissions')
 def list_permissions() -> IPermissionList:
     """
     Returns info about available permissions.
@@ -17,10 +18,13 @@ def list_permissions() -> IPermissionList:
     ## Returns:
     * `IPermissionList`
     """
+    return cast(IPermissionList, get(
+        f"{URL}/list_permissions",
+        {}
+    ))
 
 
-@permissions.get('/get_permissions')
-def get_permissions() -> IPermissionValues:
+def get_permissions(uid: UserId) -> IPermissionValues:
     """
     Returns the permissions of a user
 
@@ -30,10 +34,16 @@ def get_permissions() -> IPermissionValues:
     ## Returns:
     * `IPermissionValues`
     """
+    return cast(IPermissionValues, get(
+        f"{URL}/get_permissions",
+        {"uid": uid}
+    ))
 
 
-@permissions.put('/set_permissions')
-def set_permissions() -> dict:
+def set_permissions(
+    uid: UserId,
+    permissions: dict[PermissionId, bool | None]
+) -> None:
     """
     Sets the permissions of a user
 
@@ -41,10 +51,13 @@ def set_permissions() -> dict:
     * `uid` (`UserId`): user id to set permissions for
     * `permissions`: (`dict[PermissionId, bool?]`): mapping of permission IDs
     """
+    put(
+        f"{URL}/set_permissions",
+        {}
+    )
 
 
-@permissions.put('/set_group')
-def set_group() -> dict:
+def set_group(uid: UserId, group: PermissionGroupId) -> None:
     """
     Sets the permission group of a user.
 
@@ -52,10 +65,16 @@ def set_group() -> dict:
     * `uid` (`UserId`): user id to set parent permission for
     * `group` (`PermissionGroupId`): ID of permission group
     """
+    put(
+        f"{URL}/set_permissions",
+        {
+            "uid": uid,
+            "group": group,
+        }
+    )
 
 
-@permissions.post('/groups/make')
-def groups_make() -> dict:
+def groups_make(name: str, values: IPermissionValues) -> None:
     """
     Create a new permission group
 
@@ -63,9 +82,15 @@ def groups_make() -> dict:
     * `name` (`str`): name of permission group
     * `values` (`IPermissionValues`): values for permission group
     """
+    post(
+        f"{URL}/groups/make",
+        {
+            "name": name,
+            "values": values,
+        }
+    )
 
 
-@permissions.get('/groups/list')
 def groups_list() -> IPermissionGroupList:
     """
     List available permission groups
@@ -73,10 +98,17 @@ def groups_list() -> IPermissionGroupList:
     ## Returns:
     * `IPermissionGroupList`
     """
+    return cast(IPermissionGroupList, get(
+        f"{URL}/groups/list",
+        {}
+    ))
 
 
-@permissions.put('/groups/edit')
-def groups_edit() -> dict:
+def groups_edit(
+    group_id: PermissionGroupId,
+    name: str,
+    values: IPermissionValues,
+) -> None:
     """
     Edit an existing permission group
 
@@ -85,3 +117,11 @@ def groups_edit() -> dict:
     * `name` (`str`): new name of permission group
     * `values` (`IPermissionValues`): new values for permission group
     """
+    put(
+        f"{URL}/groups/make",
+        {
+            "group_id": group_id,
+            "name": name,
+            "values": values,
+        }
+    )
