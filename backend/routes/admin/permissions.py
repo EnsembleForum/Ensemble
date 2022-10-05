@@ -5,6 +5,7 @@ from backend.types.permissions import (
     IPermissionGroupList,
     IGroupId,
 )
+from backend.types.identifiers import PermissionGroupId
 
 
 permissions = Blueprint('permissions', 'permissions')
@@ -67,6 +68,9 @@ def groups_make() -> IGroupId:
     ## Returns:
     * `IGroupId`: ID for new group
     """
+    return {
+        "group_id": PermissionGroupId(0)
+    }
 
 
 @permissions.get('/groups/list')
