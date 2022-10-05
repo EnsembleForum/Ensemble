@@ -1,6 +1,5 @@
 import json
 import requests
-from typing import cast
 from backend.util import http_errors
 
 
