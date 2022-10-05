@@ -59,3 +59,10 @@ class NotFound(HTTPException):
     known due to its frequent occurrence on the web.
     """
     code = 404
+
+
+class InternalServerError(HTTPException):
+    """
+    The server has encountered a situation it does not know how to handle.
+    """
+    code = 500

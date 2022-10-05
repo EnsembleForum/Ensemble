@@ -25,6 +25,8 @@ def handle_response(response: requests.Response) -> dict:
             raise http_errors.Forbidden(response.text)
         case 404:
             raise http_errors.NotFound(response.url)
+        case 500:
+            raise http_errors.InternalServerError(response.text)
         case i:
             raise ValueError(f"Unrecognised status code: {i}")
 
