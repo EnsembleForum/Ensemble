@@ -39,6 +39,8 @@
     // Spell checker
     "cSpell.language": "en-gb",
     "cSpell.words": [
+        "dotenv",
+        "flaskenv",
         "Khor",
         "Neel",
         "Sesi",

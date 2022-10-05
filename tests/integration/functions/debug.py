@@ -20,7 +20,7 @@ def echo(value: str) -> IEcho:
     ## Params:
     * `value` (`str`): value to echo
     """
-    return cast(IEcho, get(f"{URL}/echo", {value: value}))
+    return cast(IEcho, get(f"{URL}/echo", {"value": value}))
 
 
 def clear() -> None:
