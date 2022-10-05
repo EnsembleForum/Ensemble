@@ -2,7 +2,7 @@ from typing import TypedDict
 from .identifiers import UserId
 
 
-class IUserBasicDetails(TypedDict):
+class IUserRegisterInfo(TypedDict):
     """
     Basic user details used when registering a new user
     """
@@ -17,3 +17,31 @@ class IUserIdList(TypedDict):
     List of user IDs for newly generated users
     """
     user_ids: list[UserId]
+
+
+class IUserBasicInfo(TypedDict):
+    """
+    Basic info about a user
+    """
+    name_first: str
+    name_last: str
+    username: str
+    uid: UserId
+
+
+class IUserBasicInfoList(TypedDict):
+    """
+    List of basic info about users
+    """
+    users: list[IUserBasicInfo]
+
+
+class IUserProfile(TypedDict):
+    """
+    Detailed info about a user
+    """
+    name_first: str
+    name_last: str
+    username: str
+    email: str
+    uid: UserId
