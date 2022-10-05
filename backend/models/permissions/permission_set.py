@@ -101,8 +101,8 @@ class PermissionGroup(PermissionSet):
                 TPermissionGroup.allowed: [],
                 TPermissionGroup.disallowed: [],
             }
-        ).save().run_sync()
-        id = cast(bool, val.id)
+        ).save().run_sync()[0]
+        id = cast(int, val["id"])
         ret = PermissionGroup(id)
         ret.update_allowed(options)
         return ret
@@ -197,8 +197,8 @@ class PermissionUser(PermissionSet):
                 TPermissionGroup.allowed: [],
                 TPermissionGroup.disallowed: [],
             }
-        ).save().run_sync()
-        id = cast(bool, val.id)
+        ).save().run_sync()[0]
+        id = cast(int, val["id"])
         ret = PermissionUser(id)
         return ret
 

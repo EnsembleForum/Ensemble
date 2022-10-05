@@ -1,4 +1,5 @@
 from flask import Blueprint
+from backend.models.permissions import PermissionGroup
 from backend.types.permissions import (
     IPermissionList,
     IPermissionValues,
@@ -68,8 +69,9 @@ def groups_make() -> IGroupId:
     ## Returns:
     * `IGroupId`: ID for new group
     """
+    PermissionGroup.create('Test', {})
     return {
-        "group_id": PermissionGroupId(0)
+        "group_id": PermissionGroupId(1)
     }
 
 

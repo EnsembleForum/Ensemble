@@ -53,8 +53,8 @@ class User:
                 TUser.name_last: name_last,
                 TUser.permissions: PermissionUser.create(permissions_base).id,
             }
-        ).save().run_sync()
-        id = cast(bool, val.id)
+        ).save().run_sync()[0]
+        id = cast(int, val["id"])
         ret = User(id)
 
         return ret
