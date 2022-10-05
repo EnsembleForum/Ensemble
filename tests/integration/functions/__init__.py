@@ -3,5 +3,3 @@
 
 Functions that shadow the routes available on the backend
 """
-
-
