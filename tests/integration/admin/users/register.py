@@ -19,7 +19,7 @@ from tests.integration.functions.admin import users
 def test_register_single_user():
     """Can we register a single user"""
     group = basic_permission_group()
-    user = users.register(
+    reg = users.register(
         [{
             "name_first": "Henry",
             "name_last": "VIII",
@@ -28,15 +28,15 @@ def test_register_single_user():
         }],
         group,
     )
-    new_users = users.all()["users"]
-    assert len(new_users) == 1
-    assert new_users[0]["user_id"] == user["user_ids"][0]
+    all = users.all()["users"]
+    assert len(all) == 1
+    assert all[0]["user_id"] == reg["user_ids"][0]
 
 
 def test_register_multi_users():
     """Can we register multiple users"""
     group = basic_permission_group()
-    user = users.register(
+    reg = users.register(
         [
             {
                 "name_first": "Henry",
@@ -53,6 +53,7 @@ def test_register_multi_users():
         ],
         group,
     )
-    new_users = users.all()["users"]
-    assert len(new_users) == 2
-    assert new_users[0]["user_id"] == user["user_ids"][0]
+    all = users.all()["users"]
+    assert len(all) == 2
+    assert all[0]["user_id"] == reg["user_ids"][0]
+    assert all[1]["user_id"] == reg["user_ids"][1]
