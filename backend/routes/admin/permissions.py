@@ -3,6 +3,7 @@ from backend.types.permissions import (
     IPermissionList,
     IPermissionValues,
     IPermissionGroupList,
+    IGroupId,
 )
 
 
@@ -55,13 +56,16 @@ def set_group() -> dict:
 
 
 @permissions.post('/groups/make')
-def groups_make() -> dict:
+def groups_make() -> IGroupId:
     """
     Create a new permission group
 
     ## Body:
     * `name` (`str`): name of permission group
-    * `values` (`IPermissionValues`): values for permission group
+    * `values` (`dict[PermissionId, bool | None]`): values for permission group
+
+    ## Returns:
+    * `IGroupId`: ID for new group
     """
 
 

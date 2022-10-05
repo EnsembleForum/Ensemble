@@ -26,7 +26,7 @@ class IUserBasicInfo(TypedDict):
     name_first: str
     name_last: str
     username: str
-    uid: UserId
+    user_id: UserId
 
 
 class IUserBasicInfoList(TypedDict):
@@ -44,4 +44,4 @@ class IUserProfile(TypedDict):
     name_last: str
     username: str
     email: str
-    uid: UserId
+    user_id: UserId

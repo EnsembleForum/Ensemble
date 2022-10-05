@@ -6,6 +6,7 @@ from backend.types.permissions import (
     IPermissionList,
     IPermissionValues,
     IPermissionGroupList,
+    IGroupId,
 )
 
 URL = f"{URL}/admin/permissions"
@@ -74,21 +75,27 @@ def set_group(uid: UserId, group: PermissionGroupId) -> None:
     )
 
 
-def groups_make(name: str, values: IPermissionValues) -> None:
+def groups_make(
+    name: str,
+    values: dict[PermissionId, bool | None],
+) -> IGroupId:
     """
     Create a new permission group
 
     ## Body:
     * `name` (`str`): name of permission group
-    * `values` (`IPermissionValues`): values for permission group
+    * `values` (`dict[PermissionId, bool | None]`): values for permission group
+
+    ## Returns:
+    * `IGroupId`: ID for new group
     """
-    post(
+    return cast(IGroupId, post(
         f"{URL}/groups/make",
         {
             "name": name,
             "values": values,
         }
-    )
+    ))
 
 
 def groups_list() -> IPermissionGroupList:

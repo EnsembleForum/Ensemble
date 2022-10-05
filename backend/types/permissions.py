@@ -11,7 +11,7 @@ class IPermissionInfo(TypedDict):
     """
     Represents a singular permission
     """
-    id: PermissionId
+    perm_id: PermissionId
     name: str
 
 
@@ -41,7 +41,7 @@ class IPermissionGroup(TypedDict):
     """
     Info about a permission group
     """
-    id: PermissionGroupId
+    group_id: PermissionGroupId
     name: str
     permissions: IPermissionValues
 
