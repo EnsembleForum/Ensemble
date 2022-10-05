@@ -8,8 +8,12 @@ This is the main entrypoint to backend server.
 import os
 from flask import Flask
 from .routes import debug, admin
+from .util import db_status
 
 app = Flask(__name__)
+
+# Initialise the database
+db_status.init()
 
 # Register blueprint routes
 if os.getenv('ENSEMBLE_DEBUG') is not None:

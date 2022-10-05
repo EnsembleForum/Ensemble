@@ -6,7 +6,7 @@ and environment variable to enabled/disabled them?
 """
 from colorama import Fore
 from flask import Blueprint, request
-from backend.util import http_errors
+from backend.util import http_errors, db_status
 from backend.types.debug import IEcho
 
 debug = Blueprint('debug', 'debug')
@@ -35,7 +35,7 @@ def clear() -> dict:
     """
     Clear the database.
     """
-    # TODO
+    db_status.clear_all()
     return {}
 
 
