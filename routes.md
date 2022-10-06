@@ -1,6 +1,8 @@
 
 # Routes
 
+## Overview
+
 * debug
     * **echo** (echo to console)
     * **clear** (clear database)
@@ -64,7 +66,9 @@
 * notifications
     * **list**
 
-# Starting state
+## Starting state
+
+When the server is started with an empty datastore:
 
 * If no users registered, `/admin/is_first_run` returns
   `{"value": true}`
