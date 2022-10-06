@@ -4,6 +4,7 @@ Contains the blueprints for routes that are used for testing and debugging.
 These routes should be disabled in the production environment, perhaps using
 and environment variable to enabled/disabled them?
 """
+import sys
 from colorama import Fore
 from flask import Blueprint, request
 from backend.util import http_errors, db_status
@@ -26,7 +27,12 @@ def echo() -> IEcho:
     except KeyError:
         raise http_errors.BadRequest('echo route requires a `value` argument')
 
-    print(f'{Fore.MAGENTA}[ECHO]\t\t{value}{Fore.RESET}')
+    to_print = f'{Fore.MAGENTA}[ECHO]\t\t{value}{Fore.RESET}'
+    # Print it to both stdout and stderr to ensure it is seen across all logs
+    # Otherwise it could be more difficult to figure out what's up with server
+    # output
+    print(to_print)
+    print(to_print, sys.stderr)
     return {'value': value}
 
 
