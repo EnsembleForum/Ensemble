@@ -56,9 +56,7 @@ class User:
             }
         ).save().run_sync()[0]
         id = cast(UserId, val["id"])
-        ret = User(id)
-
-        return ret
+        return User(id)
 
     def _get(self) -> TUser:
         """
