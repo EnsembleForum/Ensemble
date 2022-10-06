@@ -10,6 +10,7 @@ from typing import Optional
 from .permission import Permission
 from ..tables import TPermissionGroup, TPermissionUser
 from backend.util.db_queries import id_exists, get_by_id
+from backend.types.identifiers import UserPermissionId, PermissionGroupId
 from abc import abstractmethod
 from typing import cast
 
@@ -66,7 +67,7 @@ class PermissionGroup(PermissionSet):
     """
     Represents a preset permission, from which user permissions are derived.
     """
-    def __init__(self, id: int):
+    def __init__(self, id: PermissionGroupId):
         """
         Load a permission preset from the database
 
@@ -102,7 +103,7 @@ class PermissionGroup(PermissionSet):
                 TPermissionGroup.disallowed: [],
             }
         ).save().run_sync()[0]
-        id = cast(int, val["id"])
+        id = cast(PermissionGroupId, val["id"])
         ret = PermissionGroup(id)
         ret.update_allowed(options)
         return ret
@@ -114,9 +115,9 @@ class PermissionGroup(PermissionSet):
         return get_by_id(TPermissionGroup, self.__id)
 
     @property
-    def id(self) -> int:
+    def id(self) -> PermissionGroupId:
         """
-        Identifier of this permission preset
+        Identifier of this permission group
         """
         return self.__id
 
@@ -169,7 +170,7 @@ class PermissionUser(PermissionSet):
     """
     Represents a user permission, which derives from a group.
     """
-    def __init__(self, id: int) -> None:
+    def __init__(self, id: UserPermissionId) -> None:
         """
         Load a user permission set from the database
 
@@ -198,7 +199,7 @@ class PermissionUser(PermissionSet):
                 TPermissionGroup.disallowed: [],
             }
         ).save().run_sync()[0]
-        id = cast(int, val["id"])
+        id = cast(UserPermissionId, val["id"])
         ret = PermissionUser(id)
         return ret
 
@@ -209,7 +210,7 @@ class PermissionUser(PermissionSet):
         return get_by_id(TPermissionUser, self.__id)
 
     @property
-    def id(self) -> int:
+    def id(self) -> UserPermissionId:
         """
         Identifier of this permission preset
         """

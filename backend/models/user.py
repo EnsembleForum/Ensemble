@@ -4,6 +4,7 @@
 from .tables import TUser
 from .permissions import PermissionGroup, PermissionUser
 from backend.util.db_queries import id_exists, get_by_id
+from backend.types.identifiers import UserId
 from typing import cast
 
 
@@ -12,7 +13,7 @@ class User:
     Represents a user of Ensemble
     """
     # TODO: Flesh this out properly
-    def __init__(self, id: int):
+    def __init__(self, id: UserId):
         """
         Create a user object shadowing an existing in the database
 
@@ -54,7 +55,7 @@ class User:
                 TUser.permissions: PermissionUser.create(permissions_base).id,
             }
         ).save().run_sync()[0]
-        id = cast(int, val["id"])
+        id = cast(UserId, val["id"])
         ret = User(id)
 
         return ret
