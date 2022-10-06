@@ -164,3 +164,6 @@ temp.*
 
 # Project database
 ensemble.sqlite
+
+# Test output
+output
