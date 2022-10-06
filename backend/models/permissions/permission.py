@@ -15,6 +15,8 @@ class Permission(Enum):
     """User can view public posts"""
     ViewPrivate = 1
     """User can view private posts"""
+    ViewAnonymousOP = 2
+    """User can view who made an anonymous post"""
 
     # Posting
     Post = 10
@@ -24,12 +26,14 @@ class Permission(Enum):
     PostOverrideExam = 12
     """User can create public posts, even when exam mode is enabled"""
 
-    # Queues
-    Delegate = 20
+    # Taskboard and queues
+    ViewTaskboard = 20
+    """User can view the taskboard overview"""
+    Delegate = 21
     """User can move a post from the main queue to a specialised queue"""
-    FollowQueue = 21
-    """User can subscribe to queues to get notifications when a post is moved
-    into it"""
+    FollowQueue = 22
+    """User can subscribe to queues to get notifications when posts are moved
+    into them"""
 
     # Moderation
     ReportPosts = 30
@@ -48,3 +52,7 @@ class Permission(Enum):
     """User can create other user accounts"""
     RemoveUsers = 42
     """User can remove other user accounts"""
+
+    # Administration
+    ManageAuthConfig = 50
+    """User can manage authentication options"""

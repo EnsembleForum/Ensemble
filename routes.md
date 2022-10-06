@@ -15,23 +15,26 @@
     * **password_reset**
 
 * admin
-    * **is_first_run** (returns whether the server is empty)
     * users
         * **register** (bulk user registration)
         * **all** (list of all users (perhaps paged))
     * permissions
         * **list_permissions** (list of available permissions)
-        * **get_permissions** (get permissions of a user)
-        * **set_permissions** (set permissions of a user)
-        * **set_group** (change the group of a user)
+        * users
+            * **get_permissions** (get permissions of a user)
+            * **set_permissions** (set permissions of a user)
+            * **get_group** (get the group of a user)
+            * **set_group** (change the group of a user)
         * groups
-            * **make** (make a permission group)
+            * **create** (make a permission group)
             * **list** (list available permission groups)
             * **edit** (edit a permission group)
             * **remove** (remove an empty permission group)
     * auth
         * **get_config** (return config for auth system)
         * **set_config** (edit config for auth system)
+    * **is_first_run** (returns whether the server is empty)
+    * **init** (provide initial configuration for the empty server)
 
 * browse
     * **post_list** (get list of posts, incl. basic details of all)
