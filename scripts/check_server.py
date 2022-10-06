@@ -43,43 +43,18 @@ while time.time() - start_time < 10:
 if not started:
     print("❗ Server failed to start in time")
     flask.kill()
+    # Write all the outputs
+    try:
+        os.mkdir('output', )
+    except FileExistsError:
+        pass
+    with open('output/server.stdout.txt', 'w') as out:
+        out.write(flask.stdout.read().decode('utf-8'))
+    with open('output/server.stderr.txt', 'w') as out:
+        out.write(flask.stderr.read().decode('utf-8'))
     sys.exit(1)
 else:
-    print("⛅ Server started")
+    print("✅ Server started")
 
-pytest = subprocess.Popen(
-    [sys.executable, '-u', '-m', 'pytest'],
-    stderr=subprocess.PIPE,
-    stdout=subprocess.PIPE,
-)
-
-# Wait for tests to finish
-print("🔨 Running tests...")
-ret = pytest.wait()
-
-# Then shut down the server
+# Finally, shut down the server
 flask.terminate()
-
-if pytest.stderr is None or pytest.stdout is None:
-    print("❗ Can't read pytest output", file=sys.stderr)
-    sys.exit(1)
-
-# Write all the outputs
-try:
-    os.mkdir('output', )
-except FileExistsError:
-    pass
-with open('output/server.stdout.txt', 'w') as out:
-    out.write(flask.stdout.read().decode('utf-8'))
-with open('output/server.stderr.txt', 'w') as out:
-    out.write(flask.stderr.read().decode('utf-8'))
-with open('output/pytest.stdout.txt', 'w') as out:
-    out.write(pytest.stdout.read().decode('utf-8'))
-with open('output/pytest.stderr.txt', 'w') as out:
-    out.write(pytest.stderr.read().decode('utf-8'))
-
-if ret == 0:
-    print("✅ It works!")
-else:
-    print("❌ Tests failed")
-exit(ret)
