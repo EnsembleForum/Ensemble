@@ -64,6 +64,7 @@ jobs:
       with:
         name: outputs
         path: output/*.txt
+        if-no-files-found: ignore
 
   Flake8:
     runs-on: ubuntu-latest
