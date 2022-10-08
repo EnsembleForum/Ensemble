@@ -58,6 +58,16 @@ class User:
         id = cast(UserId, val["id"])
         return User(id)
 
+    @classmethod
+    def all(cls) -> list['User']:
+        """
+        Returns a list of all users
+
+        ### Returns:
+        * `list[User]`: list of users
+        """
+        return list(map(lambda u: User(u.id), cast(list, TUser.objects())))
+
     def _get(self) -> TUser:
         """
         Return a reference to the underlying database row
