@@ -9,7 +9,7 @@ permissions that inherit from the tutor permission set).
 from typing import Optional
 from .permission import Permission
 from ..tables import TPermissionGroup, TPermissionUser
-from backend.util.db_queries import id_exists, get_by_id
+from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import UserPermissionId, PermissionGroupId
 from abc import abstractmethod
 from typing import cast
@@ -74,8 +74,7 @@ class PermissionGroup(PermissionSet):
         ### Args:
         * `id` (`int`): ID of the preset
         """
-        if not id_exists(TPermissionGroup, id):
-            raise KeyError(f"Invalid TPermissionPreset.id {id}")
+        assert_id_exists(TPermissionGroup, id)
         self.__id = id
 
     @classmethod
@@ -177,8 +176,7 @@ class PermissionUser(PermissionSet):
         ### Args:
         * `id` (`int`): ID of the preset
         """
-        if not id_exists(TPermissionUser, id):
-            raise KeyError(f"Invalid TPermissionUser.id {id}")
+        assert_id_exists(TPermissionUser, id)
         self.__id = id
 
     @classmethod

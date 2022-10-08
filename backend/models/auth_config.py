@@ -5,6 +5,7 @@ Configuration of authentication options
 """
 from .tables import TAuthConfig
 from backend.util.db_queries import id_exists, get_by_id
+from backend.util import http_errors
 import re
 import requests
 from typing import Literal
@@ -20,7 +21,7 @@ class AuthConfig:
         server. This requires the table to be created.
         """
         if not self.exists():
-            raise ValueError("AuthConfig hasn't been initialised")
+            raise http_errors.BadRequest("AuthConfig hasn't been initialised")
         # Doing the lookup straight away since we'll need to use this info
         # repetitively so frequent lookups are probably slower
         self.__row = get_by_id(TAuthConfig, 1)
@@ -70,7 +71,7 @@ class AuthConfig:
         """
         # Make sure it doesn't already exist
         if cls.exists():
-            raise ValueError("AuthConfig has already been initialised")
+            raise http_errors.BadRequest("AuthConfig is already initialised")
         TAuthConfig(
             {
                 TAuthConfig.address: address,
@@ -129,7 +130,7 @@ class AuthConfig:
     def address(self, new_address: str):
         row = self._get()
         row.address = new_address
-        row.save().run_sync()
+        row.save([TAuthConfig.address]).run_sync()
 
     @property
     def request_type(self) -> str:
@@ -142,7 +143,7 @@ class AuthConfig:
     def request_type(self, new_request_type: Literal['get', 'post']):
         row = self._get()
         row.request_type = new_request_type
-        row.save().run_sync()
+        row.save([TAuthConfig.request_type]).run_sync()
 
     @property
     def username_param(self) -> str:
@@ -155,7 +156,7 @@ class AuthConfig:
     def username_param(self, new_username_param: Literal['get', 'post']):
         row = self._get()
         row.username_param = new_username_param
-        row.save().run_sync()
+        row.save([TAuthConfig.username_param]).run_sync()
 
     @property
     def password_param(self) -> str:
@@ -168,7 +169,7 @@ class AuthConfig:
     def password_param(self, new_password_param: Literal['get', 'post']):
         row = self._get()
         row.password_param = new_password_param
-        row.save().run_sync()
+        row.save([TAuthConfig.password_param]).run_sync()
 
     @property
     def success_regex(self) -> str:
@@ -181,4 +182,4 @@ class AuthConfig:
     def success_regex(self, new_success_regex: Literal['get', 'post']):
         row = self._get()
         row.success_regex = new_success_regex
-        row.save().run_sync()
+        row.save([TAuthConfig.success_regex]).run_sync()

@@ -3,7 +3,8 @@
 """
 from .tables import TUser
 from .permissions import PermissionGroup, PermissionUser
-from backend.util.db_queries import id_exists, get_by_id
+from backend.util.db_queries import assert_id_exists, get_by_id
+from backend.util.validators import assert_email_valid, assert_name_valid
 from backend.types.identifiers import UserId
 from typing import cast
 
@@ -22,8 +23,7 @@ class User:
         ### Raises:
         * `KeyError`: user does not exist
         """
-        if not id_exists(TUser, id):
-            raise KeyError(f"Invalid TUser.id {id}")
+        assert_id_exists(TUser, id)
         self.__id = id
 
     @classmethod
@@ -53,6 +53,8 @@ class User:
         ### Returns:
         * `PermissionPreset`: the preset object
         """
+        assert_name_valid(username, "Username")
+        assert_email_valid(email)
         val = TUser(
             {
                 TUser.username: username,
@@ -95,12 +97,6 @@ class User:
         """
         return self._get().username
 
-    @username.setter
-    def username(self, new_username: str):
-        row = self._get()
-        row.username = new_username
-        row.save().run_sync()
-
     @property
     def name_first(self) -> str:
         """
@@ -110,6 +106,7 @@ class User:
 
     @name_first.setter
     def name_first(self, new_name: str):
+        assert_name_valid(new_name, "First name")
         row = self._get()
         row.name_first = new_name
         row.save().run_sync()
@@ -123,6 +120,7 @@ class User:
 
     @name_last.setter
     def name_last(self, new_name: str):
+        assert_name_valid(new_name, "Last name")
         row = self._get()
         row.name_last = new_name
         row.save().run_sync()
@@ -136,6 +134,7 @@ class User:
 
     @email.setter
     def email(self, new_email: str):
+        assert_email_valid(new_email)
         row = self._get()
         row.email = new_email
         row.save().run_sync()
