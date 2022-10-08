@@ -89,7 +89,7 @@ class User:
         """
         The last name of the user
         """
-        return self._get().name_first
+        return self._get().name_last
 
     @name_last.setter
     def name_last(self, new_name: str):
