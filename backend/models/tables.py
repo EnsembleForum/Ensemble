@@ -47,6 +47,8 @@ class TUser(_BaseTable):
     """
     Table containing all user data
     """
+    username = Text()
     name_first = Text()
     name_last = Text()
+    email = Text()
     permissions = ForeignKey(TPermissionUser)

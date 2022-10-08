@@ -30,8 +30,10 @@ class User:
     @classmethod
     def create(
         cls,
+        username: str,
         name_first: str,
         name_last: str,
+        email: str,
         permissions_base: PermissionGroup
     ) -> 'User':
         """
@@ -50,8 +52,10 @@ class User:
         """
         val = TUser(
             {
+                TUser.username: username,
                 TUser.name_first: name_first,
                 TUser.name_last: name_last,
+                TUser.email: email,
                 TUser.permissions: PermissionUser.create(permissions_base).id,
             }
         ).save().run_sync()[0]
@@ -82,6 +86,19 @@ class User:
         return self.__id
 
     @property
+    def username(self) -> str:
+        """
+        The username of the user
+        """
+        return self._get().username
+
+    @username.setter
+    def username(self, new_username: str):
+        row = self._get()
+        row.username = new_username
+        row.save().run_sync()
+
+    @property
     def name_first(self) -> str:
         """
         The first name of the user
@@ -105,6 +122,19 @@ class User:
     def name_last(self, new_name: str):
         row = self._get()
         row.name_last = new_name
+        row.save().run_sync()
+
+    @property
+    def email(self) -> str:
+        """
+        The email address of the user
+        """
+        return self._get().email
+
+    @email.setter
+    def email(self, new_email: str):
+        row = self._get()
+        row.email = new_email
         row.save().run_sync()
 
     @property

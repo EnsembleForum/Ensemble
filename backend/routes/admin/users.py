@@ -35,8 +35,10 @@ def register() -> IUserIdList:
 
     def new_user(u: IUserRegisterInfo):
         return User.create(
+            u['username'],
             u['name_first'],
             u['name_last'],
+            u['email'],
             PermissionGroup(group),
         ).id
     return {
