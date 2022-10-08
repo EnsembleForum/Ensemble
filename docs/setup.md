@@ -1,27 +1,26 @@
-
 # Development Setup
 
 ## Tooling
 
-* VS Code with the following extensions
+- VS Code with the following extensions
 
-    * Python
+  - Python
 
-    * Python Indent
+  - Python Indent
 
-    * AutoDocstring
+  - AutoDocstring
 
-    * MyPy
+  - MyPy
 
-    * Code Spell Checker
+  - Code Spell Checker
 
-    * Todo Tree
+  - Todo Tree
 
-    * SQLite Viewer
+  - SQLite Viewer
 
-* Python 3.10
+- Python 3.10
 
-* JS/TS dependencies
+- JS/TS dependencies
 
 ## Main Setup
 
@@ -42,4 +41,12 @@ TODO: Database setup
 
 ## Front-end
 
-TODO
+1. Navigate to the base repository folder in a terminal
+
+2. Install the dependencies `npm i`
+
+3. To run the application on localhost:3000 run `npm start`
+
+4. If you see the error `ERROR in [eslint] Plugin "react" was conflicted between "package.json » eslint-config-react-app » ...base.js and "BaseConfig » ...\base.js".` simply save package.json while the app is running. This seems to be a windows specific problem to do with pathname case sensitivity.
+
+5. To test the frontend (does not require npm start) run `npm test`
