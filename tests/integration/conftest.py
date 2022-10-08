@@ -4,7 +4,7 @@ tests > backend > conftest
 Configuration for tests
 """
 import pytest
-from tests.integration.functions.debug import clear
+from tests.integration.request.debug import clear
 
 
 @pytest.fixture(autouse=True)
