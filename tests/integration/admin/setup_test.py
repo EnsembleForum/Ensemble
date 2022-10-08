@@ -22,6 +22,7 @@ Tests for server setup
 import pytest
 from backend.util import http_errors
 from ..request.admin import is_first_run, init
+from ..request.auth import login
 from mock.auth import URL
 
 
@@ -216,3 +217,4 @@ def test_init_user_created():
         name_last="Snuts",
     )
     # Test we can log in with their account
+    login("admin1", "admin1")
