@@ -12,7 +12,6 @@ class User:
     """
     Represents a user of Ensemble
     """
-    # TODO: Flesh this out properly
     def __init__(self, id: UserId):
         """
         Create a user object shadowing an existing in the database
@@ -40,9 +39,13 @@ class User:
         Create a new user
 
         ### Args:
+        * `username` (`str`): username
+
         * `name_first` (`str`): first name
 
         * `name_last` (`str`): last name
+
+        * `email` (`str`): email address
 
         * `permissions_base` (`PermissionPreset`): permissions to derive this
           user's permissions from.
