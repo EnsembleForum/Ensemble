@@ -188,3 +188,8 @@ temp.*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# Project database
+ensemble.sqlite
+
+# Test output
+output

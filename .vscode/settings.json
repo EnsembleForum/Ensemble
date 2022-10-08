@@ -37,11 +37,15 @@
     "python.testing.pytestEnabled": true,
 
     // Spell checker
-    "cSpell.language": "en",
+    "cSpell.language": "en-gb",
     "cSpell.words": [
+        "autouse",
+        "dotenv",
+        "flaskenv",
         "Khor",
         "Neel",
         "Sesi",
+        "Taskboard",
         "werkzeug"
     ],
 }

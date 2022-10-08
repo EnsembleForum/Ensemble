@@ -5,22 +5,22 @@
 
 * VS Code with the following extensions
 
-  * Python
+    * Python
 
-  * Python Indent
+    * Python Indent
 
-  * AutoDocstring
+    * AutoDocstring
 
-  * MyPy
+    * MyPy
 
-  * Code Spell Checker
+    * Code Spell Checker
 
-  * Todo Tree
+    * Todo Tree
+
+    * SQLite Viewer
 
 * Python 3.10
 
-TODO:
-* Database dependencies
 * JS/TS dependencies
 
 ## Main Setup
