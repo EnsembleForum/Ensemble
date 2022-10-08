@@ -19,9 +19,21 @@ class AuthConfig:
         Create an AuthConfig object shadowing the auth configuration for the
         server. This requires the table to be created.
         """
-        if not id_exists(TAuthConfig, 1):
+        if not self.exists():
             raise ValueError("AuthConfig hasn't been initialised")
-        self.__id = 1
+        # Doing the lookup straight away since we'll need to use this info
+        # repetitively so frequent lookups are probably slower
+        self.__row = get_by_id(TAuthConfig, 1)
+
+    @staticmethod
+    def exists() -> bool:
+        """
+        Returns whether the authentication system has been defined
+
+        ### Returns:
+        * `bool`: value
+        """
+        return id_exists(TAuthConfig, 1)
 
     @classmethod
     def create(
@@ -57,11 +69,7 @@ class AuthConfig:
         * `AuthConfig`: configuration
         """
         # Make sure it doesn't already exist
-        try:
-            AuthConfig()
-        except ValueError:
-            pass
-        else:
+        if cls.exists():
             raise ValueError("AuthConfig has already been initialised")
         TAuthConfig(
             {
@@ -78,7 +86,7 @@ class AuthConfig:
         """
         Return a reference to the underlying database row
         """
-        return get_by_id(TAuthConfig, self.__id)
+        return self.__row
 
     def authenticate(self, username: str, password: str) -> bool:
         """
