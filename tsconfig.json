@@ -22,5 +22,5 @@
   },
   "include": [
     "frontend"
-  ]
+, "tests/frontend/transformers"  ]
 }
