@@ -19,4 +19,6 @@
 
 ## Database
 
-* MongoDB?
+* SQLite
+
+* Piccolo
