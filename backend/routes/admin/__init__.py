@@ -38,19 +38,21 @@ def init() -> IAuthInfo:
     * Registers a first user as an admin
 
     ## Body:
-    * address: str (address to query for auth)
-    * username_param: str (parameter to use for username in request for auth)
-    * password_param: str (parameter to use for password in request for auth)
-    * success_regex: str (regular expression to check for auth success)
-    * username: str (username for first user)
-    * password: str (password to use with first user)
-    * email: str (email for first user)
-    * name_first: str (first name for first user)
-    * name_last: str (last name for first user)
+    * `address`: (`str`) address to query for auth
+    * `username_param`: (`str`) parameter to use for username in request for
+      auth
+    * `password_param`: (`str`) parameter to use for password in request for
+      auth
+    * `success_regex`: (`str`) regular expression to check for auth success
+    * `username`: (`str`) username for first user
+    * `password`: (`str`) password to use with first user
+    * `email`: (`str`) email for first user
+    * `name_first`: (`str`) first name for first user
+    * `name_last`: (`str`) last name for first user
 
     ## Returns:
-    * user_id: UserId
-    * token: JWT
+    * `user_id`: `UserId`
+    * `token`: `JWT`
     """
 
 

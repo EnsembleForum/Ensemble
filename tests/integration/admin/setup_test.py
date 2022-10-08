@@ -198,3 +198,21 @@ def test_last_name_empty():
             name_first="Dee",
             name_last="",  # Empty
         )
+
+
+def test_init_user_created():
+    """
+    When we initialise the server, does a user get created?
+    """
+    init(
+        address=f"{URL}/login",
+        username_param="username",
+        password_param="password",
+        success_regex="true",
+        username="admin1",
+        password="admin1",
+        email="admin@example.com",
+        name_first="Dee",
+        name_last="Snuts",
+    )
+    # Test we can log in with their account
