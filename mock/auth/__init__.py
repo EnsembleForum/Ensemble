@@ -4,6 +4,7 @@ from flask import Flask, request
 
 # Port where the app will run
 PORT = 5812
+URL = f"http://localhost:{PORT}"
 
 app = Flask('mock_auth')
 
@@ -13,7 +14,13 @@ logins: dict[str, str] = json.load(open("mock/auth/users.json"))
 
 @app.get("/login")
 def login():
-    """Returns whether the login is valid"""
+    """
+    Returns whether the login is valid
+
+    ## Args:
+    * `username` (`str`)
+    * `password` (`str`)
+    """
     username: str = request.args["username"]
     password: str = request.args["password"]
     try:
