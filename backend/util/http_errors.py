@@ -61,6 +61,15 @@ class NotFound(HTTPException):
     code = 404
 
 
+class MethodNotAllowed(HTTPException):
+    """
+    The request method is known by the server but is not supported by the
+    target resource. For example, an API may not allow calling DELETE to remove
+    a resource.
+    """
+    code = 405
+
+
 class InternalServerError(HTTPException):
     """
     The server has encountered a situation it does not know how to handle.

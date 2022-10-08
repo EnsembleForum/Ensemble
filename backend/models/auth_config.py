@@ -5,9 +5,8 @@ Configuration of authentication options
 """
 from .tables import TAuthConfig
 from backend.util.db_queries import id_exists, get_by_id
+from backend.util.auth_check import do_auth_check
 from backend.util import http_errors
-import re
-import requests
 from typing import Literal
 
 
@@ -89,35 +88,28 @@ class AuthConfig:
         """
         return self.__row
 
-    def authenticate(self, username: str, password: str) -> bool:
+    def authenticate(self, username: str, password: str):
         """
-        Attempt to authenticate the user and return whether it worked
+        Attempt to authenticate the user, raising a 401 error if it failed
 
         ### Args:
         * `username` (`str`): username
 
         * `password` (`str`): password
 
-        ### Returns:
-        * `bool`: whether authentication was a success
+        ### Raises:
+        * `Forbidden`: if authentication failed
         """
-        if self.request_type == "get":
-            res = requests.get(
-                self.address,
-                params={
-                    self.username_param: username,
-                    self.password_param: password,
-                }
-            )
-        else:
-            res = requests.post(
-                self.address,
-                json={
-                    self.username_param: username,
-                    self.password_param: password,
-                }
-            )
-        return re.match(self.success_regex, res.text) is not None
+        if not do_auth_check(
+            self.address,
+            self.request_type,
+            self.username_param,
+            self.password_param,
+            self.success_regex,
+            username,
+            password,
+        ):
+            raise http_errors.Forbidden("Incorrect username or password")
 
     @property
     def address(self) -> str:

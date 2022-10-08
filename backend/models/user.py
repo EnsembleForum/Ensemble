@@ -84,7 +84,7 @@ class User:
         return get_by_id(TUser, self.__id)
 
     @property
-    def id(self) -> int:
+    def id(self) -> UserId:
         """
         Identifier of the user
         """

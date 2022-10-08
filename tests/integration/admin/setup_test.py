@@ -31,7 +31,7 @@ def test_first_run_empty():
     When we clear the server, does is_first_run return True when the server
     isn't set up?
     """
-    assert is_first_run()
+    assert is_first_run()["value"]
 
 
 def test_not_first_run_not_empty():
@@ -40,6 +40,7 @@ def test_not_first_run_not_empty():
     """
     init(
         address=f"{URL}/login",
+        request_type="get",
         username_param="username",
         password_param="password",
         success_regex="true",
@@ -49,7 +50,7 @@ def test_not_first_run_not_empty():
         name_first="Dee",
         name_last="Snuts",
     )
-    assert not is_first_run()
+    assert not is_first_run()["value"]
 
 
 def test_init_server_already_set_up():
@@ -58,6 +59,7 @@ def test_init_server_already_set_up():
     """
     init(
         address=f"{URL}/login",
+        request_type="get",
         username_param="username",
         password_param="password",
         success_regex="true",
@@ -70,6 +72,7 @@ def test_init_server_already_set_up():
     with pytest.raises(http_errors.Forbidden):
         init(
             address=f"{URL}/login",
+            request_type="get",
             username_param="username",
             password_param="password",
             success_regex="true",
@@ -88,6 +91,7 @@ def test_cant_connect_to_auth_server():
     with pytest.raises(http_errors.BadRequest):
         init(
             address=f"{URL}/not_login",  # Bad URL
+            request_type="get",
             username_param="username",
             password_param="password",
             success_regex="true",
@@ -106,6 +110,7 @@ def test_username_password_failed_to_authenticate_username():
     with pytest.raises(http_errors.BadRequest):
         init(
             address=f"{URL}/login",
+            request_type="get",
             username_param="username",
             password_param="password",
             success_regex="true",
@@ -118,6 +123,7 @@ def test_username_password_failed_to_authenticate_username():
     with pytest.raises(http_errors.BadRequest):
         init(
             address=f"{URL}/login",
+            request_type="get",
             username_param="username",
             password_param="password",
             success_regex="true",
@@ -136,9 +142,10 @@ def test_incorrect_username_or_password_doesnt_authenticate():
     with pytest.raises(http_errors.BadRequest):
         init(
             address=f"{URL}/login",
+            request_type="get",
             username_param="username",
             password_param="password",
-            success_regex="*",  # Match everything
+            success_regex=r"[\s\S]",  # Match everything
             username="admin1",
             password="admin1",
             email="admin@example.com",
@@ -154,6 +161,7 @@ def test_init_email_not_valid():
     with pytest.raises(http_errors.BadRequest):
         init(
             address=f"{URL}/login",
+            request_type="get",
             username_param="username",
             password_param="password",
             success_regex="true",
@@ -172,6 +180,7 @@ def test_first_name_empty():
     with pytest.raises(http_errors.BadRequest):
         init(
             address=f"{URL}/login",
+            request_type="get",
             username_param="username",
             password_param="password",
             success_regex="true",
@@ -190,6 +199,7 @@ def test_last_name_empty():
     with pytest.raises(http_errors.BadRequest):
         init(
             address=f"{URL}/login",
+            request_type="get",
             username_param="username",
             password_param="password",
             success_regex="true",
@@ -207,6 +217,7 @@ def test_init_user_created():
     """
     init(
         address=f"{URL}/login",
+        request_type="get",
         username_param="username",
         password_param="password",
         success_regex="true",
