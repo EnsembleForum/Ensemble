@@ -109,3 +109,11 @@ class Token:
             },
             SECRET,
         )
+
+    def invalidate(self):
+        """
+        Invalidate this token so that it can no-longer be used.
+        """
+        TToken.delete()\
+            .where(TToken.id == self.id)\
+            .run_sync()
