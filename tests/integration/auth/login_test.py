@@ -16,7 +16,7 @@ from tests.integration.request.auth import login
 
 def test_fails_incorrect_username(basic_server_setup: IBasicServerSetup):
     """Do we fail to log in if we have an incorrect username?"""
-    with pytest.raises(http_errors.BadRequest):
+    with pytest.raises(http_errors.Forbidden):
         login(
             basic_server_setup['username'] + 'not a user',
             basic_server_setup['password'],
@@ -25,7 +25,7 @@ def test_fails_incorrect_username(basic_server_setup: IBasicServerSetup):
 
 def test_fails_incorrect_password(basic_server_setup: IBasicServerSetup):
     """Do we fail to log in if we have an incorrect password?"""
-    with pytest.raises(http_errors.BadRequest):
+    with pytest.raises(http_errors.Forbidden):
         login(
             basic_server_setup['username'],
             basic_server_setup['password'] + 'not a password',
