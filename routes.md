@@ -51,7 +51,16 @@
     * **comment_view**
         * **edit** (edit a comment)
         * **self_delete** (delete your own comment)
-        * **comment** (reply to this comment)
+        * **reply** (reply to this comment)
+        * **react** (add a reaction - me too)
+        * **report** (report a post)
+        * **close** (close a post)
+        * **mod_delete** (mod deletes post)
+        * **accept** (OP accepts as answer)
+    * **reply_view**
+        * **edit** (edit a reply)
+        * **self_delete** (delete your own reply)
+        * **reply** (reply to this reply)
         * **react** (add a reaction - me too)
         * **report** (report a post)
         * **close** (close a post)

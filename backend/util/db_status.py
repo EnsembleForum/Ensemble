@@ -3,10 +3,12 @@
 
 Tools for checking on the database status
 """
+from piccolo.table import drop_db_tables_sync, create_db_tables_sync
 from backend.models import tables
 
 # List of tables to clear
 ALL_TABLES: list[type[tables._BaseTable]] = [
+    tables.TAuthConfig,
     tables.TUser,
     tables.TPermissionGroup,
     tables.TPermissionUser,
@@ -21,8 +23,9 @@ def clear_all():
     """
     # Make sure they all exist beforehand
     init()
-    for t in ALL_TABLES:
-        t.delete(force=True).run_sync()
+    drop_db_tables_sync(*ALL_TABLES)
+    # Then recreate them
+    init()
 
 
 def init():
@@ -32,5 +35,4 @@ def init():
     This does nothing if the database is already initialised, meaning it is
     safe to call during startup.
     """
-    for t in ALL_TABLES:
-        t.create_table(if_not_exists=True).run_sync()
+    create_db_tables_sync(*ALL_TABLES, if_not_exists=True)
