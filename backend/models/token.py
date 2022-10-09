@@ -67,7 +67,7 @@ class Token:
         ### Returns:
         * `Token`: token object
         """
-        decoded = jwt.decode(token, key=SECRET)
+        decoded = jwt.decode(token, SECRET)
         user_id = decoded["user_id"]
         token_id = decoded["token_id"]
         t = Token(token_id)
@@ -79,6 +79,13 @@ class Token:
         return t
 
     @property
+    def id(self) -> int:
+        """
+        Identifier of the token
+        """
+        return self.__id
+
+    @property
     def user(self) -> User:
         """
         Returns a reference to the user that owns this token
@@ -87,3 +94,18 @@ class Token:
         * `User`: user
         """
         return User(self._get().user)
+
+    def encode(self) -> str:  # TODO: swap to JWT type
+        """
+        Encode the token into a JWT and return it
+
+        ### Returns:
+        * `str`: encoded token
+        """
+        return jwt.encode(
+            {
+                "user_id": self.user.id,
+                "token_id": self.id,
+            },
+            SECRET,
+        )
