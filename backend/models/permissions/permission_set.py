@@ -9,7 +9,7 @@ permissions that inherit from the tutor permission set).
 from typing import Optional
 from .permission import Permission
 from ..tables import TPermissionGroup, TPermissionUser
-from backend.util.db_queries import id_exists, get_by_id
+from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import UserPermissionId, PermissionGroupId
 from abc import abstractmethod
 from typing import cast
@@ -65,17 +65,16 @@ class PermissionSet:
 
 class PermissionGroup(PermissionSet):
     """
-    Represents a preset permission, from which user permissions are derived.
+    Represents a permission group, from which user permissions are derived.
     """
     def __init__(self, id: PermissionGroupId):
         """
-        Load a permission preset from the database
+        Load a permission group from the database
 
         ### Args:
         * `id` (`int`): ID of the preset
         """
-        if not id_exists(TPermissionGroup, id):
-            raise KeyError(f"Invalid TPermissionPreset.id {id}")
+        assert_id_exists(TPermissionGroup, id)
         self.__id = id
 
     @classmethod
@@ -94,7 +93,7 @@ class PermissionGroup(PermissionSet):
           disallowed permissions.
 
         ### Returns:
-        * `PermissionPreset`: the preset object
+        * `PermissionGroup`: the permission group object
         """
         val = TPermissionGroup(
             {
@@ -124,7 +123,7 @@ class PermissionGroup(PermissionSet):
     @property
     def name(self) -> str:
         """
-        The name of the permission preset (eg 'Tutor')
+        The name of the permission group (eg 'Tutor')
         """
         return self._get().name
 
@@ -177,8 +176,7 @@ class PermissionUser(PermissionSet):
         ### Args:
         * `id` (`int`): ID of the preset
         """
-        if not id_exists(TPermissionUser, id):
-            raise KeyError(f"Invalid TPermissionUser.id {id}")
+        assert_id_exists(TPermissionUser, id)
         self.__id = id
 
     @classmethod
@@ -187,7 +185,7 @@ class PermissionUser(PermissionSet):
         Create a user permission set and store it into the database.
 
         ### Args:
-        * `parent` (`PermissionPreset`): parent permission set
+        * `parent` (`PermissionGroup`): parent permission set
 
         ### Returns:
         * `Self`: PermissionUser
@@ -212,22 +210,14 @@ class PermissionUser(PermissionSet):
     @property
     def id(self) -> UserPermissionId:
         """
-        Identifier of this permission preset
+        Identifier of this user permission set
         """
         return self.__id
 
     @property
-    def user(self) -> None:
-        """
-        The user that this permission belongs to
-        """
-        # TODO once user data is implemented
-        raise NotImplementedError()
-
-    @property
     def parent(self) -> PermissionGroup:
         """
-        The parent permissions for this set
+        The parent permissions for this user permission set
 
         ### Returns:
         * `PermissionPreset`: the parent preset

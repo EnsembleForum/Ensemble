@@ -3,7 +3,7 @@
 
 Tests for debug routes
 """
-from .functions.debug import echo
+from .request.debug import echo
 
 
 def test_echo():
