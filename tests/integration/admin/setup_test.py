@@ -18,6 +18,7 @@ Tests for server setup
 * name_first empty
 * name_last empty
 * User gets registered
+* Permission groups get created: #  TODO
 """
 import pytest
 from backend.util import http_errors
