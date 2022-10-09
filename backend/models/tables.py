@@ -39,3 +39,10 @@ class TUser(_BaseTable):
     name_first = Text()
     name_last = Text()
     permissions = ForeignKey(TPermissionUser)
+
+
+class TToken(_BaseTable):
+    """
+    Table containing mapping of token IDs to user IDs
+    """
+    user = ForeignKey(TUser)
