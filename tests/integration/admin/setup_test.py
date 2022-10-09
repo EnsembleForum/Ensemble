@@ -24,7 +24,7 @@ import pytest
 from backend.util import http_errors
 from ..request.admin import is_first_run, init
 from ..request.auth import login
-from mock.auth import URL
+from mock.auth import AUTH_URL
 
 
 def test_first_run_empty():
@@ -40,7 +40,7 @@ def test_not_first_run_not_empty():
     When we set up the server, does is_first_run stop returning True?
     """
     init(
-        address=f"{URL}/login",
+        address=f"{AUTH_URL}/login",
         request_type="get",
         username_param="username",
         password_param="password",
@@ -59,7 +59,7 @@ def test_init_server_already_set_up():
     If we try to set up an already setup server, do we get a 403 error?
     """
     init(
-        address=f"{URL}/login",
+        address=f"{AUTH_URL}/login",
         request_type="get",
         username_param="username",
         password_param="password",
@@ -72,7 +72,7 @@ def test_init_server_already_set_up():
     )
     with pytest.raises(http_errors.Forbidden):
         init(
-            address=f"{URL}/login",
+            address=f"{AUTH_URL}/login",
             request_type="get",
             username_param="username",
             password_param="password",
@@ -91,7 +91,7 @@ def test_cant_connect_to_auth_server():
     """
     with pytest.raises(http_errors.BadRequest):
         init(
-            address=f"{URL}/not_login",  # Bad URL
+            address=f"{AUTH_URL}/not_login",  # Bad URL
             request_type="get",
             username_param="username",
             password_param="password",
@@ -110,7 +110,7 @@ def test_username_password_failed_to_authenticate_username():
     """
     with pytest.raises(http_errors.BadRequest):
         init(
-            address=f"{URL}/login",
+            address=f"{AUTH_URL}/login",
             request_type="get",
             username_param="username",
             password_param="password",
@@ -123,7 +123,7 @@ def test_username_password_failed_to_authenticate_username():
         )
     with pytest.raises(http_errors.BadRequest):
         init(
-            address=f"{URL}/login",
+            address=f"{AUTH_URL}/login",
             request_type="get",
             username_param="username",
             password_param="password",
@@ -142,7 +142,7 @@ def test_incorrect_username_or_password_doesnt_authenticate():
     """
     with pytest.raises(http_errors.BadRequest):
         init(
-            address=f"{URL}/login",
+            address=f"{AUTH_URL}/login",
             request_type="get",
             username_param="username",
             password_param="password",
@@ -161,7 +161,7 @@ def test_init_email_not_valid():
     """
     with pytest.raises(http_errors.BadRequest):
         init(
-            address=f"{URL}/login",
+            address=f"{AUTH_URL}/login",
             request_type="get",
             username_param="username",
             password_param="password",
@@ -180,7 +180,7 @@ def test_first_name_empty():
     """
     with pytest.raises(http_errors.BadRequest):
         init(
-            address=f"{URL}/login",
+            address=f"{AUTH_URL}/login",
             request_type="get",
             username_param="username",
             password_param="password",
@@ -199,7 +199,7 @@ def test_last_name_empty():
     """
     with pytest.raises(http_errors.BadRequest):
         init(
-            address=f"{URL}/login",
+            address=f"{AUTH_URL}/login",
             request_type="get",
             username_param="username",
             password_param="password",
@@ -217,7 +217,7 @@ def test_init_user_created():
     When we initialise the server, does a user get created?
     """
     init(
-        address=f"{URL}/login",
+        address=f"{AUTH_URL}/login",
         request_type="get",
         username_param="username",
         password_param="password",
