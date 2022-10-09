@@ -5,7 +5,8 @@ import jwt
 from .tables import TToken
 from .user import User
 from backend.types.identifiers import TokenId
-from backend.util.db_queries import id_exists, get_by_id
+from backend.types.auth import JWT
+from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util import http_errors
 from typing import cast
 
@@ -24,9 +25,7 @@ class Token:
     authenticate
     """
     def __init__(self, id: TokenId) -> None:
-        # TODO: Replace with check_id_exists when merged
-        if not id_exists(TToken, id):
-            raise KeyError(f"Invalid TUser.id {id}")
+        assert_id_exists(TToken, id)
         self.__id = id
 
     def _get(self) -> TToken:
@@ -55,7 +54,7 @@ class Token:
         return Token(id)
 
     @classmethod
-    def fromJWT(self, token: str) -> 'Token':  # TODO: replace type to JWT
+    def fromJWT(self, token: JWT) -> 'Token':
         """
         Get a token given a JWT string
 
@@ -95,20 +94,20 @@ class Token:
         """
         return User(self._get().user)
 
-    def encode(self) -> str:  # TODO: swap to JWT type
+    def encode(self) -> JWT:
         """
         Encode the token into a JWT and return it
 
         ### Returns:
         * `str`: encoded token
         """
-        return jwt.encode(
+        return cast(JWT, jwt.encode(
             {
                 "user_id": self.user.id,
                 "token_id": self.id,
             },
             SECRET,
-        )
+        ))
 
     def invalidate(self):
         """
