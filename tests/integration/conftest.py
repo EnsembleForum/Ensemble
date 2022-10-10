@@ -6,10 +6,12 @@ Configuration for tests
 import pytest
 from typing import TypedDict
 from backend.types.identifiers import UserId
-from backend.types.auth import JWT
+from backend.types.permissions import PermissionGroupId
+from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
 from tests.integration.request.debug import clear
-from .request.admin import init
+from .request.admin import init, users
+from .request.auth import login
 
 
 @pytest.fixture(autouse=True)
@@ -18,15 +20,36 @@ def before_each():
     clear()
 
 
+class PermissionIds(TypedDict):
+    """
+    Contains permission IDs for all pre-defined permission groups
+
+    * admin
+    * mod
+    * user
+    """
+    admin: PermissionGroupId
+    mod: PermissionGroupId
+    user: PermissionGroupId
+
+
 class IBasicServerSetup(TypedDict):
-    username: str
-    password: str
-    email: str
+    """
+    Set up the server
+
+    * user_id
+    * token
+    * permissions:
+        * admin
+        * mod
+        * user
+    """
     user_id: UserId
     token: JWT
+    permissions: PermissionIds
 
 
-@pytest.fixture()
+@pytest.fixture
 def basic_server_setup(before_each) -> IBasicServerSetup:
     """
     Initialise the server and create one admin account
@@ -47,9 +70,129 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
         name_last="Snuts",
     )
     return {
-        "username": username,
-        "password": password,
-        "email": email,
         "user_id": result["user_id"],
         "token": result["token"],
+        # TODO: do a request to actually get these IDs, so things don't break
+        # if we change them
+        "permissions": {
+            "admin": PermissionGroupId(1),
+            "mod": PermissionGroupId(2),
+            "user": PermissionGroupId(3),
+        }
+    }
+
+
+class IAllUsers(TypedDict):
+    """
+    Represents all users
+
+    * admins (token, user_id)
+    * mods (token, user_id)
+    * users (token, user_id)
+    * permissions:
+        * admin
+        * mod
+        * user
+    """
+    admins: list[IAuthInfo]
+    mods: list[IAuthInfo]
+    users: list[IAuthInfo]
+    permissions: PermissionIds
+
+
+@pytest.fixture
+def all_users(basic_server_setup: IBasicServerSetup) -> IAllUsers:
+    """
+    Register all users available through the mock auth server
+    """
+    # Admins
+    users.register(
+        basic_server_setup["token"],
+        [
+            {
+                "username": "admin2",
+                "email": "admin2@example.com",
+                "name_first": "Admin",
+                "name_last": "Istrator",
+            },
+            {
+                "username": "admin3",
+                "email": "admin3@example.com",
+                "name_first": "Admin3",
+                "name_last": "Istrator",
+            },
+        ],
+        basic_server_setup["permissions"]["admin"],
+    )
+    # Moderators
+    users.register(
+        basic_server_setup["token"],
+        [
+            {
+                "username": "mod1",
+                "email": "mod1@example.com",
+                "name_first": "Mod",
+                "name_last": "Erator",
+            },
+            {
+                "username": "mod2",
+                "email": "mod2@example.com",
+                "name_first": "Mod2",
+                "name_last": "Erator",
+            },
+            {
+                "username": "mod3",
+                "email": "mod3@example.com",
+                "name_first": "Mod3",
+                "name_last": "Erator",
+            },
+        ],
+        basic_server_setup["permissions"]["mod"],
+    )
+    # Users
+    users.register(
+        basic_server_setup["token"],
+        [
+            {
+                "username": "user1",
+                "email": "user1@example.com",
+                "name_first": "Mod",
+                "name_last": "Erator",
+            },
+            {
+                "username": "user2",
+                "email": "user2@example.com",
+                "name_first": "Mod2",
+                "name_last": "Erator",
+            },
+            {
+                "username": "user3",
+                "email": "user3@example.com",
+                "name_first": "User3",
+                "name_last": "Erator",
+            },
+        ],
+        basic_server_setup["permissions"]["user"],
+    )
+    # Log everyone in and return their info
+    return {
+        "admins": [
+            {
+                "token": basic_server_setup["token"],
+                "user_id": basic_server_setup["user_id"],
+            },
+            login("admin2", "admin2"),
+            login("admin3", "admin3"),
+        ],
+        "mods": [
+            login("mod1", "mod1"),
+            login("mod2", "mod2"),
+            login("mod3", "mod3"),
+        ],
+        "users": [
+            login("user1", "user1"),
+            login("user2", "user2"),
+            login("user3", "user3"),
+        ],
+        "permissions": basic_server_setup["permissions"],
     }

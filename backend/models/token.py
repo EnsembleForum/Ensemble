@@ -60,10 +60,20 @@ class Token:
         ### Args:
         * `jwt` (`str`): JWT string
 
+        ### Raises:
+        * `Forbidden`: when the token fails to decode or doesn't match up
+          correctly.
+
         ### Returns:
         * `Token`: token object
         """
-        decoded = jwt.decode(token, SECRET, algorithms=["HS256"])
+        try:
+            decoded = jwt.decode(token, SECRET, algorithms=["HS256"])
+        except jwt.DecodeError:
+            raise http_errors.Forbidden(
+                "The provided token failed to decode. This could mean that it "
+                "has been tampered with, or is no-longer valid."
+            )
         user_id = decoded["user_id"]
         token_id = decoded["token_id"]
         t = Token(token_id)

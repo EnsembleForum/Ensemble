@@ -2,10 +2,10 @@
   "admin1": "admin1",
   "admin2": "admin2",
   "admin3": "admin3",
-  "tutor1": "tutor1",
-  "tutor2": "tutor2",
-  "tutor3": "tutor3",
-  "student1": "student1",
-  "student2": "student2",
-  "student3": "student3"
+  "mod1": "mod1",
+  "mod2": "mod2",
+  "mod3": "mod3",
+  "user1": "user1",
+  "user2": "user2",
+  "user3": "user3"
 }
