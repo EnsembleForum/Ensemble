@@ -12,7 +12,6 @@ Tests for bulk registering users
 * Duplicate emails (none get registered)
 * Existing duplicate usernames (none get registered)
 * Existing duplicate emails (none get registered)
-* Multiple users with no email
 * Invalid names (empty)
 """
 import pytest
@@ -114,24 +113,6 @@ def test_invalid_email(basic_server_setup: IBasicServerSetup):
         )
     all = users.all(basic_server_setup["token"])["users"]
     # Only the main user
-    assert len(all) == 1
-
-
-def test_no_email(basic_server_setup: IBasicServerSetup):
-    """Can we register a user with no email?"""
-    with pytest.raises(http_errors.BadRequest):
-        users.register(
-            basic_server_setup["token"],
-            [{
-                "name_first": "Henry",
-                "name_last": "VIII",
-                "username": "henry8",
-                "email": None,
-            }],
-            basic_server_setup["admin_permission"],
-        )
-    # Only the main user is registered
-    all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 1
 
 
@@ -249,30 +230,6 @@ def test_existing_duplicate_emails(basic_server_setup: IBasicServerSetup):
     # Only the first user got registered
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 2
-
-
-def test_duplicate_no_email(basic_server_setup: IBasicServerSetup):
-    """Can we register multiple users with no email?"""
-    users.register(
-        basic_server_setup["token"],
-        [
-            {
-                "name_first": "Henry",
-                "name_last": "VIII",
-                "username": "henry8",
-                "email": None,
-            },
-            {
-                "name_first": "Henry",
-                "name_last": "IX",
-                "username": "henry9",
-                "email": None,
-            },
-        ],
-        basic_server_setup["admin_permission"],
-    )
-    all = users.all(basic_server_setup["token"])["users"]
-    assert len(all) == 3
 
 
 def test_invalid_name_first(basic_server_setup: IBasicServerSetup):

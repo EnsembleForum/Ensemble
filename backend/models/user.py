@@ -33,7 +33,7 @@ class User:
         username: str,
         name_first: str,
         name_last: str,
-        email: str | None,
+        email: str,
         permissions_base: PermissionGroup
     ) -> 'User':
         """
