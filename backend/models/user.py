@@ -78,7 +78,10 @@ class User:
         ### Returns:
         * `list[User]`: list of users
         """
-        return list(map(lambda u: User(u.id), cast(list, TUser.objects())))
+        return list(map(
+            lambda u: User(u.id),
+            cast(list, TUser.objects().run_sync())
+        ))
 
     @classmethod
     def from_username(cls, username: str) -> 'User':

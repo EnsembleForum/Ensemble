@@ -40,7 +40,7 @@ def test_register_single_user(basic_server_setup: IBasicServerSetup):
     )
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 2
-    assert all[0]["user_id"] == reg["user_ids"][0]
+    assert all[1]["user_id"] == reg["user_ids"][0]
 
 
 def test_register_multi_users(basic_server_setup: IBasicServerSetup):
