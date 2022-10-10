@@ -4,9 +4,12 @@
 Browse routes
 """
 import json
+from typing import cast
 from flask import Blueprint, request
 from backend.models.post import Post
-from backend.types.identifiers import PostId, UserId
+from backend.models.token import Token
+from backend.types.auth import JWT
+from backend.types.identifiers import PostId
 from backend.types.post import IPostBasicInfoList, IPostBasicInfo, IPostId
 from .post_view import post_view
 from .comment_view import comment_view
@@ -24,15 +27,18 @@ def post_list() -> IPostBasicInfoList:
     Get a list of posts
 
     ## Body:
+    * `token` (`JWT`): JWT of the user
 
     ## Returns:
     * `IPostBasicInfoList`: List of basic info of posts
     """
+    # token: JWT = cast(JWT, request.args["token"])
+    Token.fromJWT(cast(JWT, request.args["token"]))
     posts = Post.all()
 
     def basic_post_info(post: Post) -> IPostBasicInfo:
         return {
-            # TODO "author": f"{post.author.name_first} {post.author.name_last}",
+            "author": f"{post.author.name_first} {post.author.name_last}",
             "heading": post.heading,
             "post_id": post.id,
             "tags": post.tags,
@@ -50,7 +56,7 @@ def create() -> IPostId:
     Create a post
 
     ## Body:
-    * `user_id` (`UserId`): user id of the author of the post
+    * `token` (`JWT`): JWT of the user
     * `heading` (`str`): heading of the post
     * `text` (`str`): text of the post
     * `tags` (`list[int]`): tags attached to the new post (ignore for sprint 1)
@@ -59,12 +65,12 @@ def create() -> IPostId:
     * `IPostId`: identifier of the post
     """
     data = json.loads(request.data)
-    author: UserId = data["user_id"]
+    token: Token = Token.fromJWT(data["token"])
     heading: str = data["heading"]
     text: str = data["text"]
     tags: list[int] = data["tags"]
 
-    post_id: PostId = Post.create(author, heading, text, tags).id
+    post_id: PostId = Post.create(token.user, heading, text, tags).id
 
     return {"post_id": post_id}
 

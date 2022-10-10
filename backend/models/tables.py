@@ -63,7 +63,7 @@ class TPost(_BaseTable):
     Table containing all posts
     """
 
-    # TODO author = ForeignKey(TUser)
+    author = ForeignKey(TUser)
     heading = Text()
     text = Text()
     tags = Array(Integer())
@@ -77,7 +77,7 @@ class TComment(_BaseTable):
     Table containing all comments
     """
 
-    # TODO author = ForeignKey(TUser)
+    author = ForeignKey(TUser)
     parent = ForeignKey(TPost)
     text = Text()
     me_too = Integer()
@@ -90,7 +90,7 @@ class TReply(_BaseTable):
     Table containing all replies
     """
 
-    # TODO author = ForeignKey(TUser)
+    author = ForeignKey(TUser)
     parent = ForeignKey(TComment)
     text = Text()
     me_too = Integer()

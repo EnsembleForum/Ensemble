@@ -24,6 +24,8 @@ class IBasicServerSetup(TypedDict):
     email: str
     user_id: UserId
     token: JWT
+    name_first: str
+    name_last: str
 
 
 @pytest.fixture()
@@ -52,4 +54,6 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
         "email": email,
         "user_id": result["user_id"],
         "token": result["token"],
+        "name_first": "Dee",
+        "name_last": "Snuts",
     }

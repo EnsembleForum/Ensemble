@@ -13,7 +13,7 @@ class ICommentId(TypedDict):
 
 
 class ICommentFullInfo(TypedDict):
-    # TODO author: str
+    author: str
     reacts: IReacts
     replies: list[ReplyId]
     text: str

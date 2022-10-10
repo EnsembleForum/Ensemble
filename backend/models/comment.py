@@ -33,7 +33,7 @@ class Comment:
     @classmethod
     def create(
         cls,
-        author: int,
+        author: User,
         post_id: PostId,
         text: str,
     ) -> "Comment":
@@ -50,14 +50,14 @@ class Comment:
         ### Returns:
         * `Comment`: the comment object
         """
-        # TODO assert_id_exists(TUser, author)
+        assert_id_exists(TUser, author.id)
         assert_id_exists(TPost, post_id, "Post")
         assert_text_valid(text, "comment")
 
         val = (
             TComment(
                 {
-                    # TODO TComment.author: author,
+                    TComment.author: author.id,
                     TComment.text: text,
                     TComment.me_too: 0,
                     TComment.parent: post_id,
@@ -75,7 +75,7 @@ class Comment:
     def replies(self) -> list["Reply"]:
         """
         Returns a list of all replies belonging to the post
-
+        in order of oldest to newest
         ### Returns:
         * `list[Reply]`: list of replies
         """
@@ -125,16 +125,15 @@ class Comment:
         row.text = new_text
         row.save().run_sync()
 
-    # TODO
-    # @property
-    # def author(self) -> "User":
-    #     """
-    #     Returns a reference to the user that owns this token
+    @property
+    def author(self) -> "User":
+        """
+        Returns a reference to the user that owns this token
 
-    #     ### Returns:
-    #     * `User`: user
-    #     """
-    #     return User(self._get().author)
+        ### Returns:
+        * `User`: user
+        """
+        return User(self._get().author)
 
     @property
     def me_too(self) -> int:

@@ -12,7 +12,7 @@ class IPostBasicInfo(TypedDict):
     Basic info about a post
     """
 
-    # author: str
+    author: str
     heading: str
     post_id: PostId
     tags: list[int]
@@ -36,7 +36,7 @@ class IPostId(TypedDict):
 
 
 class IPostFullInfo(TypedDict):
-    # TODO author: str
+    author: str
     heading: str
     text: str
     tags: list[int]

@@ -33,7 +33,7 @@ class Post:
     @classmethod
     def create(
         cls,
-        author: int,
+        author: User,
         heading: str,
         text: str,
         tags: list[int],
@@ -53,14 +53,14 @@ class Post:
         ### Returns:
         * `Post`: the post object
         """
-        # assert_id_exists(TUser, author)
+        assert_id_exists(TUser, author.id)
         assert_heading_valid(heading)
         assert_text_valid(text, "post")
 
         val = (
             TPost(
                 {
-                    # TODO TPost.author: author,
+                    TPost.author: author.id,
                     TPost.heading: heading,
                     TPost.text: text,
                     TPost.me_too: 0,
@@ -79,17 +79,20 @@ class Post:
     def all(cls) -> list["Post"]:
         """
         Returns a list of all posts
-
+        in order of newest to oldest
         ### Returns:
         * `list[Post]`: list of posts
         """
-        return [Post(p["id"]) for p in TPost.select().run_sync()]
+        return [
+            Post(p["id"])
+            for p in TPost.select().order_by(TPost.id, ascending=False).run_sync()
+        ]
 
     @property
     def comments(self) -> list["Comment"]:
         """
         Returns a list of all comments belonging to the post
-
+        TODO Should this be ordered from newest to oldest?
         ### Returns:
         * `list[Comment]`: list of comments
         """
@@ -153,16 +156,15 @@ class Post:
         row.text = new_text
         row.save().run_sync()
 
-    # TODO
-    # @property
-    # def author(self) -> "User":
-    #     """
-    #     Returns a reference to the user that owns this token
+    @property
+    def author(self) -> "User":
+        """
+        Returns a reference to the user that owns this token
 
-    #     ### Returns:
-    #     * `User`: user
-    #     """
-    #     return User(self._get().author)
+        ### Returns:
+        * `User`: user
+        """
+        return User(self._get().author)
 
     @property
     def tags(self) -> list[int]:

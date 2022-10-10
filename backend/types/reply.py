@@ -12,7 +12,7 @@ class IReplyId(TypedDict):
 
 
 class IReplyFullInfo(TypedDict):
-    # TODO author: str
+    author: str
     reacts: IReacts
     text: str
     timestamp: int

@@ -8,7 +8,9 @@ from flask import Blueprint, request
 from typing import cast
 from backend.models.reply import Reply
 from backend.models.comment import Comment
-from backend.types.identifiers import ReplyId, UserId, CommentId
+from backend.models.token import Token
+from backend.types.auth import JWT
+from backend.types.identifiers import ReplyId, CommentId
 from backend.types.comment import ICommentFullInfo
 from backend.types.reply import IReplyId
 
@@ -22,14 +24,16 @@ def get_comment() -> ICommentFullInfo:
 
     ## Body:
     * `comment_id` (`CommentId`): identifier of the comment
+    * `token` (`JWT`): JWT of the user
 
     ## Returns:
     * `ICommentFullInfo`: Dictionary containing full info a comment
     """
     comment_id: CommentId = cast(CommentId, request.args["comment_id"])
+    Token.fromJWT(cast(JWT, request.args["token"]))
     comment = Comment(comment_id)
     return {
-        # TODO "author": f"{post.author.name_first} {post.author.name_last}",
+        "author": f"{comment.author.name_first} {comment.author.name_last}",
         "reacts": comment.reacts,
         "text": comment.text,
         "replies": [r.id for r in comment.replies],
@@ -45,16 +49,16 @@ def reply() -> IReplyId:
     ## Body:
     * `text` (`str`): text of the comment
     * `comment_id` (`CommentId`): identifier of the comment to reply to
-    * `user_id` (`UserId`): identifier of the author of the reply
+    * `token` (`JWT`): JWT of the user
 
     ## Returns:
     * `IReplyId`: identifier of the reply
     """
     data = json.loads(request.data)
-    author: UserId = data["user_id"]
+    token: Token = Token.fromJWT(data["token"])
     text: str = data["text"]
     comment_id: CommentId = data["comment_id"]
 
-    reply_id: ReplyId = Reply.create(author, comment_id, text).id
+    reply_id: ReplyId = Reply.create(token.user, comment_id, text).id
 
     return {"reply_id": reply_id}

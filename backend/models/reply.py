@@ -1,12 +1,11 @@
 """
 # Backend / Models / Reply
 """
-from xml.etree.ElementTree import Comment
 from .tables import TUser, TPost, TComment, TReply
 from .user import User
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_text_valid
-from backend.types.identifiers import PostId, CommentId, ReplyId
+from backend.types.identifiers import CommentId, ReplyId
 from backend.types.post import IReacts
 from typing import cast
 from datetime import datetime
@@ -33,7 +32,7 @@ class Reply:
     @classmethod
     def create(
         cls,
-        author: int,
+        author: User,
         comment_id: CommentId,
         text: str,
     ) -> "Reply":
@@ -50,14 +49,14 @@ class Reply:
         ### Returns:
         * `Reply`: the Reply object
         """
-        # TODO assert_id_exists(TUser, author)
+        assert_id_exists(TUser, author.id)
         assert_id_exists(TPost, comment_id, "Comment")
         assert_text_valid(text, "reply")
 
         val = (
             TComment(
                 {
-                    # TODO TPost.author: author,
+                    TComment.author: author.id,
                     TComment.text: text,
                     TComment.me_too: 0,
                     TComment.parent: comment_id,
@@ -109,16 +108,15 @@ class Reply:
         row.text = new_text
         row.save().run_sync()
 
-    # TODO
-    # @property
-    # def author(self) -> "User":
-    #     """
-    #     Returns a reference to the user that owns this token
+    @property
+    def author(self) -> "User":
+        """
+        Returns a reference to the user that owns this token
 
-    #     ### Returns:
-    #     * `User`: user
-    #     """
-    #     return User(self._get().author)
+        ### Returns:
+        * `User`: user
+        """
+        return User(self._get().author)
 
     @property
     def me_too(self) -> int:
