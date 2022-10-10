@@ -13,6 +13,7 @@ Tests for bulk registering users
 * Existing duplicate usernames (none get registered)
 * Existing duplicate emails (none get registered)
 * Invalid names (empty)
+* Don't have permission  # TODO
 """
 import pytest
 from backend.util import http_errors

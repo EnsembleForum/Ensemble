@@ -54,6 +54,9 @@ def all() -> IUserBasicInfoList:
     ### Returns:
     * `IUserBasicInfoList`: list of user info
     """
+    return {
+        "users": list(map(lambda u: u.basic_info(), User.all()))
+    }
 
 
 @users.get('/profile')
@@ -64,3 +67,6 @@ def profile() -> IUserProfile:
     ### Returns:
     * `IUserProfile`: list of user info
     """
+    data = json.loads(request.data)
+    user_id = data["user_id"]
+    return User(user_id).profile()
