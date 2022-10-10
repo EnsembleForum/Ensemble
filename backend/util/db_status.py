@@ -12,6 +12,7 @@ ALL_TABLES: list[type[tables._BaseTable]] = [
     tables.TUser,
     tables.TPermissionGroup,
     tables.TPermissionUser,
+    tables.TToken,
 ]
 
 

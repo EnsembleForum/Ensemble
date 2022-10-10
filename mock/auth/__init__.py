@@ -4,7 +4,7 @@ from flask import Flask, request
 
 # Port where the app will run
 PORT = 5812
-URL = f"http://localhost:{PORT}"
+AUTH_URL = f"http://localhost:{PORT}"
 
 app = Flask('mock_auth')
 

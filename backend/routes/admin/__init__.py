@@ -9,8 +9,9 @@ from .permissions import permissions
 from .users import users
 from backend.models.auth_config import AuthConfig
 from backend.models.permissions import PermissionGroup, Permission
+from backend.models.token import Token
 from backend.models.user import User
-from backend.types.auth import IAuthInfo, JWT
+from backend.types.auth import IAuthInfo
 from backend.types.admin import IIsFirstRun
 from backend.util import http_errors
 from backend.util.validators import assert_name_valid, assert_email_valid
@@ -213,7 +214,7 @@ def init() -> IAuthInfo:
     # Return user information
     return {
         "user_id": user.id,
-        "token": JWT(f"TODO - {user.id}")
+        "token": Token.create(user).encode(),
     }
 
 
