@@ -24,6 +24,28 @@ def uses_token(
     This modifies its parameters, so that it must accept a user_id as well as
     the original token.
 
+    ### Usage:
+
+    If you need to access the user_id or token data:
+
+    ```py
+    @app.post('/my_route)
+    @uses_token
+    def my_route(user_id: UserId, token: JWT) -> dict:
+        ...
+        return {}
+    ```
+
+    Or if you don't:
+
+    ```py
+    @app.post('/my_other_route)
+    @uses_token
+    def my_other_route(*_) -> dict:
+        ...
+        return {}
+    ```
+
     ### Args:
     * `func` (`Callable[Concatenate[UserId, JWT, P], T]`): route callback
       function.

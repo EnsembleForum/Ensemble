@@ -6,9 +6,11 @@ from backend.types.user import (
     IUserProfile,
     IUserRegisterInfo,
 )
-from backend.types.identifiers import PermissionGroupId
+from backend.types.identifiers import PermissionGroupId, UserId
+from backend.types.auth import JWT
 from backend.util.validators import assert_email_valid, assert_name_valid
 from backend.util import http_errors
+from backend.util.tokens import uses_token
 from backend.models.user import User
 from backend.models.permissions import PermissionGroup
 
@@ -17,7 +19,8 @@ users = Blueprint('users', 'users')
 
 
 @users.post('/register')
-def register() -> IUserIdList:
+@uses_token
+def register(*_) -> IUserIdList:
     """
     Register a collection of users
 
@@ -86,7 +89,8 @@ def register() -> IUserIdList:
 
 
 @users.get('/all')
-def all() -> IUserBasicInfoList:
+@uses_token
+def all(*_) -> IUserBasicInfoList:
     """
     Returns a list of basic info about all forum users
 
@@ -99,7 +103,8 @@ def all() -> IUserBasicInfoList:
 
 
 @users.get('/profile')
-def profile() -> IUserProfile:
+@uses_token
+def profile(*_) -> IUserProfile:
     """
     Returns detailed info about a user's profile
 
