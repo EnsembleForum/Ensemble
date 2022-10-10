@@ -17,7 +17,7 @@ def is_first_run() -> IIsFirstRun:
     ## Returns:
     * { value: bool }
     """
-    return cast(IIsFirstRun, get(f"{URL}/is_first_run", {}))
+    return cast(IIsFirstRun, get(None, f"{URL}/is_first_run", {}))
 
 
 def init(
@@ -57,7 +57,7 @@ def init(
     * `user_id`: `UserId`
     * `token`: `JWT`
     """
-    return cast(IAuthInfo, post(f"{URL}/init", {
+    return cast(IAuthInfo, post(None, f"{URL}/init", {
         "address": address,
         "request_type": request_type,
         "username_param": username_param,

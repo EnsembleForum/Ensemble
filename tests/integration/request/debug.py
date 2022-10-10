@@ -20,18 +20,18 @@ def echo(value: str) -> IEcho:
     ## Params:
     * `value` (`str`): value to echo
     """
-    return cast(IEcho, get(f"{URL}/echo", {"value": value}))
+    return cast(IEcho, get(None, f"{URL}/echo", {"value": value}))
 
 
 def clear() -> None:
     """
     Clear the database.
     """
-    delete(f"{URL}/clear", {})
+    delete(None, f"{URL}/clear", {})
 
 
 def shutdown() -> None:
     """
     Initiate a server shutdown.
     """
-    post(f"{URL}/shutdown", {})
+    post(None, f"{URL}/shutdown", {})
