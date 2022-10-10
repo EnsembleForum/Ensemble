@@ -29,12 +29,10 @@ def post_list(token: JWT) -> IPostBasicInfoList:
     """
     return cast(
         IPostBasicInfoList,
-        get(
+        get(token,
             f"{URL}/post_list",
-            {
-                "token": token,
-            },
-        ),
+            {}
+            ),
     )
 
 
@@ -55,15 +53,14 @@ def post_create(
     """
     return cast(
         IPostId,
-        post(
-            f"{URL}/create",
-            {
-                "token": token,
-                "heading": heading,
-                "text": text,
-                "tags": tags,
-            },
-        ),
+        post(token,
+             f"{URL}/create",
+             {
+                 "heading": heading,
+                 "text": text,
+                 "tags": tags,
+             },
+             ),
     )
 
 
@@ -80,13 +77,44 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
     """
     return cast(
         IPostFullInfo,
-        get(
+        get(token,
             f"{URL}/post_view",
             {
-                "token": token,
                 "post_id": post_id,
             },
-        ),
+            ),
+    )
+
+
+def post_edit(
+    token: JWT, post_id: PostId, heading: str, text: str, tags: list[int]
+) -> IPostId:
+    """
+    Edits the heading/text/tags of the post
+
+    ## Body:
+    * `post_id` (`PostId`): identifier of the post
+    * `heading` (`str`): new heading of the post
+                        (should be given the old heading if unedited)
+    * `text` (`str`): new text of the post
+                        (should be given the old text if unedited)
+    * `tags` (`list[int]`): new tags of the post (ignore for sprint 1)
+    * `token` (`JWT`): JWT of the user
+
+    ## Returns:
+    * `IPostId`: identifier of the post
+    """
+    return cast(
+        IPostId,
+        put(token,
+            f"{URL}/post_view/edit",
+            {
+                "post_id": post_id,
+                "heading": heading,
+                "text": text,
+                "tags": tags,
+            },
+            ),
     )
 
 
@@ -103,13 +131,12 @@ def post_delete(token: JWT, post_id: PostId) -> IPostId:
     """
     return cast(
         IPostId,
-        put(
+        put(token,
             f"{URL}/post_view/self_delete",
             {
-                "token": token,
                 "post_id": post_id,
             },
-        ),
+            ),
     )
 
 
@@ -127,14 +154,13 @@ def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
     """
     return cast(
         ICommentId,
-        post(
-            f"{URL}/post_view/comment",
-            {
-                "token": token,
-                "text": text,
-                "post_id": post_id,
-            },
-        ),
+        post(token,
+             f"{URL}/post_view/comment",
+             {
+                 "text": text,
+                 "post_id": post_id,
+             },
+             ),
     )
 
 
@@ -151,13 +177,12 @@ def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
     """
     return cast(
         ICommentFullInfo,
-        get(
+        get(token,
             f"{URL}/comment_view",
             {
-                "token": token,
                 "comment_id": comment_id,
             },
-        ),
+            ),
     )
 
 
@@ -175,14 +200,13 @@ def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
     """
     return cast(
         IReplyId,
-        post(
-            f"{URL}/comment_view/reply",
-            {
-                "token": token,
-                "comment_id": comment_id,
-                "text": text,
-            },
-        ),
+        post(token,
+             f"{URL}/comment_view/reply",
+             {
+                 "comment_id": comment_id,
+                 "text": text,
+             },
+             ),
     )
 
 
@@ -199,11 +223,10 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     """
     return cast(
         ICommentFullInfo,
-        get(
+        get(token,
             f"{URL}/reply_view",
             {
-                "token": token,
                 "reply_id": reply_id,
             },
-        ),
+            ),
     )

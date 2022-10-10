@@ -7,6 +7,7 @@ from backend.util import http_errors
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_email_valid, assert_name_valid
 from backend.types.identifiers import UserId
+from backend.types.user import IUserProfile, IUserBasicInfo
 from typing import cast
 
 
@@ -55,7 +56,8 @@ class User:
         * `PermissionPreset`: the preset object
         """
         assert_name_valid(username, "Username")
-        assert_email_valid(email)
+        if email is not None:
+            assert_email_valid(email)
         val = TUser(
             {
                 TUser.username: username,
@@ -76,7 +78,10 @@ class User:
         ### Returns:
         * `list[User]`: list of users
         """
-        return list(map(lambda u: User(u.id), cast(list, TUser.objects())))
+        return list(map(
+            lambda u: User(u.id),
+            cast(list, TUser.objects().run_sync())
+        ))
 
     @classmethod
     def from_username(cls, username: str) -> 'User':
@@ -96,6 +101,26 @@ class User:
         if result is None:
             raise http_errors.BadRequest(
                 f"User with username {username} not found")
+        return User(result.id)
+
+    @classmethod
+    def from_email(cls, email: str) -> 'User':
+        """
+        Find a user based on their email
+
+        ### Args:
+        * `email` (`str`): email
+
+        ### Returns:
+        * `User`: user object
+        """
+        result = TUser.objects()\
+            .where(TUser.email == email)\
+            .first()\
+            .run_sync()
+        if result is None:
+            raise http_errors.BadRequest(
+                f"User with email {email} not found")
         return User(result.id)
 
     def _get(self) -> TUser:
@@ -163,3 +188,34 @@ class User:
     @property
     def permissions(self) -> PermissionUser:
         return PermissionUser(self._get().permissions)
+
+    def basic_info(self) -> IUserBasicInfo:
+        """
+        Returns basic info on the user
+
+        ### Returns:
+        * `IUserBasicInfo`: basic info
+        """
+        row = self._get()
+        return {
+            "name_first": row.name_first,
+            "name_last": row.name_last,
+            "username": row.username,
+            "user_id": UserId(row.id),
+        }
+
+    def profile(self) -> IUserProfile:
+        """
+        Returns full profile info on the user
+
+        ### Returns:
+        * `IUserProfile`: full profile info
+        """
+        row = self._get()
+        return {
+            "name_first": row.name_first,
+            "name_last": row.name_last,
+            "username": row.username,
+            "user_id": UserId(row.id),
+            "email": row.email,
+        }

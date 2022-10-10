@@ -8,7 +8,6 @@ import pytest
 from typing import cast
 from backend.types.identifiers import ReplyId
 from backend.util import http_errors
-from tests.integration.conftest import IBasicServerSetup, ITwoPosts
 from tests.integration.request.browse import (
     add_reply,
     add_comment,
@@ -16,14 +15,12 @@ from tests.integration.request.browse import (
 )
 
 
-def test_get_reply_success(
-    basic_server_setup: IBasicServerSetup, create_two_posts: ITwoPosts
-):
+def test_get_reply_success(all_users, make_posts):
     """
     Can we get the full details of a valid reply?
     """
-    token = basic_server_setup["token"]
-    post_id = create_two_posts["post1_id"]
+    token = all_users["users"][0]["token"]
+    post_id = make_posts["post1_id"]
     comment_id = add_comment(token, post_id, "first")["comment_id"]
     reply_text = "First reply"
     reply_id = add_reply(token, comment_id, reply_text)["reply_id"]
@@ -32,22 +29,16 @@ def test_get_reply_success(
 
     assert reply["text"] == reply_text
     assert isinstance(reply["timestamp"], int)
-    assert (
-        f"{basic_server_setup['name_first']} {basic_server_setup['name_last']}"
-        == reply["author"]
-    )
     assert reply["reacts"]["me_too"] == 0
     assert reply["reacts"]["thanks"] == 0
 
 
-def test_invalid_reply_id(
-    basic_server_setup: IBasicServerSetup, create_two_posts: ITwoPosts
-):
+def test_invalid_reply_id(all_users, make_posts):
     """
     If we are given an invalid reply_id, is a 400 error raised?
     """
-    token = basic_server_setup["token"]
-    post_id = create_two_posts["post1_id"]
+    token = all_users["users"][0]["token"]
+    post_id = make_posts["post1_id"]
     comment_id = add_comment(token, post_id, "first")["comment_id"]
     reply_id = add_reply(token, comment_id, "reply_text")["reply_id"]
 

@@ -18,8 +18,8 @@ def test_fails_incorrect_username(basic_server_setup: IBasicServerSetup):
     """Do we fail to log in if we have an incorrect username?"""
     with pytest.raises(http_errors.Forbidden):
         login(
-            basic_server_setup['username'] + 'not a user',
-            basic_server_setup['password'],
+            'not a user',
+            'admin1',
         )
 
 
@@ -27,8 +27,8 @@ def test_fails_incorrect_password(basic_server_setup: IBasicServerSetup):
     """Do we fail to log in if we have an incorrect password?"""
     with pytest.raises(http_errors.Forbidden):
         login(
-            basic_server_setup['username'],
-            basic_server_setup['password'] + 'not a password',
+            'admin1',
+            'not a password',
         )
 
 
@@ -43,8 +43,8 @@ def test_fails_not_registered(basic_server_setup: IBasicServerSetup):
 def test_success(basic_server_setup: IBasicServerSetup):
     """Can we login if we give the correct details of a registered user?"""
     res = login(
-        basic_server_setup['username'],
-        basic_server_setup['password'],
+        'admin1',
+        'admin1',
     )
     assert isinstance(res['token'], str)
     assert isinstance(res['user_id'], int)
@@ -55,12 +55,12 @@ def test_different_tokens(basic_server_setup: IBasicServerSetup):
     with the same user?
     """
     res1 = login(
-        basic_server_setup['username'],
-        basic_server_setup['password'],
+        'admin1',
+        'admin1',
     )
     res2 = login(
-        basic_server_setup['username'],
-        basic_server_setup['password'],
+        'admin1',
+        'admin1',
     )
     assert res1['user_id'] == res2['user_id']
     assert res1['token'] != res2['token']

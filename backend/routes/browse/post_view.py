@@ -10,16 +10,18 @@ from backend.models.post import Post
 from backend.models.token import Token
 from backend.types.auth import JWT
 from backend.models.comment import Comment
-from backend.types.identifiers import PostId, CommentId
+from backend.types.identifiers import PostId, CommentId, UserId
 from backend.types.post import IPostFullInfo, IPostId
 from backend.types.comment import ICommentId
 from backend.util import http_errors
+from backend.util.tokens import uses_token
 
 post_view = Blueprint("post_view", "post_view")
 
 
 @post_view.get("")
-def get_post() -> IPostFullInfo:
+@uses_token
+def get_post(*_) -> IPostFullInfo:
     """
     Get the detailed info of a post
 
@@ -30,7 +32,6 @@ def get_post() -> IPostFullInfo:
     ## Returns:
     * `IPostFullInfo`: Dictionary containing full info a post
     """
-    Token.fromJWT(cast(JWT, request.args["token"]))
     post_id: PostId = cast(PostId, request.args["post_id"])
     post = Post(post_id)
     return {
@@ -45,7 +46,8 @@ def get_post() -> IPostFullInfo:
 
 
 @post_view.put("/edit")
-def edit() -> IPostId:
+@uses_token
+def edit(user_id: UserId, token: JWT) -> IPostId:
     """
     Edits the heading/text/tags of the post
 
@@ -62,7 +64,6 @@ def edit() -> IPostId:
     * `IPostId`: identifier of the post
     """
     data = json.loads(request.data)
-    token: Token = Token.fromJWT(data["token"])
     post_id: PostId = data["post_id"]
     new_heading: str = data["heading"]
     new_text: str = data["text"]
@@ -70,7 +71,7 @@ def edit() -> IPostId:
 
     post = Post(post_id)
 
-    if token.user.id != post.author.id:
+    if user_id != post.author.id:
         raise http_errors.Forbidden("Attempting to edit another user's post")
 
     post.heading = new_heading
@@ -80,7 +81,8 @@ def edit() -> IPostId:
 
 
 @post_view.put("/self_delete")
-def delete() -> IPostId:
+@uses_token
+def delete(user_id: UserId, token: JWT) -> IPostId:
     """
     Deletes a post
 
@@ -93,11 +95,10 @@ def delete() -> IPostId:
     """
     data = json.loads(request.data)
     post_id: PostId = data["post_id"]
-    token: Token = Token.fromJWT(data["token"])
 
     post = Post(post_id)
 
-    if token.user.id != post.author.id:
+    if user_id != post.author.id:
         raise http_errors.Forbidden("Attempting to delete another user's post")
 
     Post.delete(post_id)
@@ -105,7 +106,8 @@ def delete() -> IPostId:
 
 
 @post_view.post("/comment")
-def comment() -> ICommentId:
+@uses_token
+def comment(user_id: UserId, token: JWT) -> ICommentId:
     """
     Creates a new comment
 
@@ -118,10 +120,10 @@ def comment() -> ICommentId:
     * `ICommentId`: identifier of the comment
     """
     data = json.loads(request.data)
-    token: Token = Token.fromJWT(data["token"])
+    user_token: Token = Token.fromJWT(token)
     text: str = data["text"]
     post_id: PostId = data["post_id"]
 
-    comment_id: CommentId = Comment.create(token.user, post_id, text).id
+    comment_id: CommentId = Comment.create(user_token.user, post_id, text).id
 
     return {"comment_id": comment_id}

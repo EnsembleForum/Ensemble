@@ -4,16 +4,16 @@
 Browse routes
 """
 import json
-from typing import cast
 from flask import Blueprint, request
 from backend.models.post import Post
 from backend.models.token import Token
 from backend.types.auth import JWT
-from backend.types.identifiers import PostId
+from backend.types.identifiers import PostId, UserId
 from backend.types.post import IPostBasicInfoList, IPostBasicInfo, IPostId
 from .post_view import post_view
 from .comment_view import comment_view
 from .reply_view import reply_view
+from backend.util.tokens import uses_token
 
 browse = Blueprint("browse", "browse")
 browse.register_blueprint(post_view, url_prefix="/post_view")
@@ -22,7 +22,8 @@ browse.register_blueprint(reply_view, url_prefix="/reply_view")
 
 
 @browse.get("/post_list")
-def post_list() -> IPostBasicInfoList:
+@uses_token
+def post_list(*_) -> IPostBasicInfoList:
     """
     Get a list of posts
 
@@ -32,8 +33,6 @@ def post_list() -> IPostBasicInfoList:
     ## Returns:
     * `IPostBasicInfoList`: List of basic info of posts
     """
-    # token: JWT = cast(JWT, request.args["token"])
-    Token.fromJWT(cast(JWT, request.args["token"]))
     posts = Post.all()
 
     def basic_post_info(post: Post) -> IPostBasicInfo:
@@ -51,7 +50,8 @@ def post_list() -> IPostBasicInfoList:
 
 
 @browse.post("/create")
-def create() -> IPostId:
+@uses_token
+def create(user_id: UserId, token: JWT) -> IPostId:
     """
     Create a post
 
@@ -65,12 +65,12 @@ def create() -> IPostId:
     * `IPostId`: identifier of the post
     """
     data = json.loads(request.data)
-    token: Token = Token.fromJWT(data["token"])
+    user_token: Token = Token.fromJWT(token)
     heading: str = data["heading"]
     text: str = data["text"]
     tags: list[int] = data["tags"]
 
-    post_id: PostId = Post.create(token.user, heading, text, tags).id
+    post_id: PostId = Post.create(user_token.user, heading, text, tags).id
 
     return {"post_id": post_id}
 

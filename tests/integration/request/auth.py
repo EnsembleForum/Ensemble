@@ -4,7 +4,7 @@
 Helper functions for requesting auth code
 """
 from typing import cast
-from backend.types.auth import IAuthInfo
+from backend.types.auth import IAuthInfo, JWT
 from .consts import URL
 from .helpers import post
 
@@ -25,6 +25,7 @@ def login(username: str, password: str) -> IAuthInfo:
     * `token`: `JWT`
     """
     return cast(IAuthInfo, post(
+        None,
         f"{URL}/login",
         {
             "username": username,
@@ -33,8 +34,8 @@ def login(username: str, password: str) -> IAuthInfo:
     ))
 
 
-def logout() -> None:
+def logout(token: JWT) -> None:
     """
     Log out a logged in user
     """
-    post(f"{URL}/logout", {})
+    post(token, f"{URL}/logout", {})

@@ -1,5 +1,6 @@
 import json
 import requests
+from backend.types.auth import JWT
 from backend.util import http_errors
 
 
@@ -33,7 +34,25 @@ def handle_response(response: requests.Response) -> dict:
             raise ValueError(f"Unrecognised status code: {i}")
 
 
-def get(url: str, params: dict) -> dict:
+def encode_headers(token: JWT | None) -> dict[str, str]:
+    """
+    Returns an object representing the headers used in the request
+
+    This encodes the token if present
+
+    ### Args:
+    * `token` (`JWT | None`): token if present
+
+    ### Returns:
+    * `dict[str, str]`: headers
+    """
+    if token is None:
+        return {}
+    else:
+        return {"token": token}
+
+
+def get(token: JWT | None, url: str, params: dict) -> dict:
     """
     Returns the response to a GET web request
 
@@ -50,10 +69,11 @@ def get(url: str, params: dict) -> dict:
     return handle_response(requests.get(
         url,
         params=params,
+        headers=encode_headers(token),
     ))
 
 
-def post(url: str, body: dict) -> dict:
+def post(token: JWT | None, url: str, body: dict) -> dict:
     """
     Returns the response to a POST web request
 
@@ -70,10 +90,11 @@ def post(url: str, body: dict) -> dict:
     return handle_response(requests.post(
         url,
         json=body,
+        headers=encode_headers(token),
     ))
 
 
-def put(url: str, body: dict) -> dict:
+def put(token: JWT | None, url: str, body: dict) -> dict:
     """
     Returns the response to a PUT web request
 
@@ -90,10 +111,11 @@ def put(url: str, body: dict) -> dict:
     return handle_response(requests.put(
         url,
         json=body,
+        headers=encode_headers(token),
     ))
 
 
-def delete(url: str, params: dict) -> dict:
+def delete(token: JWT | None, url: str, params: dict) -> dict:
     """
     Returns the response to a DELETE web request
 
@@ -110,4 +132,5 @@ def delete(url: str, params: dict) -> dict:
     return handle_response(requests.delete(
         url,
         params=params,
+        headers=encode_headers(token),
     ))

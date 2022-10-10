@@ -10,15 +10,17 @@ from backend.models.reply import Reply
 from backend.models.comment import Comment
 from backend.models.token import Token
 from backend.types.auth import JWT
-from backend.types.identifiers import ReplyId, CommentId
+from backend.types.identifiers import ReplyId, CommentId, UserId
 from backend.types.comment import ICommentFullInfo
 from backend.types.reply import IReplyId
+from backend.util.tokens import uses_token
 
 comment_view = Blueprint("comment_view", "comment_view")
 
 
 @comment_view.get("")
-def get_comment() -> ICommentFullInfo:
+@uses_token
+def get_comment(*_) -> ICommentFullInfo:
     """
     Get the detailed info of a comment
 
@@ -30,7 +32,6 @@ def get_comment() -> ICommentFullInfo:
     * `ICommentFullInfo`: Dictionary containing full info a comment
     """
     comment_id: CommentId = cast(CommentId, request.args["comment_id"])
-    Token.fromJWT(cast(JWT, request.args["token"]))
     comment = Comment(comment_id)
     return {
         "author": f"{comment.author.name_first} {comment.author.name_last}",
@@ -42,7 +43,8 @@ def get_comment() -> ICommentFullInfo:
 
 
 @comment_view.post("/reply")
-def reply() -> IReplyId:
+@uses_token
+def reply(user_id: UserId, token: JWT) -> IReplyId:
     """
     Creates a new reply
 
@@ -55,10 +57,10 @@ def reply() -> IReplyId:
     * `IReplyId`: identifier of the reply
     """
     data = json.loads(request.data)
-    token: Token = Token.fromJWT(data["token"])
+    user_token: Token = Token.fromJWT(token)
     text: str = data["text"]
     comment_id: CommentId = data["comment_id"]
 
-    reply_id: ReplyId = Reply.create(token.user, comment_id, text).id
+    reply_id: ReplyId = Reply.create(user_token.user, comment_id, text).id
 
     return {"reply_id": reply_id}
