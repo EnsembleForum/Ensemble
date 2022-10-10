@@ -3,7 +3,6 @@
 
 Functions relating to users.
 """
-import json
 from flask import Blueprint, request
 from backend.types.user import IUserProfile
 from backend.types.identifiers import UserId
