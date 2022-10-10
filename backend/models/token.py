@@ -26,7 +26,10 @@ class Token:
     """
 
     def __init__(self, id: TokenId) -> None:
-        assert_id_exists(TToken, id)
+        try:
+            assert_id_exists(TToken, id, "Token")
+        except http_errors.BadRequest:
+            raise http_errors.Forbidden("Token invalidated")
         self.__id = id
 
     def _get(self) -> TToken:
