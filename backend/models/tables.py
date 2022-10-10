@@ -96,3 +96,11 @@ class TReply(_BaseTable):
     me_too = Integer()
     thanks = Integer()
     timestamp = Integer()
+
+
+class TToken(_BaseTable):
+    """
+    Table containing mapping of token IDs to user IDs
+    """
+
+    user = ForeignKey(TUser)

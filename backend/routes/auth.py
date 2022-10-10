@@ -7,8 +7,9 @@ import json
 from flask import Blueprint, request
 from backend.models.user import User
 from backend.models.auth_config import AuthConfig
+from backend.models.token import Token
 from backend.util import http_errors
-from backend.types.auth import IAuthInfo, JWT
+from backend.types.auth import IAuthInfo
 
 
 auth = Blueprint('auth', 'auth')
@@ -41,7 +42,7 @@ def login() -> IAuthInfo:
         ) from None
     return {
         "user_id": u.id,
-        "token": JWT(f"TODO - {u.id}",)
+        "token": Token.create(u).encode(),
     }
 
 
