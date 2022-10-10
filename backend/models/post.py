@@ -100,7 +100,7 @@ class Post:
             Comment(c["id"])
             for c in TComment.select()
             .where(TComment.parent == self.__id)
-            .order_by(TComment.id)
+            .order_by(TComment.id, ascending=False)
             .run_sync()
         ]
 
