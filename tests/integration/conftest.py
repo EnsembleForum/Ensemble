@@ -103,7 +103,7 @@ class IAllUsers(TypedDict):
 @pytest.fixture
 def all_users(basic_server_setup: IBasicServerSetup) -> IAllUsers:
     """
-    Register all users available through the datastore
+    Register all users available through the mock auth server
     """
     # Admins
     users.register(
