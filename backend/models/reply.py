@@ -1,7 +1,7 @@
 """
 # Backend / Models / Reply
 """
-from .tables import TUser, TPost, TComment, TReply
+from .tables import TUser, TComment, TReply
 from .user import User
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_text_valid
@@ -44,7 +44,7 @@ class Reply:
 
         * `text` (`str`): contents of reply
 
-        * `comment_id` (`CommentId`): CommentId of the comment the reply belongs to
+        * `comment_id` (`CommentId`): comment the reply belongs to
 
         ### Returns:
         * `Reply`: the Reply object

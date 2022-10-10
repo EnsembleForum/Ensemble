@@ -1,4 +1,3 @@
-from sqlite3 import Timestamp
 from typing import TypedDict
 from .identifiers import CommentId, ReplyId
 from .post import IReacts

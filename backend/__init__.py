@@ -24,6 +24,8 @@ app.register_blueprint(auth, url_prefix="/auth")
 app.register_blueprint(browse, url_prefix="/browse")
 
 # Main routes
+
+
 @app.get("/")
 def home():
     return "Hello, world! The Ensemble backend is up and running!"
