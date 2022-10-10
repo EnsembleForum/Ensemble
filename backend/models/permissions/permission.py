@@ -46,13 +46,18 @@ class Permission(Enum):
     """User can view the list of reported posts"""
 
     # User management
-    SetUserPermissions = 40
+    ManageUserPermissions = 40
     """User can set the permission level of other users"""
     AddUsers = 41
     """User can create other user accounts"""
     RemoveUsers = 42
     """User can remove other user accounts"""
+    ViewUsers = 43
+    """User can view the list of users"""
 
     # Administration
     ManageAuthConfig = 50
     """User can manage authentication options"""
+    ManagePermissionGroups = 51
+    """manage permissions groups, including creation, deletion and modification
+    """

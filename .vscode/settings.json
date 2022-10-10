@@ -26,6 +26,9 @@
     "python.linting.flake8Enabled": true,
     "python.linting.mypyEnabled": true,
 
+    // Use autopep8 formatter
+    "python.formatting.provider": "autopep8",
+
     // Switch off Pylance, since we're using MyPy instead
     "python.analysis.typeCheckingMode": "off",
 
@@ -40,6 +43,7 @@
     "cSpell.language": "en-gb",
     "cSpell.words": [
         "autouse",
+        "doesnt",
         "dotenv",
         "flaskenv",
         "Khor",

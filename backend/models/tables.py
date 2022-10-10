@@ -14,6 +14,17 @@ class _BaseTable(Table):
     id = Serial(primary_key=True)
 
 
+class TAuthConfig(_BaseTable):
+    """
+    Table containing a single row which is the server's auth config
+    """
+    address = Text()
+    request_type = Text()
+    username_param = Text()
+    password_param = Text()
+    success_regex = Text()
+
+
 class TPermissionGroup(_BaseTable):
     """
     Table containing preset permission definitions.
@@ -36,6 +47,15 @@ class TUser(_BaseTable):
     """
     Table containing all user data
     """
+    username = Text()
     name_first = Text()
     name_last = Text()
+    email = Text()
     permissions = ForeignKey(TPermissionUser)
+
+
+class TToken(_BaseTable):
+    """
+    Table containing mapping of token IDs to user IDs
+    """
+    user = ForeignKey(TUser)

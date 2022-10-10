@@ -26,6 +26,13 @@ if flask.stderr is None or flask.stdout is None:
     flask.kill()
     sys.exit(1)
 
+# Start login server
+login = subprocess.Popen(
+    [sys.executable, '-u', '-m', 'mock.auth'],
+    stderr=subprocess.DEVNULL,
+    stdout=subprocess.DEVNULL,
+)
+
 # Request until we get a success, but crash if we failed to start in 10 seconds
 start_time = time.time()
 started = False
@@ -59,6 +66,7 @@ ret = pytest.wait()
 
 # Then shut down the server
 flask.terminate()
+login.terminate()
 
 if pytest.stderr is None or pytest.stdout is None:
     print("❗ Can't read pytest output", file=sys.stderr)

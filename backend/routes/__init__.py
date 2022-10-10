@@ -9,7 +9,9 @@ keep the code structured and maintainable.
 __all__ = [
     'debug',
     'admin',
+    'auth',
 ]
 
 from .debug import debug
 from .admin import admin
+from .auth import auth
