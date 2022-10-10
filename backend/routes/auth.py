@@ -9,7 +9,7 @@ from backend.models.user import User
 from backend.models.auth_config import AuthConfig
 from backend.models.token import Token
 from backend.util import http_errors
-from backend.types.auth import IAuthInfo
+from backend.types.auth import IAuthInfo, JWT
 
 
 auth = Blueprint('auth', 'auth')
@@ -51,3 +51,12 @@ def logout() -> dict:
     """
     Log out a logged in user
     """
+    token = JWT(request.headers['token'])
+    try:
+        Token.fromJWT(token).invalidate()
+    except http_errors.Forbidden:
+        # If we get an error do nothing, to prevent a painful experience if a
+        # user doesn't have a valid token and wants to return to the login
+        # screen
+        pass
+    return {}
