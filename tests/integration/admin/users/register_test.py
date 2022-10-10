@@ -13,7 +13,7 @@ Tests for bulk registering users
 * Existing duplicate usernames (none get registered)
 * Existing duplicate emails (none get registered)
 * Invalid names (empty)
-* Don't have permission  # TODO
+* Don't have permission to create users  # TODO
 """
 import pytest
 from backend.util import http_errors
@@ -36,7 +36,7 @@ def test_register_single_user(basic_server_setup: IBasicServerSetup):
             "username": "henry8",
             "email": "henry@example.com",
         }],
-        basic_server_setup["admin_permission"],
+        basic_server_setup["permissions"]["admin"],
     )
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 2
@@ -61,7 +61,7 @@ def test_register_multi_users(basic_server_setup: IBasicServerSetup):
                 "email": "henry9@example.com",
             },
         ],
-        basic_server_setup["admin_permission"],
+        basic_server_setup["permissions"]["admin"],
     )
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 3
@@ -93,7 +93,7 @@ def test_invalid_usernames(
                 "username": username,
                 "email": "henry@example.com",
             }],
-            basic_server_setup["admin_permission"],
+            basic_server_setup["permissions"]["admin"],
         )
     all = users.all(basic_server_setup["token"])["users"]
     # Only the main user
@@ -120,7 +120,7 @@ def test_invalid_email(basic_server_setup: IBasicServerSetup):
                     "email": "henry9@example.com",
                 },
             ],
-            basic_server_setup["admin_permission"],
+            basic_server_setup["permissions"]["admin"],
         )
     all = users.all(basic_server_setup["token"])["users"]
     # Only the main user
@@ -146,7 +146,7 @@ def test_duplicate_usernames(basic_server_setup: IBasicServerSetup):
                     "email": "henry2@example.com",
                 },
             ],
-            basic_server_setup["admin_permission"],
+            basic_server_setup["permissions"]["admin"],
         )
     # Only the main user is registered
     all = users.all(basic_server_setup["token"])["users"]
@@ -172,7 +172,7 @@ def test_duplicate_emails(basic_server_setup: IBasicServerSetup):
                     "email": "henry@example.com",  # duplicate
                 },
             ],
-            basic_server_setup["admin_permission"],
+            basic_server_setup["permissions"]["admin"],
         )
     # Only the main user is registered
     all = users.all(basic_server_setup["token"])["users"]
@@ -191,7 +191,7 @@ def test_existing_duplicate_usernames(basic_server_setup: IBasicServerSetup):
                 "email": "henry@example.com",
             },
         ],
-        basic_server_setup["admin_permission"],
+        basic_server_setup["permissions"]["admin"],
     )
     with pytest.raises(http_errors.BadRequest):
         users.register(
@@ -211,7 +211,7 @@ def test_existing_duplicate_usernames(basic_server_setup: IBasicServerSetup):
                     "email": "henry9@example.com",
                 },
             ],
-            basic_server_setup["admin_permission"],
+            basic_server_setup["permissions"]["admin"],
         )
     # Only the first user got registered
     all = users.all(basic_server_setup["token"])["users"]
@@ -230,7 +230,7 @@ def test_existing_duplicate_emails(basic_server_setup: IBasicServerSetup):
                 "email": "henry@example.com",
             },
         ],
-        basic_server_setup["admin_permission"],
+        basic_server_setup["permissions"]["admin"],
     )
     with pytest.raises(http_errors.BadRequest):
         users.register(
@@ -250,7 +250,7 @@ def test_existing_duplicate_emails(basic_server_setup: IBasicServerSetup):
                     "email": "henry9@example.com",
                 },
             ],
-            basic_server_setup["admin_permission"],
+            basic_server_setup["permissions"]["admin"],
         )
     # Only the first user got registered
     all = users.all(basic_server_setup["token"])["users"]
@@ -268,7 +268,7 @@ def test_invalid_name_first(basic_server_setup: IBasicServerSetup):
                 "username": "henry8",
                 "email": "henry8@example.com",
             }],
-            basic_server_setup["admin_permission"],
+            basic_server_setup["permissions"]["admin"],
         )
     # Only the main user is registered
     all = users.all(basic_server_setup["token"])["users"]
@@ -286,7 +286,7 @@ def test_invalid_name_last(basic_server_setup: IBasicServerSetup):
                 "username": "henry8",
                 "email": "henry8@example.com",
             }],
-            basic_server_setup["admin_permission"],
+            basic_server_setup["permissions"]["admin"],
         )
     # Only the main user is registered
     all = users.all(basic_server_setup["token"])["users"]
