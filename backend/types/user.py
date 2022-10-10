@@ -9,7 +9,7 @@ class IUserRegisterInfo(TypedDict):
     name_first: str
     name_last: str
     username: str
-    email: str
+    email: str | None
 
 
 class IUserIdList(TypedDict):
@@ -43,5 +43,5 @@ class IUserProfile(TypedDict):
     name_first: str
     name_last: str
     username: str
-    email: str
+    email: str | None
     user_id: UserId

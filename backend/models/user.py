@@ -33,7 +33,7 @@ class User:
         username: str,
         name_first: str,
         name_last: str,
-        email: str,
+        email: str | None,
         permissions_base: PermissionGroup
     ) -> 'User':
         """
@@ -55,7 +55,8 @@ class User:
         * `PermissionPreset`: the preset object
         """
         assert_name_valid(username, "Username")
-        assert_email_valid(email)
+        if email is not None:
+            assert_email_valid(email)
         val = TUser(
             {
                 TUser.username: username,
