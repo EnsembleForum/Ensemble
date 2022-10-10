@@ -148,7 +148,7 @@ def init() -> IAuthInfo:
             Permission.ManageUserPermissions: True,
             Permission.AddUsers: True,
             Permission.RemoveUsers: True,
-            Permission.ViewUsers: True,
+            Permission.ViewAllUsers: True,
             Permission.ManageAuthConfig: True,
             Permission.ManagePermissionGroups: True,
         }
@@ -172,7 +172,7 @@ def init() -> IAuthInfo:
             Permission.ManageUserPermissions: False,
             Permission.AddUsers: False,
             Permission.RemoveUsers: False,
-            Permission.ViewUsers: True,
+            Permission.ViewAllUsers: True,
             Permission.ManageAuthConfig: False,
             Permission.ManagePermissionGroups: False,
         }
@@ -196,7 +196,7 @@ def init() -> IAuthInfo:
             Permission.ManageUserPermissions: False,
             Permission.AddUsers: False,
             Permission.RemoveUsers: False,
-            Permission.ViewUsers: False,
+            Permission.ViewAllUsers: False,
             Permission.ManageAuthConfig: False,
             Permission.ManagePermissionGroups: False,
         }

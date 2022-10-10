@@ -6,7 +6,7 @@ from backend.types.user import (
     IUserProfile,
     IUserRegisterInfo,
 )
-from backend.types.identifiers import PermissionGroupId, UserId
+from backend.types.identifiers import PermissionGroupId
 from backend.util.validators import assert_email_valid, assert_name_valid
 from backend.util import http_errors
 from backend.util.tokens import uses_token
@@ -29,7 +29,8 @@ def register(user: User, *_) -> IUserIdList:
       to.
 
     ## Returns:
-    * `IUserIdList`: list of new user IDs
+    * `user_ids`: list of
+          * `int`
 
     ## TODO:
     * Improve error messages to be more helpful to user
@@ -93,13 +94,22 @@ def register(user: User, *_) -> IUserIdList:
 
 @users.get('/all')
 @uses_token
-def all(*_) -> IUserBasicInfoList:
+def all(user: User, *_) -> IUserBasicInfoList:
     """
     Returns a list of basic info about all forum users
 
     ### Returns:
-    * `IUserBasicInfoList`: list of user info
+    * `users`: `list`, containing dictionaries of:
+          * `name_first`: `str`
+          * `name_last`: `str`
+          * `username`: `str`
+          * `user_id`: `int`
     """
+    # Check that the user has permission
+    if not user.permissions.can(Permission.ViewAllUsers):
+        raise http_errors.Forbidden(
+            "You don't have permission to view all users"
+        )
     return {
         "users": list(map(lambda u: u.basic_info(), User.all()))
     }
