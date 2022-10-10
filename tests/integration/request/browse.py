@@ -4,9 +4,11 @@
 Helper functions for requesting auth code
 """
 from typing import cast
-from backend.types.comment import ICommentId
-from backend.types.identifiers import PostId
+from backend.types.comment import ICommentFullInfo, ICommentId
+from backend.types.reply import IReplyId
+from backend.types.identifiers import CommentId, PostId, ReplyId
 from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
+from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
 from .consts import URL
 from .helpers import post, get, put
@@ -36,7 +38,9 @@ def post_list(token: JWT) -> IPostBasicInfoList:
     )
 
 
-def post_create(token: JWT, heading: str, text: str, tags: list[int]) -> IPostId:
+def post_create(
+    token: JWT, heading: str, text: str, tags: list[int]
+) -> IPostId:
     """
     Create a post
 
@@ -109,7 +113,7 @@ def post_delete(token: JWT, post_id: PostId) -> IPostId:
     )
 
 
-def comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
+def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
     """
     Creates a new comment
 
@@ -129,6 +133,77 @@ def comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
                 "token": token,
                 "text": text,
                 "post_id": post_id,
+            },
+        ),
+    )
+
+
+def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
+    """
+    Get the detailed info of a comment
+
+    ## Body:
+    * `comment_id` (`CommentId`): identifier of the comment
+    * `token` (`JWT`): JWT of the user
+
+    ## Returns:
+    * `ICommentFullInfo`: Dictionary containing full info a comment
+    """
+    return cast(
+        ICommentFullInfo,
+        get(
+            f"{URL}/comment_view",
+            {
+                "token": token,
+                "comment_id": comment_id,
+            },
+        ),
+    )
+
+
+def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
+    """
+    Creates a new reply
+
+    ## Body:
+    * `text` (`str`): text of the comment
+    * `comment_id` (`CommentId`): identifier of the comment to reply to
+    * `token` (`JWT`): JWT of the user
+
+    ## Returns:
+    * `IReplyId`: identifier of the reply
+    """
+    return cast(
+        IReplyId,
+        post(
+            f"{URL}/comment_view/reply",
+            {
+                "token": token,
+                "comment_id": comment_id,
+                "text": text,
+            },
+        ),
+    )
+
+
+def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
+    """
+    Get the detailed info of a reply
+
+    ## Body:
+    * `reply_id` (`ReplyId`): identifier of the reply
+    * `token` (`JWT`): JWT of the user
+
+    ## Returns:
+    * `IReplyFullInfo`: Dictionary containing full info a reply
+    """
+    return cast(
+        ICommentFullInfo,
+        get(
+            f"{URL}/reply_view",
+            {
+                "token": token,
+                "reply_id": reply_id,
             },
         ),
     )

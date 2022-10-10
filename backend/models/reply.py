@@ -50,18 +50,18 @@ class Reply:
         * `Reply`: the Reply object
         """
         assert_id_exists(TUser, author.id)
-        assert_id_exists(TPost, comment_id, "Comment")
+        assert_id_exists(TComment, comment_id, "Comment")
         assert_text_valid(text, "reply")
 
         val = (
-            TComment(
+            TReply(
                 {
-                    TComment.author: author.id,
-                    TComment.text: text,
-                    TComment.me_too: 0,
-                    TComment.parent: comment_id,
-                    TComment.thanks: 0,
-                    TComment.timestamp: int(datetime.now().timestamp()),
+                    TReply.author: author.id,
+                    TReply.text: text,
+                    TReply.me_too: 0,
+                    TReply.parent: comment_id,
+                    TReply.thanks: 0,
+                    TReply.timestamp: int(datetime.now().timestamp()),
                 }
             )
             .save()

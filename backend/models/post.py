@@ -84,8 +84,8 @@ class Post:
         * `list[Post]`: list of posts
         """
         return [
-            Post(p["id"])
-            for p in TPost.select().order_by(TPost.id, ascending=False).run_sync()
+            Post(p["id"]) for p in
+            TPost.select().order_by(TPost.id, ascending=False).run_sync()
         ]
 
     @property
