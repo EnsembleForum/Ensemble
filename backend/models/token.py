@@ -24,6 +24,7 @@ class Token:
     Represents a JWT (JSON web token) used by a user to allow them to
     authenticate
     """
+
     def __init__(self, id: TokenId) -> None:
         assert_id_exists(TToken, id)
         self.__id = id
@@ -35,7 +36,7 @@ class Token:
         return get_by_id(TToken, self.__id)
 
     @classmethod
-    def create(self, user: 'User') -> 'Token':
+    def create(self, user: "User") -> "Token":
         """
         Create a new token used by the given user
 
@@ -45,16 +46,12 @@ class Token:
         ### Returns:
         * `Token`: token
         """
-        val = TToken(
-            {
-                TToken.user: user.id
-            }
-        ).save().run_sync()[0]
+        val = TToken({TToken.user: user.id}).save().run_sync()[0]
         id = cast(TokenId, val["id"])
         return Token(id)
 
     @classmethod
-    def fromJWT(self, token: JWT) -> 'Token':
+    def fromJWT(self, token: JWT) -> "Token":
         """
         Get a token given a JWT string
 
@@ -66,7 +63,7 @@ class Token:
         ### Returns:
         * `Token`: token object
         """
-        decoded = jwt.decode(token, SECRET)
+        decoded = jwt.decode(token, SECRET, algorithms=["HS256"])
         user_id = decoded["user_id"]
         token_id = decoded["token_id"]
         t = Token(token_id)
@@ -101,18 +98,19 @@ class Token:
         ### Returns:
         * `str`: encoded token
         """
-        return cast(JWT, jwt.encode(
-            {
-                "user_id": self.user.id,
-                "token_id": self.id,
-            },
-            SECRET,
-        ))
+        return cast(
+            JWT,
+            jwt.encode(
+                {
+                    "user_id": self.user.id,
+                    "token_id": self.id,
+                },
+                SECRET,
+            ),
+        )
 
     def invalidate(self):
         """
         Invalidate this token so that it can no-longer be used.
         """
-        TToken.delete()\
-            .where(TToken.id == self.id)\
-            .run_sync()
+        TToken.delete().where(TToken.id == self.id).run_sync()
