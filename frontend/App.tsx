@@ -2,7 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { SERVER_PATH } from './constants';
 import { requestOptions } from './interfaces';
+import AdminPage from './pages/AdminPage';
 import BrowsePage from './pages/BrowsePage';
+import FirstRunPage from './pages/FirstRunPage';
 import LoginPage from './pages/LoginPage';
 import PasswordResetPage from './pages/PasswordResetPage';
 import RegisterPage from './pages/RegisterPage';
@@ -38,7 +40,9 @@ function PassThrough () {
   return (
     <Router>
         <Routes>
-          <Route path = "/" element={<Navigate to="/auth/login" />}></Route>
+          <Route path = "/" element={<Navigate to="/firstrun" />}></Route>
+          <Route path='/firstrun' element={<FirstRunPage/>} />
+          <Route path='/admin' element={<AdminPage/>} />
           <Route path='/auth/login' element={<LoginPage/>} />
           <Route path='/auth/register' element={<RegisterPage/>} />
           <Route path='/auth/password_reset' element={<PasswordResetPage/>} />
