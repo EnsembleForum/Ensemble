@@ -6,12 +6,12 @@ from backend.types.user import (
     IUserProfile,
     IUserRegisterInfo,
 )
-from backend.types.identifiers import PermissionGroupId
+from backend.types.identifiers import PermissionGroupId, UserId
 from backend.util.validators import assert_email_valid, assert_name_valid
 from backend.util import http_errors
 from backend.util.tokens import uses_token
 from backend.models.user import User
-from backend.models.permissions import PermissionGroup
+from backend.models.permissions import PermissionGroup, Permission
 
 
 users = Blueprint('users', 'users')
@@ -19,7 +19,7 @@ users = Blueprint('users', 'users')
 
 @users.post('/register')
 @uses_token
-def register(*_) -> IUserIdList:
+def register(user: User, *_) -> IUserIdList:
     """
     Register a collection of users
 
@@ -34,6 +34,10 @@ def register(*_) -> IUserIdList:
     ## TODO:
     * Improve error messages to be more helpful to user
     """
+    # Check that the user has permission to create users
+    if not user.permissions.can(Permission.AddUsers):
+        raise http_errors.Forbidden("You don't have permission to add users")
+
     data = json.loads(request.data)
     users: list[IUserRegisterInfo] = data["users"]
     group: PermissionGroupId = data["group_id"]
