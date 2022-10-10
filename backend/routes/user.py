@@ -6,6 +6,7 @@ Functions relating to users.
 import json
 from flask import Blueprint, request
 from backend.types.user import IUserProfile
+from backend.types.identifiers import UserId
 from backend.util.tokens import uses_token
 from backend.models.user import User
 
@@ -33,6 +34,5 @@ def profile(*_) -> IUserProfile:
     Note that this will eventually contain more properties such as pronouns and
     the like
     """
-    data = json.loads(request.data)
-    user_id = data["user_id"]
+    user_id = UserId(int(request.args["user_id"]))
     return User(user_id).profile()

@@ -4,10 +4,13 @@
 Functions to request user-related routes
 """
 from typing import cast
+from .consts import URL
 from .helpers import get
 from backend.types.auth import JWT
 from backend.types.identifiers import UserId
 from backend.types.user import IUserProfile
+
+URL = f"{URL}/user"
 
 
 def profile(token: JWT, user_id: UserId) -> IUserProfile:
@@ -30,6 +33,6 @@ def profile(token: JWT, user_id: UserId) -> IUserProfile:
     """
     return cast(IUserProfile, get(
         token,
-        '/user/profile',
+        f'{URL}/profile',
         {"user_id": user_id},
     ))
