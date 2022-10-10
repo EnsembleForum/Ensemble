@@ -24,6 +24,7 @@ class Token:
     Represents a JWT (JSON web token) used by a user to allow them to
     authenticate
     """
+
     def __init__(self, id: TokenId) -> None:
         assert_id_exists(TToken, id)
         self.__id = id

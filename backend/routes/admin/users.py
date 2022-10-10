@@ -7,6 +7,7 @@ from backend.types.user import (
     IUserRegisterInfo,
 )
 from backend.types.identifiers import PermissionGroupId
+from backend.util import http_errors
 from backend.models.user import User
 from backend.models.permissions import PermissionGroup
 
@@ -32,6 +33,15 @@ def register() -> IUserIdList:
     data = json.loads(request.data)
     users: list[IUserRegisterInfo] = data["users"]
     group: PermissionGroupId = data["group_id"]
+
+    # Check for duplicates in sign-up list
+    # TODO: Give more helpful error info (eg which users cause the problem)
+    unique_usernames = set(map(lambda u: u['username'], users))
+    if len(unique_usernames) < len(users):
+        raise http_errors.BadRequest("Duplicate usernames are not allowed")
+    unique_emails = set(map(lambda u: u['email'], users))
+    if len(unique_emails) < len(users):
+        raise http_errors.BadRequest("Duplicate emails are not allowed")
 
     def new_user(u: IUserRegisterInfo):
         return User.create(
