@@ -1,26 +1,44 @@
 import React from 'react';
-//import logo from './logo.svg';
-//import './App.css';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { SERVER_PATH } from './constants';
+import { requestOptions } from './interfaces';
+import LoginPage from './pages/LoginPage';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        {/*<img src={logo} className="App-logo" alt="logo" />*/}
-        <p>
-          Wodahhh Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export function ApiFetch (method : string, path : string, token : string, body? : string) {
+  const requestOptions : requestOptions = {
+    method: method,
+    headers: { 'Content-Type': 'application/json' }
+  };
+  if (body !== null) { requestOptions.body = JSON.stringify(body); }
+  if (token !== null) { requestOptions.headers.Authorization = `Bearer ${token}`; }
+  return new Promise((resolve, reject) => {
+    fetch(`${SERVER_PATH}${path}`, requestOptions)
+      .then((response) => {
+        if (response.status === 400 || response.status === 403) {
+          response.json().then((errorMsg) => {
+            console.log(errorMsg.error);
+            alert(errorMsg.error);
+          });
+        } else if (response.status === 200) {
+          response.json().then(data => {
+            resolve(data);
+          });
+        }
+      })
+      .catch((err) => console.log(err));
+  });
 }
 
-export default App;
+
+function PassThrough () {
+  return (
+    <Router>
+        <Routes>
+          <Route path = "/" element={<Navigate to="/auth/login" />}></Route>
+          <Route path='/auth/login' element={<LoginPage/>} />
+        </Routes>
+    </Router>
+  );
+}
+export default PassThrough;
+
