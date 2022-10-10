@@ -3,7 +3,6 @@ from flask import Blueprint, request
 from backend.types.user import (
     IUserIdList,
     IUserBasicInfoList,
-    IUserProfile,
     IUserRegisterInfo,
 )
 from backend.types.identifiers import PermissionGroupId
