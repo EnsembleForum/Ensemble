@@ -25,3 +25,19 @@ def assert_name_valid(name: str, name_type: str = "Name"):
     """
     if len(name) == 0:
         raise http_errors.BadRequest(f"{name_type} cannot be empty")
+
+
+def assert_heading_valid(heading: str):
+    """
+    If the given heading is not valid (0 chars), a BadRequest is raised
+    """
+    if len(heading) == 0:
+        raise http_errors.BadRequest("Heading of a post cannot be empty")
+
+
+def assert_text_valid(text: str, text_type: str):
+    """
+    If the given text is not valid (0 chars), a BadRequest is raised
+    """
+    if len(text) == 0:
+        raise http_errors.BadRequest(f"Text of a {text_type} cannot be empty")

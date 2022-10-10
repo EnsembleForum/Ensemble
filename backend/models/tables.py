@@ -18,6 +18,7 @@ class TAuthConfig(_BaseTable):
     """
     Table containing a single row which is the server's auth config
     """
+
     address = Text()
     request_type = Text()
     username_param = Text()
@@ -29,6 +30,7 @@ class TPermissionGroup(_BaseTable):
     """
     Table containing preset permission definitions.
     """
+
     name = Text()
     allowed = Array(Integer())
     disallowed = Array(Integer())
@@ -38,6 +40,7 @@ class TPermissionUser(_BaseTable):
     """
     Table containing all permission sets available.
     """
+
     allowed = Array(Integer())
     disallowed = Array(Integer())
     parent = ForeignKey(TPermissionGroup)
@@ -47,8 +50,49 @@ class TUser(_BaseTable):
     """
     Table containing all user data
     """
+
     username = Text()
     name_first = Text()
     name_last = Text()
     email = Text()
     permissions = ForeignKey(TPermissionUser)
+
+
+class TPost(_BaseTable):
+    """
+    Table containing all posts
+    """
+
+    # TODO author = ForeignKey(TUser)
+    heading = Text()
+    text = Text()
+    tags = Array(Integer())
+    me_too = Integer()
+    thanks = Integer()
+    timestamp = Integer()
+
+
+class TComment(_BaseTable):
+    """
+    Table containing all comments
+    """
+
+    # TODO author = ForeignKey(TUser)
+    parent = ForeignKey(TPost)
+    text = Text()
+    me_too = Integer()
+    thanks = Integer()
+    timestamp = Integer()
+
+
+class TReply(_BaseTable):
+    """
+    Table containing all replies
+    """
+
+    # TODO author = ForeignKey(TUser)
+    parent = ForeignKey(TComment)
+    text = Text()
+    me_too = Integer()
+    thanks = Integer()
+    timestamp = Integer()
