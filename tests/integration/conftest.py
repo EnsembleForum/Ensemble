@@ -6,6 +6,7 @@ Configuration for tests
 import pytest
 from typing import TypedDict
 from backend.types.identifiers import UserId
+from backend.types.permissions import PermissionGroupId
 from backend.types.auth import JWT
 from mock.auth import AUTH_URL
 from tests.integration.request.debug import clear
@@ -24,6 +25,9 @@ class IBasicServerSetup(TypedDict):
     email: str
     user_id: UserId
     token: JWT
+    admin_permission: PermissionGroupId
+    mod_permission: PermissionGroupId
+    user_permission: PermissionGroupId
 
 
 @pytest.fixture()
@@ -52,4 +56,9 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
         "email": email,
         "user_id": result["user_id"],
         "token": result["token"],
+        # TODO: do a request to actually get these IDs, so things don't break
+        # if we change them
+        "admin_permission": PermissionGroupId(1),
+        "mod_permission": PermissionGroupId(2),
+        "user_permission": PermissionGroupId(3),
     }
