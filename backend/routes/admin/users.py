@@ -6,8 +6,7 @@ from backend.types.user import (
     IUserProfile,
     IUserRegisterInfo,
 )
-from backend.types.identifiers import PermissionGroupId, UserId
-from backend.types.auth import JWT
+from backend.types.identifiers import PermissionGroupId
 from backend.util.validators import assert_email_valid, assert_name_valid
 from backend.util import http_errors
 from backend.util.tokens import uses_token
