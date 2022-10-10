@@ -16,6 +16,14 @@ class IdNotFound(http_errors.BadRequest):
     """
 
 
+class MatchNotFound(http_errors.BadRequest):
+    """
+    Couldn't find an entry with matching info in the database.
+
+    Extends `BadRequest`
+    """
+
+
 class InvalidInput(http_errors.BadRequest):
     """
     An input was invalid (eg a text field that needed > 0 chars)
