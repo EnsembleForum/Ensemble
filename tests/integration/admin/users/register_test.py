@@ -76,6 +76,7 @@ def test_register_multi_users(basic_server_setup: IBasicServerSetup):
     [
         'u$ern@me',  # special chars
         'white space',  # whitespace
+        '',  # Empty
     ]
 )
 def test_invalid_usernames(
@@ -104,12 +105,21 @@ def test_invalid_email(basic_server_setup: IBasicServerSetup):
     with pytest.raises(http_errors.BadRequest):
         users.register(
             basic_server_setup["token"],
-            [{
-                "name_first": "Henry",
-                "name_last": "VIII",
-                "username": "henry8",
-                "email": "henry_example_com",
-            }],
+            [
+                {
+                    "name_first": "Henry",
+                    "name_last": "VIII",
+                    "username": "henry8",
+                    "email": "henry_example_com",
+                },
+                {   # Valid user to make sure we don't get anyone else
+                    # registered
+                    "name_first": "Henry",
+                    "name_last": "XI",
+                    "username": "henry9",
+                    "email": "henry9@example.com",
+                },
+            ],
             basic_server_setup["admin_permission"],
         )
     all = users.all(basic_server_setup["token"])["users"]
@@ -193,6 +203,13 @@ def test_existing_duplicate_usernames(basic_server_setup: IBasicServerSetup):
                     "username": "henry8",  # duplicate
                     "email": "henry2@example.com",
                 },
+                {   # Valid user to make sure we don't get anyone else
+                    # registered
+                    "name_first": "Henry",
+                    "name_last": "XI",
+                    "username": "henry9",
+                    "email": "henry9@example.com",
+                },
             ],
             basic_server_setup["admin_permission"],
         )
@@ -224,6 +241,13 @@ def test_existing_duplicate_emails(basic_server_setup: IBasicServerSetup):
                     "name_last": "VIII",
                     "username": "henry8_2",
                     "email": "henry@example.com",  # duplicate
+                },
+                {   # Valid user to make sure we don't get anyone else
+                    # registered
+                    "name_first": "Henry",
+                    "name_last": "XI",
+                    "username": "henry9",
+                    "email": "henry9@example.com",
                 },
             ],
             basic_server_setup["admin_permission"],
