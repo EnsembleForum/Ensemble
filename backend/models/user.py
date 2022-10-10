@@ -23,7 +23,7 @@ class User:
         * `id` (`int`): user id
 
         ### Raises:
-        * `KeyError`: user does not exist
+        * `BadRequest`: user does not exist
         """
         assert_id_exists(TUser, id)
         self.__id = id
