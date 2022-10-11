@@ -42,21 +42,24 @@ def write_outputs(process: subprocess.Popen[bytes], file: str | None):
                 out.write(process.stderr.read().decode('utf-8'))
 
 
-def backend(debug=False):
+def backend(debug=False, live_output=False):
+    env = os.environ.copy()
     if debug:
-        env = {"ENSEMBLE_DEBUG": "TRUE"}
+        env.update({"ENSEMBLE_DEBUG": "TRUE"})
         debug_flag = ["--debug"]
     else:
-        env = {}
         debug_flag = []
+    if live_output is False:
+        outputs = subprocess.PIPE
+    else:
+        outputs = None
     flask = subprocess.Popen(
         [sys.executable, '-u', '-m', 'flask'] + debug_flag + ['run'],
         env=env,
-        stderr=subprocess.PIPE,
-        stdout=subprocess.PIPE,
+        stderr=outputs,
+        stdout=outputs,
     )
-
-    if flask.stderr is None or flask.stdout is None:
+    if outputs is not None and (flask.stderr is None or flask.stdout is None):
         print("❗ Can't read flask output", file=sys.stderr)
         flask.kill()
         sys.exit(1)
@@ -79,9 +82,15 @@ def backend(debug=False):
     if not started:
         print("❗ Server failed to start in time")
         flask.kill()
-        write_outputs(flask, None)
+        if outputs is not None:
+            write_outputs(flask, None)
         sys.exit(1)
     else:
+        if flask.poll() is not None:
+            print("❗ Server crashed during startup")
+            if outputs is not None:
+                write_outputs(flask, None)
+            sys.exit(1)
         print("✅ Server started")
         return flask
 

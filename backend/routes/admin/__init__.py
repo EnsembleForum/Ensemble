@@ -14,7 +14,7 @@ from backend.models.user import User
 from backend.types.auth import IAuthInfo
 from backend.types.admin import IIsFirstRun
 from backend.util import http_errors
-from backend.util.validators import assert_name_valid, assert_email_valid
+from backend.util.validators import assert_valid_str_field, assert_email_valid
 from backend.util.auth_check import do_auth_check
 
 
@@ -81,9 +81,9 @@ def init() -> IAuthInfo:
 
     # Validate data
     assert_email_valid(email)
-    assert_name_valid(name_first, "First name")
-    assert_name_valid(name_last, "Last name")
-    assert_name_valid(username, "Username")
+    assert_valid_str_field(name_first, "First name")
+    assert_valid_str_field(name_last, "Last name")
+    assert_valid_str_field(username, "Username")
 
     # Make sure we can log in with the auth system
     if not do_auth_check(

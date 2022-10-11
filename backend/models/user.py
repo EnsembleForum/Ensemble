@@ -5,7 +5,7 @@ from .tables import TUser
 from .permissions import PermissionGroup, PermissionUser
 from backend.util.exceptions import MatchNotFound
 from backend.util.db_queries import assert_id_exists, get_by_id
-from backend.util.validators import assert_email_valid, assert_name_valid
+from backend.util.validators import assert_email_valid, assert_valid_str_field
 from backend.types.identifiers import UserId
 from backend.types.user import IUserProfile, IUserBasicInfo
 from typing import cast
@@ -55,7 +55,7 @@ class User:
         ### Returns:
         * `PermissionPreset`: the preset object
         """
-        assert_name_valid(username, "Username")
+        assert_valid_str_field(username, "Username")
         if email is not None:
             assert_email_valid(email)
         val = TUser(
@@ -150,7 +150,7 @@ class User:
 
     @name_first.setter
     def name_first(self, new_name: str):
-        assert_name_valid(new_name, "First name")
+        assert_valid_str_field(new_name, "First name")
         row = self._get()
         row.name_first = new_name
         row.save().run_sync()
@@ -164,7 +164,7 @@ class User:
 
     @name_last.setter
     def name_last(self, new_name: str):
-        assert_name_valid(new_name, "Last name")
+        assert_valid_str_field(new_name, "Last name")
         row = self._get()
         row.name_last = new_name
         row.save().run_sync()
