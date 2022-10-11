@@ -3,16 +3,19 @@
 
 Runs Pytest and server
 """
-from _helpers import backend, pytest, write_outputs
+from _helpers import backend, mock_auth, pytest, write_outputs
 
-flask = backend()
+flask = backend(debug=True)
+
+auth = mock_auth()
 
 ret = pytest()
 
 flask.terminate()
+auth.terminate()
 
 write_outputs(flask, 'flask')
-if not ret:
+if ret:
     # Also write outputs to stdout
     write_outputs(flask, None)
 

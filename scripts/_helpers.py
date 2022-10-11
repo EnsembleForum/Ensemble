@@ -50,7 +50,7 @@ def backend(debug=False):
         env = {}
         debug_flag = []
     flask = subprocess.Popen(
-        [sys.executable, '-u', '-m', 'flask', 'run'] + debug_flag,
+        [sys.executable, '-u', '-m', 'flask'] + debug_flag + ['run'],
         env=env,
         stderr=subprocess.PIPE,
         stdout=subprocess.PIPE,
@@ -86,7 +86,7 @@ def backend(debug=False):
         return flask
 
 
-def mock_login():
+def mock_auth():
     login = subprocess.Popen(
         [sys.executable, '-u', '-m', 'mock.auth'],
         stderr=subprocess.PIPE,
@@ -104,22 +104,18 @@ def mock_login():
     started = False
     while time.time() - start_time < 10:
         try:
-            requests.get(
-                f'http://localhost:{os.getenv("FLASK_RUN_PORT")}/debug/echo',
-                params={'value': 'Test script startup...'},
-            )
+            requests.get('http://localhost:5812/')
         except requests.ConnectionError:
             continue
         started = True
         break
 
     if not started:
-        print("❗ Server failed to start in time")
+        print("❗ mock.auth failed to start in time")
         login.kill()
-        write_outputs(login, None)
         sys.exit(1)
     else:
-        print("✅ Server started")
+        print("✅ mock.auth started")
         return login
 
 
@@ -132,11 +128,16 @@ def pytest():
 
     # Wait for tests to finish
     print("🔨 Running tests...")
-    ret = pytest.wait()
+    try:
+        ret = pytest.wait()
+    except KeyboardInterrupt:
+        print("❗ Testing cancelled")
+        pytest.terminate()
+        write_outputs(pytest, None)
+        return False
     write_outputs(pytest, "pytest")
     if ret == 0:
         print("✅ It works!")
-        return True
     else:
         print("❌ Tests failed")
-        return False
+    return bool(ret)
