@@ -63,7 +63,7 @@ class Comment:
                     TComment.me_too: 0,
                     TComment.parent: post_id,
                     TComment.thanks: 0,
-                    TComment.timestamp: int(datetime.now().timestamp()),
+                    TComment.timestamp: datetime.now()
                 }
             )
             .save()
@@ -177,7 +177,7 @@ class Comment:
         row.save().run_sync()
 
     @property
-    def timestamp(self) -> int:
+    def timestamp(self) -> datetime:
         """
         Returns the timestamp of when the comment was created
 
@@ -212,5 +212,5 @@ class Comment:
             "reacts": self.reacts,
             "text": self.text,
             "replies": [r.id for r in self.replies],
-            "timestamp": self.timestamp,
+            "timestamp": int(self.timestamp.timestamp()),
         }

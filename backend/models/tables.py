@@ -7,7 +7,7 @@ All tables should begin with T to distinguish them from their model classes.
 """
 
 from piccolo.table import Table
-from piccolo.columns import Serial, Text, Integer, Array, ForeignKey
+from piccolo.columns import Serial, Text, Integer, Array, ForeignKey, Timestamp
 
 
 class _BaseTable(Table):
@@ -69,7 +69,7 @@ class TPost(_BaseTable):
     tags = Array(Integer())
     me_too = Integer()
     thanks = Integer()
-    timestamp = Integer()
+    timestamp = Timestamp()
 
 
 class TComment(_BaseTable):
@@ -82,7 +82,7 @@ class TComment(_BaseTable):
     text = Text()
     me_too = Integer()
     thanks = Integer()
-    timestamp = Integer()
+    timestamp = Timestamp()
 
 
 class TReply(_BaseTable):
@@ -95,7 +95,7 @@ class TReply(_BaseTable):
     text = Text()
     me_too = Integer()
     thanks = Integer()
-    timestamp = Integer()
+    timestamp = Timestamp()
 
 
 class TToken(_BaseTable):

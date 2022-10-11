@@ -25,7 +25,7 @@ class Reply:
         * `id` (`int`): reply id
 
         ### Raises:
-        * `KeyError`: reply does not exist
+        * `IdNotFound`: reply does not exist
         """
         assert_id_exists(TReply, id, "Reply")
         self.__id = id
@@ -62,7 +62,7 @@ class Reply:
                     TReply.me_too: 0,
                     TReply.parent: comment_id,
                     TReply.thanks: 0,
-                    TReply.timestamp: int(datetime.now().timestamp()),
+                    TReply.timestamp: datetime.now()
                 }
             )
             .save()
@@ -152,7 +152,7 @@ class Reply:
         row.save().run_sync()
 
     @property
-    def timestamp(self) -> int:
+    def timestamp(self) -> datetime:
         """
         Returns the timestamp of when the reply was created
 
@@ -160,15 +160,6 @@ class Reply:
         * int: timestamp
         """
         return self._get().timestamp
-
-    @timestamp.setter
-    def timestamp(self, new_timestamp: int):
-        row = self._get()
-        row.timestamp = new_timestamp
-        row.save().run_sync()
-
-    def update_timestamp(self):
-        self.timestamp = int(datetime.now().timestamp())
 
     @property
     def reacts(self) -> IReacts:
@@ -195,5 +186,5 @@ class Reply:
             "author": self.author.id,
             "reacts": self.reacts,
             "text": self.text,
-            "timestamp": self.timestamp,
+            "timestamp": int(self.timestamp.timestamp()),
         }

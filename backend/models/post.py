@@ -25,7 +25,7 @@ class Post:
         * `id` (`int`): post id
 
         ### Raises:
-        * `KeyError`: post does not exist
+        * `IdNotFound`: post does not exist
         """
         assert_id_exists(TPost, id, "Post")
         self.__id = id
@@ -66,7 +66,7 @@ class Post:
                     TPost.me_too: 0,
                     TPost.thanks: 0,
                     TPost.tags: tags,
-                    TPost.timestamp: int(datetime.now().timestamp()),
+                    TPost.timestamp: datetime.now()
                 }
             )
             .save()
@@ -228,7 +228,7 @@ class Post:
         row.save().run_sync()
 
     @property
-    def timestamp(self) -> int:
+    def timestamp(self) -> datetime:
         """
         Returns the timestamp of when the post was created
 
@@ -280,6 +280,6 @@ class Post:
             "tags": self.tags,
             "reacts": self.reacts,
             "text": self.text,
-            "timestamp": self.timestamp,
+            "timestamp": int(self.timestamp.timestamp()),
             "comments": [c.id for c in self.comments],
         }

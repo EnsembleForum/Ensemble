@@ -5,12 +5,14 @@ Tests for post view routes
 
 """
 import pytest
+from datetime import datetime, timedelta
 from typing import cast
 from backend.types.identifiers import PostId
 from backend.util import http_errors
 from tests.integration.request.browse import (
     add_reply,
     get_reply,
+    post_create,
     post_delete,
     post_edit,
     post_list,
@@ -33,16 +35,21 @@ def test_invalid_post_id(all_users, make_posts):
         post_view(token, invalid_post_id)
 
 
-def test_get_post_success(all_users, make_posts):
+def test_get_post_success(all_users):
     """
     Can we get the full details of a valid post?
     """
     token = all_users["users"][0]["token"]
-    post = post_view(token, make_posts["post1_id"])
-    assert post["heading"] == make_posts["head1"]
-    assert post["text"] == make_posts["text1"]
+    heading = "heading"
+    text = "text"
+    post_time = datetime.now()
+    post_id = post_create(token, "heading", "text", [])["post_id"]
+    post = post_view(token, post_id)
+    assert post["heading"] == heading
+    assert post["text"] == text
     assert post["comments"] == []
-    assert isinstance(post["timestamp"], int)
+    assert datetime.fromtimestamp(
+        float(post["timestamp"])) - post_time < timedelta(seconds=5)
     assert post["tags"] == []
     assert post["reacts"]["me_too"] == 0
     assert post["reacts"]["thanks"] == 0
