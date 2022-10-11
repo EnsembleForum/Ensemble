@@ -5,7 +5,7 @@ Run the server
 """
 from _helpers import backend
 
-flask = backend()
+flask = backend(debug=True)
 
 try:
     exit(flask.wait())
