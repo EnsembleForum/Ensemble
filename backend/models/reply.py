@@ -5,7 +5,7 @@ from backend.types.reply import IReplyFullInfo
 from .tables import TUser, TComment, TReply
 from .user import User
 from backend.util.db_queries import assert_id_exists, get_by_id
-from backend.util.validators import assert_text_valid
+from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import CommentId, ReplyId
 from backend.types.post import IReacts
 from typing import cast
@@ -52,7 +52,7 @@ class Reply:
         """
         assert_id_exists(TUser, author.id)
         assert_id_exists(TComment, comment_id, "Comment")
-        assert_text_valid(text, "reply")
+        assert_valid_str_field(text, "reply")
 
         val = (
             TReply(
@@ -104,7 +104,7 @@ class Reply:
 
     @text.setter
     def text(self, new_text: str):
-        assert_text_valid(new_text, "reply")
+        assert_valid_str_field(new_text, "reply")
         row = self._get()
         row.text = new_text
         row.save().run_sync()

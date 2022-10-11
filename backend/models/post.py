@@ -5,7 +5,7 @@ from .tables import TComment, TUser, TPost
 from .user import User
 from .comment import Comment
 from backend.util.db_queries import assert_id_exists, get_by_id
-from backend.util.validators import assert_heading_valid, assert_text_valid
+from backend.util.validators import assert_valid_str_field, assert_valid_str_field
 from backend.types.identifiers import PostId
 from backend.types.post import IPostBasicInfo, IPostFullInfo, IReacts
 from typing import cast
@@ -54,8 +54,8 @@ class Post:
         * `Post`: the post object
         """
         assert_id_exists(TUser, author.id)
-        assert_heading_valid(heading)
-        assert_text_valid(text, "post")
+        assert_valid_str_field(heading, "heading")
+        assert_valid_str_field(text, "post")
 
         val = (
             TPost(
@@ -137,7 +137,7 @@ class Post:
 
     @heading.setter
     def heading(self, new_heading: str):
-        assert_heading_valid(new_heading)
+        assert_valid_str_field(new_heading, "new heading")
         row = self._get()
         row.heading = new_heading
         row.save().run_sync()
@@ -151,7 +151,7 @@ class Post:
 
     @text.setter
     def text(self, new_text: str):
-        assert_text_valid(new_text, "post")
+        assert_valid_str_field(new_text, "post")
         row = self._get()
         row.text = new_text
         row.save().run_sync()

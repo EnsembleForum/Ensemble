@@ -6,7 +6,7 @@ from .tables import TReply, TUser, TPost, TComment
 from .user import User
 from .reply import Reply
 from backend.util.db_queries import assert_id_exists, get_by_id
-from backend.util.validators import assert_text_valid
+from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId, CommentId
 from backend.types.post import IReacts
 from typing import cast
@@ -53,7 +53,7 @@ class Comment:
         """
         assert_id_exists(TUser, author.id)
         assert_id_exists(TPost, post_id, "Post")
-        assert_text_valid(text, "comment")
+        assert_valid_str_field(text, "comment")
 
         val = (
             TComment(
@@ -121,7 +121,7 @@ class Comment:
 
     @text.setter
     def text(self, new_text: str):
-        assert_text_valid(new_text, "comment")
+        assert_valid_str_field(new_text, "comment")
         row = self._get()
         row.text = new_text
         row.save().run_sync()
