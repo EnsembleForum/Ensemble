@@ -5,7 +5,7 @@ Contains helper code for running database queries
 """
 from backend.models.tables import _BaseTable
 from typing import TypeVar, cast
-from . import http_errors
+from .exceptions import IdNotFound
 
 
 T = TypeVar('T', bound=_BaseTable)
@@ -36,7 +36,7 @@ def assert_id_exists(table: type[_BaseTable], id: int, type: str = "") -> None:
     * `id` (`int`): id to search for
     """
     if not id_exists(table, id):
-        raise http_errors.BadRequest(f"{type}Id {id} not found")
+        raise IdNotFound(f"{type}Id {id} not found")
 
 
 def get_by_id(table: type[T], id: int) -> T:
@@ -58,5 +58,5 @@ def get_by_id(table: type[T], id: int) -> T:
     """
     result = table.objects().where(table.id == id).first().run_sync()
     if result is None:
-        raise http_errors.BadRequest(f"id {id} not found in table {table}")
+        raise IdNotFound(f"id {id} not found in table {table}")
     return cast(T, result)
