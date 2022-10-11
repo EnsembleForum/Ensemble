@@ -3,6 +3,10 @@
 
 Tests for browse routes
 
+* browse/post_list returns an empty list when there are no posts
+* browse/post_list returns the correct list containing >= 1 posts
+* browse/create succeeds creating a post when inputs are valid
+* browse/create fails when heading/text are empty
 """
 import pytest
 from backend.util import http_errors
