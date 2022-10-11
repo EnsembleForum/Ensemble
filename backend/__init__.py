@@ -7,10 +7,12 @@ This is the main entrypoint to backend server.
 """
 import os
 from flask import Flask
+from flask_cors import CORS  # type: ignore
 from .routes import debug, admin, auth, user
 from .util import db_status
 
 app = Flask(__name__)
+CORS(app)
 
 # Initialise the database
 db_status.init()
