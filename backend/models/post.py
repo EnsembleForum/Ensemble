@@ -1,7 +1,7 @@
 """
 # Backend / Models / Post
 """
-from .tables import TComment, TUser, TPost
+from .tables import TComment, TPost
 from .user import User
 from .comment import Comment
 from backend.util.db_queries import assert_id_exists, get_by_id
