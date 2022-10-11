@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Ensemble backend",
+            "name": "Backend",
             "type": "python",
             "request": "launch",
             "module": "flask",
@@ -21,6 +21,11 @@
             ],
             "jinja": true,
             "justMyCode": true,
+            "presentation": {
+                "hidden": false,
+                "group": "Backend",
+                "order": 2
+            }
         },
         {
             "name": "Mock auth",
@@ -28,6 +33,23 @@
             "request": "launch",
             "module": "mock.auth",
             "justMyCode": true,
+            "presentation": {
+                "hidden": true,
+                "group": "Backend",
+                "order": 3
+            }
         },
+    ],
+    "compounds": [
+        {
+            "name": "Backend & mock.auth",
+            "configurations": ["Backend", "Mock auth"],
+            "stopAll": true,
+            "presentation": {
+                "hidden": false,
+                "group": "Backend",
+                "order": 1
+            }
+        }
     ]
 }

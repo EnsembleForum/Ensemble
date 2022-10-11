@@ -9,19 +9,16 @@ Code for running the backend of the program
 
 #### In VS Code
 
-1. Start the mock auth server by choosing the "Mock auth" option in the run and
-   debug panel.
+1. Start the server by choosing the "Backend & mock.auth" option in the Run and
+   Debug panel.
 
-2. Also, start the backend by choosing the "Ensemble backend" option in the run
-   and debug panel.
-
-3. Enjoy the server.
+3. Enjoy!
 
 #### Outside of VS Code
 
-With additional debugging tools including the mock auth server (recommended):
+With additional debugging tools including the mock auth server:
 
-* `python scripts/run.py`
+* `python scripts/run_backend.py`
 
 Or without (you won't have access to `clear` or `echo` routes, or the mock
 login server)
@@ -32,7 +29,7 @@ login server)
 
 You can run all the tests using
 
-`python scripts/pytest.py`
+`python scripts/pytest_backend.py`
 
 This will send all the output to files in the `output/` directory.
 
