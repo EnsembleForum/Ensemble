@@ -1,6 +1,7 @@
 from typing import cast
 from ..helpers import post, get
 from ..consts import URL
+from backend.types.auth import JWT
 from backend.types.user import (
     IUserRegisterInfo,
     IUserIdList,
@@ -12,6 +13,7 @@ URL = f"{URL}/admin/users"
 
 
 def register(
+    token: JWT,
     users: list[IUserRegisterInfo],
     group_id: PermissionGroupId
 ) -> IUserIdList:
@@ -24,9 +26,11 @@ def register(
       to.
 
     ## Returns:
-    * `IUserIdList`: list of new user IDs
+    * `user_ids`: list of
+          * `int`
     """
     return cast(IUserIdList, post(
+        token,
         f'{URL}/register',
         {
             'users': users,
@@ -35,14 +39,19 @@ def register(
     ))
 
 
-def all() -> IUserBasicInfoList:
+def all(token: JWT) -> IUserBasicInfoList:
     """
     Returns a list of basic info about all forum users
 
     ### Returns:
-    * `IUserBasicInfoList`: list of user info
+    * `users`: `list`, containing dictionaries of:
+          * `name_first`: `str`
+          * `name_last`: `str`
+          * `username`: `str`
+          * `user_id`: `int`
     """
     return cast(IUserBasicInfoList, get(
+        token,
         f'{URL}/all',
         {}
     ))

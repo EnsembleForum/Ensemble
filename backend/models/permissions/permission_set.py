@@ -10,6 +10,7 @@ from typing import Optional
 from .permission import Permission
 from ..tables import TPermissionGroup, TPermissionUser
 from backend.util.db_queries import assert_id_exists, get_by_id
+from backend.util.exceptions import PermissionError
 from backend.types.identifiers import UserPermissionId, PermissionGroupId
 from abc import abstractmethod
 from typing import cast
@@ -48,6 +49,20 @@ class PermissionSet:
         ### Returns:
         * `bool`: whether the action is allowed
         """
+
+    def assert_can(self, action: Permission) -> None:
+        """
+        Ensures that a user can perform an action.
+
+        If they cannot, a PermissionError is raised
+
+        ### Args:
+        * `action` (`Permission`): permission to check
+        """
+        if not self.can(action):
+            raise PermissionError(
+                f"You don't have the {action.name} permission"
+            )
 
     @abstractmethod
     def update_allowed(self, actions: dict[Permission, Optional[bool]]):

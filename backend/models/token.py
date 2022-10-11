@@ -7,7 +7,7 @@ from .user import User
 from backend.types.identifiers import TokenId
 from backend.types.auth import JWT
 from backend.util.db_queries import assert_id_exists, get_by_id
-from backend.util import http_errors
+from backend.util.exceptions import AuthenticationError, IdNotFound
 from typing import cast
 
 
@@ -26,7 +26,10 @@ class Token:
     """
 
     def __init__(self, id: TokenId) -> None:
-        assert_id_exists(TToken, id)
+        try:
+            assert_id_exists(TToken, id, "Token")
+        except IdNotFound:
+            raise AuthenticationError("Token invalidated")
         self.__id = id
 
     def _get(self) -> TToken:
@@ -60,15 +63,25 @@ class Token:
         ### Args:
         * `jwt` (`str`): JWT string
 
+        ### Raises:
+        * `Forbidden`: when the token fails to decode or doesn't match up
+          correctly.
+
         ### Returns:
         * `Token`: token object
         """
-        decoded = jwt.decode(token, SECRET, algorithms=["HS256"])
+        try:
+            decoded = jwt.decode(token, SECRET, algorithms=["HS256"])
+        except jwt.DecodeError:
+            raise AuthenticationError(
+                "The provided token failed to decode. This could mean that it "
+                "has been tampered with, or is no-longer valid."
+            )
         user_id = decoded["user_id"]
         token_id = decoded["token_id"]
         t = Token(token_id)
         if t.user.id != user_id:
-            raise http_errors.Forbidden(
+            raise AuthenticationError(
                 "The user associated with this token doesn't "
                 "match the information stored on the server."
             )

@@ -7,10 +7,12 @@ This is the main entrypoint to backend server.
 """
 import os
 from flask import Flask
-from .routes import debug, admin, auth
+from flask_cors import CORS  # type: ignore
+from .routes import debug, admin, auth, user
 from .util import db_status
 
 app = Flask(__name__)
+CORS(app)
 
 # Initialise the database
 db_status.init()
@@ -21,6 +23,7 @@ if os.getenv('ENSEMBLE_DEBUG') is not None:
 
 app.register_blueprint(admin, url_prefix='/admin')
 app.register_blueprint(auth, url_prefix='/auth')
+app.register_blueprint(user, url_prefix='/user')
 
 
 # Main routes

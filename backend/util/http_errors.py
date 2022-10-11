@@ -1,7 +1,12 @@
 """
 # Backend / Util / HTTP Errors
 
-Definitions for HTTP exceptions used by the server
+Definitions for HTTP exceptions used by the server.
+
+Note that these should only be raised directly if we want to ensure the error
+is sent back to the user. Code in the `models` module should not raise these
+directly, but instead should raise specific exceptions defined in
+`backend.util.exceptions`.
 
 ## Usage
 
