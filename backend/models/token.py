@@ -7,7 +7,7 @@ from .user import User
 from backend.types.identifiers import TokenId
 from backend.types.auth import JWT
 from backend.util.db_queries import assert_id_exists, get_by_id
-from backend.util.exceptions import AuthenticationError
+from backend.util.exceptions import AuthenticationError, IdNotFound
 from typing import cast
 
 
@@ -28,8 +28,8 @@ class Token:
     def __init__(self, id: TokenId) -> None:
         try:
             assert_id_exists(TToken, id, "Token")
-        except http_errors.BadRequest:
-            raise http_errors.Forbidden("Token invalidated")
+        except IdNotFound:
+            raise AuthenticationError("Token invalidated")
         self.__id = id
 
     def _get(self) -> TToken:

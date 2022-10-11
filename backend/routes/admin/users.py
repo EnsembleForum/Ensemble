@@ -34,9 +34,7 @@ def register(user: User, *_) -> IUserIdList:
     ## TODO:
     * Improve error messages to be more helpful to user
     """
-    # Check that the user has permission to create users
-    if not user.permissions.can(Permission.AddUsers):
-        raise http_errors.Forbidden("You don't have permission to add users")
+    user.permissions.assert_can(Permission.AddUsers)
 
     data = json.loads(request.data)
     users: list[IUserRegisterInfo] = data["users"]
@@ -104,11 +102,7 @@ def all(user: User, *_) -> IUserBasicInfoList:
           * `username`: `str`
           * `user_id`: `int`
     """
-    # Check that the user has permission
-    if not user.permissions.can(Permission.ViewAllUsers):
-        raise http_errors.Forbidden(
-            "You don't have permission to view all users"
-        )
+    user.permissions.assert_can(Permission.ViewAllUsers)
     return {
         "users": list(map(lambda u: u.basic_info(), User.all()))
     }
