@@ -5,7 +5,7 @@ from .tables import TComment, TUser, TPost
 from .user import User
 from .comment import Comment
 from backend.util.db_queries import assert_id_exists, get_by_id
-from backend.util.validators import assert_valid_str_field, assert_valid_str_field
+from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId
 from backend.types.post import IPostBasicInfo, IPostFullInfo, IReacts
 from typing import cast
