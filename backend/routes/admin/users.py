@@ -3,7 +3,6 @@ from flask import Blueprint, request
 from backend.types.user import (
     IUserIdList,
     IUserBasicInfoList,
-    IUserProfile,
     IUserRegisterInfo,
 )
 from backend.types.identifiers import PermissionGroupId
@@ -11,7 +10,7 @@ from backend.util.validators import assert_email_valid, assert_name_valid
 from backend.util import http_errors
 from backend.util.tokens import uses_token
 from backend.models.user import User
-from backend.models.permissions import PermissionGroup
+from backend.models.permissions import PermissionGroup, Permission
 
 
 users = Blueprint('users', 'users')
@@ -19,7 +18,7 @@ users = Blueprint('users', 'users')
 
 @users.post('/register')
 @uses_token
-def register(*_) -> IUserIdList:
+def register(user: User, *_) -> IUserIdList:
     """
     Register a collection of users
 
@@ -29,11 +28,14 @@ def register(*_) -> IUserIdList:
       to.
 
     ## Returns:
-    * `IUserIdList`: list of new user IDs
+    * `user_ids`: list of
+          * `int`
 
     ## TODO:
     * Improve error messages to be more helpful to user
     """
+    user.permissions.assert_can(Permission.AddUsers)
+
     data = json.loads(request.data)
     users: list[IUserRegisterInfo] = data["users"]
     group: PermissionGroupId = data["group_id"]
@@ -89,27 +91,18 @@ def register(*_) -> IUserIdList:
 
 @users.get('/all')
 @uses_token
-def all(*_) -> IUserBasicInfoList:
+def all(user: User, *_) -> IUserBasicInfoList:
     """
     Returns a list of basic info about all forum users
 
     ### Returns:
-    * `IUserBasicInfoList`: list of user info
+    * `users`: `list`, containing dictionaries of:
+          * `name_first`: `str`
+          * `name_last`: `str`
+          * `username`: `str`
+          * `user_id`: `int`
     """
+    user.permissions.assert_can(Permission.ViewAllUsers)
     return {
         "users": list(map(lambda u: u.basic_info(), User.all()))
     }
-
-
-@users.get('/profile')
-@uses_token
-def profile(*_) -> IUserProfile:
-    """
-    Returns detailed info about a user's profile
-
-    ### Returns:
-    * `IUserProfile`: list of user info
-    """
-    data = json.loads(request.data)
-    user_id = data["user_id"]
-    return User(user_id).profile()

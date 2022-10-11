@@ -10,8 +10,10 @@ __all__ = [
     'debug',
     'admin',
     'auth',
+    'user',
 ]
 
 from .debug import debug
 from .admin import admin
 from .auth import auth
+from .user import user

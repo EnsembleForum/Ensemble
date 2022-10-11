@@ -13,12 +13,12 @@ Tests for bulk registering users
 * Existing duplicate usernames (none get registered)
 * Existing duplicate emails (none get registered)
 * Invalid names (empty)
-* Don't have permission to create users  # TODO
+* Don't have permission to create users
 """
 import pytest
 from backend.util import http_errors
 from tests.integration.request.admin import users
-from tests.integration.conftest import IBasicServerSetup
+from tests.integration.conftest import IBasicServerSetup, IAllUsers
 
 
 def test_register_single_user(basic_server_setup: IBasicServerSetup):
@@ -263,8 +263,8 @@ def test_invalid_name_first(basic_server_setup: IBasicServerSetup):
         users.register(
             basic_server_setup["token"],
             [{
-                "name_first": "Henry",
-                "name_last": "",
+                "name_first": "",
+                "name_last": "VIII",
                 "username": "henry8",
                 "email": "henry8@example.com",
             }],
@@ -281,8 +281,8 @@ def test_invalid_name_last(basic_server_setup: IBasicServerSetup):
         users.register(
             basic_server_setup["token"],
             [{
-                "name_first": "",
-                "name_last": "VIII",
+                "name_first": "Henry",
+                "name_last": "",
                 "username": "henry8",
                 "email": "henry8@example.com",
             }],
@@ -291,3 +291,18 @@ def test_invalid_name_last(basic_server_setup: IBasicServerSetup):
     # Only the main user is registered
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 1
+
+
+def test_no_permission(all_users: IAllUsers):
+    """Do we get an error if we don't have permission to register a user?"""
+    with pytest.raises(http_errors.Forbidden):
+        users.register(
+            all_users["mods"][0]["token"],
+            [{
+                "name_first": "Henry",
+                "name_last": "VIII",
+                "username": "henry8",
+                "email": "henry8@example.com",
+            }],
+            all_users["permissions"]["admin"],
+        )

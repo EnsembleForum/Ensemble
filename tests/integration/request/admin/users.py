@@ -26,7 +26,8 @@ def register(
       to.
 
     ## Returns:
-    * `IUserIdList`: list of new user IDs
+    * `user_ids`: list of
+          * `int`
     """
     return cast(IUserIdList, post(
         token,
@@ -43,7 +44,11 @@ def all(token: JWT) -> IUserBasicInfoList:
     Returns a list of basic info about all forum users
 
     ### Returns:
-    * `IUserBasicInfoList`: list of user info
+    * `users`: `list`, containing dictionaries of:
+          * `name_first`: `str`
+          * `name_last`: `str`
+          * `username`: `str`
+          * `user_id`: `int`
     """
     return cast(IUserBasicInfoList, get(
         token,
