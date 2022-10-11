@@ -29,3 +29,11 @@ def login():
     except KeyError:
         pass
     return "false"
+
+
+@app.get("/")
+def home():
+    """
+    Main page
+    """
+    return "mock.auth is up and running!"
