@@ -2,7 +2,7 @@
 # Backend / Models / Comment
 """
 from backend.types.comment import ICommentFullInfo
-from .tables import TReply, TUser, TComment
+from .tables import TReply, TComment, TPost
 from .user import User
 from .reply import Reply
 from backend.util.db_queries import assert_id_exists, get_by_id
@@ -51,7 +51,7 @@ class Comment:
         ### Returns:
         * `Comment`: the comment object
         """
-        assert_id_exists(TUser, author.id)
+        assert_id_exists(TPost, post_id, "Post")
         assert_valid_str_field(text, "comment")
 
         val = (

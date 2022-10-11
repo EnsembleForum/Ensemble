@@ -70,3 +70,16 @@ def test_empty_text_reply(all_users, make_posts):
     comment_id = add_comment(token, post_id, "first")["comment_id"]
     with pytest.raises(http_errors.BadRequest):
         add_reply(token, comment_id, "")
+
+
+def test_invalid_comment_reply(all_users, make_posts):
+    """
+    When trying to reply under a comment whose comment_id does not exist,
+    is a 400 error raised?
+    """
+    token = all_users["users"][0]["token"]
+    post_id = make_posts["post1_id"]
+    comment_id = add_comment(token, post_id, "first")["comment_id"]
+    invalid_comment_id = cast(CommentId, comment_id+1)
+    with pytest.raises(http_errors.BadRequest):
+        add_reply(token, invalid_comment_id, "hello")

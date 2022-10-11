@@ -53,7 +53,6 @@ class Post:
         ### Returns:
         * `Post`: the post object
         """
-        assert_id_exists(TUser, author.id)
         assert_valid_str_field(heading, "heading")
         assert_valid_str_field(text, "post")
 

@@ -2,7 +2,7 @@
 # Backend / Models / Reply
 """
 from backend.types.reply import IReplyFullInfo
-from .tables import TUser, TReply
+from .tables import TComment, TReply
 from .user import User
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
@@ -45,12 +45,12 @@ class Reply:
 
         * `text` (`str`): contents of reply
 
-        * `comment` (`CommentId`): comment the reply belongs to
+        * `comment_id` (`CommentId`): comment the reply belongs to
 
         ### Returns:
         * `Reply`: the Reply object
         """
-        assert_id_exists(TUser, author.id)
+        assert_id_exists(TComment, comment_id, "Comment")
         assert_valid_str_field(text, "reply")
 
         val = (

@@ -28,6 +28,10 @@ def test_empty_text_comment(all_users, make_posts):
 
 
 def test_invalid_post_comment(all_users, make_posts):
+    """
+    When trying to comment under a post whose post_id does not exist,
+    is a 400 error raised?
+    """
     token = all_users["users"][0]["token"]
     invalid_post_id = (
         max(make_posts["post1_id"], make_posts["post2_id"]) + 1
