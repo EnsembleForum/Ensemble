@@ -1,7 +1,7 @@
 """
-# Scripts / Run tests
+# Scripts / Check start
 
-Runs Pytest and server
+Check that the server starts correctly, then exits
 """
 from _helpers import backend
 
