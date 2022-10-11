@@ -7,11 +7,12 @@ Code for running the backend of the program
 
 ### For debugging
 
-With additional debugging tools (recommended):
+With additional debugging tools including the mock auth server (recommended):
 
-`ENSEMBLE_DEBUG=TRUE flask --debug run`
+`python scripts/run.py`
 
-Or without (you won't have access to `clear` or `echo` routes)
+Or without (you won't have access to `clear` or `echo` routes, or the mock
+login server)
 
 `flask run`
 
@@ -19,7 +20,7 @@ Or without (you won't have access to `clear` or `echo` routes)
 
 You can run all the tests using
 
-`python scripts/run_tests.py`
+`python scripts/test.py`
 
 This will send all the output to files in the `output/` directory.
 

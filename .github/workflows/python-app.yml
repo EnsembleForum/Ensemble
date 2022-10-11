@@ -28,7 +28,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Check server startup
       run: |
-        python scripts/check_server.py
+        python scripts/test_startup.py
     - name: Upload outputs
       uses: actions/upload-artifact@v3
       with:
@@ -58,7 +58,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
       run: |
-        python scripts/run_tests.py
+        python scripts/test.py
     - name: Upload outputs
       uses: actions/upload-artifact@v3
       with:
