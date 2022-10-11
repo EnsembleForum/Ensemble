@@ -2,7 +2,7 @@
 # Backend / Models / Reply
 """
 from backend.types.reply import IReplyFullInfo
-from .tables import TUser, TComment, TReply
+from .tables import TUser, TReply
 from .user import User
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
@@ -45,13 +45,12 @@ class Reply:
 
         * `text` (`str`): contents of reply
 
-        * `comment_id` (`CommentId`): comment the reply belongs to
+        * `comment` (`CommentId`): comment the reply belongs to
 
         ### Returns:
         * `Reply`: the Reply object
         """
         assert_id_exists(TUser, author.id)
-        assert_id_exists(TComment, comment_id, "Comment")
         assert_valid_str_field(text, "reply")
 
         val = (
@@ -129,10 +128,14 @@ class Reply:
         """
         return self._get().me_too
 
-    @me_too.setter
-    def me_too(self, new_me_too: int):
+    def me_too_inc(self):
         row = self._get()
-        row.me_too = new_me_too
+        row.me_too += 1
+        row.save().run_sync()
+
+    def me_too_dec(self):
+        row = self._get()
+        row.me_too -= 1
         row.save().run_sync()
 
     @property
@@ -145,10 +148,14 @@ class Reply:
         """
         return self._get().thanks
 
-    @thanks.setter
-    def thanks(self, new_thanks: int):
+    def thanks_inc(self):
         row = self._get()
-        row.thanks = new_thanks
+        row.thanks += 1
+        row.save().run_sync()
+
+    def thanks_dec(self):
+        row = self._get()
+        row.thanks -= 1
         row.save().run_sync()
 
     @property

@@ -19,7 +19,7 @@ def assert_email_valid(email: str):
         raise InvalidInput(f"Email {email} is not valid")
 
 
-def assert_valid_str_field(str_field: str, field_name: str = "String field"):
+def assert_valid_str_field(str_field: str, field_name: str):
     """
     If the given string field is not valid (0 chars), a BadRequest is raised
     """

@@ -2,12 +2,12 @@
 # Backend / Models / Comment
 """
 from backend.types.comment import ICommentFullInfo
-from .tables import TReply, TUser, TPost, TComment
+from .tables import TReply, TUser, TComment
 from .user import User
 from .reply import Reply
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
-from backend.types.identifiers import PostId, CommentId
+from backend.types.identifiers import CommentId, PostId
 from backend.types.post import IReacts
 from typing import cast
 from datetime import datetime
@@ -52,7 +52,6 @@ class Comment:
         * `Comment`: the comment object
         """
         assert_id_exists(TUser, author.id)
-        assert_id_exists(TPost, post_id, "Post")
         assert_valid_str_field(text, "comment")
 
         val = (
@@ -146,12 +145,12 @@ class Comment:
         """
         return self._get().me_too
 
-    def increment_me_too(self):
+    def me_too_inc(self):
         row = self._get()
         row.me_too += 1
         row.save().run_sync()
 
-    def decrement_me_too(self):
+    def me_too_dec(self):
         row = self._get()
         row.me_too -= 1
         row.save().run_sync()
@@ -166,12 +165,12 @@ class Comment:
         """
         return self._get().thanks
 
-    def increment_thanks(self):
+    def thanks_inc(self):
         row = self._get()
         row.thanks += 1
         row.save().run_sync()
 
-    def decrement_thanks(self):
+    def thanks_dec(self):
         row = self._get()
         row.thanks -= 1
         row.save().run_sync()

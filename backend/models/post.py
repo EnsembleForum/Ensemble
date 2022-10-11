@@ -197,12 +197,12 @@ class Post:
         """
         return self._get().me_too
 
-    def increment_me_too(self):
+    def me_too_inc(self):
         row = self._get()
         row.me_too += 1
         row.save().run_sync()
 
-    def decrement_me_too(self):
+    def me_too_dec(self):
         row = self._get()
         row.me_too -= 1
         row.save().run_sync()
@@ -217,12 +217,12 @@ class Post:
         """
         return self._get().thanks
 
-    def increment_thanks(self):
+    def thanks_inc(self):
         row = self._get()
         row.thanks += 1
         row.save().run_sync()
 
-    def decrement_thanks(self):
+    def thanks_dec(self):
         row = self._get()
         row.thanks -= 1
         row.save().run_sync()
