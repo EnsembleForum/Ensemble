@@ -2,14 +2,16 @@
 # Backend / Models / Reply
 """
 from backend.types.reply import IReplyFullInfo
-from .tables import TComment, TReply
+from .tables import TReply
 from .user import User
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
-from backend.types.identifiers import CommentId, ReplyId
+from backend.types.identifiers import ReplyId
 from backend.types.post import IReacts
-from typing import cast
+from typing import cast, TYPE_CHECKING
 from datetime import datetime
+if TYPE_CHECKING:
+    from .comment import Comment
 
 
 class Reply:
@@ -34,23 +36,22 @@ class Reply:
     def create(
         cls,
         author: User,
-        comment_id: CommentId,
+        comment: 'Comment',
         text: str,
     ) -> "Reply":
         """
         Create a new reply
 
         ### Args:
-        * `author` (`int`): user id of author
+        * `author` (`User`): user id of author
+
+        * `comment_id` (`Comment`): comment the reply belongs to
 
         * `text` (`str`): contents of reply
-
-        * `comment_id` (`CommentId`): comment the reply belongs to
 
         ### Returns:
         * `Reply`: the Reply object
         """
-        assert_id_exists(TComment, comment_id, "Comment")
         assert_valid_str_field(text, "reply")
 
         val = (
@@ -59,7 +60,7 @@ class Reply:
                     TReply.author: author.id,
                     TReply.text: text,
                     TReply.me_too: 0,
-                    TReply.parent: comment_id,
+                    TReply.parent: comment.id,
                     TReply.thanks: 0,
                     TReply.timestamp: datetime.now()
                 }
@@ -117,6 +118,17 @@ class Reply:
         * `User`: user
         """
         return User(self._get().author)
+
+    @property
+    def parent(self) -> "Comment":
+        """
+        The post this comment belongs to
+
+        ### Returns:
+        * `Post`: post
+        """
+        from .comment import Comment
+        return Comment(self._get().parent)
 
     @property
     def me_too(self) -> int:

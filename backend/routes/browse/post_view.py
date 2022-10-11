@@ -112,8 +112,8 @@ def comment(user: User, *_) -> ICommentId:
     """
     data = json.loads(request.data)
     text: str = data["text"]
-    post_id: PostId = data["post_id"]
+    post = Post(data["post_id"])
 
-    comment_id: CommentId = Comment.create(user, post_id, text).id
+    comment_id: CommentId = Comment.create(user, post, text).id
 
     return {"comment_id": comment_id}

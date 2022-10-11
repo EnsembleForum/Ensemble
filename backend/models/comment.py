@@ -2,15 +2,17 @@
 # Backend / Models / Comment
 """
 from backend.types.comment import ICommentFullInfo
-from .tables import TReply, TComment, TPost
+from .tables import TReply, TComment
 from .user import User
 from .reply import Reply
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
-from backend.types.identifiers import CommentId, PostId
+from backend.types.identifiers import CommentId
 from backend.types.post import IReacts
-from typing import cast
+from typing import cast, TYPE_CHECKING
 from datetime import datetime
+if TYPE_CHECKING:
+    from backend.models.post import Post
 
 
 class Comment:
@@ -35,23 +37,22 @@ class Comment:
     def create(
         cls,
         author: User,
-        post_id: PostId,
+        post: 'Post',
         text: str,
     ) -> "Comment":
         """
         Create a new comment
 
         ### Args:
-        * `author` (`int`): user id of author
+        * `author` (`User`): creator of the comment
+
+        * `post` (`Post`): post the comment belongs to
 
         * `text` (`str`): contents of comment
-
-        * `post_id` (`PostId`): PostId of the post the comment belongs to
 
         ### Returns:
         * `Comment`: the comment object
         """
-        assert_id_exists(TPost, post_id, "Post")
         assert_valid_str_field(text, "comment")
 
         val = (
@@ -60,7 +61,7 @@ class Comment:
                     TComment.author: author.id,
                     TComment.text: text,
                     TComment.me_too: 0,
-                    TComment.parent: post_id,
+                    TComment.parent: post.id,
                     TComment.thanks: 0,
                     TComment.timestamp: datetime.now()
                 }
@@ -134,6 +135,17 @@ class Comment:
         * `User`: user
         """
         return User(self._get().author)
+
+    @property
+    def parent(self) -> "Post":
+        """
+        The post this comment belongs to
+
+        ### Returns:
+        * `Post`: post
+        """
+        from .post import Post
+        return Post(self._get().parent)
 
     @property
     def me_too(self) -> int:
