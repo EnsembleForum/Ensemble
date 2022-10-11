@@ -3,12 +3,15 @@
 
 Run the server
 """
-from _helpers import backend
+from _helpers import backend, mock_auth
 
-flask = backend(debug=True)
+auth = mock_auth()
+flask = backend(debug=True, live_output=True)
 
 try:
-    exit(flask.wait())
+    flask.wait()
 except KeyboardInterrupt:
-    flask.terminate()
-    print("Goodbye!")
+    pass
+flask.terminate()
+auth.terminate()
+print("Goodbye!")

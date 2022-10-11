@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Flask",
+            "name": "Ensemble backend",
             "type": "python",
             "request": "launch",
             "module": "flask",
@@ -20,7 +20,14 @@
                 "--no-reload"
             ],
             "jinja": true,
-            "justMyCode": true
-        }
+            "justMyCode": true,
+        },
+        {
+            "name": "Mock auth",
+            "type": "python",
+            "request": "launch",
+            "module": "mock.auth",
+            "justMyCode": true,
+        },
     ]
 }

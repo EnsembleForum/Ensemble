@@ -1,7 +1,7 @@
 """
-# Scripts / Run tests
+# Scripts / Test
 
-Runs Pytest and server
+Runs pytest on the backend of the server
 """
 from _helpers import backend, mock_auth, pytest, write_outputs
 
