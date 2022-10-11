@@ -3,7 +3,7 @@
 """
 from .tables import TUser
 from .permissions import PermissionGroup, PermissionUser
-from backend.util import http_errors
+from backend.util.exceptions import MatchNotFound
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_email_valid, assert_name_valid
 from backend.types.identifiers import UserId
@@ -23,7 +23,7 @@ class User:
         * `id` (`int`): user id
 
         ### Raises:
-        * `KeyError`: user does not exist
+        * `BadRequest`: user does not exist
         """
         assert_id_exists(TUser, id)
         self.__id = id
@@ -99,8 +99,7 @@ class User:
             .first()\
             .run_sync()
         if result is None:
-            raise http_errors.BadRequest(
-                f"User with username {username} not found")
+            raise MatchNotFound(f"User with username {username} not found")
         return User(result.id)
 
     @classmethod
@@ -119,8 +118,7 @@ class User:
             .first()\
             .run_sync()
         if result is None:
-            raise http_errors.BadRequest(
-                f"User with email {email} not found")
+            raise MatchNotFound(f"User with email {email} not found")
         return User(result.id)
 
     def _get(self) -> TUser:

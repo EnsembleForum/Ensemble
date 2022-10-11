@@ -36,6 +36,9 @@
     * **is_first_run** (returns whether the server is empty)
     * **init** (provide initial configuration for the empty server)
 
+* user
+    * **profile** (get a user's detailed profile info)
+
 * browse
     * **post_list** (get list of posts, incl. basic details of all)
         * **filter** (filter posts & search)

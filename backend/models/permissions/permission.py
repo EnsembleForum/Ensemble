@@ -52,7 +52,7 @@ class Permission(Enum):
     """User can create other user accounts"""
     RemoveUsers = 42
     """User can remove other user accounts"""
-    ViewUsers = 43
+    ViewAllUsers = 43
     """User can view the list of users"""
 
     # Administration

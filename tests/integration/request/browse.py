@@ -118,7 +118,7 @@ def post_edit(
     )
 
 
-def post_delete(token: JWT, post_id: PostId) -> IPostId:
+def post_delete(token: JWT, post_id: PostId) -> dict:
     """
     Deletes a post
 
@@ -129,15 +129,10 @@ def post_delete(token: JWT, post_id: PostId) -> IPostId:
     ## Returns:
     * `IPostId`: identifier of the post
     """
-    return cast(
-        IPostId,
-        put(token,
-            f"{URL}/post_view/self_delete",
-            {
-                "post_id": post_id,
-            },
-            ),
-    )
+    return put(token,
+               f"{URL}/post_view/self_delete",
+               {"post_id": post_id, }
+               )
 
 
 def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
@@ -222,7 +217,7 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     * `IReplyFullInfo`: Dictionary containing full info a reply
     """
     return cast(
-        ICommentFullInfo,
+        IReplyFullInfo,
         get(token,
             f"{URL}/reply_view",
             {

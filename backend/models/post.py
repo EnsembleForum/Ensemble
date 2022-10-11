@@ -7,7 +7,7 @@ from .comment import Comment
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_heading_valid, assert_text_valid
 from backend.types.identifiers import PostId
-from backend.types.post import IReacts
+from backend.types.post import IPostBasicInfo, IPostFullInfo, IReacts
 from typing import cast
 from datetime import datetime
 
@@ -169,13 +169,12 @@ class Post:
     @property
     def tags(self) -> list[int]:
         """
-        TODO: Need to define a new tag type, not used in sprint 1
-        """
-        """
         Returns a list of tags attached to the post
 
         ### Returns:
         * list[int]: list of tags
+
+        TODO: Need to define a new tag type, not used in sprint 1
         """
         return self._get().tags
 
@@ -198,10 +197,14 @@ class Post:
         """
         return self._get().me_too
 
-    @me_too.setter
-    def me_too(self, new_me_too: int):
+    def increment_me_too(self):
         row = self._get()
-        row.me_too = new_me_too
+        row.me_too += 1
+        row.save().run_sync()
+
+    def decrement_me_too(self):
+        row = self._get()
+        row.me_too -= 1
         row.save().run_sync()
 
     @property
@@ -214,10 +217,14 @@ class Post:
         """
         return self._get().thanks
 
-    @thanks.setter
-    def thanks(self, new_thanks: int):
+    def increment_thanks(self):
         row = self._get()
-        row.thanks = new_thanks
+        row.thanks += 1
+        row.save().run_sync()
+
+    def decrement_thanks(self):
+        row = self._get()
+        row.thanks -= 1
         row.save().run_sync()
 
     @property
@@ -230,15 +237,6 @@ class Post:
         """
         return self._get().timestamp
 
-    @timestamp.setter
-    def timestamp(self, new_timestamp: int):
-        row = self._get()
-        row.timestamp = new_timestamp
-        row.save().run_sync()
-
-    def update_timestamp(self):
-        self.timestamp = int(datetime.now().timestamp())
-
     @property
     def reacts(self) -> IReacts:
         """
@@ -250,4 +248,38 @@ class Post:
         return {
             "thanks": self.thanks,
             "me_too": self.me_too,
+        }
+
+    @property
+    def basic_info(self) -> IPostBasicInfo:
+        """
+        Returns the basic info of a post
+
+        ### Returns:
+        * IPostBasicInfo: Dictionary containing basic info a post
+        """
+        return {
+            "author": self.author.id,
+            "heading": self.heading,
+            "post_id": self.id,
+            "tags": self.tags,
+            "reacts": self.reacts,
+        }
+
+    @property
+    def full_info(self) -> IPostFullInfo:
+        """
+        Returns the full info of a post
+
+        ### Returns:
+        * IPostFullInfo: Dictionary containing full info a post
+        """
+        return {
+            "author": self.author.id,
+            "heading": self.heading,
+            "tags": self.tags,
+            "reacts": self.reacts,
+            "text": self.text,
+            "timestamp": self.timestamp,
+            "comments": [c.id for c in self.comments],
         }

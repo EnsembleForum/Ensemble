@@ -28,9 +28,4 @@ def get_reply(*_) -> IReplyFullInfo:
     """
     reply_id: ReplyId = cast(ReplyId, request.args["reply_id"])
     reply = Reply(reply_id)
-    return {
-        "author": f"{reply.author.name_first} {reply.author.name_last}",
-        "reacts": reply.reacts,
-        "text": reply.text,
-        "timestamp": reply.timestamp,
-    }
+    return reply.full_info

@@ -62,9 +62,9 @@ def test_delete_success(all_users, make_posts):
     Successful deletion of one of the posts
     """
     token = all_users["users"][0]["token"]
-    del_post_id = post_delete(token, make_posts["post1_id"])["post_id"]
+    post_delete(token, make_posts["post1_id"])
     with pytest.raises(http_errors.BadRequest):
-        post_view(token, del_post_id)
+        post_view(token, make_posts["post1_id"])
 
     posts = post_list(token)
     assert len(posts["posts"]) == 1
@@ -151,7 +151,7 @@ def test_delete_post_deletes_comments(all_users, make_posts):
     comment_id2 = add_comment(token, post_id, "second")["comment_id"]
     reply_id = add_reply(token, comment_id1, "reply_text")["reply_id"]
 
-    post_delete(token, make_posts["post1_id"])["post_id"]
+    post_delete(token, make_posts["post1_id"])
 
     with pytest.raises(http_errors.BadRequest):
         get_comment(token, comment_id1)

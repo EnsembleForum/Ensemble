@@ -1,6 +1,7 @@
 """
 # Backend / Models / Reply
 """
+from backend.types.reply import IReplyFullInfo
 from .tables import TUser, TComment, TReply
 from .user import User
 from backend.util.db_queries import assert_id_exists, get_by_id
@@ -180,4 +181,19 @@ class Reply:
         return {
             "thanks": self.thanks,
             "me_too": self.me_too,
+        }
+
+    @property
+    def full_info(self) -> IReplyFullInfo:
+        """
+        Returns the full info of a reply
+
+        ### Returns:
+        * IReplyFullInfo: Dictionary containing full info a reply
+        """
+        return {
+            "author": self.author.id,
+            "reacts": self.reacts,
+            "text": self.text,
+            "timestamp": self.timestamp,
         }

@@ -1,6 +1,7 @@
 """
 # Backend / Models / Comment
 """
+from backend.types.comment import ICommentFullInfo
 from .tables import TReply, TUser, TPost, TComment
 from .user import User
 from .reply import Reply
@@ -25,7 +26,7 @@ class Comment:
         * `id` (`int`): comment id
 
         ### Raises:
-        * `KeyError`: comment does not exist
+        * `IdNotFound`: comment does not exist
         """
         assert_id_exists(TComment, id, "Comment")
         self.__id = id
@@ -145,10 +146,14 @@ class Comment:
         """
         return self._get().me_too
 
-    @me_too.setter
-    def me_too(self, new_me_too: int):
+    def increment_me_too(self):
         row = self._get()
-        row.me_too = new_me_too
+        row.me_too += 1
+        row.save().run_sync()
+
+    def decrement_me_too(self):
+        row = self._get()
+        row.me_too -= 1
         row.save().run_sync()
 
     @property
@@ -161,10 +166,14 @@ class Comment:
         """
         return self._get().thanks
 
-    @thanks.setter
-    def thanks(self, new_thanks: int):
+    def increment_thanks(self):
         row = self._get()
-        row.thanks = new_thanks
+        row.thanks += 1
+        row.save().run_sync()
+
+    def decrement_thanks(self):
+        row = self._get()
+        row.thanks -= 1
         row.save().run_sync()
 
     @property
@@ -177,15 +186,6 @@ class Comment:
         """
         return self._get().timestamp
 
-    @timestamp.setter
-    def timestamp(self, new_timestamp: int):
-        row = self._get()
-        row.timestamp = new_timestamp
-        row.save().run_sync()
-
-    def update_timestamp(self):
-        self.timestamp = int(datetime.now().timestamp())
-
     @property
     def reacts(self) -> IReacts:
         """
@@ -197,4 +197,20 @@ class Comment:
         return {
             "thanks": self.thanks,
             "me_too": self.me_too,
+        }
+
+    @property
+    def full_info(self) -> ICommentFullInfo:
+        """
+        Returns the full info of a comment
+
+        ### Returns:
+        * ICommentFullInfo: Dictionary containing full info a comment
+        """
+        return {
+            "author": self.author.id,
+            "reacts": self.reacts,
+            "text": self.text,
+            "replies": [r.id for r in self.replies],
+            "timestamp": self.timestamp,
         }

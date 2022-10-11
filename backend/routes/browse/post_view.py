@@ -7,10 +7,9 @@ import json
 from flask import Blueprint, request
 from typing import cast
 from backend.models.post import Post
-from backend.models.token import Token
-from backend.types.auth import JWT
+from backend.models.user import User
 from backend.models.comment import Comment
-from backend.types.identifiers import PostId, CommentId, UserId
+from backend.types.identifiers import PostId, CommentId
 from backend.types.post import IPostFullInfo, IPostId
 from backend.types.comment import ICommentId
 from backend.util import http_errors
@@ -34,20 +33,12 @@ def get_post(*_) -> IPostFullInfo:
     """
     post_id: PostId = cast(PostId, request.args["post_id"])
     post = Post(post_id)
-    return {
-        "author": f"{post.author.name_first} {post.author.name_last}",
-        "heading": post.heading,
-        "text": post.text,
-        "tags": post.tags,
-        "reacts": post.reacts,
-        "comments": [c.id for c in post.comments],
-        "timestamp": post.timestamp,
-    }
+    return post.full_info
 
 
 @post_view.put("/edit")
 @uses_token
-def edit(user_id: UserId, token: JWT) -> IPostId:
+def edit(user: User, *_) -> IPostId:
     """
     Edits the heading/text/tags of the post
 
@@ -71,7 +62,7 @@ def edit(user_id: UserId, token: JWT) -> IPostId:
 
     post = Post(post_id)
 
-    if user_id != post.author.id:
+    if user.id != post.author.id:
         raise http_errors.Forbidden("Attempting to edit another user's post")
 
     post.heading = new_heading
@@ -82,7 +73,7 @@ def edit(user_id: UserId, token: JWT) -> IPostId:
 
 @post_view.put("/self_delete")
 @uses_token
-def delete(user_id: UserId, token: JWT) -> IPostId:
+def delete(user: User, *_) -> dict:
     """
     Deletes a post
 
@@ -98,16 +89,16 @@ def delete(user_id: UserId, token: JWT) -> IPostId:
 
     post = Post(post_id)
 
-    if user_id != post.author.id:
+    if user.id != post.author.id:
         raise http_errors.Forbidden("Attempting to delete another user's post")
 
     Post.delete(post_id)
-    return {"post_id": post_id}
+    return {}
 
 
 @post_view.post("/comment")
 @uses_token
-def comment(user_id: UserId, token: JWT) -> ICommentId:
+def comment(user: User, *_) -> ICommentId:
     """
     Creates a new comment
 
@@ -120,10 +111,9 @@ def comment(user_id: UserId, token: JWT) -> ICommentId:
     * `ICommentId`: identifier of the comment
     """
     data = json.loads(request.data)
-    user_token: Token = Token.fromJWT(token)
     text: str = data["text"]
     post_id: PostId = data["post_id"]
 
-    comment_id: CommentId = Comment.create(user_token.user, post_id, text).id
+    comment_id: CommentId = Comment.create(user, post_id, text).id
 
     return {"comment_id": comment_id}
