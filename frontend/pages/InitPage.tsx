@@ -24,7 +24,7 @@ const StyledForm = styled(Box)`
 const InitPage = (props: Props) => {
   const [initDetails, setInitDetails] = React.useState<initSchema>({
     address: '',
-    request_type: "POST",
+    request_type: "post",
     username_param: '',
     password_param: '',
     success_regex: '',
@@ -37,8 +37,8 @@ const InitPage = (props: Props) => {
   const onSubmit = (e: { preventDefault: () => void; }) => {
       e.preventDefault();
       // Here we would call api, which would reroute
-      ApiFetch("POST", "admin/init", null, initDetails);
       console.log(initDetails);
+      ApiFetch("POST", "admin/init", null, initDetails);
   } 
   return (
     <LoginLayout>
@@ -57,8 +57,8 @@ const InitPage = (props: Props) => {
               <>
                 <Label htmlFor={eachKey}>Request Type</Label>
                 <Select name="request_type" id="request_type" mb={3} value = {initDetails.request_type} onChange={(e) => setInitDetails(initDetails=>({...initDetails, request_type: e.target.value}))}> 
-                  <option value = "POST">POST</option>
-                  <option value = "GET">GET</option>
+                  <option value = "post">POST</option>
+                  <option value = "get">GET</option>
                 </Select>
               </>
             )

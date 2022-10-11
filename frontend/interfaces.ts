@@ -22,10 +22,9 @@ export interface requestOptions {
 }
 
 // init type
-enum InitType {"POST", "GET"};
 export interface initSchema {
   address: string,
-  request_type: "POST" | "GET",
+  request_type: "post" | "get",
   username_param: string,
   password_param: string,
   success_regex: string,
