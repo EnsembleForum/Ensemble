@@ -43,11 +43,11 @@ def write_outputs(process: subprocess.Popen[bytes], file: str | None):
 
 
 def backend(debug=False):
+    env = os.environ.copy()
     if debug:
-        env = {"ENSEMBLE_DEBUG": "TRUE"}
+        env.update({"ENSEMBLE_DEBUG": "TRUE"})
         debug_flag = ["--debug"]
     else:
-        env = {}
         debug_flag = []
     flask = subprocess.Popen(
         [sys.executable, '-u', '-m', 'flask'] + debug_flag + ['run'],
