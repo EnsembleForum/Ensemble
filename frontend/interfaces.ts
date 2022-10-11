@@ -21,3 +21,17 @@ export interface requestOptions {
   body? : string,
 }
 
+// init type
+enum InitType {"POST", "GET"};
+export interface initSchema {
+  address: string,
+  request_type: "POST" | "GET",
+  username_param: string,
+  password_param: string,
+  success_regex: string,
+  username: string,
+  password: string,
+  email: string, 
+  name_first: string,
+  name_last: string
+}

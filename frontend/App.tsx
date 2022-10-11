@@ -4,13 +4,13 @@ import { SERVER_PATH } from './constants';
 import { requestOptions } from './interfaces';
 import AdminPage from './pages/AdminPage';
 import BrowsePage from './pages/BrowsePage';
-import FirstRunPage from './pages/FirstRunPage';
+import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
 import PasswordResetPage from './pages/PasswordResetPage';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
 
-export function ApiFetch (method : string, path : string, token : string, body? : string) {
+export function ApiFetch (method : string, path : string, token : string | null, body? : object) {
   const requestOptions : requestOptions = {
     method: method,
     headers: { 'Content-Type': 'application/json' }
@@ -40,8 +40,8 @@ function PassThrough () {
   return (
     <Router>
         <Routes>
-          <Route path = "/" element={<Navigate to="/firstrun" />}></Route>
-          <Route path='/firstrun' element={<FirstRunPage/>} />
+          <Route path = "/" element={<Navigate to="/init" />}></Route>
+          <Route path='/init' element={<InitPage/>} />
           <Route path='/admin' element={<AdminPage/>} />
           <Route path='/auth/login' element={<LoginPage/>} />
           <Route path='/auth/register' element={<RegisterPage/>} />

@@ -28,6 +28,7 @@ const LoginPage = (props: Props) => {
   const onSubmit = (e: { preventDefault: () => void; }) => {
       e.preventDefault();
       // Here we would call api, which would reroute
+      
       console.log(loginDetails);
   } 
   return (
