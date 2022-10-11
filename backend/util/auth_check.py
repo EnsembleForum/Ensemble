@@ -38,21 +38,32 @@ def do_auth_check(
     ### Returns:
     * `bool`: whether the authentication succeeded
     """
-    if request_type == "get":
-        res = requests.get(
-            address,
-            params={
-                username_param: username,
-                password_param: password,
-            }
+    try:
+        if request_type == "get":
+            res = requests.get(
+                address,
+                params={
+                    username_param: username,
+                    password_param: password,
+                }
+            )
+        else:
+            res = requests.post(
+                address,
+                json={
+                    username_param: username,
+                    password_param: password,
+                }
+            )
+    except requests.ConnectionError:
+        raise http_errors.BadRequest(
+            f"Unable to connect to {address} for login auth. Please double "
+            f"check the address."
         )
-    else:
-        res = requests.post(
-            address,
-            json={
-                username_param: username,
-                password_param: password,
-            }
+    except requests.exceptions.InvalidSchema:
+        raise http_errors.BadRequest(
+            f"Invalid schema for {address} when checking login auth. Please "
+            f"ensure your address contains the schema (such as http://)."
         )
     try:
         return re.match(success_regex, res.text) is not None
