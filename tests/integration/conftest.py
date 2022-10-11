@@ -5,11 +5,12 @@ Configuration for tests
 """
 import pytest
 from typing import TypedDict
-from backend.types.identifiers import UserId
+from backend.types.identifiers import UserId, PostId
 from backend.types.permissions import PermissionGroupId
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
 from tests.integration.request.debug import clear
+from tests.integration.request.browse import post_create
 from .request.admin import init, users
 from .request.auth import login
 
@@ -195,4 +196,36 @@ def all_users(basic_server_setup: IBasicServerSetup) -> IAllUsers:
             login("user3", "user3"),
         ],
         "permissions": basic_server_setup["permissions"],
+    }
+
+
+class ITwoPosts(TypedDict):
+    post1_id: PostId
+    post2_id: PostId
+    head1: str
+    head2: str
+    text1: str
+    text2: str
+
+
+@pytest.fixture()
+def make_posts(all_users) -> ITwoPosts:
+    """
+    Create two posts inside the forum
+    """
+    token = all_users["users"][0]["token"]
+    head1 = "First head"
+    head2 = "Second head"
+    text1 = "First text"
+    text2 = "Second text"
+    post1_id = post_create(token, head1, text1, [])["post_id"]
+    post2_id = post_create(token, head2, text2, [])["post_id"]
+
+    return {
+        "post1_id": post1_id,
+        "post2_id": post2_id,
+        "head1": head1,
+        "head2": head2,
+        "text1": text1,
+        "text2": text2,
     }

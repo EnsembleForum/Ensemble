@@ -6,7 +6,7 @@ from backend.types.user import (
     IUserRegisterInfo,
 )
 from backend.types.identifiers import PermissionGroupId
-from backend.util.validators import assert_email_valid, assert_name_valid
+from backend.util.validators import assert_email_valid, assert_valid_str_field
 from backend.util import http_errors
 from backend.util.tokens import uses_token
 from backend.models.user import User
@@ -51,7 +51,7 @@ def register(user: User, *_) -> IUserIdList:
     # Make sure each email and username isn't present already, and that
     # username is alphanumeric
     for username in unique_usernames:
-        assert_name_valid(username, "Username")
+        assert_valid_str_field(username, "Username")
         if not username.isalnum():
             raise http_errors.BadRequest(
                 f"Username {username} is not alphanumeric"
@@ -73,8 +73,8 @@ def register(user: User, *_) -> IUserIdList:
 
     # Make sure names are not empty
     for u in users:
-        assert_name_valid(u['name_first'], "First name")
-        assert_name_valid(u['name_last'], "Last name")
+        assert_valid_str_field(u['name_first'], "First name")
+        assert_valid_str_field(u['name_last'], "Last name")
 
     def new_user(u: IUserRegisterInfo):
         return User.create(

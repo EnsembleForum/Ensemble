@@ -19,9 +19,9 @@ def assert_email_valid(email: str):
         raise InvalidInput(f"Email {email} is not valid")
 
 
-def assert_name_valid(name: str, name_type: str = "Name"):
+def assert_valid_str_field(str_field: str, field_name: str):
     """
-    If the given name is not valid (0 chars), a BadRequest is raised
+    If the given string field is not valid (0 chars), a BadRequest is raised
     """
-    if len(name) == 0:
-        raise InvalidInput(f"{name_type} cannot be empty")
+    if len(str_field) == 0:
+        raise InvalidInput(f"{field_name} cannot be empty")

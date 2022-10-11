@@ -11,6 +11,7 @@ class IUserRegisterInfo(TypedDict):
     * `username`: `str`
     * `email`: `str`
     """
+
     name_first: str
     name_last: str
     username: str
@@ -24,6 +25,7 @@ class IUserIdList(TypedDict):
     * `user_ids`: list of
           * `int`
     """
+
     user_ids: list[UserId]
 
 
@@ -36,6 +38,7 @@ class IUserBasicInfo(TypedDict):
     * `username`: `str`
     * `user_id`: `int`
     """
+
     name_first: str
     name_last: str
     username: str
@@ -52,6 +55,7 @@ class IUserBasicInfoList(TypedDict):
           * `username`: `str`
           * `user_id`: `int`
     """
+
     users: list[IUserBasicInfo]
 
 
@@ -68,6 +72,7 @@ class IUserProfile(TypedDict):
     Note that this will eventually contain more properties such as pronouns and
     the like
     """
+
     name_first: str
     name_last: str
     username: str
