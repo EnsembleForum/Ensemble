@@ -13,16 +13,20 @@ import TaskboardPage from "./TaskboardPage";
 interface Props {
   page: "taskboard" | "browse";
 }
+const Layout = styled.div`
+  height: 100%;
+`
 
 const Navbar = styled.ul`
-  height: 50px;
-  width: 100%;
+  height: 60px;
+  width: 100vw;
   display: flex;
   align-items: center;
-  padding: 10px;
   * {
     padding: 10px;
     margin: 10px;
+  }
+  a {
     background-color: lightgrey;
     border-radius: 10%;
     &:hover {
@@ -40,13 +44,14 @@ const MainPage = (props: Props) => {
     page = <TaskboardPage/>
   }
   return (
-    <>
+    <Layout>
       <Navbar as="nav">
-        <a onClick={(e) => {setCurrPage("browse")}}>browse</a>
-        <a onClick={(e) => {setCurrPage("taskboard")}}>taskboard</a>
+        <h1>ENSEMBLE</h1>
+        <a onClick={(e) => {setCurrPage("browse")}}>Browse</a>
+        <a onClick={(e) => {setCurrPage("taskboard")}}>Taskboard</a>
       </Navbar>
       {page}
-    </>
+    </Layout>
   )
 };
 

@@ -1,15 +1,14 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { Box, Label, Input, Select } from "theme-ui";
-import { ApiFetch } from "../App";
+import { ApiFetch, setToken } from "../App";
 import { Prettify } from "../global_functions";
-import { initSchema, loginForm } from "../interfaces";
+import { APIcall, initReturn, initSchema, loginForm } from "../interfaces";
 import { StyledButton } from "./GlobalProps";
-
 
 interface Props {}
 
-const LoginLayout = styled.body`
+const LoginLayout = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
@@ -35,11 +34,20 @@ const InitPage = (props: Props) => {
     name_last: ''
   });
   const onSubmit = (e: { preventDefault: () => void; }) => {
-      e.preventDefault();
-      // Here we would call api, which would reroute
-      console.log(initDetails);
-      ApiFetch("POST", "admin/init", null, initDetails);
-  } 
+    e.preventDefault();
+    // Here we would call api, which would reroute
+    console.log(initDetails);
+    const api : APIcall = {
+      method: "POST",
+      path:"admin/init",
+      body: initDetails
+    }
+    ApiFetch(api)
+    .then((data) => { 
+      const check = data as initReturn;
+      setToken(check.token)
+    });
+  }
   return (
     <LoginLayout>
       <StyledForm as="form" onSubmit={onSubmit}>
