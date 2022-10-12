@@ -16,7 +16,7 @@ if PORT is None:
 URL = f"http://localhost:{PORT}"
 
 try:
-    ret = requests.delete(f"{URL}/clear")
+    ret = requests.delete(f"{URL}/debug/clear")
 except requests.ConnectionError:
     print("❗ Couldn't connect to server - is it running?")
     exit(1)
