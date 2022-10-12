@@ -23,7 +23,7 @@ def do_auth_check(
     ### Args:
     * `address` (`str`): URL to request to
 
-    * `request_type` (`str`): request type (get, post)
+    * `request_type` (`str`): request type (get, post, put, delete)
 
     * `username_param` (`str`): username parameter name to use
 
@@ -83,6 +83,11 @@ def do_auth_check(
         raise http_errors.BadRequest(
             f"Invalid schema for {address} when checking login auth. Please "
             f"ensure your address contains the schema (such as http://)."
+        )
+    if res.status_code != 200:
+        c = res.status_code
+        raise http_errors.BadRequest(
+            f"Auth server failed to process request - gave status code {c}"
         )
     try:
         return re.match(success_regex, res.text) is not None
