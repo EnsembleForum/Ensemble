@@ -6,8 +6,10 @@ Helper functions for requesting auth code
 from typing import cast
 from backend.types.comment import ICommentFullInfo, ICommentId
 from backend.types.reply import IReplyId
-from backend.types.identifiers import CommentId, PostId, ReplyId
+from backend.types.queue import IQueueId, IQueueFullInfo, IQueueFullInfoList
+from backend.types.identifiers import CommentId, PostId, ReplyId, QueueId
 from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
+
 from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
 from .consts import URL
@@ -33,6 +35,81 @@ def post_list(token: JWT) -> IPostBasicInfoList:
             f"{URL}/post_list",
             {}
             ),
+    )
+def queue_list(token: JWT, queue_id: QueueId) -> IQueueFullInfoList:
+    """
+    Get a list of queues
+
+    ## Body:
+    * `token` (`JWT`): JWT of the user
+
+    ## Returns:
+    * `IQueueInfoList`: List of basic info of queues
+    """
+    return cast(
+        IQueueFullInfoList,
+        get(token,
+            f"{URL}/queue_list",
+            {}
+            ),
+    )
+
+
+def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
+    """
+    Get the detailed info of a post
+
+    ## Body:
+    * `post_id` (`PostId`): identifier of the post
+    * `token` (`JWT`): JWT of the user
+
+    ## Returns:
+    * `IPostFullInfo`: Dictionary containing full info a post
+    """
+    return cast(
+        IPostFullInfo,
+        get(token,
+            f"{URL}/post_view",
+            {
+                "post_id": post_id,
+            },
+            ),
+    )
+def queue_view(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
+    """
+    Get a detailed info of a queue
+
+    ## Body:
+    * `token` (`JWT`): JWT of the user
+
+    ## Returns:
+    * `IQueueInfo`: List of basic info of queues
+    """
+    return cast(
+        IQueueFullInfo,
+        get(token,
+            f"{URL}/queue_view",
+            {
+                "queue_id": queue_id,
+            }
+            ),
+    )
+
+
+def queue_create(
+    token: JWT, queue_name: str
+) -> IQueueId:
+    """
+    Create a queue
+    """
+    return cast(
+        IQueueId,
+        post(token,
+             f"{URL}/create",
+             {
+                 "queue_name": queue_name,
+             },
+             ),
     )
 
 
@@ -63,27 +140,6 @@ def post_create(
              ),
     )
 
-
-def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
-    """
-    Get the detailed info of a post
-
-    ## Body:
-    * `post_id` (`PostId`): identifier of the post
-    * `token` (`JWT`): JWT of the user
-
-    ## Returns:
-    * `IPostFullInfo`: Dictionary containing full info a post
-    """
-    return cast(
-        IPostFullInfo,
-        get(token,
-            f"{URL}/post_view",
-            {
-                "post_id": post_id,
-            },
-            ),
-    )
 
 
 def post_edit(

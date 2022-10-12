@@ -8,7 +8,7 @@ from flask import Blueprint, request
 from typing import cast
 from backend.models.queue import Queue
 from backend.types.identifiers import PostId, QueueId
-from backend.types.post import IPostFullInfo, IPostId
+from backend.types.queue import IQueueFullInfo
 from backend.util import http_errors
 from backend.util.tokens import uses_token
 
@@ -17,16 +17,14 @@ queue_view = Blueprint("queue_view", "queue_view")
 
 @queue_view.get("")
 @uses_token
-def get_queue(*_) -> IPostFullInfo:
+def get_queue(*_) -> IQueueFullInfo:
     """
-    Get the detailed info of a post
+    Get the list of available queues
 
     ## Body:
-    * `post_id` (`PostId`): identifier of the post
-    * `token` (`JWT`): JWT of the user
 
     ## Returns:
-    * `IPostFullInfo`: Dictionary containing full info a post
+    * `queues`: [queue_id:int, queue_name: str]
     """
     queue_id: QueueId = cast(QueueId, request.args["queue_id"])
     queue = Queue(queue_id)

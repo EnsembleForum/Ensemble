@@ -3,9 +3,10 @@
 """
 from .tables import TQueue, TPost
 from .post import Post
-from backend.util.db_queries import assert_id_exists
-from backend.types.identifiers import QueueId
+from backend.util.db_queries import assert_id_exists, get_by_id
+from backend.types.identifiers import QueueId, PostId
 from backend.util.validators import assert_valid_str_field
+from backend.types.queue import IQueueFullInfo
 from typing import cast
 
 class Queue:
@@ -27,18 +28,30 @@ class Queue:
         assert_id_exists(TQueue, id, "Queue")
         self.__id = id
 
+    def _get(self) -> TQueue:
+        """
+        Return a reference to the underlying database row
+        """
+        return get_by_id(TQueue, self.__id)
+
+    @property
+    def id(self) -> QueueId:
+        """
+        Identifier of the post
+        """
+        return self.__id
     # Create an empty list
     @classmethod
     def create(
         cls,
-        heading: str,
+        queue_name: str,
     ) -> "Queue":
-        assert_valid_str_field(heading, "heading")
+        assert_valid_str_field(queue_name, "queue_name")
 
         val = (
             TQueue(
                 {
-                    TQueue.heading: heading
+                    TQueue.queue_name: queue_name
                 }
             )
             .save()
@@ -46,6 +59,20 @@ class Queue:
         )
         id = cast(QueueId, val["id"])
         return Queue(id)
+
+    @property
+    def queue_name(self) -> str:
+        """
+        The heading of the post
+        """
+        return self._get().queue_name
+
+    @queue_name.setter
+    def queue_name(self, queue_name: str):
+        assert_valid_str_field(queue_name, "queue_name")
+        row = self._get()
+        row.queue_name = queue_name
+        row.save().run_sync()
 
     #Get the list of all available queues
     @classmethod
@@ -55,28 +82,44 @@ class Queue:
             TQueue.select().order_by(TQueue.id, ascending=False).run_sync()
         ]
 
+    # Retrieve the posts for the queue specified
     @property
     def posts(self) -> list["Post"]:
         return [
             Post(c["id"])
             for c in TPost.select()
-            .where(TPost.id == self.__id)
+            .where(TPost.queue == self.__id)
             .order_by(TPost.id, ascending=False)
             .run_sync()
         ]
     # Remove a queue list
-    # Sending any posts within the queue back to the main queue
     @classmethod
     def delete(cls, queue_id: QueueId) -> QueueId:
         TQueue.delete().where(TQueue.id == queue_id).run_sync()
         # Send posts back to original queue
         return queue_id
 
-    # Getter?
-    # Retrieve the posts for the queue specified
+    # Get a list of posts from the queue
+    @classmethod
+    def get_posts(cls, queue_id: QueueId) -> list["Post"]:
+        return [
+            Post(c["id"])
+            for c in TPost.select()
+            .where(TPost.queue == queue_id)
+            .order_by(TPost.id, ascending=False)
+            .run_sync()
+        ]
 
-    # Add a post to this queue (remove it from its original queue)
+    @property
+    def full_info(self) -> IQueueFullInfo:
+        """
+        Returns the full info of a post
 
-
-
+        ### Returns:
+        * IPostFullInfo: Dictionary containing full info a post
+        """
+        return {
+            "queue_name": self.queue_name,
+            "posts": [c.id for c in self.posts],
+        }
 

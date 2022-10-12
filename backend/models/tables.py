@@ -59,7 +59,7 @@ class TUser(_BaseTable):
 
 
 class TQueue(_BaseTable):
-    heading = Text()
+    queue_name = Text()
 #   post_list = Array(ForeignKey(TPost))
 
 class TPost(_BaseTable):
