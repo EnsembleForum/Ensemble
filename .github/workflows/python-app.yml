@@ -29,6 +29,7 @@ jobs:
     - name: Check server startup
       run: |
         python scripts/check_run_backend.py
+      timeout-minutes: 1
     - name: Upload outputs
       uses: actions/upload-artifact@v3
       with:
@@ -59,6 +60,7 @@ jobs:
     - name: Test with pytest
       run: |
         python scripts/pytest_backend.py
+      timeout-minutes: 5
     - name: Upload outputs
       uses: actions/upload-artifact@v3
       with:
@@ -89,6 +91,7 @@ jobs:
     - name: Lint with flake8
       run: |
         flake8
+      timeout-minutes: 2
 
   Mypy:
     runs-on: ubuntu-latest
@@ -113,3 +116,4 @@ jobs:
     - name: Lint with mypy
       run: |
         mypy .
+      timeout-minutes: 5
