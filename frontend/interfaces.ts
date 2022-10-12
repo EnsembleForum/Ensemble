@@ -24,7 +24,7 @@ export interface requestOptions {
 // init type
 export interface initSchema {
   address: string,
-  request_type: "post" | "get",
+  request_type: string,
   username_param: string,
   password_param: string,
   success_regex: string,
