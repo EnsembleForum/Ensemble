@@ -5,7 +5,7 @@ Tests to ensure the application is working correctly.
 
 ## Running tests
 
-TODO
+* `python scripts/pytest_backend.py`
 
 ## Types of Tests
 

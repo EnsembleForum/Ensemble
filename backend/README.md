@@ -1,5 +1,5 @@
 
-# Backend
+# Ensemble Backend
 
 Code for running the backend of the program
 
