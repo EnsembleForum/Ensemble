@@ -5,7 +5,7 @@ interface Props {}
 
 const BrowsePage = (props: Props) => {
   return (
-    <></>
+    <>WOW!</>
   );
 };
 

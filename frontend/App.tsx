@@ -6,6 +6,7 @@ import AdminPage from './pages/AdminPage';
 import BrowsePage from './pages/BrowsePage';
 import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
+import MainPage from './pages/MainPage';
 import PasswordResetPage from './pages/PasswordResetPage';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
@@ -50,8 +51,7 @@ function PassThrough () {
           <Route path='/auth/login' element={<LoginPage/>} />
           <Route path='/auth/register' element={<RegisterPage/>} />
           <Route path='/auth/password_reset' element={<PasswordResetPage/>} />
-          <Route path='/browse' element={<BrowsePage/>} />
-          <Route path='/taskboard' element={<TaskboardPage/>} />
+          <Route path='/main' element={<MainPage page = "browse"/>} />
         </Routes>
     </Router>
   );
