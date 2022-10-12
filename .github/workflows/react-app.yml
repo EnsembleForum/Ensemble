@@ -21,3 +21,4 @@ jobs:
       run: npm ci
     - name: Run Jest
       run: npm t
+      timeout-minutes: 5
