@@ -9,7 +9,14 @@ flask = backend(debug=True)
 
 auth = mock_auth()
 
-ret = pytest()
+try:
+    ret = pytest()
+except KeyboardInterrupt:
+    print("❗ Testing cancelled")
+    flask.terminate()
+    auth.terminate()
+    write_outputs(flask, 'flask')
+    exit(1)
 
 flask.terminate()
 auth.terminate()
