@@ -24,9 +24,11 @@ def write_outputs(process: subprocess.Popen[bytes], file: str | None):
         if process.stdout is not None:
             print("* stdout:")
             sys.stdout.write(process.stdout.read().decode('utf-8'))
+            print()
         if process.stderr is not None:
             print("* stderr:")
             sys.stdout.write(process.stderr.read().decode('utf-8'))
+            print()
 
     # Otherwise, write it to the requested files
     else:
@@ -143,7 +145,8 @@ def pytest():
         print("❗ Testing cancelled")
         pytest.terminate()
         write_outputs(pytest, None)
-        return False
+        write_outputs(pytest, "pytest")
+        raise
     write_outputs(pytest, "pytest")
     if ret == 0:
         print("✅ It works!")
