@@ -39,22 +39,41 @@ def do_auth_check(
     * `bool`: whether the authentication succeeded
     """
     try:
-        if request_type == "get":
-            res = requests.get(
-                address,
-                params={
-                    username_param: username,
-                    password_param: password,
-                }
-            )
-        else:
-            res = requests.post(
-                address,
-                json={
-                    username_param: username,
-                    password_param: password,
-                }
-            )
+        match request_type.lower():
+            case "get":
+                res = requests.get(
+                    address,
+                    params={
+                        username_param: username,
+                        password_param: password,
+                    }
+                )
+            case "post":
+                res = requests.post(
+                    address,
+                    json={
+                        username_param: username,
+                        password_param: password,
+                    }
+                )
+            case "put":
+                res = requests.put(
+                    address,
+                    json={
+                        username_param: username,
+                        password_param: password,
+                    }
+                )
+            case "delete":
+                res = requests.delete(
+                    address,
+                    params={
+                        username_param: username,
+                        password_param: password,
+                    }
+                )
+            case t:
+                raise http_errors.BadRequest(f"Invalid request type {t}")
     except requests.ConnectionError:
         raise http_errors.BadRequest(
             f"Unable to connect to {address} for login auth. Please double "
