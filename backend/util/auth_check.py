@@ -23,7 +23,7 @@ def do_auth_check(
     ### Args:
     * `address` (`str`): URL to request to
 
-    * `request_type` (`str`): request type (get, post)
+    * `request_type` (`str`): request type (get, post, put, delete)
 
     * `username_param` (`str`): username parameter name to use
 
@@ -38,21 +38,56 @@ def do_auth_check(
     ### Returns:
     * `bool`: whether the authentication succeeded
     """
-    if request_type == "get":
-        res = requests.get(
-            address,
-            params={
-                username_param: username,
-                password_param: password,
-            }
+    try:
+        match request_type.lower():
+            case "get":
+                res = requests.get(
+                    address,
+                    params={
+                        username_param: username,
+                        password_param: password,
+                    }
+                )
+            case "post":
+                res = requests.post(
+                    address,
+                    json={
+                        username_param: username,
+                        password_param: password,
+                    }
+                )
+            case "put":
+                res = requests.put(
+                    address,
+                    json={
+                        username_param: username,
+                        password_param: password,
+                    }
+                )
+            case "delete":
+                res = requests.delete(
+                    address,
+                    params={
+                        username_param: username,
+                        password_param: password,
+                    }
+                )
+            case t:
+                raise http_errors.BadRequest(f"Invalid request type {t}")
+    except requests.ConnectionError:
+        raise http_errors.BadRequest(
+            f"Unable to connect to {address} for login auth. Please double "
+            f"check the address."
         )
-    else:
-        res = requests.post(
-            address,
-            json={
-                username_param: username,
-                password_param: password,
-            }
+    except requests.exceptions.InvalidSchema:
+        raise http_errors.BadRequest(
+            f"Invalid schema for {address} when checking login auth. Please "
+            f"ensure your address contains the schema (such as http://)."
+        )
+    if res.status_code != 200:
+        c = res.status_code
+        raise http_errors.BadRequest(
+            f"Auth server failed to process request - gave status code {c}"
         )
     try:
         return re.match(success_regex, res.text) is not None
