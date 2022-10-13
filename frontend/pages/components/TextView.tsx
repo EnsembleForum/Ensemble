@@ -6,7 +6,7 @@ import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props {
-  text: string,
+  text?: string,
   heading?: string,
   reacts?: {
     thanks: number,
