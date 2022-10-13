@@ -82,7 +82,8 @@ class Queue:
     def all(cls) -> list["Queue"]:
         return [
             Queue(q["id"]) for q in
-            TQueue.select().order_by(TQueue.queue_name, ascending=False).run_sync()
+            TQueue.select().order_by(TQueue.queue_name, ascending=False)
+            .run_sync()
         ]
 
     # Retrieve the posts for the queue specified
@@ -103,7 +104,6 @@ class Queue:
         TQueue.delete().where(TQueue.id == queue_id).run_sync()
         # Send posts back to original queue
         return queue_id
-
 
     @property
     def full_info(self) -> IQueueFullInfo:
