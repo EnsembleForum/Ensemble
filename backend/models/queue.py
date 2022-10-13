@@ -38,17 +38,24 @@ class Queue:
     @property
     def id(self) -> QueueId:
         """
-        Identifier of the post
+        Identifier of the queue
         """
         return self.__id
-
-    # Create an empty list
 
     @classmethod
     def create(
         cls,
         queue_name: str,
     ) -> "Queue":
+        """
+        Create a new queue and save it to the database
+
+        ### Args:
+        * `queue_name` (`str`): name of queue
+
+        ### Returns:
+        * `Queue`: the new queue
+        """
         assert_valid_str_field(queue_name, "queue_name")
 
         val = (
@@ -64,32 +71,39 @@ class Queue:
         return Queue(id)
 
     @property
-    def queue_name(self) -> str:
+    def queue(self) -> str:
         """
-        Name of a
+        Name of the queue
         """
         return self._get().queue_name
 
-    @queue_name.setter
-    def queue_name(self, queue_name: str):
+    @queue.setter
+    def queue(self, queue_name: str):
         assert_valid_str_field(queue_name, "queue_name")
         row = self._get()
         row.queue_name = queue_name
         row.save().run_sync()
 
-    # Get the list of all available queues
     @classmethod
     def all(cls) -> list["Queue"]:
+        """
+        Get the list of all available queues
+        """
         return [
             Queue(q["id"]) for q in
             TQueue.select().order_by(TQueue.queue_name, ascending=False)
             .run_sync()
         ]
 
-    # Retrieve the posts for the queue specified
     # TODO: Revisit in sprint 2 to think of a way to organise
     @property
     def posts(self) -> list["Post"]:
+        """
+        List of all posts in the given queue
+
+        ### Returns:
+        * `list[Post]`: posts
+        """
         return [
             Post(c["id"])
             for c in TPost.select()
@@ -98,12 +112,15 @@ class Queue:
             .run_sync()
         ]
 
-    # Remove a queue list
-    # TODO: Complete routing in sprint 2
-    def delete(cls, queue_id: QueueId) -> QueueId:
-        TQueue.delete().where(TQueue.id == queue_id).run_sync()
-        # Send posts back to original queue
-        return queue_id
+    def delete(self) -> None:
+        """
+        Delete a queue
+
+        This should move all post back into the main queue
+        """
+        # TODO: Error checking (can't delete main queue)
+        TQueue.delete().where(TQueue.id == self.id).run_sync()
+        # TODO: Send posts back to original queue
 
     @property
     def full_info(self) -> IQueueFullInfo:
@@ -114,6 +131,6 @@ class Queue:
         * IPostFullInfo: Dictionary containing full info a post
         """
         return {
-            "queue_name": self.queue_name,
+            "queue_name": self.queue,
             "posts": [c.id for c in self.posts],
         }
