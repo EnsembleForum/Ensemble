@@ -3,13 +3,12 @@
 
 Post View routes
 """
-import json
+
 from flask import Blueprint, request
 from typing import cast
 from backend.models.queue import Queue
-from backend.types.identifiers import PostId, QueueId
+from backend.types.identifiers import QueueId
 from backend.types.queue import IQueueFullInfo
-from backend.util import http_errors
 from backend.util.tokens import uses_token
 
 queue_view = Blueprint("queue_view", "queue_view")

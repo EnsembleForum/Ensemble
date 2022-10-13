@@ -8,7 +8,7 @@ from flask import Blueprint, request
 from backend.models.post import Post
 from backend.models.queue import Queue
 from backend.models.user import User
-from backend.types.queue import IQueueFullInfoList, IQueueId
+from backend.types.queue import IQueueId
 from backend.types.post import IPostBasicInfoList, IPostId
 from .post_view import post_view
 from .queue_view import queue_view
@@ -66,6 +66,7 @@ def create(user: User, *_) -> IPostId:
 
     return {"post_id": post_id}
 
+
 @browse.post("/queue_create")
 @uses_token
 def queue_create(user: User, *_) -> IQueueId:
@@ -87,6 +88,7 @@ def queue_create(user: User, *_) -> IQueueId:
     queue_id = Queue.create(queue_name).id
 
     return {"queue_id": queue_id}
+
 
 __all__ = [
     "browse",

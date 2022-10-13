@@ -36,6 +36,8 @@ def post_list(token: JWT) -> IPostBasicInfoList:
             {}
             ),
     )
+
+
 def queue_list(token: JWT, queue_id: QueueId) -> IQueueFullInfoList:
     """
     Get a list of queues
@@ -75,6 +77,7 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
             },
             ),
     )
+
 
 def queue_view(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     """
@@ -140,7 +143,6 @@ def post_create(
              },
              ),
     )
-
 
 
 def post_edit(
