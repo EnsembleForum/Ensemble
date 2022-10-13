@@ -55,25 +55,29 @@ export interface initSchema {
   name_first: string,
   name_last: string
 }
-
+export interface reacts {
+  thanks: number,
+  me_too: number
+}
 export interface postListItem {
   post_id: number,
   heading: string,
   tags: number[],
-  reacts: {
-    thanks: number,
-    me_too: number
-  }
+  reacts: reacts
 }
 
 export interface postView {
   post_id: number,
   heading: string,
   tags: number[],
-  reacts: {
-    thanks: number,
-    me_too: number
-  }
-  comments: [],
+  reacts: reacts,
+  comments: number[],
   text: string,
+}
+export interface commentView {
+  text:string, replies:number[], timestamp:number, reacts: reacts, author:number
+}
+
+export interface replyView {
+  text:string, timestamp:number, reacts: reacts, author:number
 }

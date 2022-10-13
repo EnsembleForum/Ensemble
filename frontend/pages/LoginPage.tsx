@@ -3,7 +3,7 @@ import { stripBasename } from "@remix-run/router";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button,  } from "theme-ui";
-import { ApiFetch } from "../App";
+import { ApiFetch, setToken } from "../App";
 import { APIcall, loginForm } from "../interfaces";
 import { StyledButton } from "./GlobalProps";
 
@@ -38,7 +38,8 @@ const LoginPage = (props: Props) => {
       }
       ApiFetch(api)
       .then((data) => {
-        void data;
+        const check = data as {token: string};
+      setToken(check.token)
         navigate("main");
       })
   }

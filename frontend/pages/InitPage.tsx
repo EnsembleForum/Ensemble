@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Label, Input, Select } from "theme-ui";
 import { ApiFetch, setToken } from "../App";
 import { Prettify } from "../global_functions";
@@ -21,6 +22,7 @@ const StyledForm = styled(Box)`
   border-radius: 2%;
 `;
 const InitPage = (props: Props) => {
+  const navigate = useNavigate();
   const [initDetails, setInitDetails] = React.useState<initSchema>({
     address: '',
     request_type: "post",
@@ -46,6 +48,7 @@ const InitPage = (props: Props) => {
     .then((data) => { 
       const check = data as initReturn;
       setToken(check.token)
+      navigate("main");
     });
   }
   return (

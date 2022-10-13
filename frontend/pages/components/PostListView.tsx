@@ -3,21 +3,17 @@ import React, { JSXElementConstructor } from "react";
 import { Box, IconButton, Text } from "theme-ui";
 import { forEachChild } from "typescript";
 import { ApiFetch } from "../../App";
-import { post } from "../../interfaces";
+import { postListItem } from "../../interfaces";
 import PostListItem from "./PostListItem";
 
 // Declaring and typing our props
 interface Props {}
 const StyledLayout=styled.div`
   width: 350px;
-  height: 100%;
-`
-const Post = styled.div`
-  height: 100px;
 `
 // Exporting our example component
 const PostListView = (props: Props) => {
-  const defaultProps : post[] = [{
+  const defaultProps : postListItem[] = [{
     post_id: 1,
     heading: "Post1",
     tags: [1, 2],

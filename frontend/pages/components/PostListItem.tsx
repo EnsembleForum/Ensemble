@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { Box, IconButton, Text } from "theme-ui";
-import { post, postListItem, postView } from "../../interfaces";
+import { postListItem, postView } from "../../interfaces";
 import PostContext from "../postContext";
 
 // Declaring and typing our props
@@ -38,7 +38,7 @@ const PostListItem = (props: Props) => {
     <Post onClick={() => setPostId(props.post.post_id-1)}>
       <div>{props.post.heading}</div>
       <p>{fakeText}</p>
-      
+
     </Post>
   );
 };
