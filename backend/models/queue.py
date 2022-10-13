@@ -66,7 +66,7 @@ class Queue:
     @property
     def queue_name(self) -> str:
         """
-        The heading of the post
+        Name of a
         """
         return self._get().queue_name
 
@@ -82,10 +82,11 @@ class Queue:
     def all(cls) -> list["Queue"]:
         return [
             Queue(q["id"]) for q in
-            TQueue.select().order_by(TQueue.id, ascending=False).run_sync()
+            TQueue.select().order_by(TQueue.queue_name, ascending=False).run_sync()
         ]
 
     # Retrieve the posts for the queue specified
+    # TODO: Revisit in sprint 2 to think of a way to organise
     @property
     def posts(self) -> list["Post"]:
         return [
@@ -97,22 +98,12 @@ class Queue:
         ]
 
     # Remove a queue list
-    @classmethod
+    # TODO: Complete routing in sprint 2
     def delete(cls, queue_id: QueueId) -> QueueId:
         TQueue.delete().where(TQueue.id == queue_id).run_sync()
         # Send posts back to original queue
         return queue_id
 
-    # Get a list of posts from the queue
-    @classmethod
-    def get_posts(cls, queue_id: QueueId) -> list["Post"]:
-        return [
-            Post(c["id"])
-            for c in TPost.select()
-            .where(TPost.queue == queue_id)
-            .order_by(TPost.id, ascending=False)
-            .run_sync()
-        ]
 
     @property
     def full_info(self) -> IQueueFullInfo:

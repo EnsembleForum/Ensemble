@@ -37,7 +37,4 @@ def test_get_queue_success(all_users):
     queue_name = "queue_name"
     queue_id = queue_create(token, "queue_name")["queue_id"]
     queue = queue_view(token, queue_id)
-    print('hello world')
-    print(queue_name)
-    print(queue["queue_name"])
     assert queue["queue_name"] == queue_name

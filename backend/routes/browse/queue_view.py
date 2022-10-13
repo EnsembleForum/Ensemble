@@ -1,7 +1,7 @@
 """
-# Backend / Routes / Browse / Post View
+# Backend / Routes / Browse / Queue View
 
-Post View routes
+Queue View routes
 """
 
 from flask import Blueprint, request
