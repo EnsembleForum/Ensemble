@@ -92,7 +92,7 @@ def delete(user: User, *_) -> dict:
     if user.id != post.author.id:
         raise http_errors.Forbidden("Attempting to delete another user's post")
 
-    Post.delete(post_id)
+    post.delete()
     return {}
 
 

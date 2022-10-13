@@ -122,10 +122,10 @@ class Reply:
     @property
     def parent(self) -> "Comment":
         """
-        The post this comment belongs to
+        The comment this reply belongs to
 
         ### Returns:
-        * `Post`: post
+        * `Comment`: comment
         """
         from .comment import Comment
         return Comment(self._get().parent)
