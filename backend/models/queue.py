@@ -6,7 +6,7 @@ from .post import Post
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import QueueId
 from backend.util.validators import assert_valid_str_field
-from backend.types.queue import IQueueFullInfo
+from backend.types.queue import IQueueFullInfo, IQueueBasicInfo
 from typing import cast
 
 
@@ -124,12 +124,25 @@ class Queue:
 
     def full_info(self) -> IQueueFullInfo:
         """
-        Returns the full info of a post
+        Returns the full info of a queue
 
         ### Returns:
-        * IPostFullInfo: Dictionary containing full info a post
+        * IPostFullInfo: Dictionary containing full info a queue
         """
         return {
+            "queue_id": self.id,
             "queue_name": self.queue,
             "posts": [c.id for c in self.posts],
+        }
+
+    def basic_info(self) -> IQueueBasicInfo:
+        """
+        Returns the basic info of a queue
+
+        ### Returns:
+        * IPostBasicInfo: Dictionary containing full info a queue
+        """
+        return {
+            "queue_id": self.id,
+            "queue_name": self.queue,
         }

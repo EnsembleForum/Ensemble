@@ -4,7 +4,7 @@
 Helper functions for requesting queue-related code
 """
 from typing import cast
-from backend.types.queue import IQueueId, IQueueFullInfo, IQueueFullInfoList
+from backend.types.queue import IQueueId, IQueueFullInfo, IQueueList
 from backend.types.identifiers import QueueId
 from backend.types.auth import JWT
 from .consts import URL
@@ -14,7 +14,7 @@ from .helpers import post, get
 URL = f"{URL}/taskboard"
 
 
-def queue_list(token: JWT, queue_id: QueueId) -> IQueueFullInfoList:
+def queue_list(token: JWT, queue_id: QueueId) -> IQueueList:
     """
     Get a list of queues
 
@@ -25,7 +25,7 @@ def queue_list(token: JWT, queue_id: QueueId) -> IQueueFullInfoList:
     * `IQueueInfoList`: List of basic info of queues
     """
     return cast(
-        IQueueFullInfoList,
+        IQueueList,
         get(token,
             f"{URL}/queue_list",
             {}

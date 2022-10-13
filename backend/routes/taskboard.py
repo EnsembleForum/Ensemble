@@ -9,12 +9,27 @@ from backend.models.user import User
 from typing import cast
 from backend.models.queue import Queue
 from backend.types.identifiers import QueueId
-from backend.types.queue import IQueueFullInfo
+from backend.types.queue import IQueueFullInfo, IQueueList
 from backend.util.tokens import uses_token
 from backend.types.queue import IQueueId
 
 
 taskboard = Blueprint('taskboard', 'taskboard')
+
+
+@taskboard.get("/queue_list")
+@uses_token
+def queue_list(user: User, *_) -> IQueueList:
+    """
+    Returns a list of available queue
+
+    ## Body:
+    * `queue_name` (`str`): name of queue
+
+    ## Returns:
+    * `IQueueId`: identifier of the post
+    """
+    return {"queues": list(map(lambda q: q.basic_info(), Queue.all()))}
 
 
 @taskboard.post("/queue_list/create")
@@ -38,25 +53,19 @@ def queue_create(user: User, *_) -> IQueueId:
 
 
 @uses_token
-def queue_delete(user: User, *_) -> IQueueId:
+def queue_delete(user: User, *_) -> dict:
     """
-    Create a post
+    Delete a queue
 
-    ## Body:
-    * `token` (`JWT`): JWT of the user
-    * `heading` (`str`): heading of the post
-    * `text` (`str`): text of the post
-    * `tags` (`list[int]`): tags attached to the new post (ignore for sprint 1)
-
-    ## Returns:
-    * `IPostId`: identifier of the post
+    ## Args:
+    * `queue_id` (`int`): queue to delete
     """
-    data = json.loads(request.data)
-    queue_name: str = data["queue_name"]
+    queue_id: QueueId = cast(QueueId, request.args["queue_id"])
+    queue = Queue(queue_id)
 
-    queue_id = Queue.create(queue_name).id
+    queue.delete()
 
-    return {"queue_id": queue_id}
+    return {}
 
 
 @taskboard.get("/queue/post_list")

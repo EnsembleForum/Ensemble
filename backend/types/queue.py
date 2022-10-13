@@ -11,21 +11,32 @@ class IQueueId(TypedDict):
     queue_id: QueueId
 
 
-class IQueueFullInfo(TypedDict):
+class IQueueBasicInfo(TypedDict):
     """
     Full info about a post
 
     * `queue_name`: `str`
-    * `posts`: `list[PostId]`
-
+    * `post_id`: `PostId`
     """
+    queue_name: str
+    queue_id: QueueId
+
+
+class IQueueFullInfo(TypedDict):
+    """
+    Full info about a post
+
+    * `post_id`: `PostId`
+    * `queue_name`: `str`
+    * `posts`: `list[PostId]`
+    """
+    queue_id: QueueId
     queue_name: str
     posts: list[PostId]
 
 
-class IQueueFullInfoList(TypedDict):
+class IQueueList(TypedDict):
     """
     List of basic info about queues
     """
-
-    posts: list[IQueueFullInfo]
+    queues: list[IQueueBasicInfo]
