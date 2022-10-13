@@ -10,6 +10,7 @@ class IQueueId(TypedDict):
     """
     queue_id: QueueId
 
+
 class IQueueFullInfo(TypedDict):
     """
     Full info about a post
@@ -20,6 +21,7 @@ class IQueueFullInfo(TypedDict):
     """
     queue_name: str
     posts: list[PostId]
+
 
 class IQueueFullInfoList(TypedDict):
     """
