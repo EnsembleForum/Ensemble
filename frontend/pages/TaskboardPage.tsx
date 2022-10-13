@@ -5,7 +5,7 @@ interface Props {}
 
 const TaskboardPage = (props: Props) => {
   return (
-    <></>
+    <>Taskboard</>
   );
 };
 

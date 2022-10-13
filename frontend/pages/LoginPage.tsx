@@ -1,14 +1,16 @@
 import styled from "@emotion/styled";
 import { stripBasename } from "@remix-run/router";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import { useNavigate } from "react-router-dom";
 import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button,  } from "theme-ui";
-import { loginForm } from "../interfaces";
+import { ApiFetch, setToken } from "../App";
+import { APIcall, loginForm } from "../interfaces";
 import { StyledButton } from "./GlobalProps";
 
 
 interface Props {}
 
-const LoginLayout = styled.body`
+const LoginLayout = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
@@ -21,6 +23,7 @@ const StyledForm = styled(Box)`
   border-radius: 2%;
 `;
 const LoginPage = (props: Props) => {
+  const navigate = useNavigate();
   const [loginDetails, setLoginDetails] = React.useState<loginForm>({
     username: '',
     password: '',
@@ -28,9 +31,18 @@ const LoginPage = (props: Props) => {
   const onSubmit = (e: { preventDefault: () => void; }) => {
       e.preventDefault();
       // Here we would call api, which would reroute
-      
-      console.log(loginDetails);
-  } 
+      const api : APIcall = {
+        method: "POST",
+        path: "auth/login",
+        body: loginDetails
+      }
+      ApiFetch(api)
+      .then((data) => {
+        const check = data as {token: string};
+      setToken(check.token)
+        navigate("main");
+      })
+  }
   return (
     <LoginLayout>
       <StyledForm as="form" onSubmit={onSubmit}>
