@@ -6,7 +6,9 @@ Browse routes
 import json
 from flask import Blueprint, request
 from backend.models.post import Post
+from backend.models.queue import Queue
 from backend.models.user import User
+from backend.types.queue import IQueueFullInfoList, IQueueId
 from backend.types.post import IPostBasicInfoList, IPostId
 from .post_view import post_view
 from .comment_view import comment_view
@@ -62,6 +64,27 @@ def create(user: User, *_) -> IPostId:
 
     return {"post_id": post_id}
 
+@browse.post("/queue_create")
+@uses_token
+def queue_create(user: User, *_) -> IQueueId:
+    """
+    Create a post
+
+    ## Body:
+    * `token` (`JWT`): JWT of the user
+    * `heading` (`str`): heading of the post
+    * `text` (`str`): text of the post
+    * `tags` (`list[int]`): tags attached to the new post (ignore for sprint 1)
+
+    ## Returns:
+    * `IPostId`: identifier of the post
+    """
+    data = json.loads(request.data)
+    queue_name: str = data["queue_name"]
+
+    queue_id = Queue.create(queue_name).id
+
+    return {"queue_id": queue_id}
 
 __all__ = [
     "browse",

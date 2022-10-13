@@ -5,12 +5,12 @@ Configuration for tests
 """
 import pytest
 from typing import TypedDict
-from backend.types.identifiers import UserId, PostId
+from backend.types.identifiers import UserId, PostId, QueueId
 from backend.types.permissions import PermissionGroupId
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
 from tests.integration.request.debug import clear
-from tests.integration.request.browse import post_create
+from tests.integration.request.browse import queue_create, post_create
 from .request.admin import init, users
 from .request.auth import login
 
@@ -207,6 +207,12 @@ class ITwoPosts(TypedDict):
     text1: str
     text2: str
 
+class ITwoQueues(TypedDict):
+    queue1_id: QueueId
+    queue2_id: QueueId
+    queue_name1: str
+    queue_name2: str
+
 
 @pytest.fixture()
 def make_posts(all_users) -> ITwoPosts:
@@ -228,4 +234,22 @@ def make_posts(all_users) -> ITwoPosts:
         "head2": head2,
         "text1": text1,
         "text2": text2,
+    }
+
+@pytest.fixture()
+def make_queues(all_users) -> ITwoQueues:
+    """
+    Create two queues inside the forum
+    """
+    token = all_users["users"][0]["token"]
+    queue_name1 = "First queue"
+    queue_name2 = "Second queue"
+    queue1_id = queue_create(token, queue_name1)["queue_id"]
+    queue2_id = queue_create(token, queue_name2)["queue_id"]
+
+    return {
+        "queue1_id": queue1_id,
+        "queue2_id": queue2_id,
+        "queue_name1": queue_name1,
+        "queue_name2": queue_name2
     }
