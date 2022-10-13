@@ -7,7 +7,6 @@ Tests for queue view routes
 * Success with valid queue_id
 """
 import pytest
-from datetime import datetime, timedelta
 from typing import cast
 from backend.types.identifiers import QueueId
 from backend.util import http_errors
@@ -42,5 +41,3 @@ def test_get_queue_success(all_users):
     print(queue_name)
     print(queue["queue_name"])
     assert queue["queue_name"] == queue_name
-
-

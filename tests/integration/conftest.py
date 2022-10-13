@@ -207,6 +207,7 @@ class ITwoPosts(TypedDict):
     text1: str
     text2: str
 
+
 class ITwoQueues(TypedDict):
     queue1_id: QueueId
     queue2_id: QueueId
@@ -235,6 +236,7 @@ def make_posts(all_users) -> ITwoPosts:
         "text1": text1,
         "text2": text2,
     }
+
 
 @pytest.fixture()
 def make_queues(all_users) -> ITwoQueues:

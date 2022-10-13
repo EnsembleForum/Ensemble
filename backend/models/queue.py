@@ -4,10 +4,11 @@
 from .tables import TQueue, TPost
 from .post import Post
 from backend.util.db_queries import assert_id_exists, get_by_id
-from backend.types.identifiers import QueueId, PostId
+from backend.types.identifiers import QueueId
 from backend.util.validators import assert_valid_str_field
 from backend.types.queue import IQueueFullInfo
 from typing import cast
+
 
 class Queue:
     """
@@ -40,7 +41,9 @@ class Queue:
         Identifier of the post
         """
         return self.__id
+
     # Create an empty list
+
     @classmethod
     def create(
         cls,
@@ -74,7 +77,7 @@ class Queue:
         row.queue_name = queue_name
         row.save().run_sync()
 
-    #Get the list of all available queues
+    # Get the list of all available queues
     @classmethod
     def all(cls) -> list["Queue"]:
         return [
@@ -92,6 +95,7 @@ class Queue:
             .order_by(TPost.id, ascending=False)
             .run_sync()
         ]
+
     # Remove a queue list
     @classmethod
     def delete(cls, queue_id: QueueId) -> QueueId:
@@ -122,4 +126,3 @@ class Queue:
             "queue_name": self.queue_name,
             "posts": [c.id for c in self.posts],
         }
-
