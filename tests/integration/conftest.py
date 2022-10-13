@@ -10,7 +10,8 @@ from backend.types.permissions import PermissionGroupId
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
 from tests.integration.request.debug import clear
-from tests.integration.request.browse import queue_create, post_create
+from tests.integration.request.browse import post_create
+from tests.integration.request.taskboard import queue_create
 from .request.admin import init, users
 from .request.auth import login
 

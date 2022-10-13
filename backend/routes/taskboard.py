@@ -14,7 +14,7 @@ from backend.util.tokens import uses_token
 from backend.types.queue import IQueueId
 
 
-taskboard = Blueprint('auth', 'auth')
+taskboard = Blueprint('taskboard', 'taskboard')
 
 
 @taskboard.post("/queue_list/create")

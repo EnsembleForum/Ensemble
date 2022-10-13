@@ -10,7 +10,7 @@ import pytest
 from typing import cast
 from backend.types.identifiers import QueueId
 from backend.util import http_errors
-from tests.integration.request.browse import (
+from tests.integration.request.taskboard import (
     queue_create,
     queue_view,
 )
