@@ -21,7 +21,7 @@ taskboard = Blueprint('taskboard', 'taskboard')
 @uses_token
 def queue_list(user: User, *_) -> IQueueList:
     """
-    Returns a list of available queue
+    Returns a list of available queues
 
     ## Body:
     * `queue_name` (`str`): name of queue
