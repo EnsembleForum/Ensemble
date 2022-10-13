@@ -193,11 +193,17 @@ class Post:
         return self._get().me_too
 
     def me_too_inc(self):
+        """
+        Increments the number of me_too's this post has
+        """
         row = self._get()
         row.me_too += 1
         row.save().run_sync()
 
     def me_too_dec(self):
+        """
+        Decrements the number of me_too's this post has
+        """
         row = self._get()
         row.me_too -= 1
         row.save().run_sync()
@@ -213,11 +219,17 @@ class Post:
         return self._get().thanks
 
     def thanks_inc(self):
+        """
+        Increments the number of thanks' this post has
+        """
         row = self._get()
         row.thanks += 1
         row.save().run_sync()
 
     def thanks_dec(self):
+        """
+        Decrements the number of thanks' this post has
+        """
         row = self._get()
         row.thanks -= 1
         row.save().run_sync()
