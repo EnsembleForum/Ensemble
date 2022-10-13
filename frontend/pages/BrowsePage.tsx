@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import React, { createContext, JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import PostListView from "./components/PostListView";
 import PostView from "./components/PostView";
+import PostContext from "./postContext";
 
 interface Props {}
 
@@ -10,13 +11,16 @@ const StyledLayout = styled.div`
   height: 100%;
   flex-direction: horizontal;
 `
-
 const BrowsePage = (props: Props) => {
+  const [postId, setPostId] = React.useState(0);
+  const value = { postId, setPostId};
   return (
-    <StyledLayout>
-      <PostListView/>
-      <PostView/>
-    </StyledLayout>
+    <PostContext.Provider value={value}>
+      <StyledLayout>
+        <PostListView/>
+        <PostView postId = {postId} />
+      </StyledLayout>
+    </PostContext.Provider>
   );
 };
 

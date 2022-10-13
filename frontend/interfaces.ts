@@ -56,7 +56,7 @@ export interface initSchema {
   name_last: string
 }
 
-export interface post {
+export interface postListItem {
   post_id: number,
   heading: string,
   tags: number[],
@@ -64,4 +64,16 @@ export interface post {
     thanks: number,
     me_too: number
   }
+}
+
+export interface postView {
+  post_id: number,
+  heading: string,
+  tags: number[],
+  reacts: {
+    thanks: number,
+    me_too: number
+  }
+  comments: [],
+  text: string,
 }

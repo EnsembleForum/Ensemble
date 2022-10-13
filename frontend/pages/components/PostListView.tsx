@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { Box, IconButton, Text } from "theme-ui";
+import { forEachChild } from "typescript";
 import { ApiFetch } from "../../App";
 import { post } from "../../interfaces";
 import PostListItem from "./PostListItem";
@@ -34,10 +35,11 @@ const PostListView = (props: Props) => {
       me_too: 1
     }
   }];
+  const fakeText =  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit";
   return (
     <StyledLayout>
       {defaultProps.map((each) => {
-        return <PostListItem post: {each} ></PostListItem>
+        return (<PostListItem post={each}></PostListItem>);
       })}
       
     </StyledLayout>
