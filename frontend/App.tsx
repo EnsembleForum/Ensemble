@@ -16,7 +16,6 @@ import UsersRegisterPage from './pages/UsersRegisterPage';
 export function ApiFetch (apiCall : APIcall) {
   const requestOptions : requestOptions = {
     method: apiCall.method,
-    mode: "no-cors",
     headers: { 'Content-Type': 'application/json', }
   };
   if (apiCall.body) { requestOptions.body = JSON.stringify(apiCall.body); }

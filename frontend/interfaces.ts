@@ -36,7 +36,6 @@ export interface loginForm {
 type HeaderType = "Authorization" | "Content-Type" | "Access-Control-Allow-Origin";
 export interface requestOptions {
   method: string,
-  mode?: string,
   headers: {
     [header in HeaderType]?: string
   },
@@ -55,4 +54,14 @@ export interface initSchema {
   email: string, 
   name_first: string,
   name_last: string
+}
+
+export interface post {
+  post_id: number,
+  heading: string,
+  tags: number[],
+  reacts: {
+    thanks: number,
+    me_too: number
+  }
 }

@@ -1,9 +1,12 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { Box, IconButton, Text } from "theme-ui";
+import { post } from "../../interfaces";
 
 // Declaring and typing our props
-interface Props {}
+interface Props {
+  post: post
+}
 const StyledLayout=styled.div`
   width: 350px;
   height: 100%;
