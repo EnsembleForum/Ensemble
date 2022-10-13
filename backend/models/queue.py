@@ -122,7 +122,6 @@ class Queue:
         TQueue.delete().where(TQueue.id == self.id).run_sync()
         # TODO: Send posts back to original queue
 
-    @property
     def full_info(self) -> IQueueFullInfo:
         """
         Returns the full info of a post
