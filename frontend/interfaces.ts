@@ -81,3 +81,7 @@ export interface commentView {
 export interface replyView {
   text:string, timestamp:number, reacts: reacts, author:number
 }
+
+export interface userView {
+  name_first: string, name_last: string,username:  string, email: string, user_id: number
+}

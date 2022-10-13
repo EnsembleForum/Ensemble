@@ -11,6 +11,7 @@ import MainPage from './pages/MainPage';
 import PasswordResetPage from './pages/PasswordResetPage';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
+import UserProfilePage from './pages/UserProfilePage';
 import UsersRegisterPage from './pages/UsersRegisterPage';
 
 export function ApiFetch (apiCall : APIcall) {
@@ -63,6 +64,7 @@ function PassThrough () {
           <Route path='/auth/login' element={<LoginPage/>} />
           <Route path='/auth/register' element={<RegisterPage/>} />
           <Route path='/auth/password_reset' element={<PasswordResetPage/>} />
+          <Route path='/user/profile' element={<UserProfilePage userId={0}/>} />
           <Route path='/main' element={<MainPage page = "browse"/>} />
           <Route path='/admin/users/register' element={<UsersRegisterPage/>} />
         </Routes>

@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
-import { Box, IconButton, Text } from "theme-ui";
+import { Box, IconButton, Input, Text } from "theme-ui";
 import { postView } from "../../interfaces";
+import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props {
-  text: string,
+  text?: string,
   heading?: string,
   reacts?: {
     thanks: number,
@@ -15,6 +16,12 @@ interface Props {
 
 const StyledText = styled.div`
   padding: 10px;
+  border: 1px solid grey;
+  border-radius: 2px;
+  overflow: hidden;
+  * {
+    margin-bottom: 10px;
+  }
 `
 // Exporting our example component
 const PostView = (props: Props) => {
@@ -31,6 +38,10 @@ const PostView = (props: Props) => {
       {heading}
       <p>{props.text}</p>
       {reacts}
+      <div>
+        <Input></Input>
+        <StyledButton>Post</StyledButton>
+      </div>
     </StyledText>
   );
 };
