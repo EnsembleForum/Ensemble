@@ -1,7 +1,7 @@
 """
-# Scripts / Clear
+# Scripts / init-backend-script
 
-Send a simple clear request to the running server
+Send a default setup request to the server to register an admin and login server
 """
 import requests
 import dotenv
