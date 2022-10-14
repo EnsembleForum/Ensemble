@@ -29,11 +29,14 @@ class Permission(Enum):
     # Taskboard and queues
     ViewTaskboard = 20
     """User can view the taskboard overview"""
-    Delegate = 21
+    TaskboardDelegate = 21
     """User can move a post from the main queue to a specialised queue"""
     FollowQueue = 22
     """User can subscribe to queues to get notifications when posts are moved
     into them"""
+    ManageQueues = 23
+    """User can manage taskboard queues, including creating and deleting them.
+    """
 
     # Moderation
     ReportPosts = 30
@@ -59,5 +62,6 @@ class Permission(Enum):
     ManageAuthConfig = 50
     """User can manage authentication options"""
     ManagePermissionGroups = 51
-    """manage permissions groups, including creation, deletion and modification
+    """User can manage permissions groups, including creation, deletion and
+    modification
     """
