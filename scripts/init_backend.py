@@ -1,7 +1,7 @@
 """
 # Scripts / init-backend-script
 
-Send a default setup request to the server to register an admin and login server
+Send a default setup request to the server to register an admin
 """
 import requests
 import dotenv
