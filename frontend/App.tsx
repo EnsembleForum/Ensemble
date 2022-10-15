@@ -1,33 +1,39 @@
+import styled from '@emotion/styled';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { SERVER_PATH } from './constants';
-import { requestOptions } from './interfaces';
+import { APIcall, requestOptions } from './interfaces';
 import AdminPage from './pages/AdminPage';
 import BrowsePage from './pages/BrowsePage';
 import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
+import MainPage from './pages/MainPage';
 import PasswordResetPage from './pages/PasswordResetPage';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
+import UserProfilePage from './pages/UserProfilePage';
+import UsersRegisterPage from './pages/UsersRegisterPage';
 
-export function ApiFetch (method : string, path : string, token : string | null, body? : object, customUrl?: string) {
+export function ApiFetch (apiCall : APIcall) {
   const requestOptions : requestOptions = {
-    method: method,
-    headers: { 'Content-Type': 'application/json' }
+    method: apiCall.method,
+    headers: { 'Content-Type': 'application/json', }
   };
-  if (body !== null) { requestOptions.body = JSON.stringify(body); }
-  if (token !== null) { requestOptions.headers.Authorization = `Bearer ${token}`; }
+  if (apiCall.body) { requestOptions.body = JSON.stringify(apiCall.body); }
+  if (apiCall.token) { requestOptions.headers.Authorization = `Bearer ${apiCall.token}`; }
   console.log(JSON.stringify(requestOptions));
-  if (!customUrl) {
-    customUrl = SERVER_PATH;
+  if (!apiCall.customUrl) {
+    apiCall.customUrl = SERVER_PATH;
   }
   return new Promise((resolve, reject) => {
-    fetch(`${customUrl}${path}`, requestOptions)
+    fetch(`${apiCall.customUrl}${apiCall.path}`, requestOptions)
       .then((response) => {
+        console.log(response);
         if (response.status === 400 || response.status === 403) {
           response.json().then((errorMsg) => {
             console.log(errorMsg.error);
             alert(errorMsg.error);
+            reject(errorMsg);
           });
         } else if (response.status === 200) {
           response.json().then(data => {
@@ -39,19 +45,28 @@ export function ApiFetch (method : string, path : string, token : string | null,
   });
 }
 
+export function setToken(value: string) {
+  window.localStorage.setItem("token", value);
+}
+export function getToken() : string | null {
+  const token = window.localStorage.getItem("token");
+  return token;
+}
+
 
 function PassThrough () {
   return (
     <Router>
         <Routes>
-          <Route path = "/" element={<Navigate to="/init" />}></Route>
-          <Route path='/init' element={<InitPage/>} />
+          <Route path = "/" element={<Navigate to="/admin/init" />}></Route>
+          <Route path='/admin/init' element={<InitPage/>} />
           <Route path='/admin' element={<AdminPage/>} />
           <Route path='/auth/login' element={<LoginPage/>} />
           <Route path='/auth/register' element={<RegisterPage/>} />
           <Route path='/auth/password_reset' element={<PasswordResetPage/>} />
-          <Route path='/browse' element={<BrowsePage/>} />
-          <Route path='/taskboard' element={<TaskboardPage/>} />
+          <Route path='/user/profile' element={<UserProfilePage userId={0}/>} />
+          <Route path='/main' element={<MainPage page = "browse"/>} />
+          <Route path='/admin/users/register' element={<UsersRegisterPage/>} />
         </Routes>
     </Router>
   );
