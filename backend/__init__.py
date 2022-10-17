@@ -9,7 +9,6 @@ from flask import Flask
 from flask_cors import CORS  # type: ignore
 from .routes import debug, admin, auth, user, browse
 from .util import db_status
-from .util.debug import debug_active
 from .util.http_errors import HTTPException
 from .util.error_handler import http_error_handler, general_error_handler
 
@@ -24,9 +23,7 @@ app.register_error_handler(Exception, general_error_handler)
 db_status.init()
 
 # Register blueprint routes
-if debug_active():
-    app.register_blueprint(debug, url_prefix="/debug")
-
+app.register_blueprint(debug, url_prefix="/debug")
 app.register_blueprint(admin, url_prefix='/admin')
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(user, url_prefix='/user')
