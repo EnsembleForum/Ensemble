@@ -82,6 +82,7 @@ class PermissionGroup(PermissionSet):
     """
     Represents a permission group, from which user permissions are derived.
     """
+
     def __init__(self, id: PermissionGroupId):
         """
         Load a permission group from the database
@@ -184,6 +185,7 @@ class PermissionUser(PermissionSet):
     """
     Represents a user permission, which derives from a group.
     """
+
     def __init__(self, id: UserPermissionId) -> None:
         """
         Load a user permission set from the database
