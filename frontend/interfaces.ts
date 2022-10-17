@@ -4,10 +4,10 @@ export interface exampleTest {
 }
 
 export interface APIcall {
-  method : string, path : string, body? : object | null, token?: string | null, customUrl?: string
+  method: string, path: string, body?: object | null, customUrl?: string
 }
 
-export interface userToAdd  {
+export interface userToAdd {
   [key: string]: string,
   name_first: string, name_last: string, email: string, username: string,
 }
@@ -40,7 +40,7 @@ export interface requestOptions {
     //[header in HeaderType]?: string
     [key: string]: string;
   },
-  body? : string,
+  body?: string,
 }
 
 // init type
@@ -52,7 +52,7 @@ export interface initSchema {
   success_regex: string,
   username: string,
   password: string,
-  email: string, 
+  email: string,
   name_first: string,
   name_last: string
 }
@@ -76,13 +76,13 @@ export interface postView {
   text: string,
 }
 export interface commentView {
-  text:string, replies:number[], timestamp:number, reacts: reacts, author:number
+  text: string, replies: number[], timestamp: number, reacts: reacts, author: number
 }
 
 export interface replyView {
-  text:string, timestamp:number, reacts: reacts, author:number
+  text: string, timestamp: number, reacts: reacts, author: number
 }
 
 export interface userView {
-  name_first: string, name_last: string,username:  string, email: string, user_id: number
+  name_first: string, name_last: string, username: string, email: string, user_id: number
 }

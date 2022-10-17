@@ -14,13 +14,14 @@ import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
 import UsersRegisterPage from './pages/UsersRegisterPage';
 
-export function ApiFetch (apiCall : APIcall) {
-  const requestOptions : requestOptions = {
+export function ApiFetch(apiCall: APIcall) {
+  const requestOptions: requestOptions = {
     method: apiCall.method,
-    headers: { 'Content-Type': 'application/json'}
+    headers: { 'Content-Type': 'application/json' }
   };
   if (apiCall.body) { requestOptions.body = JSON.stringify(apiCall.body); }
-  if (apiCall.token) { requestOptions.headers.Authorization = `Bearer ${apiCall.token}`; }
+  const token = getToken();
+  if (token !== null) { requestOptions.headers.Authorization = `Bearer ${token}`; }
   console.log(JSON.stringify(requestOptions));
   if (!apiCall.customUrl) {
     apiCall.customUrl = SERVER_PATH;
@@ -46,28 +47,29 @@ export function ApiFetch (apiCall : APIcall) {
 }
 
 export function setToken(value: string) {
+  console.log(value);
   window.localStorage.setItem("token", value);
 }
-export function getToken() : string | null {
+export function getToken(): string | null {
   const token = window.localStorage.getItem("token");
   return token;
 }
 
 
-function PassThrough () {
+function PassThrough() {
   return (
     <Router>
-        <Routes>
-          <Route path = "/" element={<Navigate to="/admin/init" />}></Route>
-          <Route path='/admin/init' element={<InitPage/>} />
-          <Route path='/admin' element={<AdminPage/>} />
-          <Route path='/auth/login' element={<LoginPage/>} />
-          <Route path='/auth/register' element={<RegisterPage/>} />
-          <Route path='/auth/password_reset' element={<PasswordResetPage/>} />
-          <Route path='/user/profile' element={<UserProfilePage userId={0}/>} />
-          <Route path='/main' element={<MainPage page = "browse"/>} />
-          <Route path='/admin/users/register' element={<UsersRegisterPage/>} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Navigate to="/admin/init" />}></Route>
+        <Route path='/admin/init' element={<InitPage />} />
+        <Route path='/admin' element={<AdminPage />} />
+        <Route path='/auth/login' element={<LoginPage />} />
+        <Route path='/auth/register' element={<RegisterPage />} />
+        <Route path='/auth/password_reset' element={<PasswordResetPage />} />
+        <Route path='/user/profile' element={<UserProfilePage userId={0} />} />
+        <Route path='/main' element={<MainPage page="browse" />} />
+        <Route path='/admin/users/register' element={<UsersRegisterPage />} />
+      </Routes>
     </Router>
   );
 }
