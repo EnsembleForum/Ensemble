@@ -28,6 +28,7 @@
     "test": "jest --verbose ./tests/frontend",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:5000",
   "eslintConfig": {
     "extends": [
       "react-app",
