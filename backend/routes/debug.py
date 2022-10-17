@@ -9,6 +9,7 @@ from colorama import Fore
 from flask import Blueprint, request
 from backend.util import http_errors, db_status
 from backend.types.debug import IEcho
+from typing import NoReturn
 
 debug = Blueprint('debug', 'debug')
 
@@ -53,3 +54,11 @@ def shutdown() -> dict:
     print("Initiated server shutdown")
     # TODO
     return {}
+
+
+@debug.get('/fail')
+def fail() -> NoReturn:
+    """
+    Raise an error 500
+    """
+    raise Exception("You brought this upon yourself.")
