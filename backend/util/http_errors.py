@@ -177,10 +177,10 @@ class InternalServerError(HTTPException):
 
 codes: dict[int, tuple[str, Optional[type[HTTPException]]]] = {
     200: ("Ok", None),
-    400: ("Bad request", BadRequest),
+    400: ("Bad Request", BadRequest),
     401: ("Unauthorized", Unauthorized),
     403: ("Forbidden", Forbidden),
-    404: ("Not found", NotFound),
-    405: ("Method not allowed", MethodNotAllowed),
-    500: ("Internal server error", InternalServerError),
+    404: ("Not Found", NotFound),
+    405: ("Method Not Allowed", MethodNotAllowed),
+    500: ("Internal Server Error", InternalServerError),
 }

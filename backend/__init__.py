@@ -7,10 +7,15 @@ This is the main entrypoint to backend server.
 """
 from flask import Flask
 from flask_cors import CORS  # type: ignore
+from werkzeug.exceptions import HTTPException as WzException
 from .routes import debug, admin, auth, user, browse
 from .util import db_status
 from .util.http_errors import HTTPException
-from .util.error_handler import http_error_handler, general_error_handler
+from .util.error_handler import (
+    http_error_handler,
+    general_error_handler,
+    werkzeug_error_handler,
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -18,6 +23,7 @@ CORS(app)
 # Register error handlers
 app.register_error_handler(HTTPException, http_error_handler)
 app.register_error_handler(Exception, general_error_handler)
+app.register_error_handler(WzException, werkzeug_error_handler)
 
 # Initialise the database
 db_status.init()

@@ -2,6 +2,7 @@
 # Backend / Util / Error handler
 """
 import traceback
+from werkzeug import exceptions as wz_exceptions
 from .http_errors import HTTPException
 from backend.types.errors import IErrorInfo
 from .debug import debug_active
@@ -38,6 +39,26 @@ def http_error_handler(err: HTTPException) -> IErrorInfo:
     * `err` (`HTTPException`): error to handle
     """
     return err.asJson()
+
+
+@decorate_error_handlers
+def werkzeug_error_handler(err: wz_exceptions.HTTPException) -> IErrorInfo:
+    """
+    Error handler for werkzeug exceptions
+
+    ### Args:
+    * `err` (`Exception`): error to handle
+
+    ### Returns:
+    * `IErrorInfo`: _description_
+    """
+    c = err.code if err.code is not None else 500
+    return {
+        "code": c,
+        "heading": err.name,
+        "description": err.description if err.description is not None else "",
+        "traceback": None,
+    }
 
 
 @decorate_error_handlers
