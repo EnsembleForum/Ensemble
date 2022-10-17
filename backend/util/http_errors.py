@@ -24,59 +24,77 @@ Error code descriptions sourced from
 [Mozilla's MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status),
 used under [CC-BY-SA 2.5](https://creativecommons.org/licenses/by-sa/2.5/).
 """
-from typing import Optional, TypeVar, Generic
-from werkzeug.exceptions import HTTPException as _HTTPException
-from werkzeug.wrappers import Response
-from backend.types.errors import IErrorInfo
+from typing import Optional
 
 
-T = TypeVar("T", IErrorInfo, None)
-
-
-class HTTPException(_HTTPException, Generic[T]):
+class HTTPException(Exception):
     """
     Base HTTPException type in Ensemble
     """
-    test_json: T
+    code: int
+    heading: str
+    description: str
+    traceback: Optional[str]
 
     def __init__(
         self,
-        description: Optional[str] = None,
-        response: Optional[Response] = None,
-        test_json: T = None,
+        code: int,
+        heading: str,
+        description: str,
+        traceback: Optional[str],
     ) -> None:
-        self.test_json = test_json  # type: ignore
-        super().__init__(description, response)
+        self.code = code
+        self.heading = heading
+        self.description = description
+        self.traceback = traceback
+
+    def __repr__(self) -> str:
+        return f"{self.code} ({self.heading}): {self.description}"
 
 
-class BadRequest(HTTPException, Generic[T]):
+class BadRequest(HTTPException):
     """
     The server cannot or will not process the request due to something that is
     perceived to be a client error (e.g., malformed request syntax, invalid
     request message framing, or deceptive request routing).
     """
-    test_json: T
-    code = 400
+
+    def __init__(
+        self,
+        description: str,
+        traceback: Optional[str] = None,
+    ) -> None:
+        super().__init__(400, "Bad Request", description, traceback)
 
 
-class Unauthorized(HTTPException, Generic[T]):
+class Unauthorized(HTTPException):
     """
     Although the HTTP standard specifies "unauthorized", semantically this
     response means "unauthenticated". That is, the client must authenticate
     itself to get the requested response.
     """
-    test_json: T
-    code = 401
+
+    def __init__(
+        self,
+        description: str,
+        traceback: Optional[str] = None,
+    ) -> None:
+        super().__init__(401, "Unauthorized", description, traceback)
 
 
-class Forbidden(HTTPException, Generic[T]):
+class Forbidden(HTTPException):
     """
     The client does not have access rights to the content; that is, it is
     unauthorized, so the server is refusing to give the requested resource.
     Unlike `Unauthorized`, the client's identity is known to the server.
     """
-    test_json: T
-    code = 403
+
+    def __init__(
+        self,
+        description: str,
+        traceback: Optional[str] = None,
+    ) -> None:
+        super().__init__(403, "Forbidden", description, traceback)
 
 
 class NotFound(HTTPException):
@@ -88,7 +106,13 @@ class NotFound(HTTPException):
     from an unauthorized client. This response code is probably the most well
     known due to its frequent occurrence on the web.
     """
-    code = 404
+
+    def __init__(
+        self,
+        description: str,
+        traceback: Optional[str] = None,
+    ) -> None:
+        super().__init__(404, "Not found", description, traceback)
 
 
 class MethodNotAllowed(HTTPException):
@@ -97,12 +121,23 @@ class MethodNotAllowed(HTTPException):
     target resource. For example, an API may not allow calling DELETE to remove
     a resource.
     """
-    code = 405
+
+    def __init__(
+        self,
+        description: str,
+        traceback: Optional[str] = None,
+    ) -> None:
+        super().__init__(405, "Method not allowed", description, traceback)
 
 
-class InternalServerError(HTTPException, Generic[T]):
+class InternalServerError(HTTPException):
     """
     The server has encountered a situation it does not know how to handle.
     """
-    test_json: T
-    code = 500
+
+    def __init__(
+        self,
+        description: str,
+        traceback: Optional[str] = None,
+    ) -> None:
+        super().__init__(500, "Internal server error", description, traceback)
