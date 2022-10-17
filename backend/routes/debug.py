@@ -66,18 +66,18 @@ def fail() -> NoReturn:
     raise Exception("You brought this upon yourself.")
 
 
-# Dummy debug to let people know that debug routes are disabled
+# Dummy debug containing no routes
 dummy_debug = Blueprint('dummy_debug', 'debug')
 
 
-@dummy_debug.errorhandler(404)
-def debug_not_found(err) -> IErrorInfo:
+@dummy_debug.route('/<path:path>')
+def debug_not_found(path) -> tuple[IErrorInfo, int]:
     return {
         "code": 404,
         "heading": "Not found",
         "description": "Debug routes are disabled in a production environment",
         "traceback": None,
-    }
+    }, 404
 
 
 # Only export the required routes
