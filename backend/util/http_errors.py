@@ -24,7 +24,16 @@ Error code descriptions sourced from
 [Mozilla's MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status),
 used under [CC-BY-SA 2.5](https://creativecommons.org/licenses/by-sa/2.5/).
 """
-from werkzeug.exceptions import HTTPException
+from typing import Optional
+from werkzeug.exceptions import HTTPException as _HTTPException
+from backend.types.errors import IErrorInfo
+
+
+class HTTPException(_HTTPException):
+    """
+    Base HTTPException type in Ensemble
+    """
+    test_json: Optional[IErrorInfo] = None
 
 
 class BadRequest(HTTPException):
@@ -43,6 +52,7 @@ class Unauthorized(HTTPException):
     itself to get the requested response.
     """
     code = 401
+    test_json: Optional[IErrorInfo] = None
 
 
 class Forbidden(HTTPException):
@@ -52,6 +62,7 @@ class Forbidden(HTTPException):
     Unlike `Unauthorized`, the client's identity is known to the server.
     """
     code = 403
+    test_json: Optional[IErrorInfo] = None
 
 
 class NotFound(HTTPException):
@@ -64,6 +75,7 @@ class NotFound(HTTPException):
     known due to its frequent occurrence on the web.
     """
     code = 404
+    test_json: Optional[IErrorInfo] = None
 
 
 class MethodNotAllowed(HTTPException):
@@ -73,6 +85,7 @@ class MethodNotAllowed(HTTPException):
     a resource.
     """
     code = 405
+    test_json: Optional[IErrorInfo] = None
 
 
 class InternalServerError(HTTPException):
@@ -80,3 +93,4 @@ class InternalServerError(HTTPException):
     The server has encountered a situation it does not know how to handle.
     """
     code = 500
+    test_json: Optional[IErrorInfo] = None

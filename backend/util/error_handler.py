@@ -57,7 +57,7 @@ def http_error_handler(err: HTTPException) -> IErrorInfo:
     return {
         "code": err.code,
         "heading": type(err).__name__,
-        "details": err.description,
+        "description": err.description,
         "traceback": trace,
     }
 
@@ -84,6 +84,6 @@ def general_error_handler(err: Exception) -> IErrorInfo:
     return {
         "code": 500,
         "heading": "Internal server error",
-        "details": str(err),
+        "description": str(err),
         "traceback": trace,
     }

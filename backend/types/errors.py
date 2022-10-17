@@ -20,5 +20,5 @@ class IErrorInfo(TypedDict):
     """
     code: int
     heading: str
-    details: str
+    description: str
     traceback: Optional[str]
