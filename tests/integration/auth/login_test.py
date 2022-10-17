@@ -12,7 +12,7 @@ Tests for logging in
 import pytest
 from backend.util import http_errors
 from tests.integration.conftest import IBasicServerSetup
-from tests.integration.request.auth import login, post, URL
+from tests.integration.request.auth import login, post, URL, JWT
 
 
 def test_fails_incorrect_username(basic_server_setup: IBasicServerSetup):
@@ -78,3 +78,18 @@ def test_fails_already_logged_in(basic_server_setup: IBasicServerSetup):
                 "password": "admin1",
             }
         )
+
+
+def test_already_logged_in_invalid_token(
+    basic_server_setup: IBasicServerSetup
+):
+    """Can we log in if we provide an invalid token?"""
+    ret = post(
+        JWT(basic_server_setup['token'] + 'invalid'),
+        f"{URL}/login",
+        {
+            "username": "admin1",
+            "password": "admin1",
+        }
+    )
+    assert ret["token"] != basic_server_setup['token']
