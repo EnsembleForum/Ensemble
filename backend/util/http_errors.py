@@ -39,12 +39,11 @@ class HTTPException(Exception):
     def __init__(
         self,
         code: int,
-        heading: str,
         description: str,
         traceback: Optional[str],
     ) -> None:
         self.code = code
-        self.heading = heading
+        self.heading = codes[code][0]
         self.description = description
         self.traceback = traceback
 
@@ -64,7 +63,7 @@ class BadRequest(HTTPException):
         description: str,
         traceback: Optional[str] = None,
     ) -> None:
-        super().__init__(400, "Bad Request", description, traceback)
+        super().__init__(400, description, traceback)
 
 
 class Unauthorized(HTTPException):
@@ -79,7 +78,7 @@ class Unauthorized(HTTPException):
         description: str,
         traceback: Optional[str] = None,
     ) -> None:
-        super().__init__(401, "Unauthorized", description, traceback)
+        super().__init__(401, description, traceback)
 
 
 class Forbidden(HTTPException):
@@ -94,7 +93,7 @@ class Forbidden(HTTPException):
         description: str,
         traceback: Optional[str] = None,
     ) -> None:
-        super().__init__(403, "Forbidden", description, traceback)
+        super().__init__(403, description, traceback)
 
 
 class NotFound(HTTPException):
@@ -112,7 +111,7 @@ class NotFound(HTTPException):
         description: str,
         traceback: Optional[str] = None,
     ) -> None:
-        super().__init__(404, "Not found", description, traceback)
+        super().__init__(404, description, traceback)
 
 
 class MethodNotAllowed(HTTPException):
@@ -127,7 +126,7 @@ class MethodNotAllowed(HTTPException):
         description: str,
         traceback: Optional[str] = None,
     ) -> None:
-        super().__init__(405, "Method not allowed", description, traceback)
+        super().__init__(405, description, traceback)
 
 
 class InternalServerError(HTTPException):
@@ -140,4 +139,15 @@ class InternalServerError(HTTPException):
         description: str,
         traceback: Optional[str] = None,
     ) -> None:
-        super().__init__(500, "Internal server error", description, traceback)
+        super().__init__(500, description, traceback)
+
+
+codes: dict[int, tuple[str, Optional[type[HTTPException]]]] = {
+    200: ("Ok", None),
+    400: ("Bad request", BadRequest),
+    401: ("Unauthorized", Unauthorized),
+    403: ("Forbidden", Forbidden),
+    404: ("Not found", NotFound),
+    405: ("Method not allowed", MethodNotAllowed),
+    500: ("Internal server error", InternalServerError),
+}

@@ -74,6 +74,7 @@ def do_auth_check(
                 )
             case t:
                 raise http_errors.BadRequest(f"Invalid request type {t}")
+    # Check for basic errors
     except requests.ConnectionError:
         raise http_errors.BadRequest(
             f"Unable to connect to {address} for login auth. Please double "
@@ -84,11 +85,19 @@ def do_auth_check(
             f"Invalid schema for {address} when checking login auth. Please "
             f"ensure your address contains the schema (such as http://)."
         )
+    # Make sure the request worked properly
     if res.status_code != 200:
         c = res.status_code
+        # Give helpful errors for the status code
+        try:
+            description = f"({http_errors.codes[c]})"
+        except KeyError:
+            description = ""
         raise http_errors.BadRequest(
-            f"Auth server failed to process request - gave status code {c}"
+            f"Auth server failed to process request - gave status code {c} "
+            + description
         )
+
     try:
         return re.match(success_regex, res.text) is not None
     except re.error as e:
