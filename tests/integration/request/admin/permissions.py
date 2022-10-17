@@ -5,7 +5,7 @@ from backend.types.identifiers import UserId, PermissionId, PermissionGroupId
 from backend.types.auth import JWT
 from backend.types.permissions import (
     IPermissionList,
-    IPermissionValues,
+    IPermissionUser,
     IPermissionGroupList,
     IGroupId,
 )
@@ -27,7 +27,7 @@ def list_permissions(token: JWT) -> IPermissionList:
     ))
 
 
-def get_permissions(token: JWT, uid: UserId) -> IPermissionValues:
+def get_permissions(token: JWT, uid: UserId) -> IPermissionUser:
     """
     Returns the permissions of a user
 
@@ -37,7 +37,7 @@ def get_permissions(token: JWT, uid: UserId) -> IPermissionValues:
     ## Returns:
     * `IPermissionValues`
     """
-    return cast(IPermissionValues, get(
+    return cast(IPermissionUser, get(
         token,
         f"{URL}/get_permissions",
         {"uid": uid}
@@ -124,7 +124,7 @@ def groups_edit(
     token: JWT,
     group_id: PermissionGroupId,
     name: str,
-    values: IPermissionValues,
+    values: IPermissionUser,
 ) -> None:
     """
     Edit an existing permission group

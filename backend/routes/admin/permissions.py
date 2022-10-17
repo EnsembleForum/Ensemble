@@ -2,7 +2,7 @@ from flask import Blueprint
 from backend.models.permissions import PermissionGroup
 from backend.types.permissions import (
     IPermissionList,
-    IPermissionValues,
+    IPermissionUser,
     IPermissionGroupList,
     IGroupId,
 )
@@ -23,7 +23,7 @@ def list_permissions() -> IPermissionList:
 
 
 @permissions.get('/get_permissions')
-def get_permissions() -> IPermissionValues:
+def get_permissions() -> IPermissionUser:
     """
     Returns the permissions of a user
 
