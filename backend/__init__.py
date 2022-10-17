@@ -5,20 +5,26 @@ A next-gen forum to make life easier for educators and students alike.
 
 This is the main entrypoint to backend server.
 """
-import os
 from flask import Flask
 from flask_cors import CORS  # type: ignore
 from .routes import debug, admin, auth, user, browse
 from .util import db_status
+from .util.debug import debug_active
+from .util.http_errors import HTTPException
+from .util.error_handler import http_error_handler, general_error_handler
 
 app = Flask(__name__)
 CORS(app)
+
+# Register error handlers
+app.register_error_handler(HTTPException, http_error_handler)
+app.register_error_handler(Exception, general_error_handler)
 
 # Initialise the database
 db_status.init()
 
 # Register blueprint routes
-if os.getenv("ENSEMBLE_DEBUG") is not None:
+if debug_active():
     app.register_blueprint(debug, url_prefix="/debug")
 
 app.register_blueprint(admin, url_prefix='/admin')
