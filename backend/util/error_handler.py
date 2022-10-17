@@ -37,29 +37,7 @@ def http_error_handler(err: HTTPException) -> IErrorInfo:
     ### Args:
     * `err` (`HTTPException`): error to handle
     """
-    # Only include traceback if we're debugging
-    if debug_active():
-        trace = "\n".join(traceback.format_exception(err))
-    else:
-        trace = None
-    # Type checks - all exceptions should have this
-    if err.code is None:
-        raise Exception(
-            f"Error code not specified for exception {err}"
-            f"{trace if trace is not None else ''}"
-        )
-    if err.description is None:
-        raise Exception(
-            f"Error description not specified for exception {err}"
-            f"{trace if trace is not None else ''}"
-        )
-    # Finally return the info
-    return {
-        "code": err.code,
-        "heading": type(err).__name__,
-        "description": err.description,
-        "traceback": trace,
-    }
+    return err.asJson()
 
 
 @decorate_error_handlers

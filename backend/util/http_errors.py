@@ -24,7 +24,10 @@ Error code descriptions sourced from
 [Mozilla's MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status),
 used under [CC-BY-SA 2.5](https://creativecommons.org/licenses/by-sa/2.5/).
 """
+import traceback
 from typing import Optional
+from backend.types.errors import IErrorInfo
+from .debug import debug_active
 
 
 class HTTPException(Exception):
@@ -42,6 +45,17 @@ class HTTPException(Exception):
         description: str,
         traceback: Optional[str],
     ) -> None:
+        """
+        Create a basic HTTP exception
+
+        ### Args:
+        * `code` (`int`): status code
+
+        * `description` (`str`): description of error
+
+        * `traceback` (`Optional[str]`): traceback of error, used in testing
+          API (not in backend)
+        """
         self.code = code
         self.heading = codes[code][0]
         self.description = description
@@ -49,6 +63,25 @@ class HTTPException(Exception):
 
     def __repr__(self) -> str:
         return f"{self.code} ({self.heading}): {self.description}"
+
+    def asJson(self) -> IErrorInfo:
+        """
+        Convert the exception to JSON so it can be returned to the frontend
+
+        ### Returns:
+        * `IErrorInfo`: JSON
+        """
+        # Only include traceback if we're debugging
+        if debug_active():
+            trace = "\n".join(traceback.format_exception(self))
+        else:
+            trace = None
+        return {
+            "code": self.code,
+            "heading": type(self).__name__,
+            "description": self.description,
+            "traceback": trace,
+        }
 
 
 class BadRequest(HTTPException):
