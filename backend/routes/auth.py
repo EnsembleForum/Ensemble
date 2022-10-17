@@ -28,6 +28,12 @@ def login() -> IAuthInfo:
     * `user_id`: `UserId`
     * `token`: `JWT`
     """
+    # Check if they have a token
+    if request.headers.get('token', None) is not None:
+        raise http_errors.BadRequest(
+            "You're already logged in - return to the main page to see the "
+            "content"
+        )
     data = json.loads(request.data.decode('utf-8'))
     username = data["username"]
     password = data["password"]

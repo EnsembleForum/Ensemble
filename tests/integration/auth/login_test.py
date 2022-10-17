@@ -7,11 +7,12 @@ Tests for logging in
 * Fails with correct username/password but not in database
 * Succeeds with correct input
 * Different logins from same user get different tokens but same user_id
+* Already has token
 """
 import pytest
 from backend.util import http_errors
 from tests.integration.conftest import IBasicServerSetup
-from tests.integration.request.auth import login
+from tests.integration.request.auth import login, post, URL
 
 
 def test_fails_incorrect_username(basic_server_setup: IBasicServerSetup):
@@ -64,3 +65,16 @@ def test_different_tokens(basic_server_setup: IBasicServerSetup):
     )
     assert res1['user_id'] == res2['user_id']
     assert res1['token'] != res2['token']
+
+
+def test_fails_already_logged_in(basic_server_setup: IBasicServerSetup):
+    """Do we fail to log in if we provide a token when logging in?"""
+    with pytest.raises(http_errors.BadRequest):
+        post(
+            basic_server_setup['token'],
+            f"{URL}/login",
+            {
+                "username": "admin1",
+                "password": "admin1",
+            }
+        )
