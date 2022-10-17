@@ -24,45 +24,59 @@ Error code descriptions sourced from
 [Mozilla's MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status),
 used under [CC-BY-SA 2.5](https://creativecommons.org/licenses/by-sa/2.5/).
 """
-from typing import Optional
+from typing import Optional, TypeVar, Generic
 from werkzeug.exceptions import HTTPException as _HTTPException
+from werkzeug.wrappers import Response
 from backend.types.errors import IErrorInfo
 
 
-class HTTPException(_HTTPException):
+T = TypeVar("T", IErrorInfo, None)
+
+
+class HTTPException(_HTTPException, Generic[T]):
     """
     Base HTTPException type in Ensemble
     """
-    test_json: Optional[IErrorInfo] = None
+    test_json: T
+
+    def __init__(
+        self,
+        description: Optional[str] = None,
+        response: Optional[Response] = None,
+        test_json: T = None,
+    ) -> None:
+        self.test_json = test_json  # type: ignore
+        super().__init__(description, response)
 
 
-class BadRequest(HTTPException):
+class BadRequest(HTTPException, Generic[T]):
     """
     The server cannot or will not process the request due to something that is
     perceived to be a client error (e.g., malformed request syntax, invalid
     request message framing, or deceptive request routing).
     """
+    test_json: T
     code = 400
 
 
-class Unauthorized(HTTPException):
+class Unauthorized(HTTPException, Generic[T]):
     """
     Although the HTTP standard specifies "unauthorized", semantically this
     response means "unauthenticated". That is, the client must authenticate
     itself to get the requested response.
     """
+    test_json: T
     code = 401
-    test_json: Optional[IErrorInfo] = None
 
 
-class Forbidden(HTTPException):
+class Forbidden(HTTPException, Generic[T]):
     """
     The client does not have access rights to the content; that is, it is
     unauthorized, so the server is refusing to give the requested resource.
     Unlike `Unauthorized`, the client's identity is known to the server.
     """
+    test_json: T
     code = 403
-    test_json: Optional[IErrorInfo] = None
 
 
 class NotFound(HTTPException):
@@ -75,7 +89,6 @@ class NotFound(HTTPException):
     known due to its frequent occurrence on the web.
     """
     code = 404
-    test_json: Optional[IErrorInfo] = None
 
 
 class MethodNotAllowed(HTTPException):
@@ -85,12 +98,11 @@ class MethodNotAllowed(HTTPException):
     a resource.
     """
     code = 405
-    test_json: Optional[IErrorInfo] = None
 
 
-class InternalServerError(HTTPException):
+class InternalServerError(HTTPException, Generic[T]):
     """
     The server has encountered a situation it does not know how to handle.
     """
+    test_json: T
     code = 500
-    test_json: Optional[IErrorInfo] = None

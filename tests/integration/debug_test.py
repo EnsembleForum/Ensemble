@@ -5,6 +5,8 @@ Tests for debug routes
 """
 from .request.debug import echo, fail
 from backend.util import http_errors
+from backend.types.errors import IErrorInfo
+from typing import cast
 
 
 def test_echo():
@@ -17,7 +19,11 @@ def test_fail():
     try:
         fail()
     except http_errors.InternalServerError as e:
+        # TODO: Make this nicer - some proper exception matching would be super
+        # helpful
+        err = cast(http_errors.InternalServerError[IErrorInfo], e)
         assert e.test_json is not None
-        assert e.test_json["code"] == 500
-        assert e.test_json["description"] == "You brought this upon yourself."
-        assert e.test_json["heading"] == "Internal server error"
+        assert err.test_json["code"] == 500
+        assert err.test_json["description"] \
+            == "You brought this upon yourself."
+        assert err.test_json["heading"] == "Internal server error"
