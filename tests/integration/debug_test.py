@@ -19,4 +19,4 @@ def test_fail():
     except http_errors.InternalServerError as e:
         assert e.code == 500
         assert e.description == "You brought this upon yourself."
-        assert e.heading == "Internal server error"
+        assert e.heading == "Internal Server Error"
