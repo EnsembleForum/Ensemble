@@ -54,12 +54,10 @@ class IPermissionGroup(TypedDict):
             * `True`: permission allowed
 
             * `False`: permission denied
-
-            * `None`: permission inherited
     """
     group_id: PermissionGroupId
     name: str
-    permissions: dict[PermissionId, bool | None]
+    permissions: dict[PermissionId, bool]
 
 
 class IPermissionGroupList(TypedDict):
@@ -78,8 +76,6 @@ class IPermissionGroupList(TypedDict):
                     * `True`: permission allowed
 
                     * `False`: permission denied
-
-                    * `None`: permission inherited
     """
     groups: list[IPermissionGroup]
 
