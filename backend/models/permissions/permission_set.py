@@ -325,6 +325,26 @@ class PermissionUser(PermissionSet):
         else:
             return self.parent.can(action)
 
+    def value(self, action: Permission) -> Optional[bool]:
+        """
+        Returns the specified value of a permission for this user
+
+        ### Args:
+        * `action` (`Permission`): permission to check
+
+        ### Returns:
+        * `True`: Explicitly allowed
+        * `False`: Explicitly denied
+        * `None`: Inherited
+        """
+        row = self._get()
+        if action.value in row.allowed:
+            return True
+        elif action.value in row.disallowed:
+            return False
+        else:
+            return None
+
     def update_allowed(self, actions: dict[Permission, Optional[bool]]):
         """
         Add the given set of permissions to the allowed set of permissions,
@@ -336,7 +356,7 @@ class PermissionUser(PermissionSet):
           permissions to allow or disallow. Each Permission should be set to
           `True` to allow, `False` to disallow, or `None` to leave as default.
         """
-        row = get_by_id(TPermissionGroup, self.__id)
+        row = get_by_id(TPermissionUser, self.__id)
 
         allowed: list[int] = []
         disallowed: list[int] = []

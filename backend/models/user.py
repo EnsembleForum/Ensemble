@@ -121,6 +121,12 @@ class User:
             raise MatchNotFound(f"User with email {email} not found")
         return User(result.id)
 
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, User):
+            return self.id == __o.id
+        else:
+            return False
+
     def _get(self) -> TUser:
         """
         Return a reference to the underlying database row

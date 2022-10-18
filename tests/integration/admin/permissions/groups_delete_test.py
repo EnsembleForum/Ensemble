@@ -125,4 +125,4 @@ def test_users_transferred(
     assert permissions.get_permissions(
         all_users['admins'][0]['token'],
         all_users['mods'][0]['user_id'],
-    )['group_id'] == permission_groups['user']
+    )['group_id'] == permission_groups['user']['group_id']

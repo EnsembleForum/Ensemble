@@ -63,5 +63,5 @@ def get_by_id(table: type[T], id: int) -> T:
     """
     result = table.objects().where(table.id == id).first().run_sync()
     if result is None:
-        raise IdNotFound(f"id {id} not found in table {table}")
+        raise IdNotFound(f"id {id} not found in table {table.__name__}")
     return cast(T, result)

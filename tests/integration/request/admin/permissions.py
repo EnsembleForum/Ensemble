@@ -33,12 +33,12 @@ def list_permissions(token: JWT) -> IPermissionList:
     ))
 
 
-def get_permissions(token: JWT, uid: UserId) -> IPermissionUser:
+def get_permissions(token: JWT, user_id: UserId) -> IPermissionUser:
     """
     Returns the permissions of a user
 
     ## Params:
-    * `uid` (`UserId`): user id to query permissions for
+    * `user_id` (`UserId`): user id to query permissions for
 
     ## Returns:
 
@@ -60,7 +60,7 @@ def get_permissions(token: JWT, uid: UserId) -> IPermissionUser:
     return cast(IPermissionUser, get(
         token,
         f"{URL}/user/get_permissions",
-        {"uid": uid}
+        {"user_id": user_id}
     ))
 
 
@@ -74,7 +74,7 @@ def set_permissions(
     Sets the permissions of a user
 
     ## Body:
-    * `uid` (`UserId`): user id to set permissions for
+    * `user_id` (`UserId`): user id to set permissions for
 
     * `permissions`: list of
 
@@ -87,6 +87,9 @@ def set_permissions(
                     * `False`: permission denied
 
                     * `None`: permission inherited
+
+    * `group_id`: the ID of the permission group this user inherits their
+      permissions from
     """
     put(
         token,
