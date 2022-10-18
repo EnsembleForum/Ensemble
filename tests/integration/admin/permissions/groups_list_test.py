@@ -35,7 +35,10 @@ def test_default_groups(basic_server_setup: IBasicServerSetup):
         # We don't check that permissions have the correct values, but they
         # need to at least be defined
         for p in Permission:
-            assert p.value in g['permissions']
+            assert len(list(filter(
+                lambda gp: gp['permission_id'] == p.value,
+                g['permissions']
+            ))) == 1
         # Permissions must not be None
         for v in g['permissions']:
             assert v['value'] is not None
