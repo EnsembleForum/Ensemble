@@ -8,7 +8,10 @@ import sys
 from colorama import Fore
 from flask import Blueprint, request
 from backend.util import http_errors, db_status
+from backend.util.debug import debug_active
 from backend.types.debug import IEcho
+from backend.types.errors import IErrorInfo
+from typing import NoReturn
 
 debug = Blueprint('debug', 'debug')
 
@@ -53,3 +56,32 @@ def shutdown() -> dict:
     print("Initiated server shutdown")
     # TODO
     return {}
+
+
+@debug.get('/fail')
+def fail() -> NoReturn:
+    """
+    Raise an error 500
+    """
+    raise Exception("You brought this upon yourself.")
+
+
+# Dummy debug containing no routes
+dummy_debug = Blueprint('dummy_debug', 'debug')
+
+
+@dummy_debug.route('/<path:path>')
+def debug_not_found(path) -> tuple[IErrorInfo, int]:
+    return {
+        "code": 404,
+        "heading": "Not found",
+        "description": "Debug routes are disabled in a production environment",
+        "traceback": None,
+    }, 404
+
+
+# Only export the required routes
+if debug_active():
+    debug_export = debug
+else:
+    debug_export = dummy_debug

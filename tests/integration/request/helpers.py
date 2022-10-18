@@ -1,7 +1,21 @@
 import json
 import requests
 from backend.types.auth import JWT
+from backend.types.errors import IErrorInfo
 from backend.util import http_errors
+from typing import cast, NoReturn
+
+
+def give_error_json(t: type[http_errors.HTTPException], text: str) -> NoReturn:
+    """
+    Load and return error JSON info
+    """
+    info = cast(IErrorInfo, json.loads(text))
+    # This fails mypy, since the parent class has different constructor args
+    # Just make sure that all subclasses can be initialised using a description
+    # and traceback
+    e = t(info["description"], info["traceback"])  # type: ignore
+    raise e
 
 
 def handle_response(response: requests.Response) -> dict:
@@ -19,17 +33,18 @@ def handle_response(response: requests.Response) -> dict:
                     f"Invalid response: expected dictionary, got {loaded}")
             return loaded
         case 400:
-            raise http_errors.BadRequest(response.text)
+            give_error_json(http_errors.BadRequest, response.text)
         case 401:
-            raise http_errors.Unauthorized(response.text)
+            give_error_json(http_errors.Unauthorized, response.text)
         case 403:
-            raise http_errors.Forbidden(response.text)
+            give_error_json(http_errors.Forbidden, response.text)
         case 404:
             raise http_errors.NotFound(response.url)
         case 405:
+            assert response.request.method is not None
             raise http_errors.MethodNotAllowed(response.request.method)
         case 500:
-            raise http_errors.InternalServerError(response.text)
+            give_error_json(http_errors.InternalServerError, response.text)
         case i:
             raise ValueError(f"Unrecognised status code: {i}")
 
