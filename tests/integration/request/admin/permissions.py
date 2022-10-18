@@ -1,7 +1,7 @@
 from typing import cast
 from ..helpers import post, get, put, delete
 from ..consts import URL
-from backend.types.identifiers import UserId, PermissionId, PermissionGroupId
+from backend.types.identifiers import UserId, PermissionGroupId
 from backend.types.auth import JWT
 from backend.types.permissions import (
     IPermissionList,
@@ -102,7 +102,7 @@ def set_permissions(
 def groups_create(
     token: JWT,
     name: str,
-    permissions: dict[PermissionId, bool],
+    permissions: list[IPermissionValueGroup],
 ) -> IGroupId:
     """
     Create a new permission group

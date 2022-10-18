@@ -10,7 +10,7 @@ from backend.types.permissions import IPermissionList
 from backend.models.permissions import Permission
 
 
-permissions = Blueprint('permissions', 'admin.permissions')
+permissions = Blueprint('permissions', 'permissions')
 
 
 permissions.register_blueprint(groups, url_prefix="/groups")

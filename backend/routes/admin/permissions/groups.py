@@ -3,13 +3,22 @@
 
 Routes for managing permission groups
 """
-from flask import Blueprint
+import json
+from flask import Blueprint, request
 from backend.types.identifiers import PermissionGroupId
-from backend.types.permissions import IGroupId, IPermissionGroupList
-from backend.models.permissions import PermissionGroup, Permission
+from backend.types.permissions import (
+    IGroupId,
+    IPermissionGroupList,
+    IPermissionValueGroup,
+)
+from backend.models.permissions import (
+    PermissionGroup,
+    Permission,
+    map_permissions_group,
+)
 
 
-groups = Blueprint('groups', 'admin.permissions.groups')
+groups = Blueprint('groups', 'groups')
 
 
 @groups.post('/create')
@@ -35,14 +44,19 @@ def create() -> IGroupId:
     ## Returns:
     * `IGroupId`: ID for new group
     """
-    PermissionGroup.create('Test', {})
+    data = json.loads(request.data)
+    name = data['name']
+    permissions: list[IPermissionValueGroup] = data['permissions']
+    print(permissions)
+    mapped_perms = map_permissions_group(permissions)
+    group = PermissionGroup.create(name, mapped_perms)
     return {
-        "group_id": PermissionGroupId(1)
+        "group_id": group.id
     }
 
 
 @groups.get('/list')
-def list() -> IPermissionGroupList:
+def list_groups() -> IPermissionGroupList:
     """
     List available permission groups
 
@@ -104,6 +118,13 @@ def edit() -> dict:
 
                     * `None`: permission inherited
     """
+    data = json.loads(request.data)
+    group = PermissionGroup(PermissionGroupId(data['group_id']))
+    name = data['name']
+    permissions: list[IPermissionValueGroup] = data['permissions']
+
+    group.name = name
+    group.update_allowed(map_permissions_group(permissions))
     return {}
 
 
@@ -115,4 +136,7 @@ def remove() -> dict:
     ## Body:
     * `group_id` (`PermissionGroupId`): permission group ID
     """
+    data = json.loads(request.data)
+    group = PermissionGroup(PermissionGroupId(data['group_id']))
+    group.delete()
     return {}

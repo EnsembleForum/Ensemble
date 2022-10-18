@@ -13,7 +13,8 @@ import pytest
 from tests.integration.conftest import IBasicServerSetup, IAllUsers
 from tests.integration.request.admin import permissions
 from backend.util.http_errors import BadRequest
-from backend.models.permissions.permission import Permission
+from backend.models.permissions import Permission
+from backend.types.permissions import IPermissionGroup, PermissionGroupId
 
 
 def test_duplicate_group_name(basic_server_setup: IBasicServerSetup):
@@ -22,10 +23,10 @@ def test_duplicate_group_name(basic_server_setup: IBasicServerSetup):
         permissions.groups_create(
             basic_server_setup['token'],
             'Administrator',
-            {
-                p.value: False
+            [
+                {"permission_id": p.value, "value": False}
                 for p in Permission
-            },
+            ],
         )
 
 
@@ -35,10 +36,10 @@ def test_empty_group_name(basic_server_setup: IBasicServerSetup):
         permissions.groups_create(
             basic_server_setup['token'],
             '',
-            {
-                p.value: False
+            [
+                {"permission_id": p.value, "value": False}
                 for p in Permission
-            },
+            ],
         )
 
 
@@ -48,10 +49,10 @@ def test_no_permission(all_users: IAllUsers):
         permissions.groups_create(
             all_users['mods'][0]['token'],
             'My group',
-            {
-                p.value: False
+            [
+                {"permission_id": p.value, "value": False}
                 for p in Permission
-            },
+            ],
         )
 
 
@@ -62,20 +63,26 @@ def test_not_all_values(basic_server_setup: IBasicServerSetup):
         permissions.groups_create(
             basic_server_setup['token'],
             'My group',
-            {},
+            [],
         )
 
 
 def test_success(basic_server_setup: IBasicServerSetup):
     """Can we create a permission group successfully?"""
-    group = permissions.groups_create(
-        basic_server_setup['token'],
-        'My group',
-        {
-            p.value: False
+    group_properties: IPermissionGroup = {
+        "group_id": PermissionGroupId(-1),
+        "name": "My group",
+        "permissions": [
+            {"permission_id": p.value, "value": False}
             for p in Permission
-        },
-    )
+        ],
+    }
+    group_properties["group_id"] = permissions.groups_create(
+        basic_server_setup['token'],
+        group_properties["name"],
+        group_properties["permissions"],
+    )["group_id"]
     # Check the group exists
-    # TODO
-    del group
+    groups = permissions.groups_list(basic_server_setup['token'])['groups']
+    assert len(groups) == 4
+    assert group_properties in groups
