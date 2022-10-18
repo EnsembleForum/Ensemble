@@ -14,7 +14,6 @@ from tests.integration.request.browse import post_create
 from .request.admin import init, users
 from .request.admin.permissions import groups_list
 from .request.auth import login
-from .request.browse import post_create
 
 
 @pytest.fixture(autouse=True)
