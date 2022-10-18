@@ -44,6 +44,16 @@ def test_default_groups(basic_server_setup: IBasicServerSetup):
             assert v['value'] is not None
 
 
+def test_admins_have_every_permission(basic_server_setup: IBasicServerSetup):
+    """Does the administrator group have every permission"""
+    groups = permissions.groups_list(basic_server_setup['token'])['groups']
+    for g in groups:
+        if g['name'] == 'Administrator':
+            # Make sure all permissions are True
+            for p in g['permissions']:
+                assert p['value'] is True
+
+
 def test_no_permission(all_users: IAllUsers):
     """Do we get an error if we don't have permission?"""
     with pytest.raises(Forbidden):
