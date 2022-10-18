@@ -18,7 +18,11 @@ def list_permissions(token: JWT) -> IPermissionList:
     Returns info about available permissions.
 
     ## Returns:
-    * `IPermissionList`
+    * `permissions`: list containing dictionaries of
+
+        * `permission_id`: ID of permission
+
+        * `name` (`str`): name of permission groups
     """
     return cast(IPermissionList, get(
         token,
@@ -35,7 +39,17 @@ def get_permissions(token: JWT, uid: UserId) -> IPermissionUser:
     * `uid` (`UserId`): user id to query permissions for
 
     ## Returns:
-    * `IPermissionValues`
+
+    * `permissions`: object containing mappings, with possible values:
+
+            * `True`: permission allowed
+
+            * `False`: permission denied
+
+            * `None`: permission inherited
+
+    * `group_id`: the ID of the permission group this user inherits their
+      permissions from
     """
     return cast(IPermissionUser, get(
         token,
@@ -99,7 +113,19 @@ def groups_list(token: JWT) -> IPermissionGroupList:
     List available permission groups
 
     ## Returns:
-    * `IPermissionGroupList`
+
+    * `groups`: list of info about permission groups. Each entry is an object
+      containing:
+
+            * `group_id`: ID of permission group
+
+            * `name`: name of permission group
+
+            * `permissions`: object containing mappings, with possible values:
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
     """
     return cast(IPermissionGroupList, get(
         token,

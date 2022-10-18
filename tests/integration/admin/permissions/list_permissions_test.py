@@ -14,7 +14,7 @@ def test_all_permissions_listed(basic_server_setup: IBasicServerSetup):
     """Are all permissions listed?"""
     perms = list_permissions(basic_server_setup['token'])['permissions']
     for p in Permission:
-        f = list(filter(lambda c: c['perm_id'] == p.value, perms))
+        f = list(filter(lambda c: c['permission_id'] == p.value, perms))
         # It should only be here once and the name should match
         assert len(f) == 1
         assert f[0]['name'] == p.name

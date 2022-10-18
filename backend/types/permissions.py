@@ -10,14 +10,24 @@ from .identifiers import PermissionGroupId, PermissionId
 class IPermissionInfo(TypedDict):
     """
     Represents a singular permission
+
+    * permission_id
+
+    * name
     """
-    perm_id: PermissionId
+    permission_id: PermissionId
     name: str
 
 
 class IPermissionList(TypedDict):
     """
     List of permissions and their associated info
+
+    * `permissions`: list containing dictionaries of
+
+        * `permission_id`: ID of permission
+
+        * `name`: name of permission groups
     """
     permissions: list[IPermissionInfo]
 

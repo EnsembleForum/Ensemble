@@ -18,8 +18,14 @@ def list_permissions() -> IPermissionList:
     Returns info about available permissions.
 
     ## Returns:
-    * `IPermissionList`
+
+    * permissions: list containing dictionaries of
+
+        * permission_id
+
+        * name
     """
+    return {"permissions": []}
 
 
 @permissions.get('/get_permissions')
@@ -31,8 +37,22 @@ def get_permissions() -> IPermissionUser:
     * `uid` (`UserId`): user id to query permissions for
 
     ## Returns:
-    * `IPermissionValues`
+
+    * `permissions`: object containing mappings, with possible values:
+
+            * `True`: permission allowed
+
+            * `False`: permission denied
+
+            * `None`: permission inherited
+
+    * `group_id`: the ID of the permission group this user inherits their
+      permissions from
     """
+    return {
+        "permissions": {},
+        "group_id": PermissionGroupId(-1)
+    }
 
 
 @permissions.put('/set_permissions')
@@ -44,6 +64,7 @@ def set_permissions() -> dict:
     * `uid` (`UserId`): user id to set permissions for
     * `permissions`: (`dict[PermissionId, bool?]`): mapping of permission IDs
     """
+    return {}
 
 
 @permissions.put('/set_group')
@@ -55,10 +76,11 @@ def set_group() -> dict:
     * `uid` (`UserId`): user id to set parent permission for
     * `group` (`PermissionGroupId`): ID of permission group
     """
+    return {}
 
 
-@permissions.post('/groups/make')
-def groups_make() -> IGroupId:
+@permissions.post('/groups/create')
+def groups_create() -> IGroupId:
     """
     Create a new permission group
 
@@ -81,8 +103,21 @@ def groups_list() -> IPermissionGroupList:
     List available permission groups
 
     ## Returns:
-    * `IPermissionGroupList`
+
+    * `groups`: list of info about permission groups. Each entry is an object
+      containing:
+
+            * `group_id`: ID of permission group
+
+            * `name`: name of permission group
+
+            * `permissions`: object containing mappings, with possible values:
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
     """
+    return {"groups": []}
 
 
 @permissions.put('/groups/edit')
@@ -95,3 +130,4 @@ def groups_edit() -> dict:
     * `name` (`str`): new name of permission group
     * `values` (`IPermissionValues`): new values for permission group
     """
+    return {}
