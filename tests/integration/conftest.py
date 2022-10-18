@@ -210,7 +210,7 @@ def all_users(
     }
 
 
-class ITwoPosts(TypedDict):
+class IMakePosts(TypedDict):
     post1_id: PostId
     post2_id: PostId
     head1: str
@@ -220,7 +220,7 @@ class ITwoPosts(TypedDict):
 
 
 @pytest.fixture()
-def make_posts(all_users) -> ITwoPosts:
+def make_posts(all_users) -> IMakePosts:
     """
     Create two posts inside the forum
     """

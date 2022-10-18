@@ -14,20 +14,25 @@ import time
 dotenv.load_dotenv('.flaskenv')
 
 
-def write_outputs(process: subprocess.Popen[bytes], file: str | None):
+def write_outputs(
+    process: str,
+    stdout: str | None,
+    stderr: str | None,
+    file: str | None,
+):
     """
     Write program outputs to the output folder
     """
     # If no output file, write to stdout
     if file is None:
-        print(f"Process {process.args!r}:")
-        if process.stdout is not None:
+        print(f"Process {process}:")
+        if stdout is not None:
             print("* stdout:")
-            sys.stdout.write(process.stdout.read().decode('utf-8'))
+            sys.stdout.write(stdout)
             print()
-        if process.stderr is not None:
+        if stderr is not None:
             print("* stderr:")
-            sys.stdout.write(process.stderr.read().decode('utf-8'))
+            sys.stdout.write(stderr)
             print()
 
     # Otherwise, write it to the requested files
@@ -36,12 +41,12 @@ def write_outputs(process: subprocess.Popen[bytes], file: str | None):
             os.mkdir('output', )
         except FileExistsError:
             pass
-        if process.stdout is not None:
+        if stdout is not None:
             with open(f'output/{file}.stdout.txt', 'w') as out:
-                out.write(process.stdout.read().decode('utf-8'))
-        if process.stderr is not None:
+                out.write(stdout)
+        if stderr is not None:
             with open(f'output/{file}.stderr.txt', 'w') as out:
-                out.write(process.stderr.read().decode('utf-8'))
+                out.write(stderr)
 
 
 def backend(debug=False, live_output=False):
@@ -61,10 +66,6 @@ def backend(debug=False, live_output=False):
         stderr=outputs,
         stdout=outputs,
     )
-    if outputs is not None and (flask.stderr is None or flask.stdout is None):
-        print("❗ Can't read flask output", file=sys.stderr)
-        flask.kill()
-        sys.exit(1)
 
     # Request until we get a success, but crash if we failed to start in 10
     # seconds
@@ -85,13 +86,14 @@ def backend(debug=False, live_output=False):
         print("❗ Server failed to start in time")
         flask.kill()
         if outputs is not None:
-            write_outputs(flask, None)
+            o, e = flask.communicate()
+            write_outputs(repr(flask), o.decode(), e.decode(), None)
         sys.exit(1)
     else:
         if flask.poll() is not None:
             print("❗ Server crashed during startup")
             if outputs is not None:
-                write_outputs(flask, None)
+                write_outputs(repr(flask), o.decode(), e.decode(), None)
             sys.exit(1)
         print("✅ Server started")
         return flask
@@ -131,25 +133,10 @@ def mock_auth():
 
 
 def pytest():
-    pytest = subprocess.Popen(
+    t = subprocess.Popen(
         [sys.executable, '-u', '-m', 'pytest'],
         stderr=subprocess.PIPE,
         stdout=subprocess.PIPE,
     )
-
-    # Wait for tests to finish
-    print("🔨 Running tests...")
-    try:
-        ret = pytest.wait()
-    except KeyboardInterrupt:
-        print("❗ Testing cancelled")
-        pytest.terminate()
-        write_outputs(pytest, None)
-        write_outputs(pytest, "pytest")
-        raise
-    write_outputs(pytest, "pytest")
-    if ret == 0:
-        print("✅ It works!")
-    else:
-        print("❌ Tests failed")
-    return bool(ret)
+    print("🔨 Pytest started")
+    return t
