@@ -67,7 +67,7 @@ def test_admin_group_immutable(
         )
 
 
-def test_admin_group_transfer_to_same(
+def test_group_transfer_to_same(
     basic_server_setup: IBasicServerSetup,
     permission_groups: IPermissionGroups,
 ):

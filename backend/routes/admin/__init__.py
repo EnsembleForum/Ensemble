@@ -151,7 +151,8 @@ def init() -> IAuthInfo:
             Permission.ViewAllUsers: True,
             Permission.ManageAuthConfig: True,
             Permission.ManagePermissionGroups: True,
-        }
+        },
+        immutable=True,
     )
     PermissionGroup.create(
         "Moderator",
@@ -175,7 +176,8 @@ def init() -> IAuthInfo:
             Permission.ViewAllUsers: True,
             Permission.ManageAuthConfig: False,
             Permission.ManagePermissionGroups: False,
-        }
+        },
+        immutable=False,
     )
     PermissionGroup.create(
         "User",
@@ -199,7 +201,8 @@ def init() -> IAuthInfo:
             Permission.ViewAllUsers: False,
             Permission.ManageAuthConfig: False,
             Permission.ManagePermissionGroups: False,
-        }
+        },
+        immutable=False,
     )
 
     # Register first user

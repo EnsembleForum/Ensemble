@@ -12,7 +12,7 @@ Tests for creating permission groups
 import pytest
 from tests.integration.conftest import IBasicServerSetup, IAllUsers
 from tests.integration.request.admin import permissions
-from backend.util.http_errors import BadRequest
+from backend.util.http_errors import BadRequest, Forbidden
 from backend.models.permissions import Permission
 from backend.types.permissions import IPermissionGroup, PermissionGroupId
 
@@ -28,6 +28,8 @@ def test_duplicate_group_name(basic_server_setup: IBasicServerSetup):
                 for p in Permission
             ],
         )
+    assert len(permissions.groups_list(basic_server_setup['token'])['groups']
+               ) == 3
 
 
 def test_empty_group_name(basic_server_setup: IBasicServerSetup):
@@ -41,11 +43,13 @@ def test_empty_group_name(basic_server_setup: IBasicServerSetup):
                 for p in Permission
             ],
         )
+    assert len(permissions.groups_list(basic_server_setup['token'])['groups']
+               ) == 3
 
 
 def test_no_permission(all_users: IAllUsers):
     """Do we fail to create a group if we don't have permission?"""
-    with pytest.raises(BadRequest):
+    with pytest.raises(Forbidden):
         permissions.groups_create(
             all_users['mods'][0]['token'],
             'My group',
@@ -54,6 +58,9 @@ def test_no_permission(all_users: IAllUsers):
                 for p in Permission
             ],
         )
+    assert len(
+        permissions.groups_list(all_users['admins'][0]['token'])['groups']
+    ) == 3
 
 
 def test_not_all_values(basic_server_setup: IBasicServerSetup):
@@ -65,6 +72,8 @@ def test_not_all_values(basic_server_setup: IBasicServerSetup):
             'My group',
             [],
         )
+    assert len(permissions.groups_list(basic_server_setup['token'])['groups']
+               ) == 3
 
 
 def test_success(basic_server_setup: IBasicServerSetup):

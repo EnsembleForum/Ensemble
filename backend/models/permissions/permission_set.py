@@ -8,16 +8,20 @@ permissions that inherit from the tutor permission set).
 """
 from typing import Optional
 from .permission import Permission
-from ..tables import TPermissionGroup, TPermissionUser
+from ..tables import TPermissionGroup, TPermissionUser, TUser
 from backend.util.db_queries import assert_id_exists, get_by_id
+from backend.util.validators import assert_valid_str_field
 from backend.util.exceptions import PermissionError
+from backend.util.http_errors import BadRequest
 from backend.types.identifiers import UserPermissionId, PermissionGroupId
 from backend.types.permissions import (
     IPermissionValueGroup,
     IPermissionValueUser,
 )
 from abc import abstractmethod
-from typing import cast
+from typing import cast, TYPE_CHECKING
+if TYPE_CHECKING:
+    from backend.models.user import User
 
 
 class PermissionSet:
@@ -88,25 +92,28 @@ class PermissionGroup(PermissionSet):
     def create(
         cls,
         name: str,
-        options: dict[Permission, bool]
+        options: dict[Permission, bool],
+        immutable: bool,
     ) -> 'PermissionGroup':
         """
         Create a new permission group and store it into the database
 
         ### Args:
-        * `name` (`str`): name of preset
+        * `name` (`str`): name of group
 
-        * `options` (`dict[Permission, Optional[bool]]`): allowed and
-          disallowed permissions.
+        * `options` (`dict[Permission, bool]`): allowed and disallowed
+          permissions.
 
         ### Returns:
         * `PermissionGroup`: the permission group object
         """
+        assert_valid_str_field(name, "group name")
         val = TPermissionGroup(
             {
                 TPermissionGroup.name: name,
                 TPermissionGroup.allowed: [],
                 TPermissionGroup.disallowed: [],
+                TPermissionGroup.immutable: immutable,
             }
         ).save().run_sync()[0]
         id = cast(PermissionGroupId, val["id"])
@@ -121,6 +128,27 @@ class PermissionGroup(PermissionSet):
         """
         ids = TPermissionGroup.select(TPermissionGroup.id).run_sync()
         return [cls(i['id']) for i in ids]
+
+    @classmethod
+    def from_name(cls, name: str) -> 'PermissionGroup | None':
+        """
+        Returns a permission group with the given name, or None if one can't be
+        found
+        """
+        ids = TPermissionGroup\
+            .select(TPermissionGroup.id)\
+            .where(TPermissionGroup.name == name)\
+            .first()\
+            .run_sync()
+        if ids is None:
+            return None
+        else:
+            return cls(ids['id'])
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, PermissionGroup):
+            return self.id == other.id
+        return False
 
     def delete(self) -> None:
         """
@@ -144,9 +172,17 @@ class PermissionGroup(PermissionSet):
         return self.__id
 
     @property
+    def immutable(self) -> bool:
+        """
+        Whether the permission group is immutable. If this returns `True`, then
+        modifying it is a pretty bad idea
+        """
+        return self._get().immutable
+
+    @property
     def name(self) -> str:
         """
-        The name of the permission group (eg 'Tutor')
+        The name of the permission group (eg 'Administrator')
         """
         return self._get().name
 
@@ -155,6 +191,16 @@ class PermissionGroup(PermissionSet):
         row = self._get()
         row.name = new_name
         row.save().run_sync()
+
+    def get_users(self) -> list['User']:
+        """
+        Returns a list of users who are in this permission group
+        """
+        from backend.models.user import User
+        matches = TUser.objects()\
+            .where(TUser.permissions.parent == self.id)\
+            .run_sync()
+        return [User(m.id) for m in matches]
 
     def can(self, action: Permission) -> bool:
         row = self._get()
@@ -184,9 +230,7 @@ class PermissionGroup(PermissionSet):
         disallowed: list[int] = []
 
         for act, option in actions.items():
-            if option is None:
-                continue
-            elif option:
+            if option:
                 allowed.append(act.value)
             else:
                 disallowed.append(act.value)
@@ -327,6 +371,9 @@ def map_permissions_group(
     mapped_perms: dict[Permission, bool] = {}
     for p in permissions:
         mapped_perms[Permission(p['permission_id'])] = p['value']
+
+    if len(mapped_perms) != len(Permission):
+        raise BadRequest("Not all permission values specified")
     return mapped_perms
 
 
@@ -345,4 +392,7 @@ def map_permissions_user(
     mapped_perms: dict[Permission, bool | None] = {}
     for p in permissions:
         mapped_perms[Permission(p['permission_id'])] = p['value']
+
+    if len(mapped_perms) != len(Permission):
+        raise BadRequest("Not all permission values specified")
     return mapped_perms

@@ -68,7 +68,7 @@ def test_admin_group_immutable(
         permissions.groups_edit(
             basic_server_setup['token'],
             permission_groups['admin']['group_id'],
-            permission_groups['mod']['name'],
+            permission_groups['admin']['name'],
             permission_groups['mod']['permissions'],
         )
 
