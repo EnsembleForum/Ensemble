@@ -8,6 +8,8 @@ from backend.types.permissions import (
     IPermissionUser,
     IPermissionGroupList,
     IGroupId,
+    IPermissionValueGroup,
+    IPermissionValueUser,
 )
 
 URL = f"{URL}/admin/permissions"
@@ -61,7 +63,7 @@ def get_permissions(token: JWT, uid: UserId) -> IPermissionUser:
 def set_permissions(
     token: JWT,
     user_id: UserId,
-    permissions: dict[PermissionId, bool | None],
+    permissions: list[IPermissionValueUser],
     group_id: PermissionGroupId,
 ) -> None:
     """
@@ -138,7 +140,7 @@ def groups_edit(
     token: JWT,
     group_id: PermissionGroupId,
     name: str,
-    permissions: dict[PermissionId, bool],
+    permissions: list[IPermissionValueGroup],
 ) -> None:
     """
     Edit an existing permission group

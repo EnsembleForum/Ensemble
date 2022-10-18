@@ -37,8 +37,8 @@ def test_default_groups(basic_server_setup: IBasicServerSetup):
         for p in Permission:
             assert p.value in g['permissions']
         # Permissions must not be None
-        for v in g['permissions'].values():
-            assert v is not None
+        for v in g['permissions']:
+            assert v['value'] is not None
 
 
 def test_no_permission(all_users: IAllUsers):

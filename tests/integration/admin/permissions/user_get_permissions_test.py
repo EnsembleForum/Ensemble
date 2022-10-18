@@ -49,5 +49,5 @@ def test_view_permissions(
     # Make sure they're a moderator
     assert perms['group_id'] == permission_groups['mod']['group_id']
     # Make sure they don't have any other permissions
-    for v in perms['permissions'].values():
-        assert v is None
+    for v in perms['permissions']:
+        assert v['value'] is None

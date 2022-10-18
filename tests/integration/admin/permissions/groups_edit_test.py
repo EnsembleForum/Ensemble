@@ -94,7 +94,11 @@ def test_permissions_edited(
     """Can users whose permission group was changed do new things?"""
     # Let moderators edit permission groups
     perms = permission_groups['mod']['permissions']
-    perms[Permission.ManagePermissionGroups.value] = True
+    # I don't like the fact that I have to do this in a loop either, but it's
+    # not my fault that JSON is bad
+    for p in perms:
+        if p['permission_id'] == Permission.ManagePermissionGroups.value:
+            p['value'] = True
     permissions.groups_edit(
         all_users['admins'][0]['token'],
         permission_groups['mod']['group_id'],

@@ -35,7 +35,7 @@ def test_not_all_permissions_set(
         set_permissions(
             all_users['admins'][0]['token'],
             all_users['mods'][0]['user_id'],
-            {},
+            [],
             permission_groups['user']['group_id'],
         )
 
@@ -49,7 +49,7 @@ def test_user_id_invalid(
         set_permissions(
             basic_server_setup['token'],
             UserId(-1),
-            {p.value: None for p in Permission},
+            [{"permission_id": p.value, "value": None} for p in Permission],
             permission_groups['user']['group_id'],
         )
 
@@ -60,7 +60,7 @@ def test_group_id_invalid(all_users: IAllUsers):
         set_permissions(
             all_users['admins'][0]['token'],
             all_users['mods'][0]['user_id'],
-            {p.value: None for p in Permission},
+            [{"permission_id": p.value, "value": None} for p in Permission],
             PermissionGroupId(-1),
         )
 
@@ -74,7 +74,7 @@ def test_set_own_permission_id(
         set_permissions(
             basic_server_setup['token'],
             basic_server_setup['user_id'],
-            {p.value: None for p in Permission},
+            [{"permission_id": p.value, "value": None} for p in Permission],
             permission_groups['user']['group_id'],
         )
 
@@ -90,7 +90,7 @@ def test_no_permission(
         set_permissions(
             all_users['mods'][0]['token'],
             all_users['admins'][0]['user_id'],
-            {p.value: None for p in Permission},
+            [{"permission_id": p.value, "value": None} for p in Permission],
             permission_groups['user']['group_id'],
         )
 
@@ -103,7 +103,7 @@ def test_change_permission_group(
     set_permissions(
         all_users['admins'][0]['token'],
         all_users['users'][0]['user_id'],
-        {p.value: None for p in Permission},
+        [{"permission_id": p.value, "value": None} for p in Permission],
         permission_groups['mod']['group_id'],
     )
     perms = get_permissions(
@@ -111,8 +111,8 @@ def test_change_permission_group(
         all_users['users'][0]['user_id']
     )
     assert perms['group_id'] == permission_groups['mod']['group_id']
-    for v in perms['permissions'].values():
-        assert v is None
+    for v in perms['permissions']:
+        assert v['value'] is None
 
 
 def test_change_permissions(
@@ -123,7 +123,7 @@ def test_change_permissions(
     set_permissions(
         all_users['admins'][0]['token'],
         all_users['users'][0]['user_id'],
-        {p.value: True for p in Permission},
+        [{"permission_id": p.value, "value": True} for p in Permission],
         permission_groups['user']['group_id'],
     )
     perms = get_permissions(
@@ -131,5 +131,5 @@ def test_change_permissions(
         all_users['users'][0]['user_id']
     )
     assert perms['group_id'] == permission_groups['user']['group_id']
-    for v in perms['permissions'].values():
-        assert v is True
+    for v in perms['permissions']:
+        assert v['value'] is True
