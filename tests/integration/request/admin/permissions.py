@@ -22,9 +22,9 @@ def list_permissions(token: JWT) -> IPermissionList:
     ## Returns:
     * `permissions`: list containing dictionaries of
 
-        * `permission_id`: ID of permission
+            * `permission_id`: ID of permission
 
-        * `name` (`str`): name of permission groups
+            * `name` (`str`): name of permission groups
     """
     return cast(IPermissionList, get(
         token,
@@ -42,20 +42,24 @@ def get_permissions(token: JWT, uid: UserId) -> IPermissionUser:
 
     ## Returns:
 
-    * `permissions`: object containing mappings, with possible values:
+    * `permissions`: list of
 
-            * `True`: permission allowed
+            * `permission_id`: ID of permission
 
-            * `False`: permission denied
+            * `value`: one of
 
-            * `None`: permission inherited
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
+
+                    * `None`: permission inherited
 
     * `group_id`: the ID of the permission group this user inherits their
       permissions from
     """
     return cast(IPermissionUser, get(
         token,
-        f"{URL}/get_permissions",
+        f"{URL}/user/get_permissions",
         {"uid": uid}
     ))
 
@@ -71,11 +75,22 @@ def set_permissions(
 
     ## Body:
     * `uid` (`UserId`): user id to set permissions for
-    * `permissions`: (`dict[PermissionId, bool?]`): mapping of permission IDs
+
+    * `permissions`: list of
+
+            * `permission_id`: ID of permission
+
+            * `value`: one of
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
+
+                    * `None`: permission inherited
     """
     put(
         token,
-        f"{URL}/set_permissions",
+        f"{URL}/user/set_permissions",
         {
             "user_id": user_id,
             "permissions": permissions,
@@ -94,8 +109,18 @@ def groups_create(
 
     ## Body:
     * `name` (`str`): name of permission group
-    * `permissions` (`dict[PermissionId, bool | None]`): values for permission
-      group
+
+    * `permissions`: list of
+
+            * `permission_id`: ID of permission
+
+            * `value`: one of
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
+
+                    * `None`: permission inherited
 
     ## Returns:
     * `IGroupId`: ID for new group
@@ -147,8 +172,20 @@ def groups_edit(
 
     ## Body:
     * `group_id` (`PermissionGroupId`): permission group ID
+
     * `name` (`str`): new name of permission group
-    * `permissions` (`IPermissionValues`): new values for permission group
+
+    * `permissions`: list of
+
+            * `permission_id`: ID of permission
+
+            * `value`: one of
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
+
+                    * `None`: permission inherited
     """
     put(
         token,

@@ -63,13 +63,17 @@ class IPermissionUser(TypedDict):
     """
     Map of permissions and their associated values
 
-    * `permissions`: object containing mappings, with possible values:
+    * `permissions`: list of
 
-            * `True`: permission allowed
+            * `permission_id`: ID of permission
 
-            * `False`: permission denied
+            * `value`: one of
 
-            * `None`: permission inherited
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
+
+                    * `None`: permission inherited
 
     * `group_id`: the ID of the permission group this user inherits their
       permissions from
