@@ -123,6 +123,14 @@ class PermissionGroup(PermissionSet):
         ret.update_allowed(options)
         return ret
 
+    @classmethod
+    def all(cls) -> list['PermissionGroup']:
+        """
+        Returns a list of all available permission groups
+        """
+        ids = TPermissionGroup.select(TPermissionGroup.id).run_sync()
+        return [cls(i['id']) for i in ids]
+
     def _get(self) -> TPermissionGroup:
         """
         Return a reference to the underlying database row

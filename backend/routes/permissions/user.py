@@ -19,6 +19,6 @@ def set_permissions() -> dict:
 @user.put('/get_permissions')
 def get_permissions() -> IPermissionUser:
     return {
-        "permissions": {},
+        "permissions": [],
         "group_id": PermissionGroupId(1),
     }

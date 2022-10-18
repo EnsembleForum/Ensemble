@@ -23,6 +23,11 @@ def id_exists(table: type[_BaseTable], id: int) -> bool:
     ### Returns:
     * `bool`:
     """
+    if not isinstance(id, int):
+        raise TypeError(
+            f"ID {id} must be int - this probably means you're not getting "
+            f"database values correctly"
+        )
     return cast(bool, table.exists().where(table.id == id).run_sync())
 
 

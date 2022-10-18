@@ -1,5 +1,5 @@
 from flask import Blueprint
-from backend.models.permissions import PermissionGroup
+from backend.models.permissions import PermissionGroup, Permission
 from backend.types.permissions import (
     IPermissionList,
     IPermissionUser,
@@ -21,11 +21,19 @@ def list_permissions() -> IPermissionList:
 
     * permissions: list containing dictionaries of
 
-        * permission_id
+            * permission_id
 
-        * name
+            * name
     """
-    return {"permissions": []}
+    return {
+        "permissions": [
+            {
+                "permission_id": p.value,
+                "name": p.name,
+            }
+            for p in Permission
+        ]
+    }
 
 
 @permissions.get('/get_permissions')
@@ -50,7 +58,7 @@ def get_permissions() -> IPermissionUser:
       permissions from
     """
     return {
-        "permissions": {},
+        "permissions": [],
         "group_id": PermissionGroupId(-1)
     }
 
@@ -117,7 +125,21 @@ def groups_list() -> IPermissionGroupList:
 
                     * `False`: permission denied
     """
-    return {"groups": []}
+    groups = PermissionGroup.all()
+    return {"groups": [
+        {
+            "group_id": g.id,
+            "name": g.name,
+            "permissions": [
+                {
+                    "permission_id": p.value,
+                    "value": g.can(p),
+                }
+                for p in Permission
+            ]
+        }
+        for g in groups
+    ]}
 
 
 @permissions.put('/groups/edit')
