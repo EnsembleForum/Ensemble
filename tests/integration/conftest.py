@@ -9,16 +9,17 @@ from backend.types.identifiers import UserId, PostId
 from backend.types.permissions import PermissionGroupId
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
-from tests.integration.request.debug import clear
+from tests.integration.request.debug import clear, echo
 from tests.integration.request.browse import post_create
 from .request.admin import init, users
 from .request.auth import login
 
 
 @pytest.fixture(autouse=True)
-def before_each():
+def before_each(request: pytest.FixtureRequest):
     """Clear the database between tests"""
     clear()
+    echo(f"{request.module.__name__}.{request.function.__name__}")
 
 
 class PermissionIds(TypedDict):

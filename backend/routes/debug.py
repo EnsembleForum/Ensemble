@@ -35,7 +35,7 @@ def echo() -> IEcho:
     # Otherwise it could be more difficult to figure out what's up with server
     # output
     print(to_print)
-    print(to_print, sys.stderr)
+    print(to_print, file=sys.stderr)
     return {'value': value}
 
 
