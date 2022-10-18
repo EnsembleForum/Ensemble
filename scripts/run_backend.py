@@ -14,4 +14,4 @@ except KeyboardInterrupt:
     pass
 flask.terminate()
 auth.terminate()
-print("Goodbye!")
+print("\nGoodbye!")
