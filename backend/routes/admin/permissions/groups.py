@@ -9,7 +9,7 @@ from backend.types.permissions import IGroupId, IPermissionGroupList
 from backend.models.permissions import PermissionGroup, Permission
 
 
-groups = Blueprint('groups', 'permissions.groups')
+groups = Blueprint('groups', 'admin.permissions.groups')
 
 
 @groups.post('/create')

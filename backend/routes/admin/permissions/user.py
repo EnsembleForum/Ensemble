@@ -8,7 +8,7 @@ from backend.types.permissions import IPermissionUser
 from backend.types.identifiers import PermissionGroupId
 
 
-user = Blueprint('user', 'permissions.user')
+user = Blueprint('user', 'admin.permissions.user')
 
 
 @user.put('/set_permissions')
