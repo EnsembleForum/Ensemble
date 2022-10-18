@@ -37,7 +37,8 @@ type HeaderType = "Authorization" | "Content-Type" | "Access-Control-Allow-Origi
 export interface requestOptions {
   method: string,
   headers: {
-    [header in HeaderType]?: string
+    //[header in HeaderType]?: string
+    [key: string]: string;
   },
   body? : string,
 }
