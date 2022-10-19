@@ -47,6 +47,6 @@ TODO: Database setup
 
 3. To run the application on localhost:3000 run `npm start`
 
-4. If you see the error `ERROR in [eslint] Plugin "react" was conflicted between "package.json » eslint-config-react-app » ...base.js and "BaseConfig » ...\base.js".` simply save package.json while the app is running. This seems to be a windows specific problem to do with pathname case sensitivity.
+4. If you see the error `ERROR in [eslint] Plugin "react" was conflicted between "package.json » eslint-config-react-app » ...base.js and "BaseConfig » ...\base.js".`, in VSCode click file > open and open the `capstone-project-h18a-ensemble` folder before running npm start in terminal. This seems to be a windows specific problem to do with pathname case sensitivity. (Previous solution was to save package.json while the app is running)
 
 5. To test the frontend (does not require npm start) run `npm test`

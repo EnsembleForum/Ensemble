@@ -7,9 +7,15 @@ keep the code structured and maintainable.
 """
 # Keep flake8 happy
 __all__ = [
-    'debug',
-    'admin',
+    "debug",
+    "admin",
+    "auth",
+    "browse",
+    'user',
 ]
 
-from .debug import debug
+from .debug import debug_export as debug
 from .admin import admin
+from .auth import auth
+from .browse import browse
+from .user import user

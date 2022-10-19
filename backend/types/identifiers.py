@@ -8,7 +8,11 @@ identifiers.
 """
 from typing import NewType
 
-UserId = NewType('UserId', int)
-PermissionId = NewType('PermissionId', int)
-UserPermissionId = NewType('UserPermissionId', int)
-PermissionGroupId = NewType('PermissionGroupId', int)
+UserId = NewType("UserId", int)
+TokenId = NewType("TokenId", int)
+PermissionId = NewType("PermissionId", int)
+UserPermissionId = NewType("UserPermissionId", int)
+PermissionGroupId = NewType("PermissionGroupId", int)
+PostId = NewType("PostId", int)
+CommentId = NewType("CommentId", int)
+ReplyId = NewType("ReplyId", int)

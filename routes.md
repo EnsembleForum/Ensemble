@@ -36,6 +36,9 @@
     * **is_first_run** (returns whether the server is empty)
     * **init** (provide initial configuration for the empty server)
 
+* user
+    * **profile** (get a user's detailed profile info)
+
 * browse
     * **post_list** (get list of posts, incl. basic details of all)
         * **filter** (filter posts & search)
@@ -51,7 +54,16 @@
     * **comment_view**
         * **edit** (edit a comment)
         * **self_delete** (delete your own comment)
-        * **comment** (reply to this comment)
+        * **reply** (reply to this comment)
+        * **react** (add a reaction - me too)
+        * **report** (report a post)
+        * **close** (close a post)
+        * **mod_delete** (mod deletes post)
+        * **accept** (OP accepts as answer)
+    * **reply_view**
+        * **edit** (edit a reply)
+        * **self_delete** (delete your own reply)
+        * **reply** (reply to this reply)
         * **react** (add a reaction - me too)
         * **report** (report a post)
         * **close** (close a post)

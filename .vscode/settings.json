@@ -1,51 +1,55 @@
 {
-    // Disable automatic indentation detection
-    // and force a tab size
-    "editor.detectIndentation": false,
-    "[python]": {
-        "editor.tabSize": 4,
-        "editor.rulers": [79],
-    },
-    "[javascript]": {
-        "editor.tabSize": 2,
-    },
-    "[typescript]": {
-        "editor.tabSize": 2,
-    },
-    "[typescriptreact]": {
-        "editor.tabSize": 2,
-    },
+  // Disable automatic indentation detection
+  // and force a tab size
+  "editor.detectIndentation": false,
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.rulers": [79]
+  },
+  "[javascript]": {
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.tabSize": 2
+  },
 
-    // Link up docstring template
-    "autoDocstring.customTemplatePath": "config/docstring_template.mustache",
+  // Link up docstring template
+  "autoDocstring.customTemplatePath": "config/docstring_template.mustache",
 
-    // Enable linters
-    "python.linting.enabled": true,
-    "python.linting.flake8CategorySeverity.E": "Warning",
-    "python.linting.flake8CategorySeverity.F": "Warning",
-    "python.linting.flake8Enabled": true,
-    "python.linting.mypyEnabled": true,
+  // Enable linters
+  "python.linting.enabled": true,
+  "python.linting.flake8CategorySeverity.E": "Warning",
+  "python.linting.flake8CategorySeverity.F": "Warning",
+  "python.linting.flake8Enabled": true,
+  "python.linting.mypyEnabled": true,
 
-    // Switch off Pylance, since we're using MyPy instead
-    "python.analysis.typeCheckingMode": "off",
+  // Use autopep8 formatter
+  "python.formatting.provider": "autopep8",
 
-    // Testing
-    "python.testing.pytestArgs": [
-        "tests"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true,
+  // Switch off Pylance, since we're using MyPy instead
+  "python.analysis.typeCheckingMode": "off",
 
-    // Spell checker
-    "cSpell.language": "en-gb",
-    "cSpell.words": [
-        "autouse",
-        "dotenv",
-        "flaskenv",
-        "Khor",
-        "Neel",
-        "Sesi",
-        "Taskboard",
-        "werkzeug"
-    ],
+  // Testing
+  "python.testing.pytestArgs": ["tests"],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+
+  // Spell checker
+  "cSpell.language": "en-gb",
+  "cSpell.words": [
+    "autouse",
+    "doesnt",
+    "dotenv",
+    "flaskenv",
+    "Khor",
+    "Neel",
+    "Sesi",
+    "Taskboard",
+    "werkzeug"
+  ],
+"python.pythonPath": "c:\\Users\\neeldutta\\Desktop\\3900\\capstone-project-h18a-ensemble\\.venv\\Scripts\\python.exe",
+"prettier.enable": false
 }
