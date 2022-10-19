@@ -33,7 +33,7 @@ jobs:
     - name: Upload outputs
       uses: actions/upload-artifact@v3
       with:
-        name: outputs
+        name: start_server
         path: output/*.txt
 
   Pytest:
@@ -64,7 +64,7 @@ jobs:
     - name: Upload outputs
       uses: actions/upload-artifact@v3
       with:
-        name: outputs
+        name: pytest
         path: output/*.txt
         if-no-files-found: ignore
 
