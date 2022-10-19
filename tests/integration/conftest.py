@@ -6,12 +6,13 @@ Configuration for tests
 import pytest
 from typing import TypedDict
 from backend.types.identifiers import UserId, PostId
-from backend.types.permissions import PermissionGroupId
+from backend.types.permissions import IPermissionGroup
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
 from tests.integration.request.debug import clear, echo
 from tests.integration.request.browse import post_create
 from .request.admin import init, users
+from .request.admin.permissions import groups_list
 from .request.auth import login
 
 
@@ -22,33 +23,15 @@ def before_each(request: pytest.FixtureRequest):
     echo(f"{request.module.__name__}.{request.function.__name__}")
 
 
-class PermissionIds(TypedDict):
-    """
-    Contains permission IDs for all pre-defined permission groups
-
-    * admin
-    * mod
-    * user
-    """
-    admin: PermissionGroupId
-    mod: PermissionGroupId
-    user: PermissionGroupId
-
-
 class IBasicServerSetup(TypedDict):
     """
     Set up the server
 
     * user_id
     * token
-    * permissions:
-        * admin
-        * mod
-        * user
     """
     user_id: UserId
     token: JWT
-    permissions: PermissionIds
 
 
 @pytest.fixture
@@ -74,13 +57,37 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
     return {
         "user_id": result["user_id"],
         "token": result["token"],
-        # TODO: do a request to actually get these IDs, so things don't break
-        # if we change them
-        "permissions": {
-            "admin": PermissionGroupId(1),
-            "mod": PermissionGroupId(2),
-            "user": PermissionGroupId(3),
-        }
+    }
+
+
+class IPermissionGroups(TypedDict):
+    """
+    Contains permission info for all pre-defined permission groups
+
+    * admin
+    * mod
+    * user
+    """
+    admin: IPermissionGroup
+    mod: IPermissionGroup
+    user: IPermissionGroup
+
+
+@pytest.fixture
+def permission_groups(
+    basic_server_setup: IBasicServerSetup,
+) -> IPermissionGroups:
+    """
+    Represents all available permissions upon initialising the server
+    """
+    ids = groups_list(basic_server_setup['token'])["groups"]
+    assert ids[0]["name"] == "Administrator"
+    assert ids[1]["name"] == "Moderator"
+    assert ids[2]["name"] == "User"
+    return {
+        "admin": ids[0],
+        "mod": ids[1],
+        "user": ids[2],
     }
 
 
@@ -91,21 +98,25 @@ class IAllUsers(TypedDict):
     * admins (token, user_id)
     * mods (token, user_id)
     * users (token, user_id)
-    * permissions:
-        * admin
-        * mod
-        * user
     """
     admins: list[IAuthInfo]
     mods: list[IAuthInfo]
     users: list[IAuthInfo]
-    permissions: PermissionIds
 
 
 @pytest.fixture
-def all_users(basic_server_setup: IBasicServerSetup) -> IAllUsers:
+def all_users(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+) -> IAllUsers:
     """
     Register all users available through the mock auth server
+
+    * 3 admins
+
+    * 3 moderators
+
+    * 3 users
     """
     # Admins
     users.register(
@@ -124,7 +135,7 @@ def all_users(basic_server_setup: IBasicServerSetup) -> IAllUsers:
                 "name_last": "Istrator",
             },
         ],
-        basic_server_setup["permissions"]["admin"],
+        permission_groups["admin"]["group_id"],
     )
     # Moderators
     users.register(
@@ -149,7 +160,7 @@ def all_users(basic_server_setup: IBasicServerSetup) -> IAllUsers:
                 "name_last": "Erator",
             },
         ],
-        basic_server_setup["permissions"]["mod"],
+        permission_groups["mod"]["group_id"],
     )
     # Users
     users.register(
@@ -174,7 +185,7 @@ def all_users(basic_server_setup: IBasicServerSetup) -> IAllUsers:
                 "name_last": "Ator",
             },
         ],
-        basic_server_setup["permissions"]["user"],
+        permission_groups["user"]["group_id"],
     )
     # Log everyone in and return their info
     return {
@@ -196,11 +207,10 @@ def all_users(basic_server_setup: IBasicServerSetup) -> IAllUsers:
             login("user2", "user2"),
             login("user3", "user3"),
         ],
-        "permissions": basic_server_setup["permissions"],
     }
 
 
-class ITwoPosts(TypedDict):
+class IMakePosts(TypedDict):
     post1_id: PostId
     post2_id: PostId
     head1: str
@@ -210,7 +220,7 @@ class ITwoPosts(TypedDict):
 
 
 @pytest.fixture()
-def make_posts(all_users) -> ITwoPosts:
+def make_posts(all_users) -> IMakePosts:
     """
     Create two posts inside the forum
     """

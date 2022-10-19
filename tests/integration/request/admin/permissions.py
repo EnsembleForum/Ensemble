@@ -1,13 +1,15 @@
 from typing import cast
-from ..helpers import post, get, put
+from ..helpers import post, get, put, delete
 from ..consts import URL
-from backend.types.identifiers import UserId, PermissionId, PermissionGroupId
+from backend.types.identifiers import UserId, PermissionGroupId
 from backend.types.auth import JWT
 from backend.types.permissions import (
     IPermissionList,
-    IPermissionValues,
+    IPermissionUser,
     IPermissionGroupList,
     IGroupId,
+    IPermissionValueGroup,
+    IPermissionValueUser,
 )
 
 URL = f"{URL}/admin/permissions"
@@ -18,7 +20,11 @@ def list_permissions(token: JWT) -> IPermissionList:
     Returns info about available permissions.
 
     ## Returns:
-    * `IPermissionList`
+    * `permissions`: list containing dictionaries of
+
+            * `permission_id`: ID of permission
+
+            * `name` (`str`): name of permission groups
     """
     return cast(IPermissionList, get(
         token,
@@ -27,81 +33,107 @@ def list_permissions(token: JWT) -> IPermissionList:
     ))
 
 
-def get_permissions(token: JWT, uid: UserId) -> IPermissionValues:
+def get_permissions(token: JWT, user_id: UserId) -> IPermissionUser:
     """
     Returns the permissions of a user
 
     ## Params:
-    * `uid` (`UserId`): user id to query permissions for
+    * `user_id` (`UserId`): user id to query permissions for
 
     ## Returns:
-    * `IPermissionValues`
+
+    * `permissions`: list of
+
+            * `permission_id`: ID of permission
+
+            * `value`: one of
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
+
+                    * `None`: permission inherited
+
+    * `group_id`: the ID of the permission group this user inherits their
+      permissions from
     """
-    return cast(IPermissionValues, get(
+    return cast(IPermissionUser, get(
         token,
-        f"{URL}/get_permissions",
-        {"uid": uid}
+        f"{URL}/user/get_permissions",
+        {"user_id": user_id}
     ))
 
 
 def set_permissions(
     token: JWT,
-    uid: UserId,
-    permissions: dict[PermissionId, bool | None]
+    user_id: UserId,
+    permissions: list[IPermissionValueUser],
+    group_id: PermissionGroupId,
 ) -> None:
     """
     Sets the permissions of a user
 
     ## Body:
-    * `uid` (`UserId`): user id to set permissions for
-    * `permissions`: (`dict[PermissionId, bool?]`): mapping of permission IDs
+    * `user_id` (`UserId`): user id to set permissions for
+
+    * `permissions`: list of
+
+            * `permission_id`: ID of permission
+
+            * `value`: one of
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
+
+                    * `None`: permission inherited
+
+    * `group_id`: the ID of the permission group this user inherits their
+      permissions from
     """
     put(
         token,
-        f"{URL}/set_permissions",
-        {}
-    )
-
-
-def set_group(token: JWT, uid: UserId, group: PermissionGroupId) -> None:
-    """
-    Sets the permission group of a user.
-
-    ## Body:
-    * `uid` (`UserId`): user id to set parent permission for
-    * `group` (`PermissionGroupId`): ID of permission group
-    """
-    put(
-        token,
-        f"{URL}/set_permissions",
+        f"{URL}/user/set_permissions",
         {
-            "uid": uid,
-            "group": group,
+            "user_id": user_id,
+            "permissions": permissions,
+            "group_id": group_id,
         }
     )
 
 
-def groups_make(
+def groups_create(
     token: JWT,
     name: str,
-    values: dict[PermissionId, bool | None],
+    permissions: list[IPermissionValueGroup],
 ) -> IGroupId:
     """
     Create a new permission group
 
     ## Body:
     * `name` (`str`): name of permission group
-    * `values` (`dict[PermissionId, bool | None]`): values for permission group
+
+    * `permissions`: list of
+
+            * `permission_id`: ID of permission
+
+            * `value`: one of
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
+
+                    * `None`: permission inherited
 
     ## Returns:
     * `IGroupId`: ID for new group
     """
     return cast(IGroupId, post(
         token,
-        f"{URL}/groups/make",
+        f"{URL}/groups/create",
         {
             "name": name,
-            "values": values,
+            "permissions": permissions,
         }
     ))
 
@@ -111,7 +143,19 @@ def groups_list(token: JWT) -> IPermissionGroupList:
     List available permission groups
 
     ## Returns:
-    * `IPermissionGroupList`
+
+    * `groups`: list of info about permission groups. Each entry is an object
+      containing:
+
+            * `group_id`: ID of permission group
+
+            * `name`: name of permission group
+
+            * `permissions`: object containing mappings, with possible values:
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
     """
     return cast(IPermissionGroupList, get(
         token,
@@ -124,22 +168,55 @@ def groups_edit(
     token: JWT,
     group_id: PermissionGroupId,
     name: str,
-    values: IPermissionValues,
+    permissions: list[IPermissionValueGroup],
 ) -> None:
     """
     Edit an existing permission group
 
     ## Body:
     * `group_id` (`PermissionGroupId`): permission group ID
+
     * `name` (`str`): new name of permission group
-    * `values` (`IPermissionValues`): new values for permission group
+
+    * `permissions`: list of
+
+            * `permission_id`: ID of permission
+
+            * `value`: one of
+
+                    * `True`: permission allowed
+
+                    * `False`: permission denied
+
+                    * `None`: permission inherited
     """
     put(
         token,
-        f"{URL}/groups/make",
+        f"{URL}/groups/edit",
         {
             "group_id": group_id,
             "name": name,
-            "values": values,
+            "permissions": permissions,
+        }
+    )
+
+
+def groups_remove(
+    token: JWT,
+    group_id: PermissionGroupId,
+    transfer_group_id: PermissionGroupId,
+) -> None:
+    """
+    Remove an existing permission group
+
+    ## Body:
+    * `group_id` (`PermissionGroupId`): permission group ID
+    """
+    delete(
+        token,
+        f"{URL}/groups/remove",
+        {
+            "group_id": group_id,
+            "transfer_group_id": transfer_group_id,
         }
     )

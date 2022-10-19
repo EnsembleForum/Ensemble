@@ -3,10 +3,13 @@ import requests
 from backend.types.auth import JWT
 from backend.types.errors import IErrorInfo
 from backend.util import http_errors
-from typing import cast, NoReturn
+from typing import cast, NoReturn, TypeVar
 
 
-def give_error_json(t: type[http_errors.HTTPException], text: str) -> NoReturn:
+HTTPException = TypeVar("HTTPException", bound=http_errors.HTTPException)
+
+
+def give_error_json(t: type[HTTPException], text: str) -> NoReturn:
     """
     Load and return error JSON info
     """

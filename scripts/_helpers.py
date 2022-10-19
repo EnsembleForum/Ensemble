@@ -9,147 +9,147 @@ import requests
 import subprocess
 import sys
 import time
+from typing import Callable
 
 # Load environment variables
 dotenv.load_dotenv('.flaskenv')
 
 
-def write_outputs(process: subprocess.Popen[bytes], file: str | None):
-    """
-    Write program outputs to the output folder
-    """
-    # If no output file, write to stdout
-    if file is None:
-        print(f"Process {process.args!r}:")
-        if process.stdout is not None:
-            print("* stdout:")
-            sys.stdout.write(process.stdout.read().decode('utf-8'))
-            print()
-        if process.stderr is not None:
-            print("* stderr:")
-            sys.stdout.write(process.stderr.read().decode('utf-8'))
-            print()
+def output_folder():
+    try:
+        os.mkdir('output', )
+    except FileExistsError:
+        pass
 
-    # Otherwise, write it to the requested files
-    else:
-        try:
-            os.mkdir('output', )
-        except FileExistsError:
-            pass
-        if process.stdout is not None:
-            with open(f'output/{file}.stdout.txt', 'w') as out:
-                out.write(process.stdout.read().decode('utf-8'))
-        if process.stderr is not None:
-            with open(f'output/{file}.stderr.txt', 'w') as out:
-                out.write(process.stderr.read().decode('utf-8'))
+
+class Task:
+    def __init__(
+        self,
+        name: str,
+        args: list[str],
+        live_output: bool = False,
+        env: dict[str, str] = None,
+        wait_for: Callable[[], bool] = None,
+    ):
+        self.process = None
+        curr_env = os.environ.copy()
+        if env is not None:
+            curr_env.update(env)
+        output_folder()
+        if live_output:
+            self.stdout = None
+            self.stderr = None
+        else:
+            self.stdout = open(f"output/{name}.stdout.txt", 'w')
+            self.stderr = open(f"output/{name}.stderr.txt", 'w')
+        self.process = subprocess.Popen(
+            args,
+            stdout=self.stdout,
+            stderr=self.stderr,
+            env=curr_env
+        )
+        if wait_for is not None:
+            # Request until we get a success, but crash if we failed to start
+            # in 10 seconds
+            start_time = time.time()
+            started = False
+            while time.time() - start_time < 10:
+                if wait_for():
+                    started = True
+                    break
+            if not started:
+                print(f"❗ {name} failed to start in time")
+                sys.exit(1)
+
+    def __del__(self):
+        # Always kill the subprocess when this goes out of scope
+        self.kill()
+
+    def close_files(self):
+        if self.stdout is not None:
+            self.stdout.close()
+        if self.stderr is not None:
+            self.stderr.close()
+
+    def terminate(self):
+        if self.process is not None:
+            self.process.terminate()
+        self.close_files()
+
+    def kill(self):
+        if self.process is not None:
+            self.process.kill()
+        self.close_files()
+
+    def wait(self):
+        if self.process is None:
+            raise ValueError("Process not started")
+        ret = self.process.wait()
+        self.close_files()
+        return ret
+
+    def poll(self):
+        if self.process is None:
+            raise ValueError("Process not started")
+        ret = self.process.poll()
+        if ret is not None:
+            self.close_files()
+        return ret
 
 
 def backend(debug=False, live_output=False):
-    env = os.environ.copy()
-    if debug:
-        env.update({"ENSEMBLE_DEBUG": "TRUE"})
-        debug_flag = ["--debug"]
-    else:
-        debug_flag = []
-    if live_output is False:
-        outputs = subprocess.PIPE
-    else:
-        outputs = None
-    flask = subprocess.Popen(
-        [sys.executable, '-u', '-m', 'flask'] + debug_flag + ['run'],
-        env=env,
-        stderr=outputs,
-        stdout=outputs,
-    )
-    if outputs is not None and (flask.stderr is None or flask.stdout is None):
-        print("❗ Can't read flask output", file=sys.stderr)
-        flask.kill()
-        sys.exit(1)
-
-    # Request until we get a success, but crash if we failed to start in 10
-    # seconds
-    start_time = time.time()
-    started = False
-    while time.time() - start_time < 10:
+    def started() -> bool:
         try:
             requests.get(
                 f'http://localhost:{os.getenv("FLASK_RUN_PORT")}/debug/echo',
                 params={'value': 'Test script startup...'},
             )
+            return True
         except requests.ConnectionError:
-            continue
-        started = True
-        break
+            return False
 
-    if not started:
-        print("❗ Server failed to start in time")
-        flask.kill()
-        if outputs is not None:
-            write_outputs(flask, None)
-        sys.exit(1)
+    if debug:
+        env = {"ENSEMBLE_DEBUG": "TRUE"}
+        debug_flag = ["--debug"]
     else:
-        if flask.poll() is not None:
-            print("❗ Server crashed during startup")
-            if outputs is not None:
-                write_outputs(flask, None)
-            sys.exit(1)
-        print("✅ Server started")
-        return flask
+        debug_flag = []
+        env = None
+    flask = Task(
+        'backend',
+        [sys.executable, '-u', '-m', 'flask'] + debug_flag + ['run'],
+        live_output,
+        env,
+        started
+    )
+    if flask.poll() is not None:
+        print("❗ Server crashed during startup")
+        sys.exit(1)
+    print("✅ Server started")
+    return flask
 
 
 def mock_auth():
-    login = subprocess.Popen(
-        [sys.executable, '-u', '-m', 'mock.auth'],
-        stderr=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-    )
 
-    if login.stderr is None or login.stdout is None:
-        print("❗ Can't read flask output", file=sys.stderr)
-        login.kill()
-        sys.exit(1)
-
-    # Request until we get a success, but crash if we failed to start in 10
-    # seconds
-    start_time = time.time()
-    started = False
-    while time.time() - start_time < 10:
+    def started() -> bool:
         try:
             requests.get('http://localhost:5812/')
+            return True
         except requests.ConnectionError:
-            continue
-        started = True
-        break
+            return False
 
-    if not started:
-        print("❗ mock.auth failed to start in time")
-        login.kill()
-        sys.exit(1)
-    else:
-        print("✅ mock.auth started")
-        return login
+    login = Task(
+        'mock.auth',
+        [sys.executable, '-u', '-m', 'mock.auth'],
+        wait_for=started
+    )
+    print("✅ mock.auth started")
+    return login
 
 
 def pytest():
-    pytest = subprocess.Popen(
+    t = Task(
+        'pytest',
         [sys.executable, '-u', '-m', 'pytest'],
-        stderr=subprocess.PIPE,
-        stdout=subprocess.PIPE,
     )
-
-    # Wait for tests to finish
-    print("🔨 Running tests...")
-    try:
-        ret = pytest.wait()
-    except KeyboardInterrupt:
-        print("❗ Testing cancelled")
-        pytest.terminate()
-        write_outputs(pytest, None)
-        write_outputs(pytest, "pytest")
-        raise
-    write_outputs(pytest, "pytest")
-    if ret == 0:
-        print("✅ It works!")
-    else:
-        print("❌ Tests failed")
-    return bool(ret)
+    print("🔨 Pytest started")
+    return t

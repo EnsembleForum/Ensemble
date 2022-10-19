@@ -18,10 +18,17 @@ Tests for bulk registering users
 import pytest
 from backend.util import http_errors
 from tests.integration.request.admin import users
-from tests.integration.conftest import IBasicServerSetup, IAllUsers
+from tests.integration.conftest import (
+    IBasicServerSetup,
+    IAllUsers,
+    IPermissionGroups,
+)
 
 
-def test_register_single_user(basic_server_setup: IBasicServerSetup):
+def test_register_single_user(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+):
     """Can we register a single user?"""
     reg = users.register(
         basic_server_setup["token"],
@@ -36,14 +43,17 @@ def test_register_single_user(basic_server_setup: IBasicServerSetup):
             "username": "henry8",
             "email": "henry@example.com",
         }],
-        basic_server_setup["permissions"]["admin"],
+        permission_groups["admin"]["group_id"],
     )
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 2
     assert all[1]["user_id"] == reg["user_ids"][0]
 
 
-def test_register_multi_users(basic_server_setup: IBasicServerSetup):
+def test_register_multi_users(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+):
     """Can we register multiple users?"""
     reg = users.register(
         basic_server_setup["token"],
@@ -61,7 +71,7 @@ def test_register_multi_users(basic_server_setup: IBasicServerSetup):
                 "email": "henry9@example.com",
             },
         ],
-        basic_server_setup["permissions"]["admin"],
+        permission_groups["admin"]["group_id"],
     )
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 3
@@ -81,6 +91,7 @@ def test_register_multi_users(basic_server_setup: IBasicServerSetup):
 )
 def test_invalid_usernames(
     basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
     username: str,
 ):
     """Does it fail if usernames are invalid?"""
@@ -93,14 +104,17 @@ def test_invalid_usernames(
                 "username": username,
                 "email": "henry@example.com",
             }],
-            basic_server_setup["permissions"]["admin"],
+            permission_groups["admin"]["group_id"]
         )
     all = users.all(basic_server_setup["token"])["users"]
     # Only the main user
     assert len(all) == 1
 
 
-def test_invalid_email(basic_server_setup: IBasicServerSetup):
+def test_invalid_email(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+):
     """Does it fail if emails are invalid?"""
     with pytest.raises(http_errors.BadRequest):
         users.register(
@@ -120,14 +134,17 @@ def test_invalid_email(basic_server_setup: IBasicServerSetup):
                     "email": "henry9@example.com",
                 },
             ],
-            basic_server_setup["permissions"]["admin"],
+            permission_groups["admin"]["group_id"]
         )
     all = users.all(basic_server_setup["token"])["users"]
     # Only the main user
     assert len(all) == 1
 
 
-def test_duplicate_usernames(basic_server_setup: IBasicServerSetup):
+def test_duplicate_usernames(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+):
     """Does it fail if usernames are duplicate?"""
     with pytest.raises(http_errors.BadRequest):
         users.register(
@@ -146,14 +163,17 @@ def test_duplicate_usernames(basic_server_setup: IBasicServerSetup):
                     "email": "henry2@example.com",
                 },
             ],
-            basic_server_setup["permissions"]["admin"],
+            permission_groups["admin"]["group_id"]
         )
     # Only the main user is registered
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 1
 
 
-def test_duplicate_emails(basic_server_setup: IBasicServerSetup):
+def test_duplicate_emails(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+):
     """Does it fail if emails are duplicate?"""
     with pytest.raises(http_errors.BadRequest):
         users.register(
@@ -172,14 +192,17 @@ def test_duplicate_emails(basic_server_setup: IBasicServerSetup):
                     "email": "henry@example.com",  # duplicate
                 },
             ],
-            basic_server_setup["permissions"]["admin"],
+            permission_groups["admin"]["group_id"]
         )
     # Only the main user is registered
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 1
 
 
-def test_existing_duplicate_usernames(basic_server_setup: IBasicServerSetup):
+def test_existing_duplicate_usernames(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+):
     """Does it fail if an existing username is already registered?"""
     users.register(
         basic_server_setup["token"],
@@ -191,7 +214,7 @@ def test_existing_duplicate_usernames(basic_server_setup: IBasicServerSetup):
                 "email": "henry@example.com",
             },
         ],
-        basic_server_setup["permissions"]["admin"],
+        permission_groups["admin"]["group_id"],
     )
     with pytest.raises(http_errors.BadRequest):
         users.register(
@@ -211,14 +234,17 @@ def test_existing_duplicate_usernames(basic_server_setup: IBasicServerSetup):
                     "email": "henry9@example.com",
                 },
             ],
-            basic_server_setup["permissions"]["admin"],
+            permission_groups["admin"]["group_id"]
         )
     # Only the first user got registered
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 2
 
 
-def test_existing_duplicate_emails(basic_server_setup: IBasicServerSetup):
+def test_existing_duplicate_emails(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+):
     """Does it fail if an existing email is already registered?"""
     users.register(
         basic_server_setup["token"],
@@ -230,7 +256,7 @@ def test_existing_duplicate_emails(basic_server_setup: IBasicServerSetup):
                 "email": "henry@example.com",
             },
         ],
-        basic_server_setup["permissions"]["admin"],
+        permission_groups["admin"]["group_id"],
     )
     with pytest.raises(http_errors.BadRequest):
         users.register(
@@ -250,14 +276,17 @@ def test_existing_duplicate_emails(basic_server_setup: IBasicServerSetup):
                     "email": "henry9@example.com",
                 },
             ],
-            basic_server_setup["permissions"]["admin"],
+            permission_groups["admin"]["group_id"]
         )
     # Only the first user got registered
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 2
 
 
-def test_invalid_name_first(basic_server_setup: IBasicServerSetup):
+def test_invalid_name_first(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+):
     """Does it fail to register a user with empty first name?"""
     with pytest.raises(http_errors.BadRequest):
         users.register(
@@ -268,14 +297,17 @@ def test_invalid_name_first(basic_server_setup: IBasicServerSetup):
                 "username": "henry8",
                 "email": "henry8@example.com",
             }],
-            basic_server_setup["permissions"]["admin"],
+            permission_groups["admin"]["group_id"]
         )
     # Only the main user is registered
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 1
 
 
-def test_invalid_name_last(basic_server_setup: IBasicServerSetup):
+def test_invalid_name_last(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+):
     """Does it fail to register a user with empty last name?"""
     with pytest.raises(http_errors.BadRequest):
         users.register(
@@ -286,14 +318,17 @@ def test_invalid_name_last(basic_server_setup: IBasicServerSetup):
                 "username": "henry8",
                 "email": "henry8@example.com",
             }],
-            basic_server_setup["permissions"]["admin"],
+            permission_groups["admin"]["group_id"]
         )
     # Only the main user is registered
     all = users.all(basic_server_setup["token"])["users"]
     assert len(all) == 1
 
 
-def test_no_permission(all_users: IAllUsers):
+def test_no_permission(
+    all_users: IAllUsers,
+    permission_groups: IPermissionGroups,
+):
     """Do we get an error if we don't have permission to register a user?"""
     with pytest.raises(http_errors.Forbidden):
         users.register(
@@ -304,5 +339,5 @@ def test_no_permission(all_users: IAllUsers):
                 "username": "henry8",
                 "email": "henry8@example.com",
             }],
-            all_users["permissions"]["admin"],
+            permission_groups["admin"]["group_id"],
         )

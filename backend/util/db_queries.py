@@ -23,6 +23,11 @@ def id_exists(table: type[_BaseTable], id: int) -> bool:
     ### Returns:
     * `bool`:
     """
+    if not isinstance(id, int):
+        raise TypeError(
+            f"ID {id!r} is a {type(id).__name__}, but should be an int - this "
+            f"probably means you're not getting database values correctly"
+        )
     return cast(bool, table.exists().where(table.id == id).run_sync())
 
 
@@ -58,5 +63,5 @@ def get_by_id(table: type[T], id: int) -> T:
     """
     result = table.objects().where(table.id == id).first().run_sync()
     if result is None:
-        raise IdNotFound(f"id {id} not found in table {table}")
+        raise IdNotFound(f"id {id} not found in table {table.__name__}")
     return cast(T, result)

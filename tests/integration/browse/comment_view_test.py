@@ -13,9 +13,10 @@ from tests.integration.request.browse import (
     add_comment,
     get_comment,
 )
+from tests.integration.conftest import IAllUsers, IMakePosts
 
 
-def test_invalid_comment_id(all_users, make_posts):
+def test_invalid_comment_id(all_users: IAllUsers, make_posts: IMakePosts):
     """
     If we are given an invalid comment_id, do we get a 400 error?
     """
@@ -27,7 +28,7 @@ def test_invalid_comment_id(all_users, make_posts):
         get_comment(token, invalid_comment_id)
 
 
-def test_get_comment_success(all_users, make_posts):
+def test_get_comment_success(all_users: IAllUsers, make_posts: IMakePosts):
     """
     Can we get the full details of a valid comment?
     """
@@ -45,7 +46,7 @@ def test_get_comment_success(all_users, make_posts):
     assert comment["reacts"]["thanks"] == 0
 
 
-def test_add_two_replies(all_users, make_posts):
+def test_add_two_replies(all_users: IAllUsers, make_posts: IMakePosts):
     """
     Add two replies to a comment
     List of reply_id returned by post_view should be in order
@@ -61,7 +62,7 @@ def test_add_two_replies(all_users, make_posts):
     assert comment["replies"] == [reply_id1, reply_id2]
 
 
-def test_empty_text_reply(all_users, make_posts):
+def test_empty_text_reply(all_users: IAllUsers, make_posts: IMakePosts):
     """
     Does creating a reply with empty text raise a 400 error?
     """
@@ -72,7 +73,7 @@ def test_empty_text_reply(all_users, make_posts):
         add_reply(token, comment_id, "")
 
 
-def test_invalid_comment_reply(all_users, make_posts):
+def test_invalid_comment_reply(all_users: IAllUsers, make_posts: IMakePosts):
     """
     When trying to reply under a comment whose comment_id does not exist,
     is a 400 error raised?

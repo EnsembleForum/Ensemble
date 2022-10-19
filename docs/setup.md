@@ -18,7 +18,7 @@
 
   - SQLite Viewer
 
-- Python 3.10
+- Python 3.10.7 or newer (note that Python 3.10.0 will not work)
 
 - JS/TS dependencies
 
