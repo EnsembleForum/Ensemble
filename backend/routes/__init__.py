@@ -15,7 +15,7 @@ __all__ = [
     'taskboard',
 ]
 
-from .debug import debug
+from .debug import debug_export as debug
 from .admin import admin
 from .auth import auth
 from .browse import browse

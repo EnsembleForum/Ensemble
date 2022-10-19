@@ -7,7 +7,15 @@ All tables should begin with T to distinguish them from their model classes.
 """
 
 from piccolo.table import Table
-from piccolo.columns import Serial, Text, Integer, Array, ForeignKey, Timestamp
+from piccolo.columns import (
+    Serial,
+    Text,
+    Integer,
+    Array,
+    ForeignKey,
+    Timestamp,
+    Boolean,
+)
 
 
 class _BaseTable(Table):
@@ -34,6 +42,7 @@ class TPermissionGroup(_BaseTable):
     name = Text()
     allowed = Array(Integer())
     disallowed = Array(Integer())
+    immutable = Boolean()
 
 
 class TPermissionUser(_BaseTable):

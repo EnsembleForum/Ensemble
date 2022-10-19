@@ -3,7 +3,7 @@
 
 Functions that shadow server routes starting at /debug
 """
-from typing import cast
+from typing import cast, NoReturn
 from backend.types.debug import IEcho
 from .consts import URL
 from .helpers import get, delete, post
@@ -35,3 +35,12 @@ def shutdown() -> None:
     Initiate a server shutdown.
     """
     post(None, f"{URL}/shutdown", {})
+
+
+def fail() -> NoReturn:
+    """
+    Raise a 500 error. Used to test error handling
+    """
+    get(None, f"{URL}/fail", {})
+    # If we reach this point then we have problems
+    assert False

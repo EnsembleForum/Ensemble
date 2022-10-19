@@ -1,12 +1,13 @@
 import json
 from flask import Flask, request
-
+from flask_cors import CORS  # type: ignore
 
 # Port where the app will run
 PORT = 5812
 AUTH_URL = f"http://localhost:{PORT}"
 
 app = Flask('mock_auth')
+CORS(app)
 
 # Load login data
 logins: dict[str, str] = json.load(open("mock/auth/users.json"))
