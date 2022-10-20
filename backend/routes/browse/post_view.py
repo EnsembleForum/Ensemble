@@ -84,8 +84,7 @@ def delete(user: User, *_) -> dict:
     ## Returns:
     * `IPostId`: identifier of the post
     """
-    data = json.loads(request.data)
-    post_id = PostId(int(data["post_id"]))
+    post_id: PostId = cast(PostId, int(request.args["post_id"]))
 
     post = Post(post_id)
 
