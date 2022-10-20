@@ -34,12 +34,10 @@ export function ApiFetch(apiCall: APIcall) {
             resolve(data);
           });
         } else {
-          alert(response.status + ": " + response.statusText);
-          /*response.json().then((errorMsg) => {
-            console.log("ERROR: ", errorMsg);
-            alert(errorMsg.error);
+          response.json().then(errorMsg => {
+            alert(errorMsg.code + ": " + errorMsg.description);
             reject(errorMsg);
-          });*/
+          });
         }
       })
       .catch((err) => {

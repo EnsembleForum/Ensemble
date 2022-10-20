@@ -78,13 +78,13 @@ const UsersRegisterPage = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         void data;
-        navigate("main");
+        setRegisterList([]);
+        navigate("/main");
       })
   }
   const resetGroupPermission = (e: { preventDefault: () => void; target: { value: string; }; }) => {
     e.preventDefault();
     setGroupPermission(parseInt(e.target.value));
-    setRegisterList([]);
     setRegisterDetails(defaultState);
   }
   const resetUser = (e: { preventDefault: () => void; }) => {
