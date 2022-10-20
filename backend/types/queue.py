@@ -4,7 +4,7 @@ from .identifiers import QueueId, PostId
 
 class IQueueId(TypedDict):
     """
-    Identifier of a post
+    Identifier of a queue
 
     * `post_id`: `PostId`
     """
@@ -13,7 +13,7 @@ class IQueueId(TypedDict):
 
 class IQueueBasicInfo(TypedDict):
     """
-    Full info about a post
+    Basic info about a queue
 
     * `queue_name`: `str`
     * `post_id`: `PostId`
@@ -24,7 +24,7 @@ class IQueueBasicInfo(TypedDict):
 
 class IQueueFullInfo(TypedDict):
     """
-    Full info about a post
+    Full info about a queue
 
     * `post_id`: `PostId`
     * `queue_name`: `str`

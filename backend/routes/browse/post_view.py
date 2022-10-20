@@ -71,7 +71,7 @@ def edit(user: User, *_) -> IPostId:
     return {"post_id": post.id}
 
 
-@post_view.put("/self_delete")
+@post_view.delete("/self_delete")
 @uses_token
 def delete(user: User, *_) -> dict:
     """

@@ -8,6 +8,7 @@ from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId
 from backend.types.post import IPostBasicInfo, IPostFullInfo, IReacts
+from backend.models.queue import Queue
 from typing import cast
 from datetime import datetime
 
@@ -65,7 +66,8 @@ class Post:
                     TPost.me_too: 0,
                     TPost.thanks: 0,
                     TPost.tags: tags,
-                    TPost.timestamp: datetime.now()
+                    TPost.timestamp: datetime.now(),
+                    TPost.queue: Queue.get_main_queue().id,
                 }
             )
             .save()
@@ -164,6 +166,20 @@ class Post:
         * `User`: user
         """
         return User(self._get().author)
+
+    @property
+    def queue(self) -> Queue:
+        """
+        Returns a reference to the queue that the post belongs in
+
+        ### Returns:
+        * `Queue`: Queue that has the post
+        """
+        return Queue(self._get().queue)
+
+    @queue.setter
+    def queue(self, new_queue: Queue):
+        self._get().queue = new_queue.id
 
     @property
     def tags(self) -> list[int]:

@@ -6,6 +6,7 @@ from .post import Post
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import QueueId
 from backend.util.validators import assert_valid_str_field
+from backend.util import http_errors
 from backend.types.queue import IQueueFullInfo, IQueueBasicInfo
 from typing import cast
 
@@ -46,12 +47,14 @@ class Queue:
     def create(
         cls,
         queue_name: str,
+        immutable: bool = False,
     ) -> "Queue":
         """
         Create a new queue and save it to the database
 
         ### Args:
         * `queue_name` (`str`): name of queue
+        * `immutable` (`bool`): default false (not immutable)
 
         ### Returns:
         * `Queue`: the new queue
@@ -61,7 +64,8 @@ class Queue:
         val = (
             TQueue(
                 {
-                    TQueue.queue_name: queue_name
+                    TQueue.queue_name: queue_name,
+                    TQueue.immutable: immutable
                 }
             )
             .save()
@@ -89,14 +93,23 @@ class Queue:
         """
         Get the list of all available queues
         """
+
         return [
-            Queue(q["id"]) for q in
-            TQueue.select().order_by(TQueue.queue_name, ascending=False)
-            .run_sync()
-        ]
+            Queue(q["id"]) for q in TQueue.select()
+            .order_by(TQueue.queue_name, ascending=False).run_sync()]
+
+    @classmethod
+    def get_main_queue(cls):
+        """
+        Gets the main queue
+
+        ### Returns:
+        * `queue`: main queue
+        """
+        TQueue.select().where(TQueue.immutable.eq(True)).first().run_sync()
 
     # TODO: Revisit in sprint 2 to think of a way to organise
-    @property
+
     def posts(self) -> list["Post"]:
         """
         List of all posts in the given queue
@@ -107,7 +120,7 @@ class Queue:
         return [
             Post(c["id"])
             for c in TPost.select()
-            .where(TPost.queue == self.__id)
+            .where(TPost.queue == self.id)
             .order_by(TPost.id, ascending=False)
             .run_sync()
         ]
@@ -119,8 +132,14 @@ class Queue:
         This should move all post back into the main queue
         """
         # TODO: Error checking (can't delete main queue)
-        TQueue.delete().where(TQueue.id == self.id).run_sync()
+        row = self._get()
+        if row.immutable:
+            raise http_errors.BadRequest('Cannot delete main queue')
         # TODO: Send posts back to original queue
+        main_queue = self.get_main_queue()
+        for p in self.posts():
+            p.queue = main_queue
+        TQueue.delete().where(TQueue.id == self.id).run_sync()
 
     def full_info(self) -> IQueueFullInfo:
         """
@@ -132,7 +151,7 @@ class Queue:
         return {
             "queue_id": self.id,
             "queue_name": self.queue,
-            "posts": [c.id for c in self.posts],
+            "posts": [c.id for c in self.posts()],
         }
 
     def basic_info(self) -> IQueueBasicInfo:

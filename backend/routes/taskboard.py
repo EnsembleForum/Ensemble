@@ -52,6 +52,7 @@ def queue_create(user: User, *_) -> IQueueId:
     return {"queue_id": queue_id}
 
 
+@taskboard.delete("/queue_list/delete")
 @uses_token
 def queue_delete(user: User, *_) -> dict:
     """
