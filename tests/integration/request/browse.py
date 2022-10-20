@@ -11,7 +11,7 @@ from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
 from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
 from .consts import URL
-from .helpers import post, get, put
+from .helpers import post, get, put, delete
 
 
 URL = f"{URL}/browse"
@@ -129,10 +129,10 @@ def post_delete(token: JWT, post_id: PostId) -> dict:
     ## Returns:
     * `IPostId`: identifier of the post
     """
-    return put(token,
-               f"{URL}/post_view/self_delete",
-               {"post_id": post_id, }
-               )
+    return delete(token,
+                  f"{URL}/post_view/self_delete",
+                  {"post_id": post_id, }
+                  )
 
 
 def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
