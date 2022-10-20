@@ -33,13 +33,15 @@ def init(
     name_last: str,
 ) -> IAuthInfo:
     """"
+    ## GET `/admin/init`
+
     Initialise the forum.
 
     * Sets up the authentication system
     * Creates permission groups "Admin", "Moderator", "User"
     * Registers a first user as an admin
 
-    ## Body:
+    ## Body
     * `address` (`str`): address to query for auth
     * `request_type` (`str`): type of request (eg post, get)
     * `username_param` (`str`): parameter to use for username in request for
@@ -53,7 +55,8 @@ def init(
     * `name_first` (`str`): first name for first user
     * `name_last` (`str`): last name for first user
 
-    ## Returns:
+    ## Returns
+    Object containing:
     * `user_id`: `UserId`
     * `token`: `JWT`
     """
