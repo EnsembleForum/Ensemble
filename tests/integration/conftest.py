@@ -9,11 +9,11 @@ from backend.types.identifiers import UserId, PostId
 from backend.types.permissions import IPermissionGroup
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
-from tests.integration.request.debug import clear, echo
-from tests.integration.request.browse import post_create
-from .request.admin import init, users
-from .request.admin.permissions import groups_list
-from .request.auth import login
+from request.debug import clear, echo
+from request.browse import post_create
+from request.admin import init, users
+from request.admin.permissions import groups_list
+from request.auth import login
 
 
 @pytest.fixture(autouse=True)

@@ -10,7 +10,7 @@ Tests for browse routes
 """
 import pytest
 from backend.util import http_errors
-from tests.integration.request.browse import post_list, post_create
+from request.browse import post_list, post_create
 
 
 def test_empty_post_list(all_users):

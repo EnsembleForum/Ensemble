@@ -16,7 +16,7 @@ from tests.integration.conftest import (
     IAllUsers,
     IPermissionGroups,
 )
-from tests.integration.request.admin import permissions
+from request.admin import permissions
 from backend.models.permissions.permission import Permission
 from backend.util.http_errors import Forbidden, BadRequest
 from backend.types.identifiers import PermissionGroupId

@@ -10,7 +10,7 @@ Tests for post_view/self_delete
 """
 import pytest
 from backend.util import http_errors
-from tests.integration.request.browse import (
+from request.browse import (
     add_reply,
     get_reply,
     post_delete,

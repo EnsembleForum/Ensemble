@@ -10,7 +10,7 @@ Tests for listing all users
 """
 import pytest
 from backend.util import http_errors
-from tests.integration.request.admin import users
+from request.admin import users
 from tests.integration.conftest import IBasicServerSetup, IAllUsers
 
 

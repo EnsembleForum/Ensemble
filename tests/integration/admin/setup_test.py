@@ -22,8 +22,8 @@ Tests for server setup
 """
 import pytest
 from backend.util import http_errors
-from ..request.admin import is_first_run, init
-from ..request.auth import login
+from request.admin import is_first_run, init
+from request.auth import login
 from mock.auth import AUTH_URL
 
 

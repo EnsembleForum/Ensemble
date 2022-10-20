@@ -12,7 +12,7 @@ Tests for setting the specific permissions of users.
 * Can set individual permissions
 """
 import pytest
-from tests.integration.request.admin.permissions import (
+from request.admin.permissions import (
     get_permissions,
     set_permissions,
 )

@@ -8,7 +8,7 @@ import pytest
 from typing import cast
 from backend.types.identifiers import CommentId
 from backend.util import http_errors
-from tests.integration.request.browse import (
+from request.browse import (
     add_reply,
     add_comment,
     get_comment,

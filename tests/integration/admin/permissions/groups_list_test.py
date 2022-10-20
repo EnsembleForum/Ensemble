@@ -10,7 +10,7 @@ Tests for listing permission groups
 """
 import pytest
 from tests.integration.conftest import IBasicServerSetup, IAllUsers
-from tests.integration.request.admin import permissions
+from request.admin import permissions
 from backend.models.permissions.permission import Permission
 from backend.util.http_errors import Forbidden
 

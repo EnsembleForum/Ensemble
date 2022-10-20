@@ -19,13 +19,24 @@ URL = f"{URL}/browse"
 
 def post_list(token: JWT) -> IPostBasicInfoList:
     """
-    Get a list of posts
+    ## GET `browse/post_list`
 
-    ## Body:
-    * `token` (`JWT`): JWT of the user
+    Get a list of posts visible to the give user
 
-    ## Returns:
-    * `IPostBasicInfoList`: List of basic info of posts
+    ## Header
+    * `token` (`str`): JWT of the user
+
+    ## Returns
+    Object containing:
+    * `posts`: List of objects, each containing
+            * `post_id` (`int`): ID of the post
+            * `author` (`int`): ID of the creator of the post
+            * `heading` (`str`): title of the post
+            * `tags` (`list[int]`): list of tag IDs for the post (not
+              implemented yet)
+            * `reacts`: object containing
+                    * `thanks` (`int`): amount of thanks the post received
+                    * `me_too` (`int`): number of me too's, the post received
     """
     return cast(
         IPostBasicInfoList,
@@ -40,16 +51,21 @@ def post_create(
     token: JWT, heading: str, text: str, tags: list[int]
 ) -> IPostId:
     """
-    Create a post
+    ## POST `browse/create`
 
-    ## Body:
-    * `token` (`JWT`): JWT of the user
+    Create a new post on the forum
+
+    ## Header
+    * `token` (`str`): JWT of the user
+
+    ## Body
     * `heading` (`str`): heading of the post
     * `text` (`str`): text of the post
     * `tags` (`list[int]`): tags attached to the new post (ignore for sprint 1)
 
-    ## Returns:
-    * `IPostId`: identifier of the post
+    ## Returns
+    Object containing:
+    * `post_id` (`int`): identifier of the post
     """
     return cast(
         IPostId,
@@ -66,14 +82,27 @@ def post_create(
 
 def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
     """
-    Get the detailed info of a post
+    # GET `browse/post_view`
 
-    ## Body:
-    * `post_id` (`PostId`): identifier of the post
-    * `token` (`JWT`): JWT of the user
+    Get the detailed info of a post.
 
-    ## Returns:
-    * `IPostFullInfo`: Dictionary containing full info a post
+    ## Header
+    * `token` (`str`): JWT of the user
+
+    ## Params
+    * `post_id` (`int`): identifier of the post
+
+    ## Returns
+    Object containing
+    * `author` (`int`): ID of the post author
+    * `heading` (`str`): heading of the post
+    * `text` (`str`): main text of the post
+    * `tags` (`list[int]`): list of tag IDs for the post
+    * `reacts` (object containing):
+            * `thanks` (`int`): amount of thanks the post received
+            * `me_too` (`int`): number of me too's, the post received
+    * `comments` (`list[int]`): list of IDs of comments
+    * `timestamp` (`int`): UNIX timestamp of the post
     """
     return cast(
         IPostFullInfo,
@@ -87,22 +116,33 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
 
 
 def post_edit(
-    token: JWT, post_id: PostId, heading: str, text: str, tags: list[int]
+    token: JWT,
+    post_id: PostId,
+    heading: str,
+    text: str,
+    tags: list[int],
 ) -> IPostId:
     """
+    # PUT `browse/post_view/edit`
+
     Edits the heading/text/tags of the post
 
-    ## Body:
+    ## Header
+    * `token` (`str`): JWT of the user
+
+    ## Body
     * `post_id` (`PostId`): identifier of the post
     * `heading` (`str`): new heading of the post
                         (should be given the old heading if unedited)
     * `text` (`str`): new text of the post
                         (should be given the old text if unedited)
     * `tags` (`list[int]`): new tags of the post (ignore for sprint 1)
-    * `token` (`JWT`): JWT of the user
 
-    ## Returns:
+    ## Returns
     * `IPostId`: identifier of the post
+
+    FIXME: Is it worthwhile returning the post ID given that they already know
+    it?
     """
     return cast(
         IPostId,
@@ -120,14 +160,21 @@ def post_edit(
 
 def post_delete(token: JWT, post_id: PostId) -> dict:
     """
-    Deletes a post
+    # DELETE `browse/post_view/self_delete`
 
-    ## Body:
-    * `post_id` (`PostId`): identifier of the post
-    * `token` (`JWT`): JWT of the user
+    Deletes a post. This route must be called by the owner of the post.
 
-    ## Returns:
+    ## Header
+    * `token` (`str`): JWT of the user
+
+    ## Params
+    * `post_id` (`int`): identifier of the post
+
+    ## Returns
     * `IPostId`: identifier of the post
+
+    FIXME: Is it worthwhile returning the post ID given that they already know
+    it?
     """
     return put(token,
                f"{URL}/post_view/self_delete",
@@ -137,15 +184,20 @@ def post_delete(token: JWT, post_id: PostId) -> dict:
 
 def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
     """
-    Creates a new comment
+    # POST `browse/post_view/comment`
 
-    ## Body:
+    Creates a new comment on a post
+
+    ## Header
+    * `token` (`str`): JWT of the user
+
+    ## Body
+    * `post_id` (`int`): identifier of the post to comment on
     * `text` (`str`): text of the comment
-    * `post_id` (`PostId`): identifier of the post to comment on
-    * `token` (`JWT`): JWT of the user
 
-    ## Returns:
-    * `ICommentId`: identifier of the comment
+    ## Returns
+    Object containing:
+    * `comment_id` (`int`): identifier of the comment
     """
     return cast(
         ICommentId,
@@ -161,14 +213,25 @@ def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
 
 def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
     """
+    # GET `browse/comment_view`
+
     Get the detailed info of a comment
 
-    ## Body:
-    * `comment_id` (`CommentId`): identifier of the comment
-    * `token` (`JWT`): JWT of the user
+    ## Header
+    * `token` (`str`): JWT of the user
 
-    ## Returns:
-    * `ICommentFullInfo`: Dictionary containing full info a comment
+    ## Params
+    * `comment_id` (`CommentId`): identifier of the comment
+
+    ## Returns
+    Object containing:
+    * `author` (`int`): ID of the comment author
+    * `reacts`: object containing
+            * `thanks` (`int`): amount of thanks the comment received
+            * `me_too` (`int`): number of me too's, the comment received
+    * `replies` (`list[int]`): list of reply IDs for replies to this comment
+    * `text` (`str`): text of the comment
+    * `timestamp` (`int`): UNIX timestamp of the comment
     """
     return cast(
         ICommentFullInfo,
@@ -183,15 +246,20 @@ def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
 
 def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
     """
+    # POST `browse/comment_view/reply`
+
     Creates a new reply
 
-    ## Body:
-    * `text` (`str`): text of the comment
-    * `comment_id` (`CommentId`): identifier of the comment to reply to
-    * `token` (`JWT`): JWT of the user
+    ## Header
+    * `token` (`str`): JWT of the user
 
-    ## Returns:
-    * `IReplyId`: identifier of the reply
+    ## Body
+    * `comment_id` (`CommentId`): identifier of the comment to reply to
+    * `text` (`str`): text of the comment
+
+    ## Returns
+    Object containing:
+    * `reply_id` (`int`): identifier of the reply
     """
     return cast(
         IReplyId,
@@ -207,14 +275,23 @@ def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
 
 def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     """
+    # POST `browse/reply_view`
+
     Get the detailed info of a reply
 
-    ## Body:
-    * `reply_id` (`ReplyId`): identifier of the reply
-    * `token` (`JWT`): JWT of the user
+    ## Header
+    * `token` (`str`): JWT of the user
 
-    ## Returns:
-    * `IReplyFullInfo`: Dictionary containing full info a reply
+    ## Params
+    * `reply_id` (`ReplyId`): identifier of the reply
+
+    ## Returns
+    * `author` (`int`): ID of the author of the reply
+    * `reacts`: object containing
+            * `thanks` (`int`): amount of thanks the reply received
+            * `me_too` (`int`): number of me too's, the reply received
+    * `text` (`str`): text of the reply
+    * `timestamp` (`int`): UNIX timestamp of the reply
     """
     return cast(
         IReplyFullInfo,

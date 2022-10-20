@@ -8,7 +8,7 @@ Tests for getting the specific permissions of users.
 * Admins can view permissions of other users
 """
 import pytest
-from tests.integration.request.admin.permissions import get_permissions
+from request.admin.permissions import get_permissions
 from tests.integration.conftest import IAllUsers, IPermissionGroups
 from backend.util.http_errors import Forbidden
 from backend.types.identifiers import UserId

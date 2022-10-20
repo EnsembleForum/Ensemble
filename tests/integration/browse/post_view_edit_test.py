@@ -12,7 +12,7 @@ Tests for post_view/edit
 """
 import pytest
 from backend.util import http_errors
-from tests.integration.request.browse import (
+from request.browse import (
     post_edit,
     post_view,
 )
