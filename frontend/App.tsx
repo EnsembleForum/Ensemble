@@ -17,7 +17,7 @@ import UsersRegisterPage from './pages/UsersRegisterPage';
 export function ApiFetch (apiCall : APIcall) {
   const requestOptions : requestOptions = {
     method: apiCall.method,
-    headers: { 'Content-Type': 'application/json', }
+    headers: { 'Content-Type': 'application/json'}
   };
   if (apiCall.body) { requestOptions.body = JSON.stringify(apiCall.body); }
   if (apiCall.token) { requestOptions.headers.Authorization = `Bearer ${apiCall.token}`; }

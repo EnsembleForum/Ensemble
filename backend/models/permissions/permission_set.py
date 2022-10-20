@@ -8,12 +8,20 @@ permissions that inherit from the tutor permission set).
 """
 from typing import Optional
 from .permission import Permission
-from ..tables import TPermissionGroup, TPermissionUser
+from ..tables import TPermissionGroup, TPermissionUser, TUser
 from backend.util.db_queries import assert_id_exists, get_by_id
+from backend.util.validators import assert_valid_str_field
 from backend.util.exceptions import PermissionError
+from backend.util.http_errors import BadRequest
 from backend.types.identifiers import UserPermissionId, PermissionGroupId
+from backend.types.permissions import (
+    IPermissionValueGroup,
+    IPermissionValueUser,
+)
 from abc import abstractmethod
-from typing import cast
+from typing import cast, TYPE_CHECKING
+if TYPE_CHECKING:
+    from backend.models.user import User
 
 
 class PermissionSet:
@@ -64,24 +72,12 @@ class PermissionSet:
                 f"You don't have the {action.name} permission"
             )
 
-    @abstractmethod
-    def update_allowed(self, actions: dict[Permission, Optional[bool]]):
-        """
-        Add the given set of permissions to the allowed set of permissions,
-        and remove any elements from the disallowed set of permissions if
-        present.
-
-        ### Args:
-        * `actions` (`dict[Permission, Optional[bool]]`): dictionary of
-          permissions to allow or disallow. Each Permission should be set to
-          `True` to allow, `False` to disallow, or `None` to leave as default.
-        """
-
 
 class PermissionGroup(PermissionSet):
     """
     Represents a permission group, from which user permissions are derived.
     """
+
     def __init__(self, id: PermissionGroupId):
         """
         Load a permission group from the database
@@ -96,31 +92,71 @@ class PermissionGroup(PermissionSet):
     def create(
         cls,
         name: str,
-        options: dict[Permission, Optional[bool]]
+        options: dict[Permission, bool],
+        immutable: bool,
     ) -> 'PermissionGroup':
         """
         Create a new permission group and store it into the database
 
         ### Args:
-        * `name` (`str`): name of preset
+        * `name` (`str`): name of group
 
-        * `options` (`dict[Permission, Optional[bool]]`): allowed and
-          disallowed permissions.
+        * `options` (`dict[Permission, bool]`): allowed and disallowed
+          permissions.
 
         ### Returns:
         * `PermissionGroup`: the permission group object
         """
+        assert_valid_str_field(name, "group name")
         val = TPermissionGroup(
             {
                 TPermissionGroup.name: name,
                 TPermissionGroup.allowed: [],
                 TPermissionGroup.disallowed: [],
+                TPermissionGroup.immutable: immutable,
             }
         ).save().run_sync()[0]
         id = cast(PermissionGroupId, val["id"])
         ret = PermissionGroup(id)
         ret.update_allowed(options)
         return ret
+
+    @classmethod
+    def all(cls) -> list['PermissionGroup']:
+        """
+        Returns a list of all available permission groups
+        """
+        ids = TPermissionGroup.select(TPermissionGroup.id).run_sync()
+        return [cls(i['id']) for i in ids]
+
+    @classmethod
+    def from_name(cls, name: str) -> 'PermissionGroup | None':
+        """
+        Returns a permission group with the given name, or None if one can't be
+        found
+        """
+        ids = TPermissionGroup\
+            .select(TPermissionGroup.id)\
+            .where(TPermissionGroup.name == name)\
+            .first()\
+            .run_sync()
+        if ids is None:
+            return None
+        else:
+            return cls(ids['id'])
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, PermissionGroup):
+            return self.id == other.id
+        return False
+
+    def delete(self) -> None:
+        """
+        Delete this permission group
+        """
+        TPermissionGroup.delete()\
+            .where(TPermissionGroup.id == self.id)\
+            .run_sync()
 
     def _get(self) -> TPermissionGroup:
         """
@@ -136,9 +172,17 @@ class PermissionGroup(PermissionSet):
         return self.__id
 
     @property
+    def immutable(self) -> bool:
+        """
+        Whether the permission group is immutable. If this returns `True`, then
+        modifying it is a pretty bad idea
+        """
+        return self._get().immutable
+
+    @property
     def name(self) -> str:
         """
-        The name of the permission group (eg 'Tutor')
+        The name of the permission group (eg 'Administrator')
         """
         return self._get().name
 
@@ -147,6 +191,16 @@ class PermissionGroup(PermissionSet):
         row = self._get()
         row.name = new_name
         row.save().run_sync()
+
+    def get_users(self) -> list['User']:
+        """
+        Returns a list of users who are in this permission group
+        """
+        from backend.models.user import User
+        matches = TUser.objects()\
+            .where(TUser.permissions.parent == self.id)\
+            .run_sync()
+        return [User(m.id) for m in matches]
 
     def can(self, action: Permission) -> bool:
         row = self._get()
@@ -159,16 +213,24 @@ class PermissionGroup(PermissionSet):
         else:
             return False
 
-    def update_allowed(self, actions: dict[Permission, Optional[bool]]):
+    def update_allowed(self, actions: dict[Permission, bool]):
+        """
+        Add the given set of permissions to the allowed set of permissions,
+        and remove any elements from the disallowed set of permissions if
+        present.
+
+        ### Args:
+        * `actions` (`dict[Permission, Optional[bool]]`): dictionary of
+          permissions to allow or disallow. Each Permission should be set to
+          `True` to allow, `False` to disallow.
+        """
         row = get_by_id(TPermissionGroup, self.__id)
 
         allowed: list[int] = []
         disallowed: list[int] = []
 
         for act, option in actions.items():
-            if option is None:
-                continue
-            elif option:
+            if option:
                 allowed.append(act.value)
             else:
                 disallowed.append(act.value)
@@ -184,6 +246,7 @@ class PermissionUser(PermissionSet):
     """
     Represents a user permission, which derives from a group.
     """
+
     def __init__(self, id: UserPermissionId) -> None:
         """
         Load a user permission set from the database
@@ -215,6 +278,14 @@ class PermissionUser(PermissionSet):
         id = cast(UserPermissionId, val["id"])
         ret = PermissionUser(id)
         return ret
+
+    def delete(self) -> None:
+        """
+        Delete this user permission set
+        """
+        TPermissionUser.delete()\
+            .where(TPermissionUser.id == self.id)\
+            .run_sync()
 
     def _get(self) -> TPermissionUser:
         """
@@ -254,8 +325,38 @@ class PermissionUser(PermissionSet):
         else:
             return self.parent.can(action)
 
+    def value(self, action: Permission) -> Optional[bool]:
+        """
+        Returns the specified value of a permission for this user
+
+        ### Args:
+        * `action` (`Permission`): permission to check
+
+        ### Returns:
+        * `True`: Explicitly allowed
+        * `False`: Explicitly denied
+        * `None`: Inherited
+        """
+        row = self._get()
+        if action.value in row.allowed:
+            return True
+        elif action.value in row.disallowed:
+            return False
+        else:
+            return None
+
     def update_allowed(self, actions: dict[Permission, Optional[bool]]):
-        row = get_by_id(TPermissionGroup, self.__id)
+        """
+        Add the given set of permissions to the allowed set of permissions,
+        and remove any elements from the disallowed set of permissions if
+        present.
+
+        ### Args:
+        * `actions` (`dict[Permission, Optional[bool]]`): dictionary of
+          permissions to allow or disallow. Each Permission should be set to
+          `True` to allow, `False` to disallow, or `None` to leave as default.
+        """
+        row = get_by_id(TPermissionUser, self.__id)
 
         allowed: list[int] = []
         disallowed: list[int] = []
@@ -273,3 +374,45 @@ class PermissionUser(PermissionSet):
 
         row.save([TPermissionGroup.allowed, TPermissionGroup.disallowed])\
             .run_sync()
+
+
+def map_permissions_group(
+    permissions: list[IPermissionValueGroup]
+) -> dict[Permission, bool]:
+    """
+    Maps group permission values from a list into a dictionary
+
+    ### Args:
+    * `permissions` (`list[IPermissionValueGroup]`): list of permission values
+
+    ### Returns:
+    * `dict[Permission, bool]`: dictionary of mappings
+    """
+    mapped_perms: dict[Permission, bool] = {}
+    for p in permissions:
+        mapped_perms[Permission(p['permission_id'])] = p['value']
+
+    if len(mapped_perms) != len(Permission):
+        raise BadRequest("Not all permission values specified")
+    return mapped_perms
+
+
+def map_permissions_user(
+    permissions: list[IPermissionValueUser]
+) -> dict[Permission, bool | None]:
+    """
+    Maps user permission values from a list into a dictionary
+
+    ### Args:
+    * `permissions` (`list[IPermissionValueUser]`): list of permission values
+
+    ### Returns:
+    * `dict[Permission, bool]`: dictionary of mappings
+    """
+    mapped_perms: dict[Permission, bool | None] = {}
+    for p in permissions:
+        mapped_perms[Permission(p['permission_id'])] = p['value']
+
+    if len(mapped_perms) != len(Permission):
+        raise BadRequest("Not all permission values specified")
+    return mapped_perms

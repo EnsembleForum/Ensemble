@@ -3,8 +3,6 @@
 
 A next-gen forum to make life easier for educators and students alike.
 
-## Running the
-
 ## Quick Links
 
 * [Setting up the environment to run Ensemble](./docs/setup.md)

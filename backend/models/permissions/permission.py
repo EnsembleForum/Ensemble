@@ -4,12 +4,18 @@
 Contains definitions for permissions that can be granted to users.
 """
 from enum import Enum
+from typing import cast
+from backend.types.identifiers import PermissionId
 
 
 class Permission(Enum):
     """
     Enum containing definitions for all the permission types of users.
     """
+    @property
+    def value(self) -> PermissionId:
+        return cast(PermissionId, super().value)
+
     # Viewing
     View = 0
     """User can view public posts"""

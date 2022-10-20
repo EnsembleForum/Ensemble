@@ -4,7 +4,13 @@
 Contains code relevant for user permissions
 """
 from .permission import Permission
-from .permission_set import PermissionSet, PermissionGroup, PermissionUser
+from .permission_set import (
+    PermissionSet,
+    PermissionGroup,
+    PermissionUser,
+    map_permissions_group,
+    map_permissions_user,
+)
 
 
 __all__ = [
@@ -12,4 +18,6 @@ __all__ = [
     'PermissionSet',
     'PermissionGroup',
     'PermissionUser',
+    'map_permissions_group',
+    'map_permissions_user',
 ]

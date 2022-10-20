@@ -31,7 +31,7 @@ def get_post(*_) -> IPostFullInfo:
     ## Returns:
     * `IPostFullInfo`: Dictionary containing full info a post
     """
-    post_id: PostId = cast(PostId, request.args["post_id"])
+    post_id: PostId = cast(PostId, int(request.args["post_id"]))
     post = Post(post_id)
     return post.full_info
 
@@ -85,7 +85,7 @@ def delete(user: User, *_) -> dict:
     * `IPostId`: identifier of the post
     """
     data = json.loads(request.data)
-    post_id: PostId = data["post_id"]
+    post_id = PostId(int(data["post_id"]))
 
     post = Post(post_id)
 
