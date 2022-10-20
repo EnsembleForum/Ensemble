@@ -12,7 +12,8 @@ export interface userToAdd {
   name_first: string, name_last: string, email: string, username: string,
 }
 export interface usersRegister {
-  users: userToAdd[];
+  users: userToAdd[],
+  group_id: number;
 }
 
 export interface initReturn {
@@ -45,6 +46,7 @@ export interface requestOptions {
 
 // init type
 export interface initSchema {
+  [key: string]: string,
   address: string,
   request_type: string,
   username_param: string,
@@ -85,4 +87,8 @@ export interface replyView {
 
 export interface userView {
   name_first: string, name_last: string, username: string, email: string, user_id: number
+}
+
+export interface pageList {
+  [key: string]: JSX.Element,
 }

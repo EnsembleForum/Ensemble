@@ -8,16 +8,22 @@ import {
 } from "react-router-dom";
 import BrowsePage from "./BrowsePage";
 import TaskboardPage from "./TaskboardPage";
+import AdminPage from "./AdminPage";
+import { pageList } from "../interfaces";
+import { Prettify } from "../global_functions";
 
 
 interface Props {
-  page: "taskboard" | "browse";
+  page: "taskboard" | "browse" | "admin";
 }
 const Layout = styled.div`
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  max-height: 100%;
 `
 
-const Navbar = styled.ul`
+export const Navbar = styled.div`
   height: 60px;
   width: 100vw;
   display: flex;
@@ -28,29 +34,41 @@ const Navbar = styled.ul`
   }
   a {
     background-color: lightgrey;
-    border-radius: 10%;
+    border-radius: 10px;
+    min-width: 60px;
+    display: flex;
+    justify-content: center;
     &:hover {
       cursor: pointer;
-      background-color: darkgrey;
+      background-color: lightgrey;
+      filter: brightness(85%);
     }
   }
   background-color: lightgrey;
 `;
 
+const Content = styled.div`
+
+`
+
 const MainPage = (props: Props) => {
   const [currPage, setCurrPage] = React.useState<string>(props.page);
-  let page = <BrowsePage/>;
-  if (currPage === "taskboard") {
-    page = <TaskboardPage/>
-  }
+  let pages: pageList = {
+    "browse": <BrowsePage />,
+    "taskboard": <TaskboardPage />,
+    "admin": <AdminPage page={"register_users"} />
+  };
   return (
     <Layout>
       <Navbar as="nav">
         <h1>ENSEMBLE</h1>
-        <a onClick={(e) => {setCurrPage("browse")}}>Browse</a>
-        <a onClick={(e) => {setCurrPage("taskboard")}}>Taskboard</a>
+        {Object.keys(pages).map((key) => {
+          return (<a key={key} style={(key === currPage) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={(e) => { setCurrPage(key) }}>{Prettify(key)}</a>)
+        })}
       </Navbar>
-      {page}
+      <Content>
+        {pages[currPage]}
+      </Content>
     </Layout>
   )
 };
