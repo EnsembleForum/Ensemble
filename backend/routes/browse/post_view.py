@@ -31,7 +31,7 @@ def get_post(*_) -> IPostFullInfo:
     ## Returns:
     * `IPostFullInfo`: Dictionary containing full info a post
     """
-    post_id: PostId = cast(PostId, int(request.args["post_id"]))
+    post_id = cast(PostId, int(request.args["post_id"]))
     post = Post(post_id)
     return post.full_info
 
@@ -62,7 +62,7 @@ def edit(user: User, *_) -> IPostId:
 
     post = Post(post_id)
 
-    if user.id != post.author.id:
+    if user != post.author:
         raise http_errors.Forbidden("Attempting to edit another user's post")
 
     post.heading = new_heading
@@ -84,11 +84,11 @@ def delete(user: User, *_) -> dict:
     ## Returns:
     * `IPostId`: identifier of the post
     """
-    post_id: PostId = cast(PostId, int(request.args["post_id"]))
+    post_id = cast(PostId, int(request.args["post_id"]))
 
     post = Post(post_id)
 
-    if user.id != post.author.id:
+    if user != post.author:
         raise http_errors.Forbidden("Attempting to delete another user's post")
 
     post.delete()

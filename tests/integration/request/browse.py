@@ -129,10 +129,11 @@ def post_delete(token: JWT, post_id: PostId) -> dict:
     ## Returns:
     * `IPostId`: identifier of the post
     """
-    return delete(token,
-                  f"{URL}/post_view/self_delete",
-                  {"post_id": post_id, }
-                  )
+    return delete(
+        token,
+        f"{URL}/post_view/self_delete",
+        {"post_id": post_id, }
+    )
 
 
 def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
