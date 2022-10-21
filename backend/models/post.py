@@ -62,7 +62,7 @@ class Post:
                     TPost.author: author.id,
                     TPost.heading: heading,
                     TPost.text: text,
-                    TPost.me_too: 0,
+                    TPost.me_too: [],
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now()
                 }
@@ -193,16 +193,21 @@ class Post:
         ### Returns:
         * int: number of 'me too' reacts
         """
-        return self._get().me_too
+        return len(self._get().me_too)
 
-    def me_too_inc(self):
-        row = self._get()
-        row.me_too += 1
-        row.save().run_sync()
+    def react(self, user: User):
+        """
+        React to the post if the user has not reacted to the post
+        Unreact to the post if the user has reacted to the post
 
-    def me_too_dec(self):
+        ### Args:
+        * `user` (`User`): User reacting/unreacting to the post
+        """
         row = self._get()
-        row.me_too -= 1
+        if user.id in row.me_too:
+            row.me_too.remove(user.id)
+        else:
+            row.me_too.append(user.id)
         row.save().run_sync()
 
     @property

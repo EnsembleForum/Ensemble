@@ -80,9 +80,6 @@ def delete(user: User, *_) -> dict:
     ## Body:
     * `post_id` (`PostId`): identifier of the post
     * `token` (`JWT`): JWT of the user
-
-    ## Returns:
-    * `IPostId`: identifier of the post
     """
     data = json.loads(request.data)
     post_id = PostId(int(data["post_id"]))
@@ -117,3 +114,20 @@ def comment(user: User, *_) -> ICommentId:
     comment_id: CommentId = Comment.create(user, post, text).id
 
     return {"comment_id": comment_id}
+
+
+@post_view.put("/react")
+@uses_token
+def react(user: User, *_) -> dict:
+    """
+    Add or remove a 'Me Too' react by the user to a post
+
+    ## Body:
+    * `post_id` (`PostId`): identifier of the post to react to
+    * `token` (`JWT`): JWT of the user
+    """
+    data = json.loads(request.data)
+    post = Post(data["post_id"])
+    post.react(user)
+
+    return {}

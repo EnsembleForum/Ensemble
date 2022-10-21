@@ -76,7 +76,7 @@ class TPost(_BaseTable):
     heading = Text()
     text = Text()
     tags = Array(Integer())
-    me_too = Integer()
+    me_too = Array(Integer())
     timestamp = Timestamp()
 
 

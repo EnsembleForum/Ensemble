@@ -225,3 +225,18 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
             },
             ),
     )
+
+
+def post_react(token: JWT, post_id: PostId) -> dict:
+    """
+    Add or remove a 'Me Too' react by the user to a post
+
+    ## Body:
+    * `post_id` (`PostId`): identifier of the post to react to
+    * `token` (`JWT`): JWT of the user
+    """
+    return put(
+        token,
+        f"{URL}/post_view/react",
+        {"post_id": post_id, }
+    )
