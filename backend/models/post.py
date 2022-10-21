@@ -7,7 +7,7 @@ from .comment import Comment
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId
-from backend.types.post import IPostBasicInfo, IPostFullInfo, IReacts
+from backend.types.post import IPostBasicInfo, IPostFullInfo
 from typing import cast
 from datetime import datetime
 
@@ -63,7 +63,6 @@ class Post:
                     TPost.heading: heading,
                     TPost.text: text,
                     TPost.me_too: 0,
-                    TPost.thanks: 0,
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now()
                 }
@@ -207,26 +206,6 @@ class Post:
         row.save().run_sync()
 
     @property
-    def thanks(self) -> int:
-        """
-        Returns the number of 'thanks' reacts
-
-        ### Returns:
-        * int: number of 'thanks' reacts
-        """
-        return self._get().thanks
-
-    def thanks_inc(self):
-        row = self._get()
-        row.thanks += 1
-        row.save().run_sync()
-
-    def thanks_dec(self):
-        row = self._get()
-        row.thanks -= 1
-        row.save().run_sync()
-
-    @property
     def timestamp(self) -> datetime:
         """
         Returns the timestamp of when the post was created
@@ -236,18 +215,18 @@ class Post:
         """
         return self._get().timestamp
 
-    @property
-    def reacts(self) -> IReacts:
-        """
-        Returns the reactions to the post
+    # @property
+    # def reacts(self) -> IReacts:
+    #     """
+    #     Returns the reactions to the post
 
-        ### Returns:
-        * IReacts: Dictionary containing the reactions
-        """
-        return {
-            "thanks": self.thanks,
-            "me_too": self.me_too,
-        }
+    #     ### Returns:
+    #     * IReacts: Dictionary containing the reactions
+    #     """
+    #     return {
+    #         "thanks": self.thanks,
+    #         "me_too": self.me_too,
+    #     }
 
     @property
     def basic_info(self) -> IPostBasicInfo:
@@ -262,7 +241,7 @@ class Post:
             "heading": self.heading,
             "post_id": self.id,
             "tags": self.tags,
-            "reacts": self.reacts,
+            "me_too": self.me_too,
         }
 
     @property
@@ -277,7 +256,7 @@ class Post:
             "author": self.author.id,
             "heading": self.heading,
             "tags": self.tags,
-            "reacts": self.reacts,
+            "me_too": self.me_too,
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
             "comments": [c.id for c in self.comments],

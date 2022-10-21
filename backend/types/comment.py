@@ -1,6 +1,5 @@
 from typing import TypedDict
 from .identifiers import CommentId, ReplyId, UserId
-from .post import IReacts
 
 
 class ICommentId(TypedDict):
@@ -19,12 +18,12 @@ class ICommentFullInfo(TypedDict):
 
     * `author`: `UserId`
     * `text`: `str`
-    * `reacts`: `IReacts`
+    * `thanks`: `int`
     * `replies`: `list[ReplyId]`
     * `timestamp`: `int`
     """
     author: UserId
-    reacts: IReacts
+    thanks: int
     replies: list[ReplyId]
     text: str
     timestamp: int

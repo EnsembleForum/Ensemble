@@ -29,8 +29,7 @@ def test_get_reply_success(all_users, make_posts):
 
     assert reply["text"] == reply_text
     assert isinstance(reply["timestamp"], int)
-    assert reply["reacts"]["me_too"] == 0
-    assert reply["reacts"]["thanks"] == 0
+    assert reply["thanks"] == 0
 
 
 def test_invalid_reply_id(all_users, make_posts):

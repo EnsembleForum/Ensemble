@@ -21,14 +21,14 @@ class IPostBasicInfo(TypedDict):
     * `heading`: `str`
     * `post_id`: `PostId`
     * `tags`: `list[int]`
-    * `reacts`: `IReacts`
+    * `me_too`: `int`
     """
 
     author: UserId
     heading: str
     post_id: PostId
     tags: list[int]
-    reacts: IReacts
+    me_too: int
 
 
 class IPostBasicInfoList(TypedDict):
@@ -72,6 +72,6 @@ class IPostFullInfo(TypedDict):
     heading: str
     text: str
     tags: list[int]
-    reacts: IReacts
+    me_too: int
     comments: list[CommentId]
     timestamp: int

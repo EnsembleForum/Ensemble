@@ -77,7 +77,6 @@ class TPost(_BaseTable):
     text = Text()
     tags = Array(Integer())
     me_too = Integer()
-    thanks = Integer()
     timestamp = Timestamp()
 
 
@@ -89,7 +88,6 @@ class TComment(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TPost)
     text = Text()
-    me_too = Integer()
     thanks = Integer()
     timestamp = Timestamp()
 
@@ -102,7 +100,6 @@ class TReply(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TComment)
     text = Text()
-    me_too = Integer()
     thanks = Integer()
     timestamp = Timestamp()
 

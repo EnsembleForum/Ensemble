@@ -8,7 +8,6 @@ from .reply import Reply
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import CommentId
-from backend.types.post import IReacts
 from typing import cast, TYPE_CHECKING
 from datetime import datetime
 if TYPE_CHECKING:
@@ -60,7 +59,6 @@ class Comment:
                 {
                     TComment.author: author.id,
                     TComment.text: text,
-                    TComment.me_too: 0,
                     TComment.parent: post.id,
                     TComment.thanks: 0,
                     TComment.timestamp: datetime.now()
@@ -148,26 +146,6 @@ class Comment:
         return Post(self._get().parent)
 
     @property
-    def me_too(self) -> int:
-        """
-        Returns the number of 'me too' reacts
-
-        ### Returns:
-        * int: number of 'me too' reacts
-        """
-        return self._get().me_too
-
-    def me_too_inc(self):
-        row = self._get()
-        row.me_too += 1
-        row.save().run_sync()
-
-    def me_too_dec(self):
-        row = self._get()
-        row.me_too -= 1
-        row.save().run_sync()
-
-    @property
     def thanks(self) -> int:
         """
         Returns the number of 'thanks' reacts
@@ -197,18 +175,18 @@ class Comment:
         """
         return self._get().timestamp
 
-    @property
-    def reacts(self) -> IReacts:
-        """
-        Returns the reactions to the comment
+    # @property
+    # def reacts(self) -> IReacts:
+    #     """
+    #     Returns the reactions to the comment
 
-        ### Returns:
-        * IReacts: Dictionary containing the reactions
-        """
-        return {
-            "thanks": self.thanks,
-            "me_too": self.me_too,
-        }
+    #     ### Returns:
+    #     * IReacts: Dictionary containing the reactions
+    #     """
+    #     return {
+    #         "thanks": self.thanks,
+    #         "me_too": self.me_too,
+    #     }
 
     @property
     def full_info(self) -> ICommentFullInfo:
@@ -220,7 +198,7 @@ class Comment:
         """
         return {
             "author": self.author.id,
-            "reacts": self.reacts,
+            "thanks": self.thanks,
             "text": self.text,
             "replies": [r.id for r in self.replies],
             "timestamp": int(self.timestamp.timestamp()),

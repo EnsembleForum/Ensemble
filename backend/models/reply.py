@@ -7,7 +7,6 @@ from .user import User
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import ReplyId
-from backend.types.post import IReacts
 from typing import cast, TYPE_CHECKING
 from datetime import datetime
 if TYPE_CHECKING:
@@ -59,7 +58,6 @@ class Reply:
                 {
                     TReply.author: author.id,
                     TReply.text: text,
-                    TReply.me_too: 0,
                     TReply.parent: comment.id,
                     TReply.thanks: 0,
                     TReply.timestamp: datetime.now()
@@ -131,26 +129,6 @@ class Reply:
         return Comment(self._get().parent)
 
     @property
-    def me_too(self) -> int:
-        """
-        Returns the number of 'me too' reacts
-
-        ### Returns:
-        * int: number of 'me too' reacts
-        """
-        return self._get().me_too
-
-    def me_too_inc(self):
-        row = self._get()
-        row.me_too += 1
-        row.save().run_sync()
-
-    def me_too_dec(self):
-        row = self._get()
-        row.me_too -= 1
-        row.save().run_sync()
-
-    @property
     def thanks(self) -> int:
         """
         Returns the number of 'thanks' reacts
@@ -180,18 +158,18 @@ class Reply:
         """
         return self._get().timestamp
 
-    @property
-    def reacts(self) -> IReacts:
-        """
-        Returns the reactions to the reply
+    # @property
+    # def reacts(self) -> IReacts:
+    #     """
+    #     Returns the reactions to the reply
 
-        ### Returns:
-        * IReacts: Dictionary containing the reactions
-        """
-        return {
-            "thanks": self.thanks,
-            "me_too": self.me_too,
-        }
+    #     ### Returns:
+    #     * IReacts: Dictionary containing the reactions
+    #     """
+    #     return {
+    #         "thanks": self.thanks,
+    #         "me_too": self.me_too,
+    #     }
 
     @property
     def full_info(self) -> IReplyFullInfo:
@@ -203,7 +181,7 @@ class Reply:
         """
         return {
             "author": self.author.id,
-            "reacts": self.reacts,
+            "thanks": self.thanks,
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
         }

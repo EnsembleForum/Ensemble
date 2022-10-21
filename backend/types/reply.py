@@ -1,6 +1,5 @@
 from typing import TypedDict
 from .identifiers import ReplyId, UserId
-from .post import IReacts
 
 
 class IReplyId(TypedDict):
@@ -19,10 +18,10 @@ class IReplyFullInfo(TypedDict):
 
     * `author`: `UserId`
     * `text`: `str`
-    * `reacts`: `IReacts`
+    * `thanks`: `int`
     * `timestamp`: `int`
     """
     author: UserId
-    reacts: IReacts
+    thanks: int
     text: str
     timestamp: int
