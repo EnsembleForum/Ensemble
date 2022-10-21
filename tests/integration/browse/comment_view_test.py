@@ -42,8 +42,7 @@ def test_get_comment_success(all_users: IAllUsers, make_posts: IMakePosts):
     assert comment["text"] == comment_text
     assert comment["replies"] == []
     assert isinstance(comment["timestamp"], int)
-    assert comment["reacts"]["me_too"] == 0
-    assert comment["reacts"]["thanks"] == 0
+    assert comment["thanks"] == 0
 
 
 def test_add_two_replies(all_users: IAllUsers, make_posts: IMakePosts):
