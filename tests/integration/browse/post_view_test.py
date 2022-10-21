@@ -46,4 +46,4 @@ def test_get_post_success(all_users):
     assert datetime.fromtimestamp(
         float(post["timestamp"])) - post_time < timedelta(seconds=5)
     assert post["tags"] == []
-    assert post["thanks"] == 0
+    assert post["me_too"] == 0
