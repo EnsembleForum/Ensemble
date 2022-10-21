@@ -102,16 +102,12 @@ class Post:
             .run_sync()
         ]
 
-    @classmethod
-    def delete(cls, post_id: PostId) -> PostId:
+    def delete(self):
         """
-        Deletes a post from the database
+        Deletes this post from the database
 
-        ### Returns:
-        * `PostId`: identifier of the deleted post
         """
-        TPost.delete().where(TPost.id == post_id).run_sync()
-        return post_id
+        TPost.delete().where(TPost.id == self.id).run_sync()
 
     def _get(self) -> TPost:
         """

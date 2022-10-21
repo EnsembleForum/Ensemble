@@ -31,7 +31,7 @@ def get_post(*_) -> IPostFullInfo:
     ## Returns:
     * `IPostFullInfo`: Dictionary containing full info a post
     """
-    post_id: PostId = cast(PostId, int(request.args["post_id"]))
+    post_id = cast(PostId, int(request.args["post_id"]))
     post = Post(post_id)
     return post.full_info
 
@@ -62,7 +62,7 @@ def edit(user: User, *_) -> IPostId:
 
     post = Post(post_id)
 
-    if user.id != post.author.id:
+    if user != post.author:
         raise http_errors.Forbidden("Attempting to edit another user's post")
 
     post.heading = new_heading
@@ -71,7 +71,7 @@ def edit(user: User, *_) -> IPostId:
     return {"post_id": post.id}
 
 
-@post_view.put("/self_delete")
+@post_view.delete("/self_delete")
 @uses_token
 def delete(user: User, *_) -> dict:
     """
@@ -81,15 +81,14 @@ def delete(user: User, *_) -> dict:
     * `post_id` (`PostId`): identifier of the post
     * `token` (`JWT`): JWT of the user
     """
-    data = json.loads(request.data)
-    post_id = PostId(int(data["post_id"]))
+    post_id = cast(PostId, int(request.args["post_id"]))
 
     post = Post(post_id)
 
-    if user.id != post.author.id:
+    if user != post.author:
         raise http_errors.Forbidden("Attempting to delete another user's post")
 
-    Post.delete(post_id)
+    post.delete()
     return {}
 
 

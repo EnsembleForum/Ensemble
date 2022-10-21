@@ -120,10 +120,10 @@ class Reply:
     @property
     def parent(self) -> "Comment":
         """
-        The post this comment belongs to
+        The comment this reply belongs to
 
         ### Returns:
-        * `Post`: post
+        * `Comment`: comment
         """
         from .comment import Comment
         return Comment(self._get().parent)
@@ -137,16 +137,6 @@ class Reply:
         * int: number of 'thanks' reacts
         """
         return self._get().thanks
-
-    def thanks_inc(self):
-        row = self._get()
-        row.thanks += 1
-        row.save().run_sync()
-
-    def thanks_dec(self):
-        row = self._get()
-        row.thanks -= 1
-        row.save().run_sync()
 
     @property
     def timestamp(self) -> datetime:

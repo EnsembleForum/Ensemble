@@ -155,16 +155,6 @@ class Comment:
         """
         return self._get().thanks
 
-    def thanks_inc(self):
-        row = self._get()
-        row.thanks += 1
-        row.save().run_sync()
-
-    def thanks_dec(self):
-        row = self._get()
-        row.thanks -= 1
-        row.save().run_sync()
-
     @property
     def timestamp(self) -> datetime:
         """
