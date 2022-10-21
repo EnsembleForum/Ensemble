@@ -220,19 +220,6 @@ class Post:
         """
         return self._get().timestamp
 
-    # @property
-    # def reacts(self) -> IReacts:
-    #     """
-    #     Returns the reactions to the post
-
-    #     ### Returns:
-    #     * IReacts: Dictionary containing the reactions
-    #     """
-    #     return {
-    #         "thanks": self.thanks,
-    #         "me_too": self.me_too,
-    #     }
-
     @property
     def basic_info(self) -> IPostBasicInfo:
         """
