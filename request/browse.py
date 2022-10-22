@@ -1,5 +1,5 @@
 """
-# Tests / Integration / Request / Browse
+# Request / Browse
 
 Helper functions for requesting auth code
 """
@@ -276,7 +276,7 @@ def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
 
 def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     """
-    # POST `/browse/reply_view`
+    # GET `/browse/reply_view`
 
     Get the detailed info of a reply
 

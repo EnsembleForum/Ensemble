@@ -44,7 +44,7 @@ def shutdown() -> None:
 
     Initiate a server shutdown.
 
-    Currently this route is unused.
+    Currently this route is unused and unimplemented.
     """
     post(None, f"{URL}/shutdown", {})
 
@@ -53,7 +53,7 @@ def fail() -> NoReturn:
     """
     ## GET `debug/fail`
 
-    Raise a 500 error. Used to test error handling.
+    Raise a 500 error. Used to test the custom error handling.
     """
     get(None, f"{URL}/fail", {})
     # If we reach this point then we have problems
