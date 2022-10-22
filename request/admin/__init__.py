@@ -12,10 +12,13 @@ URL = f"{URL}/admin"
 
 def is_first_run() -> IIsFirstRun:
     """
+    ## GET `/admin/is_first_run`
+
     Returns whether the datastore is empty
 
     ## Returns:
-    * { value: bool }
+    Object containing:
+    * `value` (`bool`): `True` if the server hasn't been initialised
     """
     return cast(IIsFirstRun, get(None, f"{URL}/is_first_run", {}))
 
@@ -32,7 +35,7 @@ def init(
     name_first: str,
     name_last: str,
 ) -> IAuthInfo:
-    """"
+    """
     ## GET `/admin/init`
 
     Initialise the forum.
