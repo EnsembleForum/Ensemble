@@ -56,11 +56,17 @@ def uses_token(
     @wraps(func)
     def wrapper(*args, **kwargs) -> T:
         try:
-            token: JWT = cast(JWT, request.headers["token"])
+            bearer_token = request.headers["Authorization"]
+            if not bearer_token.startswith("Bearer "):
+                raise http_errors.Forbidden(
+                    "Invalid format for JWT. Must be 'Bearer {token}'"
+                )
+            token: JWT = cast(JWT, bearer_token.removeprefix('Bearer '))
         except KeyError:
             raise http_errors.Unauthorized(
                 "This route expected an authentication token, but couldn't "
-                "find it in the request header"
+                "find it in the request header. Tokens must be given in the "
+                "'Authorization' key"
             )
         user = Token.fromJWT(token).user
         return func(user, token, *args, **kwargs)

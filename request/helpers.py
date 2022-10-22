@@ -1,3 +1,8 @@
+"""
+# Request / Helpers
+
+Code used to help with handling requests
+"""
 import json
 import requests
 from backend.types.auth import JWT
@@ -67,7 +72,7 @@ def encode_headers(token: JWT | None) -> dict[str, str]:
     if token is None:
         return {}
     else:
-        return {"token": token}
+        return {"Authorization": f"Bearer {token}"}
 
 
 def get(token: JWT | None, url: str, params: dict) -> dict:

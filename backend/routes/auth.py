@@ -29,9 +29,9 @@ def login() -> IAuthInfo:
     * `token`: `JWT`
     """
     # Check if they have a token
-    if (tok := request.headers.get('token', None)) is not None:
+    if (tok := request.headers.get('Authorization', None)) is not None:
         try:
-            Token.fromJWT(JWT(tok))
+            Token.fromJWT(JWT(tok.removeprefix('Bearer ')))
         except http_errors.Forbidden:
             pass
         else:
@@ -62,7 +62,8 @@ def logout() -> dict:
     """
     Log out a logged in user
     """
-    token = JWT(request.headers['token'])
+    # TODO: Fix up this so that it's more robust
+    token = JWT(request.headers['Authorization'].removeprefix('Bearer '))
     try:
         Token.fromJWT(token).invalidate()
     except http_errors.Forbidden:
