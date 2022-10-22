@@ -2,13 +2,14 @@
 # Backend / Models / Queue
 """
 from .tables import TQueue, TPost
-from .post import Post
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import QueueId
 from backend.util.validators import assert_valid_str_field
 from backend.util import http_errors
 from backend.types.queue import IQueueFullInfo, IQueueBasicInfo
-from typing import cast
+from typing import cast, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .post import Post
 
 
 class Queue:

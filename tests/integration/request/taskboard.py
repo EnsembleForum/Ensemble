@@ -33,6 +33,22 @@ def queue_list(token: JWT, queue_id: QueueId) -> IQueueList:
     )
 
 
+def queue_create(
+    token: JWT, queue_name: str
+) -> IQueueId:
+    """
+    Create a queue
+    """
+    return cast(
+        IQueueId,
+        post(token,
+             f"{URL}/queue_list/create",
+             {
+                 "queue_name": queue_name,
+             },
+             ),
+    )
+
 def queue_view(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     """
     Get a detailed info of a queue
@@ -51,21 +67,4 @@ def queue_view(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
                 "queue_id": queue_id,
             }
             ),
-    )
-
-
-def queue_create(
-    token: JWT, queue_name: str
-) -> IQueueId:
-    """
-    Create a queue
-    """
-    return cast(
-        IQueueId,
-        post(token,
-             f"{URL}/queue_list/create",
-             {
-                 "queue_name": queue_name,
-             },
-             ),
     )

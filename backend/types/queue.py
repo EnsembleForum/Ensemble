@@ -18,8 +18,8 @@ class IQueueBasicInfo(TypedDict):
     * `queue_name`: `str`
     * `post_id`: `PostId`
     """
-    queue_name: str
     queue_id: QueueId
+    queue_name: str
 
 
 class IQueueFullInfo(TypedDict):

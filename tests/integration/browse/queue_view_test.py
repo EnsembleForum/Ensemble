@@ -24,9 +24,13 @@ def test_invalid_queue_id(all_users, make_queues):
     invalid_queue_id = (
         max(make_queues["queue1_id"], make_queues["queue2_id"]) + 1
     )
+
     invalid_queue_id = cast(QueueId, invalid_queue_id)
+    print(type(invalid_queue_id), invalid_queue_id, 'hello world')
     with pytest.raises(http_errors.BadRequest):
+        print('kms')
         queue_view(token, invalid_queue_id)
+        print(type(invalid_queue_id), 'goodbye world')
 
 
 def test_get_queue_success(all_users):
@@ -36,5 +40,6 @@ def test_get_queue_success(all_users):
     token = all_users["users"][0]["token"]
     queue_name = "queue_name"
     queue_id = queue_create(token, "queue_name")["queue_id"]
+    print('type of queue_id is', type(queue_id))
     queue = queue_view(token, queue_id)
     assert queue["queue_name"] == queue_name

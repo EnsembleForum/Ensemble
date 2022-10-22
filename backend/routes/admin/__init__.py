@@ -10,6 +10,8 @@ from .users import users
 from backend.models.auth_config import AuthConfig
 from backend.models.permissions import PermissionGroup, Permission
 from backend.models.token import Token
+from backend.models.queue import Queue
+
 from backend.models.user import User
 from backend.types.auth import IAuthInfo
 from backend.types.admin import IIsFirstRun
@@ -206,6 +208,10 @@ def init() -> IAuthInfo:
             Permission.ManagePermissionGroups: False,
         },
         immutable=False,
+    )
+
+    queue = Queue.create(
+        "mainQueue"
     )
 
     # Register first user
