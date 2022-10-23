@@ -25,6 +25,6 @@ def get_reply(*_) -> IReplyFullInfo:
     ## Returns:
     * `IReplyFullInfo`: Dictionary containing full info a reply
     """
-    reply_id = ReplyId(int(request.args["reply_id"]))
+    reply_id = ReplyId(request.args["reply_id"])
     reply = Reply(reply_id)
     return reply.full_info

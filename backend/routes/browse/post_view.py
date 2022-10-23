@@ -30,7 +30,7 @@ def get_post(*_) -> IPostFullInfo:
     ## Returns:
     * `IPostFullInfo`: Dictionary containing full info a post
     """
-    post_id = PostId(int(request.args["post_id"]))
+    post_id = PostId(request.args["post_id"])
     post = Post(post_id)
     return post.full_info
 
