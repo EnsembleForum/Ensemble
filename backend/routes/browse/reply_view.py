@@ -4,7 +4,6 @@
 Reply View routes
 """
 from flask import Blueprint, request
-from typing import cast
 from backend.models.reply import Reply
 from backend.types.identifiers import ReplyId
 from backend.types.reply import IReplyFullInfo
