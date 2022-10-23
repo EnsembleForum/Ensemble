@@ -5,11 +5,10 @@ Post View routes
 """
 import json
 from flask import Blueprint, request
-from typing import cast
 from backend.models.post import Post
 from backend.models.user import User
 from backend.models.comment import Comment
-from backend.types.identifiers import PostId, CommentId
+from backend.types.identifiers import PostId
 from backend.types.post import IPostFullInfo, IPostId
 from backend.types.comment import ICommentId
 from backend.util import http_errors
