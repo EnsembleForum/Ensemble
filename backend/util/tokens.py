@@ -56,8 +56,7 @@ def uses_token(
     @wraps(func)
     def wrapper(*args, **kwargs) -> T:
         try:
-            token: JWT = cast(JWT, request.headers["Authorization"][7:])
-            print(token)
+            token: JWT = cast(JWT, request.headers["token"])
         except KeyError:
             raise http_errors.Unauthorized(
                 "This route expected an authentication token, but couldn't "
