@@ -6,13 +6,57 @@ Identifier types used for additional type safety.
 These are used to prevent interchangeability between different types of
 identifiers.
 """
-from typing import NewType
 
-UserId = NewType("UserId", int)
-TokenId = NewType("TokenId", int)
-PermissionId = NewType("PermissionId", int)
-UserPermissionId = NewType("UserPermissionId", int)
-PermissionGroupId = NewType("PermissionGroupId", int)
-PostId = NewType("PostId", int)
-CommentId = NewType("CommentId", int)
-ReplyId = NewType("ReplyId", int)
+
+class Identifier(int):
+    """
+    Base class for identifiers used within the application.
+    """
+
+
+class UserId(Identifier):
+    """
+    Identifier for a user
+    """
+
+
+class TokenId(Identifier):
+    """
+    Identifier for a token
+    """
+
+
+class PermissionId(Identifier):
+    """
+    Identifier for a permission
+    """
+
+
+class UserPermissionId(Identifier):
+    """
+    Identifier for a user's permission table entry
+    """
+
+
+class PermissionGroupId(Identifier):
+    """
+    Identifier for a permission group
+    """
+
+
+class PostId(Identifier):
+    """
+    Identifier for a post
+    """
+
+
+class CommentId(Identifier):
+    """
+    Identifier for a comment
+    """
+
+
+class ReplyId(Identifier):
+    """
+    Identifier for a reply
+    """

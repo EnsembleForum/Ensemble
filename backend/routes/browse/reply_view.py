@@ -4,7 +4,6 @@
 Reply View routes
 """
 from flask import Blueprint, request
-from typing import cast
 from backend.models.reply import Reply
 from backend.types.identifiers import ReplyId
 from backend.types.reply import IReplyFullInfo
@@ -26,6 +25,6 @@ def get_reply(*_) -> IReplyFullInfo:
     ## Returns:
     * `IReplyFullInfo`: Dictionary containing full info a reply
     """
-    reply_id: ReplyId = cast(ReplyId, int(request.args["reply_id"]))
+    reply_id = ReplyId(request.args["reply_id"])
     reply = Reply(reply_id)
     return reply.full_info
