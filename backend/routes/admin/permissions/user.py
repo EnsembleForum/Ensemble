@@ -89,7 +89,7 @@ def get_permissions(user: User, *_) -> IPermissionUser:
       permissions from
     """
     user.permissions.assert_can(Permission.ManageUserPermissions)
-    target_user = User(UserId(int(request.args['user_id'])))
+    target_user = User(UserId(request.args['user_id']))
     permissions = target_user.permissions
 
     return {

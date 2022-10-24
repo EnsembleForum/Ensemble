@@ -25,7 +25,7 @@
                 "hidden": false,
                 "group": "Backend",
                 "order": 2
-            }
+            },
         },
         {
             "name": "Mock auth",

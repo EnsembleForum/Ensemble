@@ -3,11 +3,12 @@
 
 Configuration of authentication options
 """
+from typing import cast
 from .tables import TAuthConfig
 from backend.util.db_queries import id_exists, get_by_id
 from backend.util.auth_check import do_auth_check
 from backend.util import http_errors
-from typing import Literal
+from backend.types.admin import RequestType
 
 
 class AuthConfig:
@@ -39,7 +40,7 @@ class AuthConfig:
     def create(
         cls,
         address: str,
-        request_type: Literal['get', 'post'],
+        request_type: RequestType,
         username_param: str,
         password_param: str,
         success_regex: str,
@@ -125,14 +126,14 @@ class AuthConfig:
         row.save([TAuthConfig.address]).run_sync()
 
     @property
-    def request_type(self) -> str:
+    def request_type(self) -> RequestType:
         """
         The request type to make when authenticating
         """
-        return self._get().request_type
+        return cast(RequestType, self._get().request_type)
 
     @request_type.setter
-    def request_type(self, new_request_type: Literal['get', 'post']):
+    def request_type(self, new_request_type: RequestType):
         row = self._get()
         row.request_type = new_request_type
         row.save([TAuthConfig.request_type]).run_sync()
@@ -145,7 +146,7 @@ class AuthConfig:
         return self._get().username_param
 
     @username_param.setter
-    def username_param(self, new_username_param: Literal['get', 'post']):
+    def username_param(self, new_username_param: RequestType):
         row = self._get()
         row.username_param = new_username_param
         row.save([TAuthConfig.username_param]).run_sync()
@@ -158,7 +159,7 @@ class AuthConfig:
         return self._get().password_param
 
     @password_param.setter
-    def password_param(self, new_password_param: Literal['get', 'post']):
+    def password_param(self, new_password_param: str):
         row = self._get()
         row.password_param = new_password_param
         row.save([TAuthConfig.password_param]).run_sync()
@@ -171,7 +172,7 @@ class AuthConfig:
         return self._get().success_regex
 
     @success_regex.setter
-    def success_regex(self, new_success_regex: Literal['get', 'post']):
+    def success_regex(self, new_success_regex: str):
         row = self._get()
         row.success_regex = new_success_regex
         row.save([TAuthConfig.success_regex]).run_sync()

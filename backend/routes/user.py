@@ -33,5 +33,5 @@ def profile(*_) -> IUserProfile:
     Note that this will eventually contain more properties such as pronouns and
     the like
     """
-    user_id = UserId(int(request.args["user_id"]))
+    user_id = UserId(request.args["user_id"])
     return User(user_id).profile()

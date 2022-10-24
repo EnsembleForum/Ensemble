@@ -5,12 +5,13 @@ Code for checking authentication
 """
 import re
 import requests
+from typing import Literal
 from . import http_errors
 
 
 def do_auth_check(
     address: str,
-    request_type: str,
+    request_type: Literal['get', 'post', 'put', 'delete'],
     username_param: str,
     password_param: str,
     success_regex: str,
@@ -39,7 +40,7 @@ def do_auth_check(
     * `bool`: whether the authentication succeeded
     """
     try:
-        match request_type.lower():
+        match request_type:
             case "get":
                 res = requests.get(
                     address,
