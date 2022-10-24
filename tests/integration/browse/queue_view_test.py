@@ -12,7 +12,7 @@ from backend.types.identifiers import QueueId
 from backend.util import http_errors
 from tests.integration.request.taskboard import (
     queue_create,
-    queue_view,
+    post_list,
 )
 
 
@@ -26,12 +26,8 @@ def test_invalid_queue_id(all_users, make_queues):
     )
 
     invalid_queue_id = cast(QueueId, invalid_queue_id)
-    print(type(invalid_queue_id), invalid_queue_id, 'hello world')
     with pytest.raises(http_errors.BadRequest):
-        print('kms')
-        queue_view(token, invalid_queue_id)
-        print(type(invalid_queue_id), 'goodbye world')
-
+        post_list(token, invalid_queue_id)
 
 def test_get_queue_success(all_users):
     """
@@ -41,5 +37,6 @@ def test_get_queue_success(all_users):
     queue_name = "queue_name"
     queue_id = queue_create(token, "queue_name")["queue_id"]
     print('type of queue_id is', type(queue_id))
-    queue = queue_view(token, queue_id)
+    queue = post_list(token, queue_id)
     assert queue["queue_name"] == queue_name
+

@@ -49,7 +49,8 @@ def queue_create(
              ),
     )
 
-def queue_view(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
+
+def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     """
     Get a detailed info of a queue
 

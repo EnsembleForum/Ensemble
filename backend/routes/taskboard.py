@@ -81,6 +81,7 @@ def post_list(*_) -> IQueueFullInfo:
     ## Returns:
     * `queues`: [queue_id:int, queue_name: str]
     """
-    queue_id: QueueId = cast(QueueId, request.args["queue_id"])
+    queue_id: QueueId = cast(QueueId, int(request.args["queue_id"]))
+
     queue = Queue(queue_id)
     return queue.full_info()
