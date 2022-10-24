@@ -29,6 +29,7 @@ def test_invalid_queue_id(all_users, make_queues):
     with pytest.raises(http_errors.BadRequest):
         post_list(token, invalid_queue_id)
 
+
 def test_get_queue_success(all_users):
     """
     Can we get the full details of a valid queue?
@@ -39,4 +40,3 @@ def test_get_queue_success(all_users):
     print('type of queue_id is', type(queue_id))
     queue = post_list(token, queue_id)
     assert queue["queue_name"] == queue_name
-
