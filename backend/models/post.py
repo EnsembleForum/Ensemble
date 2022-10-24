@@ -103,16 +103,12 @@ class Post:
             .run_sync()
         ]
 
-    @classmethod
-    def delete(cls, post_id: PostId) -> PostId:
+    def delete(self):
         """
-        Deletes a post from the database
+        Deletes this post from the database
 
-        ### Returns:
-        * `PostId`: identifier of the deleted post
         """
-        TPost.delete().where(TPost.id == post_id).run_sync()
-        return post_id
+        TPost.delete().where(TPost.id == self.id).run_sync()
 
     def _get(self) -> TPost:
         """
@@ -197,11 +193,17 @@ class Post:
         return self._get().me_too
 
     def me_too_inc(self):
+        """
+        Increments the number of me_too's this post has
+        """
         row = self._get()
         row.me_too += 1
         row.save().run_sync()
 
     def me_too_dec(self):
+        """
+        Decrements the number of me_too's this post has
+        """
         row = self._get()
         row.me_too -= 1
         row.save().run_sync()
@@ -217,11 +219,17 @@ class Post:
         return self._get().thanks
 
     def thanks_inc(self):
+        """
+        Increments the number of thanks' this post has
+        """
         row = self._get()
         row.thanks += 1
         row.save().run_sync()
 
     def thanks_dec(self):
+        """
+        Decrements the number of thanks' this post has
+        """
         row = self._get()
         row.thanks -= 1
         row.save().run_sync()

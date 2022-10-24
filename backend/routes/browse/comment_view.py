@@ -29,7 +29,7 @@ def get_comment(*_) -> ICommentFullInfo:
     ## Returns:
     * `ICommentFullInfo`: Dictionary containing full info a comment
     """
-    comment = Comment(CommentId(int(request.args["comment_id"])))
+    comment = Comment(CommentId(request.args["comment_id"]))
     return comment.full_info
 
 
