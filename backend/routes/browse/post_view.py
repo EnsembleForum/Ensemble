@@ -9,7 +9,7 @@ from backend.models.post import Post
 from backend.models.user import User
 from backend.models.comment import Comment
 from backend.types.identifiers import PostId
-from backend.types.post import IPostFullInfo, IPostId
+from backend.types.post import IPostFullInfo
 from backend.types.comment import ICommentId
 from backend.util import http_errors
 from backend.util.tokens import uses_token
@@ -37,7 +37,7 @@ def get_post(*_) -> IPostFullInfo:
 
 @post_view.put("/edit")
 @uses_token
-def edit(user: User, *_) -> IPostId:
+def edit(user: User, *_) -> dict:
     """
     Edits the heading/text/tags of the post
 
@@ -67,7 +67,7 @@ def edit(user: User, *_) -> IPostId:
     post.heading = new_heading
     post.text = new_text
     post.tags = new_tags
-    return {"post_id": post.id}
+    return {}
 
 
 @post_view.delete("/self_delete")

@@ -41,10 +41,11 @@ def post_list(token: JWT) -> IPostBasicInfoList:
     """
     return cast(
         IPostBasicInfoList,
-        get(token,
+        get(
+            token,
             f"{URL}/post_list",
             {}
-            ),
+        ),
     )
 
 
@@ -106,14 +107,15 @@ def post_create(
     """
     return cast(
         IPostId,
-        post(token,
-             f"{URL}/create",
-             {
-                 "heading": heading,
-                 "text": text,
-                 "tags": tags,
-             },
-             ),
+        post(
+            token,
+            f"{URL}/create",
+            {
+                "heading": heading,
+                "text": text,
+                "tags": tags,
+            },
+        ),
     )
 
 
@@ -123,7 +125,7 @@ def post_edit(
     heading: str,
     text: str,
     tags: list[int],
-) -> IPostId:
+):
     """
     # PUT `/browse/post_view/edit`
 
@@ -142,25 +144,20 @@ def post_edit(
 
     ## Returns
     * `IPostId`: identifier of the post
-
-    FIXME: Is it worthwhile returning the post ID given that they already know
-    it?
     """
-    return cast(
-        IPostId,
-        put(token,
-            f"{URL}/post_view/edit",
-            {
-                "post_id": post_id,
-                "heading": heading,
-                "text": text,
-                "tags": tags,
-            },
-            ),
+    put(
+        token,
+        f"{URL}/post_view/edit",
+        {
+            "post_id": post_id,
+            "heading": heading,
+            "text": text,
+            "tags": tags,
+        },
     )
 
 
-def post_delete(token: JWT, post_id: PostId) -> dict:
+def post_delete(token: JWT, post_id: PostId):
     """
     # DELETE `/browse/post_view/self_delete`
 
@@ -174,11 +171,8 @@ def post_delete(token: JWT, post_id: PostId) -> dict:
 
     ## Returns
     * `IPostId`: identifier of the post
-
-    FIXME: Is it worthwhile returning the post ID given that they already know
-    it?
     """
-    return delete(
+    delete(
         token,
         f"{URL}/post_view/self_delete",
         {"post_id": post_id, }
@@ -204,13 +198,14 @@ def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
     """
     return cast(
         ICommentId,
-        post(token,
-             f"{URL}/post_view/comment",
-             {
-                 "text": text,
-                 "post_id": post_id,
-             },
-             ),
+        post(
+            token,
+            f"{URL}/post_view/comment",
+            {
+                "text": text,
+                "post_id": post_id,
+            },
+        ),
     )
 
 
@@ -238,12 +233,13 @@ def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
     """
     return cast(
         ICommentFullInfo,
-        get(token,
+        get(
+            token,
             f"{URL}/comment_view",
             {
                 "comment_id": comment_id,
             },
-            ),
+        ),
     )
 
 
@@ -266,13 +262,14 @@ def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
     """
     return cast(
         IReplyId,
-        post(token,
-             f"{URL}/comment_view/reply",
-             {
-                 "comment_id": comment_id,
-                 "text": text,
-             },
-             ),
+        post(
+            token,
+            f"{URL}/comment_view/reply",
+            {
+                "comment_id": comment_id,
+                "text": text,
+            },
+        ),
     )
 
 
@@ -298,10 +295,11 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     """
     return cast(
         IReplyFullInfo,
-        get(token,
+        get(
+            token,
             f"{URL}/reply_view",
             {
                 "reply_id": reply_id,
             },
-            ),
+        ),
     )
