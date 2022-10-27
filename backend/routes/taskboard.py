@@ -6,11 +6,11 @@ Taskboard-related routes
 import json
 from flask import Blueprint, request
 from backend.models.user import User
-from typing import cast
 from backend.models.queue import Queue
 from backend.types.identifiers import QueueId
 from backend.types.queue import IQueueFullInfo, IQueueList
 from backend.util.tokens import uses_token
+from backend.util.validators import assert_valid_str_field
 from backend.types.queue import IQueueId
 from backend.models.permissions import Permission
 
@@ -66,9 +66,32 @@ def queue_delete(user: User, *_) -> dict:
     """
     user.permissions.assert_can(Permission.ManageQueues)
 
-    queue_id: QueueId = cast(QueueId, int(request.args["queue_id"]))
+    queue_id: QueueId = QueueId(int(request.args["queue_id"]))
     queue = Queue(queue_id)
     queue.delete()
+
+    return {}
+
+
+@taskboard.put("/queue_list/edit")
+@uses_token
+def queue_edit(user: User, *_) -> dict:
+    """
+    Change the name of a queue
+
+    ## Args:
+    * `queue_id` (`int`): queue to edit
+    * `new_name` (`str`): new name of queue
+    """
+    user.permissions.assert_can(Permission.ManageQueues)
+
+    data = json.loads(request.data)
+
+    queue_id: QueueId = QueueId(data["queue_id"])
+    new_name = data['new_name']
+    queue = Queue(queue_id)
+    assert_valid_str_field(new_name, 'queue_name')
+    queue.name = new_name
 
     return {}
 
@@ -85,8 +108,7 @@ def post_list(user: User, *_) -> IQueueFullInfo:
     ## Returns:
     * `queues`: [queue_id:int, queue_name: str]
     """
-    queue_id: QueueId = cast(QueueId, int(request.args["queue_id"]))
+    user.permissions.assert_can(Permission.FollowQueue)
+    queue_id: QueueId = QueueId(int(request.args["queue_id"]))
     queue = Queue(queue_id)
-
-    user.permissions.assert_can(Permission.ManageQueues)
     return queue.full_info()
