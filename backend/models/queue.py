@@ -97,21 +97,22 @@ class Queue:
         """
         # IDEA: custom ordering of queues in the future
         return [
-            Queue(q["id"]) for q in TQueue.select()
+            Queue(q.id) for q in TQueue.objects()
             .order_by(TQueue.queue_name, ascending=False).run_sync()]
 
     @classmethod
-    def get_main_queue(cls):
+    def get_main_queue(cls) -> "Queue":
         """
         Gets the main queue
 
         ### Returns:
         * `queue`: main queue
         """
-        TQueue.select().where(TQueue.immutable.eq(True)).first().run_sync()
+        q = TQueue.objects()\
+            .where(TQueue.immutable.eq(True)).first().run_sync()
+        return Queue(q.id)
 
     # TODO: Revisit in sprint 2 to think of a way to organise
-
     def posts(self) -> list["Post"]:
         """
         List of all posts in the given queue
@@ -119,6 +120,7 @@ class Queue:
         ### Returns:
         * `list[Post]`: posts
         """
+        from .post import Post
         return [
             Post(c["id"])
             for c in TPost.select()

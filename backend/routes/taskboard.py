@@ -64,10 +64,9 @@ def queue_delete(user: User, *_) -> dict:
     ## Args:
     * `queue_id` (`int`): queue to delete
     """
-    # HERE
     user.permissions.assert_can(Permission.ManageQueues)
 
-    queue_id: QueueId = cast(QueueId, request.args["queue_id"])
+    queue_id: QueueId = cast(QueueId, int(request.args["queue_id"]))
     queue = Queue(queue_id)
     queue.delete()
 

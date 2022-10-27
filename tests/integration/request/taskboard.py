@@ -8,13 +8,13 @@ from backend.types.queue import IQueueId, IQueueFullInfo, IQueueList
 from backend.types.identifiers import QueueId
 from backend.types.auth import JWT
 from .consts import URL
-from .helpers import post, get
+from .helpers import post, get, delete
 
 
 URL = f"{URL}/taskboard"
 
 
-def queue_list(token: JWT, queue_id: QueueId) -> IQueueList:
+def queue_list(token: JWT) -> IQueueList:
     """
     Get a list of queues
 
@@ -63,10 +63,32 @@ def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     """
     return cast(
         IQueueFullInfo,
-        get(token,
+        get(
+            token,
             f"{URL}/queue/post_list",
             {
                 "queue_id": queue_id,
             }
             ),
+    )
+
+
+def queue_delete(token: JWT, queue_id: QueueId):
+    """
+    Get a list of queues
+
+    ## Body:
+    * `token` (`JWT`): JWT of the user
+
+    ## Returns:
+    * `IQueueList`: List of basic info of queues,
+       hence queue: list[IQueueBasicInfo]
+    """
+    IQueueList,
+    delete(
+        token,
+        f"{URL}/queue_list/delete",
+        {
+            "queue_id": queue_id,
+        }
     )
