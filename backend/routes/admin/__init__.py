@@ -161,7 +161,7 @@ def init() -> IAuthInfo:
                 Permission.Answer,
                 Permission.PostOverrideExam,
                 Permission.ViewTaskboard,
-                Permission.Delegate,
+                Permission.TaskboardDelegate,
                 Permission.FollowQueue,
                 Permission.ReportPosts,
                 Permission.ClosePosts,
