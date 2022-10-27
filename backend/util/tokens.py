@@ -5,7 +5,7 @@ Code used for cleanly unwrapping JWT tokens from routes
 """
 from flask import request
 from functools import wraps
-from typing import cast, Callable, TypeVar, ParamSpec, Concatenate
+from typing import Callable, TypeVar, ParamSpec, Concatenate
 from backend.models.token import Token
 from backend.models.user import User
 from backend.types.auth import JWT
