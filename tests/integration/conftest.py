@@ -228,11 +228,11 @@ class IMakeQueues(TypedDict):
 
 
 @pytest.fixture()
-def make_posts(all_users: IAllUsers) -> IMakePosts:
+def make_posts(basic_server_setup: IBasicServerSetup) -> IMakePosts:
     """
     Create two posts inside the forum
     """
-    token = all_users["users"][0]["token"]
+    token = basic_server_setup["token"]
     head1 = "First head"
     head2 = "Second head"
     text1 = "First text"

@@ -16,15 +16,19 @@ from tests.integration.request.taskboard import (
 )
 from tests.integration.conftest import (
     IAllUsers,
-    IMakeQueues
+    IMakeQueues,
+    IBasicServerSetup,
 )
 
 
-def test_invalid_queue_id(all_users: IAllUsers, make_queues: IMakeQueues):
+def test_invalid_queue_id(
+    basic_server_setup: IBasicServerSetup,
+    make_queues: IMakeQueues,
+):
     """
     If we are given an invalid queue_id, we get a 400 error
     """
-    token = all_users["admins"][0]["token"]
+    token = basic_server_setup["token"]
     invalid_queue_id = (
         max(make_queues["queue1_id"], make_queues["queue2_id"]) + 1
     )
@@ -34,11 +38,11 @@ def test_invalid_queue_id(all_users: IAllUsers, make_queues: IMakeQueues):
         post_list(token, invalid_queue_id)
 
 
-def test_get_queue_success(all_users: IAllUsers):
+def test_get_queue_success(basic_server_setup: IBasicServerSetup):
     """
-    Testing that admins can successfully create and delete queues
+    Testing that admins can successfully create queues
     """
-    token = all_users["admins"][0]["token"]
+    token = basic_server_setup["token"]
     queue_name = "queue_name"
     queue_id = queue_create(token, "queue_name")["queue_id"]
     queue = post_list(token, queue_id)
