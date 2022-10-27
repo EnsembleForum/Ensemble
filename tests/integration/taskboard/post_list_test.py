@@ -10,7 +10,7 @@ Tests for post list routes
 import pytest
 from backend.types.identifiers import QueueId
 from backend.util.http_errors import Forbidden, BadRequest
-from tests.integration.request.taskboard import (
+from request.taskboard import (
     queue_create,
     post_list,
 )

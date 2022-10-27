@@ -9,12 +9,12 @@ Tests for the default queue
 """
 import pytest
 from backend.util.http_errors import BadRequest
-from tests.integration.request.taskboard import (
+from request.taskboard import (
     post_list,
     queue_list,
     queue_delete,
 )
-from tests.integration.request.browse import (
+from request.browse import (
     post_create
 )
 from tests.integration.conftest import (
