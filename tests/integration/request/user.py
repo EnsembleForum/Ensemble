@@ -5,7 +5,7 @@ Functions to request user-related routes
 """
 from typing import cast
 from .consts import URL
-from .helpers import get
+from .helpers import get, put
 from backend.types.auth import JWT
 from backend.types.identifiers import UserId
 from backend.types.user import IUserProfile
@@ -35,4 +35,27 @@ def profile(token: JWT, user_id: UserId) -> IUserProfile:
         token,
         f'{URL}/profile',
         {"user_id": user_id},
+    ))
+
+
+def profile_edit_first(token: JWT, user_id: UserId, new_name: str) -> IUserProfile:
+    return cast(IUserProfile, put(
+        token,
+        f'{URL}/profile/edit_name_first',
+        {
+            "user_id": user_id,
+            "new_name": new_name,
+        }
+        ,
+    ))
+
+
+def profile_edit_last(token: JWT, user_id: UserId, new_name: str) -> IUserProfile:
+    return cast(IUserProfile, put(
+        token,
+        f'{URL}/profile/edit_name_last',
+        {
+            "user_id": user_id,
+            "new_name": new_name,
+        },
     ))
