@@ -135,11 +135,11 @@ class Queue:
 
         This should move all post back into the main queue
         """
-        # TODO: Error checking (can't delete main queue)
+        # Error checking (can't delete main queue)
         row = self._get()
         if row.immutable:
             raise http_errors.BadRequest('Cannot delete main queue')
-        # TODO: Send posts back to original queue
+        # Send posts back to original queue
         main_queue = self.get_main_queue()
         for p in self.posts():
             p.queue = main_queue
