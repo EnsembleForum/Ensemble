@@ -47,7 +47,7 @@ class Queue:
     @classmethod
     def create(
         cls,
-        queue_name: str,
+        name: str,
         immutable: bool = False,
     ) -> "Queue":
         """
@@ -61,12 +61,12 @@ class Queue:
         ### Returns:
         * `Queue`: the new queue
         """
-        assert_valid_str_field(queue_name, "queue_name")
+        assert_valid_str_field(name, "queue_name")
 
         val = (
             TQueue(
                 {
-                    TQueue.queue_name: queue_name,
+                    TQueue.name: name,
                     TQueue.immutable: immutable
                 }
             )
@@ -77,17 +77,17 @@ class Queue:
         return Queue(id)
 
     @property
-    def queue(self) -> str:
+    def name(self) -> str:
         """
         Name of the queue
         """
-        return self._get().queue_name
+        return self._get().name
 
-    @queue.setter
-    def queue(self, queue_name: str):
-        assert_valid_str_field(queue_name, "queue_name")
+    @name.setter
+    def name(self, new_name: str):
+        assert_valid_str_field(new_name, "queue_name")
         row = self._get()
-        row.queue_name = queue_name
+        row.name = new_name
         row.save().run_sync()
 
     @classmethod
@@ -98,7 +98,7 @@ class Queue:
         # IDEA: custom ordering of queues in the future
         return [
             Queue(q.id) for q in TQueue.objects()
-            .order_by(TQueue.queue_name, ascending=False).run_sync()]
+            .order_by(TQueue.name, ascending=False).run_sync()]
 
     @classmethod
     def get_main_queue(cls) -> "Queue":
@@ -154,7 +154,7 @@ class Queue:
         """
         return {
             "queue_id": self.id,
-            "queue_name": self.queue,
+            "queue_name": self.name,
             "posts": [c.id for c in self.posts()],
         }
 
@@ -167,5 +167,5 @@ class Queue:
         """
         return {
             "queue_id": self.id,
-            "queue_name": self.queue,
+            "queue_name": self.name,
         }
