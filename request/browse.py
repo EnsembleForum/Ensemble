@@ -1,13 +1,14 @@
 """
 # Request / Browse
 
-Helper functions for requesting auth code
+Helper functions for requesting post browsing code
 """
 from typing import cast
 from backend.types.comment import ICommentFullInfo, ICommentId
 from backend.types.reply import IReplyId
 from backend.types.identifiers import CommentId, PostId, ReplyId
 from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
+
 from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
 from .consts import URL
@@ -47,6 +48,42 @@ def post_list(token: JWT) -> IPostBasicInfoList:
     )
 
 
+def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
+    """
+    # GET `/browse/post_view`
+
+    Get the detailed info of a post.
+
+    ## Header
+    * `token` (`str`): JWT of the user
+
+    ## Params
+    * `post_id` (`int`): identifier of the post
+
+    ## Returns
+    Object containing
+    * `author` (`int`): ID of the post author
+    * `heading` (`str`): heading of the post
+    * `text` (`str`): main text of the post
+    * `tags` (`list[int]`): list of tag IDs for the post
+    * `reacts` (object containing):
+            * `thanks` (`int`): amount of thanks the post received
+            * `me_too` (`int`): number of me too's, the post received
+    * `comments` (`list[int]`): list of IDs of comments
+    * `timestamp` (`int`): UNIX timestamp of the post
+    """
+    return cast(
+        IPostFullInfo,
+        get(
+            token,
+            f"{URL}/post_view",
+            {
+                "post_id": post_id,
+            },
+        ),
+    )
+
+
 def post_create(
     token: JWT, heading: str, text: str, tags: list[int]
 ) -> IPostId:
@@ -77,41 +114,6 @@ def post_create(
                  "tags": tags,
              },
              ),
-    )
-
-
-def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
-    """
-    # GET `/browse/post_view`
-
-    Get the detailed info of a post.
-
-    ## Header
-    * `token` (`str`): JWT of the user
-
-    ## Params
-    * `post_id` (`int`): identifier of the post
-
-    ## Returns
-    Object containing
-    * `author` (`int`): ID of the post author
-    * `heading` (`str`): heading of the post
-    * `text` (`str`): main text of the post
-    * `tags` (`list[int]`): list of tag IDs for the post
-    * `reacts` (object containing):
-            * `thanks` (`int`): amount of thanks the post received
-            * `me_too` (`int`): number of me too's, the post received
-    * `comments` (`list[int]`): list of IDs of comments
-    * `timestamp` (`int`): UNIX timestamp of the post
-    """
-    return cast(
-        IPostFullInfo,
-        get(token,
-            f"{URL}/post_view",
-            {
-                "post_id": post_id,
-            },
-            ),
     )
 
 

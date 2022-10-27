@@ -5,7 +5,7 @@ Configuration for tests
 """
 import pytest
 from typing import TypedDict
-from backend.types.identifiers import UserId, PostId
+from backend.types.identifiers import UserId, PostId, QueueId
 from backend.types.permissions import IPermissionGroup
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
@@ -14,6 +14,7 @@ from request.browse import post_create
 from request.admin import init, users
 from request.admin.permissions import groups_list
 from request.auth import login
+from request.taskboard import queue_create
 
 
 @pytest.fixture(autouse=True)
@@ -211,6 +212,11 @@ def all_users(
 
 
 class IMakePosts(TypedDict):
+    """
+    Create two posts inside the forum.
+
+    Both posts are created by the admin
+    """
     post1_id: PostId
     post2_id: PostId
     head1: str
@@ -219,12 +225,24 @@ class IMakePosts(TypedDict):
     text2: str
 
 
+class IMakeQueues(TypedDict):
+    """
+    Create two queues on the forum
+    """
+    queue1_id: QueueId
+    queue2_id: QueueId
+    queue_name1: str
+    queue_name2: str
+
+
 @pytest.fixture()
-def make_posts(all_users) -> IMakePosts:
+def make_posts(basic_server_setup: IBasicServerSetup) -> IMakePosts:
     """
-    Create two posts inside the forum
+    Create two posts inside the forum.
+
+    Both posts are created by the admin
     """
-    token = all_users["users"][0]["token"]
+    token = basic_server_setup["token"]
     head1 = "First head"
     head2 = "Second head"
     text1 = "First text"
@@ -239,4 +257,23 @@ def make_posts(all_users) -> IMakePosts:
         "head2": head2,
         "text1": text1,
         "text2": text2,
+    }
+
+
+@pytest.fixture()
+def make_queues(all_users: IAllUsers) -> IMakeQueues:
+    """
+    Create two queues inside the forum
+    """
+    token = all_users["admins"][0]["token"]
+    queue_name1 = "First queue"
+    queue_name2 = "Second queue"
+    queue1_id = queue_create(token, queue_name1)["queue_id"]
+    queue2_id = queue_create(token, queue_name2)["queue_id"]
+
+    return {
+        "queue1_id": queue1_id,
+        "queue2_id": queue2_id,
+        "queue_name1": queue_name1,
+        "queue_name2": queue_name2
     }

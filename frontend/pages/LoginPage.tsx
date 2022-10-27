@@ -40,7 +40,7 @@ const LoginPage = (props: Props) => {
       .then((data) => {
         const check = data as {token: string};
       setToken(check.token)
-        navigate("main");
+        navigate("../../main");
       })
   }
   return (

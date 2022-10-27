@@ -16,6 +16,7 @@ ALL_TABLES: list[type[tables._BaseTable]] = [
     tables.TComment,
     tables.TReply,
     tables.TToken,
+    tables.TQueue
 ]
 
 
