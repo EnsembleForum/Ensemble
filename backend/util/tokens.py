@@ -61,7 +61,7 @@ def uses_token(
                 raise http_errors.Forbidden(
                     "Invalid format for JWT. Must be 'Bearer {token}'"
                 )
-            token: JWT = cast(JWT, bearer_token.removeprefix('Bearer '))
+            token: JWT = JWT(bearer_token.removeprefix('Bearer '))
         except KeyError:
             raise http_errors.Unauthorized(
                 "This route expected an authentication token, but couldn't "
