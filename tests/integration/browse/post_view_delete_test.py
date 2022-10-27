@@ -19,9 +19,13 @@ from tests.integration.request.browse import (
     add_comment,
     get_comment,
 )
+from tests.integration.conftest import (
+    IAllUsers,
+    IMakePosts,
+)
 
 
-def test_delete_other_user_post(all_users, make_posts):
+def test_delete_other_user_post(all_users: IAllUsers, make_posts: IMakePosts):
     """
     Does deleting another person's post raise a 403 error
     """
@@ -30,7 +34,7 @@ def test_delete_other_user_post(all_users, make_posts):
         post_delete(token, make_posts["post1_id"])
 
 
-def test_delete_success(all_users, make_posts):
+def test_delete_success(all_users: IAllUsers, make_posts: IMakePosts):
     """
     Successful deletion of one of the posts
     """
@@ -44,7 +48,10 @@ def test_delete_success(all_users, make_posts):
     assert posts["posts"][0]["post_id"] == make_posts["post2_id"]
 
 
-def test_delete_post_deletes_comments(all_users, make_posts):
+def test_delete_post_deletes_comments(
+    all_users: IAllUsers,
+    make_posts: IMakePosts,
+):
     """
     Delete a post containing two comments
     The two comments should also be deleted
