@@ -19,9 +19,14 @@ from tests.integration.request.browse import (
     add_comment,
     get_comment,
 )
+from tests.integration.conftest import (
+    IAllUsers,
+    IBasicServerSetup,
+    IMakePosts,
+)
 
 
-def test_delete_other_user_post(all_users, make_posts):
+def test_delete_other_user_post(all_users: IAllUsers, make_posts: IMakePosts):
     """
     Does deleting another person's post raise a 403 error
     """
@@ -30,11 +35,14 @@ def test_delete_other_user_post(all_users, make_posts):
         post_delete(token, make_posts["post1_id"])
 
 
-def test_delete_success(all_users, make_posts):
+def test_delete_success(
+    basic_server_setup: IBasicServerSetup,
+    make_posts: IMakePosts,
+):
     """
     Successful deletion of one of the posts
     """
-    token = all_users["users"][0]["token"]
+    token = basic_server_setup["token"]
     post_delete(token, make_posts["post1_id"])
     with pytest.raises(http_errors.BadRequest):
         post_view(token, make_posts["post1_id"])
@@ -44,12 +52,15 @@ def test_delete_success(all_users, make_posts):
     assert posts["posts"][0]["post_id"] == make_posts["post2_id"]
 
 
-def test_delete_post_deletes_comments(all_users, make_posts):
+def test_delete_post_deletes_comments(
+    basic_server_setup: IBasicServerSetup,
+    make_posts: IMakePosts,
+):
     """
     Delete a post containing two comments
     The two comments should also be deleted
     """
-    token = all_users["users"][0]["token"]
+    token = basic_server_setup["token"]
     post_id = make_posts["post1_id"]
     comment_id1 = add_comment(token, post_id, "first")["comment_id"]
     comment_id2 = add_comment(token, post_id, "second")["comment_id"]

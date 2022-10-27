@@ -8,7 +8,7 @@ This is the main entrypoint to backend server.
 from flask import Flask
 from flask_cors import CORS  # type: ignore
 from werkzeug.exceptions import HTTPException as WzException
-from .routes import debug, admin, auth, user, browse
+from .routes import debug, admin, auth, user, browse, taskboard
 from .util import db_status
 from .util.http_errors import HTTPException
 from .util.error_handler import (
@@ -34,6 +34,7 @@ app.register_blueprint(admin, url_prefix='/admin')
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(user, url_prefix='/user')
 app.register_blueprint(browse, url_prefix="/browse")
+app.register_blueprint(taskboard, url_prefix="/taskboard")
 
 
 # Main routes

@@ -12,6 +12,7 @@ __all__ = [
     "auth",
     "browse",
     'user',
+    'taskboard',
 ]
 
 from .debug import debug_export as debug
@@ -19,3 +20,4 @@ from .admin import admin
 from .auth import auth
 from .browse import browse
 from .user import user
+from .taskboard import taskboard
