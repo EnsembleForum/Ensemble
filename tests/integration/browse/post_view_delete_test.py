@@ -21,6 +21,7 @@ from tests.integration.request.browse import (
 )
 from tests.integration.conftest import (
     IAllUsers,
+    IBasicServerSetup,
     IMakePosts,
 )
 
@@ -34,11 +35,14 @@ def test_delete_other_user_post(all_users: IAllUsers, make_posts: IMakePosts):
         post_delete(token, make_posts["post1_id"])
 
 
-def test_delete_success(all_users: IAllUsers, make_posts: IMakePosts):
+def test_delete_success(
+    basic_server_setup: IBasicServerSetup,
+    make_posts: IMakePosts,
+):
     """
     Successful deletion of one of the posts
     """
-    token = all_users["users"][0]["token"]
+    token = basic_server_setup["token"]
     post_delete(token, make_posts["post1_id"])
     with pytest.raises(http_errors.BadRequest):
         post_view(token, make_posts["post1_id"])
@@ -49,14 +53,14 @@ def test_delete_success(all_users: IAllUsers, make_posts: IMakePosts):
 
 
 def test_delete_post_deletes_comments(
-    all_users: IAllUsers,
+    basic_server_setup: IBasicServerSetup,
     make_posts: IMakePosts,
 ):
     """
     Delete a post containing two comments
     The two comments should also be deleted
     """
-    token = all_users["users"][0]["token"]
+    token = basic_server_setup["token"]
     post_id = make_posts["post1_id"]
     comment_id1 = add_comment(token, post_id, "first")["comment_id"]
     comment_id2 = add_comment(token, post_id, "second")["comment_id"]
