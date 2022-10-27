@@ -68,8 +68,8 @@ class TUser(_BaseTable):
 
 
 class TQueue(_BaseTable):
-    queue_name = Text()
     immutable = Boolean()
+    queue_name = Text()
 
 
 class TPost(_BaseTable):

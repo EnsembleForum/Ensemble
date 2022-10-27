@@ -220,7 +220,7 @@ class IMakePosts(TypedDict):
     text2: str
 
 
-class ITwoQueues(TypedDict):
+class IMakeQueues(TypedDict):
     queue1_id: QueueId
     queue2_id: QueueId
     queue_name1: str
@@ -228,7 +228,7 @@ class ITwoQueues(TypedDict):
 
 
 @pytest.fixture()
-def make_posts(all_users) -> IMakePosts:
+def make_posts(all_users: IAllUsers) -> IMakePosts:
     """
     Create two posts inside the forum
     """
@@ -251,11 +251,11 @@ def make_posts(all_users) -> IMakePosts:
 
 
 @pytest.fixture()
-def make_queues(all_users) -> ITwoQueues:
+def make_queues(all_users: IAllUsers) -> IMakeQueues:
     """
     Create two queues inside the forum
     """
-    token = all_users["users"][0]["token"]
+    token = all_users["admins"][0]["token"]
     queue_name1 = "First queue"
     queue_name2 = "Second queue"
     queue1_id = queue_create(token, queue_name1)["queue_id"]

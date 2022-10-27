@@ -22,7 +22,8 @@ def queue_list(token: JWT, queue_id: QueueId) -> IQueueList:
     * `token` (`JWT`): JWT of the user
 
     ## Returns:
-    * `IQueueInfoList`: List of basic info of queues
+    * `IQueueList`: List of basic info of queues,
+       hence queue: list[IQueueBasicInfo]
     """
     return cast(
         IQueueList,
@@ -37,7 +38,7 @@ def queue_create(
     token: JWT, queue_name: str
 ) -> IQueueId:
     """
-    Create a queue
+    Creates a queue and returns the queue name
     """
     return cast(
         IQueueId,
@@ -54,7 +55,7 @@ def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     """
     Get a detailed info of a queue
 
-    ## Body:
+    ## Header:
     * `token` (`JWT`): JWT of the user
 
     ## Returns:

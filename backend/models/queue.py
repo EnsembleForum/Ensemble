@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 class Queue:
     """
-    Represents a queues in Ensemble
+    Represents a queue
     """
 
     def __init__(self, id: QueueId):
@@ -55,7 +55,8 @@ class Queue:
 
         ### Args:
         * `queue_name` (`str`): name of queue
-        * `immutable` (`bool`): default false (not immutable)
+        * `immutable` (`bool`): default false (not immutable). it determines
+           whether the queue is changeable or not
 
         ### Returns:
         * `Queue`: the new queue
@@ -94,7 +95,7 @@ class Queue:
         """
         Get the list of all available queues
         """
-
+        # IDEA: custom ordering of queues in the future
         return [
             Queue(q["id"]) for q in TQueue.select()
             .order_by(TQueue.queue_name, ascending=False).run_sync()]

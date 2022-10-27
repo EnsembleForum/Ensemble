@@ -68,7 +68,7 @@ class Post:
                     TPost.thanks: 0,
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
-                    TPost.queue: Queue.get_main_queue(),
+                    TPost.queue: Queue.get_main_queue().id,
                 }
             )
             .save()
