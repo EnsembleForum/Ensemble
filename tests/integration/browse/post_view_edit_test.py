@@ -56,9 +56,8 @@ def test_edit_success(
     token = basic_server_setup["token"]
     new_head = "new_head"
     new_text = "new_text"
-    post_id = post_edit(token, make_posts["post1_id"], new_head, new_text, [])[
-        "post_id"]
+    post_edit(token, make_posts["post1_id"], new_head, new_text, [])
 
-    post = post_view(token, post_id)
+    post = post_view(token, make_posts["post1_id"])
     assert post["heading"] == new_head
     assert post["text"] == new_text
