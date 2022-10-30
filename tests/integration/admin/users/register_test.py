@@ -17,7 +17,7 @@ Tests for bulk registering users
 """
 import pytest
 from backend.util import http_errors
-from request.admin import users
+from ensemble_request.admin import users
 from tests.integration.conftest import (
     IBasicServerSetup,
     IAllUsers,

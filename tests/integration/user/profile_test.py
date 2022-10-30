@@ -10,7 +10,7 @@ Tests for user profile route
 import pytest
 from backend.util import http_errors
 from backend.types.identifiers import UserId
-from request.user import profile
+from ensemble_request.user import profile
 from ..conftest import IAllUsers
 
 

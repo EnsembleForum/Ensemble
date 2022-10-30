@@ -12,7 +12,7 @@ import pytest
 from typing import cast
 from backend.types.identifiers import PostId
 from backend.util import http_errors
-from request.browse import (
+from ensemble_request.browse import (
     post_view,
     add_comment,
 )

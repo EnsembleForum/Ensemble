@@ -11,7 +11,7 @@ Tests for creating permission groups
 """
 import pytest
 from tests.integration.conftest import IBasicServerSetup, IAllUsers
-from request.admin import permissions
+from ensemble_request.admin import permissions
 from backend.util.http_errors import BadRequest, Forbidden
 from backend.models.permissions import Permission
 from backend.types.permissions import IPermissionGroup, PermissionGroupId

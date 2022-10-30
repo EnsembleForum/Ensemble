@@ -9,12 +9,12 @@ from backend.types.identifiers import UserId, PostId, QueueId
 from backend.types.permissions import IPermissionGroup
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
-from request.debug import clear, echo
-from request.browse import post_create
-from request.admin import init, users
-from request.admin.permissions import groups_list
-from request.auth import login
-from request.taskboard import queue_create
+from ensemble_request.debug import clear, echo
+from ensemble_request.browse import post_create
+from ensemble_request.admin import init, users
+from ensemble_request.admin.permissions import groups_list
+from ensemble_request.auth import login
+from ensemble_request.taskboard import queue_create
 
 
 @pytest.fixture(autouse=True)

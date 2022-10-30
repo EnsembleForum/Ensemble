@@ -10,8 +10,8 @@ import pytest
 from backend.util import http_errors
 from backend.types.auth import JWT
 from ..conftest import IAllUsers
-from request.auth import logout
-from request.user import profile
+from ensemble_request.auth import logout
+from ensemble_request.user import profile
 
 
 def test_token_invalidated(all_users: IAllUsers):

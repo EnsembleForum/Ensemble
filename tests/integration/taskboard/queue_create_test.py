@@ -9,7 +9,7 @@ Tests for creating queues
 """
 import pytest
 from backend.util.http_errors import Forbidden, BadRequest
-from request.taskboard import (
+from ensemble_request.taskboard import (
     queue_create,
     post_list,
 )

@@ -11,7 +11,7 @@ Tests for editing queues
 import pytest
 from backend.types.identifiers import QueueId
 from backend.util.http_errors import Forbidden, BadRequest
-from request.taskboard import (
+from ensemble_request.taskboard import (
     post_list,
     queue_edit,
 )

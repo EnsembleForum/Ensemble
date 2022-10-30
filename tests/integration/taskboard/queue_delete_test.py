@@ -10,7 +10,7 @@ Tests for the deleting queues
 import pytest
 from backend.types.identifiers import QueueId
 from backend.util.http_errors import BadRequest, Forbidden
-from request.taskboard import (
+from ensemble_request.taskboard import (
     queue_list,
     queue_delete,
 )

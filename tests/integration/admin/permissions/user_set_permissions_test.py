@@ -12,7 +12,7 @@ Tests for setting the specific permissions of users.
 * Can set individual permissions
 """
 import pytest
-from request.admin.permissions import (
+from ensemble_request.admin.permissions import (
     get_permissions,
     set_permissions,
 )
