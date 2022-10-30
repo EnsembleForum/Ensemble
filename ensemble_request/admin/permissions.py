@@ -22,7 +22,7 @@ def list_permissions(token: JWT) -> IPermissionList:
     Returns info about available permissions.
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Returns
     Object containing:
@@ -49,7 +49,7 @@ def get_permissions(token: JWT, user_id: UserId) -> IPermissionUser:
     * `ManageUserPermissions`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Params
     * `user_id` (`int`): user id to query permissions for
@@ -87,7 +87,7 @@ def set_permissions(
     * `ManageUserPermissions`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `user_id` (`int`): user id to set permissions for
@@ -125,7 +125,7 @@ def groups_create(
     * `ManagePermissionGroups`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `name` (`str`): name of permission group
@@ -159,7 +159,7 @@ def groups_list(token: JWT) -> IPermissionGroupList:
     * `ManagePermissionGroups`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Returns
     Object containing:
@@ -193,7 +193,7 @@ def groups_edit(
     * `ManagePermissionGroups`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `group_id` (`int`): permission group ID
@@ -227,7 +227,7 @@ def groups_remove(
     * `ManagePermissionGroups`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Params
     * `group_id` (`int`): permission group ID

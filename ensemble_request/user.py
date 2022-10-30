@@ -20,7 +20,7 @@ def profile(token: JWT, user_id: UserId) -> IUserProfile:
     Returns detailed info about a user.
 
     ## Header
-    * `token` (`str`): JWT of the user performing the action
+    * `Authorization` (`JWT`): JWT of the user
 
     ### Params
     * `user_id` (`int`): user ID for user we're viewing the profile of

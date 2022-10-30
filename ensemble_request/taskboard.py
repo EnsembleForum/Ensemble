@@ -24,7 +24,7 @@ def queue_list(token: JWT) -> IQueueList:
     * `ManageQueues`
 
     ## Header
-    * `token` (`JWT`): JWT of the user
+    * `Authorization` (`JWT`): JWT of the user
 
     ## Returns
     Object containing:
@@ -52,7 +52,7 @@ def queue_create(token: JWT, queue_name: str) -> IQueueId:
     * `ManageQueues`
 
     ## Header
-    * `token` (`JWT`): JWT of the user
+    * `Authorization` (`JWT`): JWT of the user
 
     ## Body:
     * `queue_name` (`str`): Name to use for the new queue
@@ -83,7 +83,7 @@ def queue_delete(token: JWT, queue_id: QueueId):
     * `ManageQueues`
 
     ## Header
-    * `token` (`JWT`): JWT of the user
+    * `Authorization` (`JWT`): JWT of the user
 
     ## Params
     * `queue_id` (`int`): ID of the queue to delete
@@ -108,7 +108,7 @@ def queue_edit(token: JWT, queue_id: QueueId, new_name: str):
     * `ManageQueues`
 
     ## Headers
-    * `token` (`JWT`): JWT of the user
+    * `Authorization` (`JWT`): JWT of the user
 
     ## Body
     * `queue_id` (`int`): the ID of the queue to edit
@@ -135,7 +135,7 @@ def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     * `FollowQueue`
 
     ## Header
-    * `token` (`JWT`): JWT of the user
+    * `Authorization` (`JWT`): JWT of the user
 
     ## Params
     * `queue_id` (`int`): ID of the queue to get info on

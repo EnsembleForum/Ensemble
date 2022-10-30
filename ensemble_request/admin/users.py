@@ -23,6 +23,9 @@ def register(
     ## Permissions
     * `AddUsers`
 
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
     ## Body
     * `users`: list of user info to add. Each user must be an object of:
             * `name_first` (`str`): First name
@@ -54,6 +57,9 @@ def all(token: JWT) -> IUserBasicInfoList:
 
     ## Permissions
     * `ViewAllUsers`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
 
     ### Returns
     * `users`: list of users, containing objects of

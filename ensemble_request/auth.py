@@ -45,7 +45,7 @@ def logout(token: JWT) -> None:
     Log out a logged in user, invalidating their token so it can no-longer be
     used.
 
-    ## Headers
-    * `token` (`str`): authentication token
+    ## Header
+    * `Authorization` (`str`): JWT of the user
     """
     post(token, f"{URL}/logout", {})

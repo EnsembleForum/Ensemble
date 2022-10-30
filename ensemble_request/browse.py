@@ -28,7 +28,7 @@ def post_list(token: JWT) -> IPostBasicInfoList:
     * `PostView`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Returns
     Object containing:
@@ -62,7 +62,7 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
     * `PostView`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Params
     * `post_id` (`int`): identifier of the post
@@ -103,7 +103,7 @@ def post_create(
     * `PostCreate`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `heading` (`str`): heading of the post
@@ -144,7 +144,7 @@ def post_edit(
     * `PostCreate`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `post_id` (`PostId`): identifier of the post
@@ -176,7 +176,7 @@ def post_delete(token: JWT, post_id: PostId):
     * `PostCreate`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Params
     * `post_id` (`int`): identifier of the post
@@ -198,7 +198,7 @@ def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
     * `PostComment`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `post_id` (`int`): identifier of the post to comment on
@@ -231,7 +231,7 @@ def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
     * `PostView`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Params
     * `comment_id` (`CommentId`): identifier of the comment
@@ -268,7 +268,7 @@ def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
     * `PostComment`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `comment_id` (`CommentId`): identifier of the comment to reply to
@@ -301,7 +301,7 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     * `PostView`
 
     ## Header
-    * `token` (`str`): JWT of the user
+    * `Authorization` (`str`): JWT of the user
 
     ## Params
     * `reply_id` (`ReplyId`): identifier of the reply
