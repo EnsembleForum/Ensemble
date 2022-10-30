@@ -28,6 +28,7 @@ def test_edit_own_profile_first(all_users: IAllUsers):
         "name_last": "Ator",
         "username": "user1",
         "email": "user1@example.com",
+        "pronoun": "he/him",
         "user_id": all_users['users'][0]['user_id'],
     }
 
@@ -47,5 +48,6 @@ def test_edit_own_profile_last(all_users: IAllUsers):
         "name_last": "newLastname",
         "username": "user1",
         "email": "user1@example.com",
+        "pronoun": "he/him",
         "user_id": all_users['users'][0]['user_id'],
     }

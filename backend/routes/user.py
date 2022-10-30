@@ -7,7 +7,6 @@ import json
 from flask import Blueprint, request
 from backend.types.user import IUserProfile
 from backend.types.identifiers import UserId
-from backend.types.auth import JWT
 from backend.util.tokens import uses_token
 from backend.models.user import User
 

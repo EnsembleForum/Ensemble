@@ -24,6 +24,7 @@ def test_view_own_profile(all_users: IAllUsers):
         "name_last": "Ator",
         "username": "user1",
         "email": "user1@example.com",
+        "pronoun": "he/him",
         "user_id": all_users['users'][0]['user_id'],
     }
 
@@ -38,6 +39,7 @@ def test_view_other_profile(all_users: IAllUsers):
         "name_last": "Ator",
         "username": "user2",
         "email": "user2@example.com",
+        "pronoun": "he/him",
         "user_id": all_users['users'][1]['user_id'],
     }
 

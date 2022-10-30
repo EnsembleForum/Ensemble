@@ -31,6 +31,7 @@ try:
             "email": "admin1@example.com",
             "name_first": "Bophades",
             "name_last": "Nuts",
+            "pronoun": "he/him",
         }
     )
 except requests.ConnectionError:

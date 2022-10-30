@@ -69,4 +69,5 @@ def init(
         "email": email,
         "name_first": name_first,
         "name_last": name_last,
+        "pronoun": pronoun,
     }))
