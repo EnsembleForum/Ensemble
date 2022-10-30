@@ -5,11 +5,10 @@ Post View routes
 """
 import json
 from flask import Blueprint, request
-from typing import cast
 from backend.models.post import Post
 from backend.models.user import User
 from backend.models.comment import Comment
-from backend.types.identifiers import PostId, CommentId
+from backend.types.identifiers import PostId
 from backend.types.post import IPostFullInfo, IPostId
 from backend.types.comment import ICommentId
 from backend.util import http_errors
@@ -31,7 +30,7 @@ def get_post(*_) -> IPostFullInfo:
     ## Returns:
     * `IPostFullInfo`: Dictionary containing full info a post
     """
-    post_id = cast(PostId, int(request.args["post_id"]))
+    post_id = PostId(request.args["post_id"])
     post = Post(post_id)
     return post.full_info
 
@@ -81,7 +80,7 @@ def delete(user: User, *_) -> dict:
     * `post_id` (`PostId`): identifier of the post
     * `token` (`JWT`): JWT of the user
     """
-    post_id = cast(PostId, int(request.args["post_id"]))
+    post_id = PostId(int(request.args["post_id"]))
 
     post = Post(post_id)
 
@@ -110,7 +109,7 @@ def comment(user: User, *_) -> ICommentId:
     text: str = data["text"]
     post = Post(data["post_id"])
 
-    comment_id: CommentId = Comment.create(user, post, text).id
+    comment_id = Comment.create(user, post, text).id
 
     return {"comment_id": comment_id}
 

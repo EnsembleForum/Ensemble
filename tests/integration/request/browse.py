@@ -1,13 +1,14 @@
 """
 # Tests / Integration / Request / Browse
 
-Helper functions for requesting auth code
+Helper functions for requesting post browsing code
 """
 from typing import cast
 from backend.types.comment import ICommentFullInfo, ICommentId
 from backend.types.reply import IReplyId
 from backend.types.identifiers import CommentId, PostId, ReplyId
 from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
+
 from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
 from .consts import URL
@@ -32,6 +33,28 @@ def post_list(token: JWT) -> IPostBasicInfoList:
         get(token,
             f"{URL}/post_list",
             {}
+            ),
+    )
+
+
+def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
+    """
+    Get the detailed info of a post
+
+    ## Body:
+    * `post_id` (`PostId`): identifier of the post
+    * `token` (`JWT`): JWT of the user
+
+    ## Returns:
+    * `IPostFullInfo`: Dictionary containing full info a post
+    """
+    return cast(
+        IPostFullInfo,
+        get(token,
+            f"{URL}/post_view",
+            {
+                "post_id": post_id,
+            },
             ),
     )
 
@@ -61,28 +84,6 @@ def post_create(
                  "tags": tags,
              },
              ),
-    )
-
-
-def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
-    """
-    Get the detailed info of a post
-
-    ## Body:
-    * `post_id` (`PostId`): identifier of the post
-    * `token` (`JWT`): JWT of the user
-
-    ## Returns:
-    * `IPostFullInfo`: Dictionary containing full info a post
-    """
-    return cast(
-        IPostFullInfo,
-        get(token,
-            f"{URL}/post_view",
-            {
-                "post_id": post_id,
-            },
-            ),
     )
 
 

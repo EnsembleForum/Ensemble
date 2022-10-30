@@ -31,7 +31,7 @@ const InitPage = (props: Props) => {
     success_regex: '',
     username: '',
     password: '',
-    email: '', 
+    email: '',
     name_first: '',
     name_last: ''
   });
@@ -45,10 +45,10 @@ const InitPage = (props: Props) => {
       body: initDetails
     }
     ApiFetch(api)
-    .then((data) => { 
+    .then((data) => {
       const check = data as initReturn;
       setToken(check.token)
-      navigate("main");
+      navigate("../../main");
     });
   }
   return (
@@ -67,7 +67,7 @@ const InitPage = (props: Props) => {
             return (
               <>
                 <Label htmlFor={eachKey}>Request Type</Label>
-                <Select name="request_type" id="request_type" mb={3} value = {initDetails.request_type} onChange={(e) => setInitDetails(initDetails=>({...initDetails, request_type: e.target.value}))}> 
+                <Select name="request_type" id="request_type" mb={3} value = {initDetails.request_type} onChange={(e) => setInitDetails(initDetails=>({...initDetails, request_type: e.target.value}))}>
                   <option value = "post">POST</option>
                   <option value = "get">GET</option>
                 </Select>

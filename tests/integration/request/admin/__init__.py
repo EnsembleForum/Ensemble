@@ -1,9 +1,9 @@
 """
 # Tests / Integration / Request / Admin
 """
-from backend.types.admin import IIsFirstRun
+from backend.types.admin import IIsFirstRun, RequestType
 from backend.types.auth import IAuthInfo
-from typing import cast, Literal
+from typing import cast
 from ..consts import URL
 from ..helpers import get, post
 
@@ -22,7 +22,7 @@ def is_first_run() -> IIsFirstRun:
 
 def init(
     address: str,
-    request_type: Literal['get', 'post'],
+    request_type: RequestType,
     username_param: str,
     password_param: str,
     success_regex: str,
