@@ -4,7 +4,8 @@
 from .tables import TComment, TPost
 from .user import User
 from .comment import Comment
-from backend.util.db_queries import assert_id_exists, get_by_id
+from .content import Content
+from backend.util.db_queries import get_by_id  # assert_id_exists,
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
     from backend.models.queue import Queue
 
 
-class Post:
+class Post(Content):
     """
     Represents a post of Ensemble
     """
@@ -29,8 +30,9 @@ class Post:
         ### Raises:
         * `IdNotFound`: post does not exist
         """
-        assert_id_exists(TPost, id, "Post")
-        self.__id = id
+        super().__init__(TPost, id, "post")
+        # assert_id_exists(TPost, id, "Post")
+        # self.__id = id
 
     @classmethod
     def create(
@@ -100,30 +102,30 @@ class Post:
         return [
             Comment(c["id"])
             for c in TComment.select()
-            .where(TComment.parent == self.__id)
+            .where(TComment.parent == super().id)
             .order_by(TComment.id, ascending=False)
             .run_sync()
         ]
 
-    def delete(self):
-        """
-        Deletes this post from the database
+    # def delete(self):
+    #     """
+    #     Deletes this post from the database
 
-        """
-        TPost.delete().where(TPost.id == self.id).run_sync()
+    #     """
+    #     TPost.delete().where(TPost.id == self.id).run_sync()
 
     def _get(self) -> TPost:
         """
         Return a reference to the underlying database row
         """
-        return get_by_id(TPost, self.__id)
+        return get_by_id(TPost, super().id)
 
     @property
     def id(self) -> PostId:
         """
         Identifier of the post
         """
-        return self.__id
+        return PostId(super().id)
 
     @property
     def heading(self) -> str:
@@ -245,7 +247,7 @@ class Post:
         return {
             "author": self.author.id,
             "heading": self.heading,
-            "post_id": self.id,
+            "post_id": PostId(super().id),
             "tags": self.tags,
             "me_too": self.me_too,
         }
