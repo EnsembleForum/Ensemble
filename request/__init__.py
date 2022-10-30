@@ -27,6 +27,7 @@ from . import (  # noqa: E402
     auth,
     browse,
     debug,
+    taskboard,
     user,
 )
 
@@ -35,5 +36,6 @@ __all__ = [
     'auth',
     'browse',
     'debug',
+    'taskboard',
     'user',
 ]

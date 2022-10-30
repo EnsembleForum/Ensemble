@@ -6,6 +6,16 @@ from backend.types.auth import IAuthInfo
 from typing import cast
 from ..consts import URL
 from ..helpers import get, post
+from . import permissions
+from . import users
+
+__all__ = [
+    'permissions',
+    'users',
+    'is_first_run',
+    'init',
+]
+
 
 URL = f"{URL}/admin"
 
