@@ -16,50 +16,73 @@ URL = f"{URL}/taskboard"
 
 def queue_list(token: JWT) -> IQueueList:
     """
+    ## GET `/taskboard/queue_list`
+
     Get a list of queues
 
-    ## Body:
+    ## Header
     * `token` (`JWT`): JWT of the user
 
-    ## Returns:
-    * `IQueueList`: List of basic info of queues,
-       hence queue: list[IQueueBasicInfo]
+    ## Returns
+    Object containing:
+    * `queues`: list of objects containing:
+            * `queue_name` (`str`): the name of the queue
+            * `queue_id` (`int`): ID of the queue
     """
     return cast(
         IQueueList,
-        get(token,
+        get(
+            token,
             f"{URL}/queue_list",
             {}
-            ),
+        ),
     )
 
 
-def queue_create(
-    token: JWT, queue_name: str
-) -> IQueueId:
+def queue_create(token: JWT, queue_name: str) -> IQueueId:
     """
-    Creates a queue and returns the queue name
+    ## POST `/taskboard/queue_list/create`
+
+    Creates a new queue
+
+    ## Header
+    * `token` (`JWT`): JWT of the user
+
+    ## Body:
+    * `queue_name` (`str`): Name to use for the new queue
+
+    ## Returns
+    Object containing:
+    * `queue_id` (`int`): ID of the new queue
     """
     return cast(
         IQueueId,
-        post(token,
-             f"{URL}/queue_list/create",
-             {
-                 "queue_name": queue_name,
-             },
-             ),
+        post(
+            token,
+            f"{URL}/queue_list/create",
+            {
+                "queue_name": queue_name,
+            },
+        ),
     )
 
 
 def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     """
+    ## GET `/taskboard/queue/post_list`
+
     Get a detailed info of a queue
 
-    ## Header:
+    ## Header
     * `token` (`JWT`): JWT of the user
 
-    ## Returns:
-    * `IQueueInfo`: List of basic info of queues
+    ## Params
+    * `queue_id` (`int`): ID of the queue to get info on
+
+    ## Returns
+    * `queue_id` (`int`): ID of the queue
+    * `queue_name` (`str`): name of the queue
+    * `posts`: (`list[int]`): list of post IDs in this queue
     """
     return cast(
         IQueueFullInfo,
@@ -69,20 +92,21 @@ def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
             {
                 "queue_id": queue_id,
             }
-            ),
+        ),
     )
 
 
 def queue_delete(token: JWT, queue_id: QueueId):
     """
-    Get a list of queues
+    ## DELETE `/taskboard/queue_list/delete`
 
-    ## Body:
+    Delete a queue
+
+    ## Header
     * `token` (`JWT`): JWT of the user
 
-    ## Returns:
-    * `IQueueList`: List of basic info of queues,
-       hence queue: list[IQueueBasicInfo]
+    ## Params
+    * `queue_id` (`int`): ID of the queue to delete
     """
     IQueueList,
     delete(
@@ -96,14 +120,14 @@ def queue_delete(token: JWT, queue_id: QueueId):
 
 def queue_edit(token: JWT, queue_id: QueueId, new_name: str):
     """
-    Get a list of queues
+    ## PUT `/taskboard/queue_list/edit`
 
-    ## Body:
+    ## Headers
     * `token` (`JWT`): JWT of the user
 
-    ## Returns:
-    * `IQueueList`: List of basic info of queues,
-       hence queue: list[IQueueBasicInfo]
+    ## Body
+    * `queue_id` (`int`): the ID of the queue to edit
+    * `new_name` (`str`): the new name of the queue
     """
     IQueueList,
     put(
