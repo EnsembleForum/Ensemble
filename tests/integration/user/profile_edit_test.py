@@ -5,14 +5,11 @@ Tests for editing a user profile
 
 * Edit a user's name
 """
-import pytest
-from backend.util import http_errors
-from backend.types.identifiers import UserId
-from ..request.user import profile, profile_edit_first, profile_edit_last
+
+
+from ..request.user import profile_edit_first, profile_edit_last
 from ..conftest import (
     IAllUsers,
-    IBasicServerSetup,
-    IMakeQueues
 )
 
 
@@ -33,6 +30,7 @@ def test_edit_own_profile_first(all_users: IAllUsers):
         "email": "user1@example.com",
         "user_id": all_users['users'][0]['user_id'],
     }
+
 
 def test_edit_own_profile_last(all_users: IAllUsers):
     """Can we edit our own profile?"""
