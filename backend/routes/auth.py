@@ -17,17 +17,6 @@ auth = Blueprint('auth', 'auth')
 
 @auth.post('/login')
 def login() -> IAuthInfo:
-    """
-    Log in a user that has been registered
-
-    ## Body:
-    * `username` (`str`)
-    * `password` (`str`)
-
-    ## Returns:
-    * `user_id`: `UserId`
-    * `token`: `JWT`
-    """
     # Check if they have a token
     if (tok := request.headers.get('Authorization', None)) is not None:
         try:
@@ -59,9 +48,6 @@ def login() -> IAuthInfo:
 
 @auth.post('/logout')
 def logout() -> dict:
-    """
-    Log out a logged in user
-    """
     # TODO: Fix up this so that it's more robust
     token = JWT(request.headers['Authorization'].removeprefix('Bearer '))
     try:

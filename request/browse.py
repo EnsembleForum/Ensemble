@@ -24,6 +24,9 @@ def post_list(token: JWT) -> IPostBasicInfoList:
 
     Get a list of posts visible to the give user
 
+    ## Permissions
+    * `PostView`
+
     ## Header
     * `token` (`str`): JWT of the user
 
@@ -54,6 +57,9 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
     # GET `/browse/post_view`
 
     Get the detailed info of a post.
+
+    ## Permissions
+    * `PostView`
 
     ## Header
     * `token` (`str`): JWT of the user
@@ -93,6 +99,9 @@ def post_create(
 
     Create a new post on the forum
 
+    ## Permissions
+    * `PostCreate`
+
     ## Header
     * `token` (`str`): JWT of the user
 
@@ -131,6 +140,9 @@ def post_edit(
 
     Edits the heading/text/tags of the post
 
+    ## Permissions
+    * `PostCreate`
+
     ## Header
     * `token` (`str`): JWT of the user
 
@@ -141,9 +153,6 @@ def post_edit(
     * `text` (`str`): new text of the post
                         (should be given the old text if unedited)
     * `tags` (`list[int]`): new tags of the post (ignore for sprint 1)
-
-    ## Returns
-    * `IPostId`: identifier of the post
     """
     put(
         token,
@@ -163,14 +172,14 @@ def post_delete(token: JWT, post_id: PostId):
 
     Deletes a post. This route must be called by the owner of the post.
 
+    ## Permissions
+    * `PostCreate`
+
     ## Header
     * `token` (`str`): JWT of the user
 
     ## Params
     * `post_id` (`int`): identifier of the post
-
-    ## Returns
-    * `IPostId`: identifier of the post
     """
     delete(
         token,
@@ -184,6 +193,9 @@ def add_comment(token: JWT, post_id: PostId, text: str) -> ICommentId:
     # POST `/browse/post_view/comment`
 
     Creates a new comment on a post
+
+    ## Permissions
+    * `PostComment`
 
     ## Header
     * `token` (`str`): JWT of the user
@@ -214,6 +226,9 @@ def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
     # GET `/browse/comment_view`
 
     Get the detailed info of a comment
+
+    ## Permissions
+    * `PostView`
 
     ## Header
     * `token` (`str`): JWT of the user
@@ -247,7 +262,10 @@ def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
     """
     # POST `/browse/comment_view/reply`
 
-    Creates a new reply
+    Creates a new reply to a comment
+
+    ## Permissions
+    * `PostComment`
 
     ## Header
     * `token` (`str`): JWT of the user
@@ -278,6 +296,9 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     # GET `/browse/reply_view`
 
     Get the detailed info of a reply
+
+    ## Permissions
+    * `PostView`
 
     ## Header
     * `token` (`str`): JWT of the user

@@ -17,7 +17,7 @@ class Permission(Enum):
         return cast(PermissionId, super().value)
 
     # Viewing
-    View = 0
+    PostView = 0
     """User can view public posts"""
     ViewPrivate = 1
     """User can view private posts"""
@@ -25,9 +25,9 @@ class Permission(Enum):
     """User can view who made an anonymous post"""
 
     # Posting
-    Post = 10
+    PostCreate = 10
     """User can create posts"""
-    Answer = 11
+    PostComment = 11
     """User can create answers to posts"""
     PostOverrideExam = 12
     """User can create public posts, even when exam mode is enabled"""

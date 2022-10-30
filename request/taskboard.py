@@ -20,6 +20,9 @@ def queue_list(token: JWT) -> IQueueList:
 
     Get a list of queues
 
+    ## Permissions
+    * `ManageQueues`
+
     ## Header
     * `token` (`JWT`): JWT of the user
 
@@ -45,6 +48,9 @@ def queue_create(token: JWT, queue_name: str) -> IQueueId:
 
     Creates a new queue
 
+    ## Permissions
+    * `ManageQueues`
+
     ## Header
     * `token` (`JWT`): JWT of the user
 
@@ -67,40 +73,14 @@ def queue_create(token: JWT, queue_name: str) -> IQueueId:
     )
 
 
-def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
-    """
-    ## GET `/taskboard/queue/post_list`
-
-    Get a detailed info of a queue
-
-    ## Header
-    * `token` (`JWT`): JWT of the user
-
-    ## Params
-    * `queue_id` (`int`): ID of the queue to get info on
-
-    ## Returns
-    * `queue_id` (`int`): ID of the queue
-    * `queue_name` (`str`): name of the queue
-    * `posts`: (`list[int]`): list of post IDs in this queue
-    """
-    return cast(
-        IQueueFullInfo,
-        get(
-            token,
-            f"{URL}/queue/post_list",
-            {
-                "queue_id": queue_id,
-            }
-        ),
-    )
-
-
 def queue_delete(token: JWT, queue_id: QueueId):
     """
     ## DELETE `/taskboard/queue_list/delete`
 
     Delete a queue
+
+    ## Permissions
+    * `ManageQueues`
 
     ## Header
     * `token` (`JWT`): JWT of the user
@@ -122,6 +102,11 @@ def queue_edit(token: JWT, queue_id: QueueId, new_name: str):
     """
     ## PUT `/taskboard/queue_list/edit`
 
+    Rename a queue.
+
+    ## Permissions
+    * `ManageQueues`
+
     ## Headers
     * `token` (`JWT`): JWT of the user
 
@@ -137,4 +122,36 @@ def queue_edit(token: JWT, queue_id: QueueId, new_name: str):
             "queue_id": queue_id,
             "new_name": new_name,
         }
+    )
+
+
+def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
+    """
+    ## GET `/taskboard/queue/post_list`
+
+    Get a detailed info of a queue
+
+    ## Permissions
+    * `FollowQueue`
+
+    ## Header
+    * `token` (`JWT`): JWT of the user
+
+    ## Params
+    * `queue_id` (`int`): ID of the queue to get info on
+
+    ## Returns
+    * `queue_id` (`int`): ID of the queue
+    * `queue_name` (`str`): name of the queue
+    * `posts`: (`list[int]`): list of post IDs in this queue
+    """
+    return cast(
+        IQueueFullInfo,
+        get(
+            token,
+            f"{URL}/queue/post_list",
+            {
+                "queue_id": queue_id,
+            }
+        ),
     )

@@ -20,6 +20,9 @@ def register(
     """
     Register a collection of users
 
+    ## Permissions
+    * `AddUsers`
+
     ## Body
     * `users`: list of user info to add. Each user must be an object of:
             * `name_first` (`str`): First name
@@ -48,6 +51,9 @@ def register(
 def all(token: JWT) -> IUserBasicInfoList:
     """
     Returns a list of basic info about all forum users
+
+    ## Permissions
+    * `ViewAllUsers`
 
     ### Returns
     * `users`: list of users, containing objects of

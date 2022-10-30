@@ -25,6 +25,7 @@ def list_permissions(token: JWT) -> IPermissionList:
     * `token` (`str`): JWT of the user
 
     ## Returns
+    Object containing:
     * `permissions`: list containing dictionaries of
 
             * `permission_id` (`int`): ID of permission
@@ -44,26 +45,23 @@ def get_permissions(token: JWT, user_id: UserId) -> IPermissionUser:
 
     Returns the permissions of a user
 
+    ## Permissions
+    * `ManageUserPermissions`
+
     ## Header
     * `token` (`str`): JWT of the user
 
     ## Params
     * `user_id` (`int`): user id to query permissions for
 
-    ## Returns:
-
+    ## Returns
+    Object containing:
     * `permissions`: list of
-
             * `permission_id` (`int`): ID of permission
-
             * `value`: one of
-
                     * `True`: permission allowed
-
                     * `False`: permission denied
-
                     * `None`: permission inherited
-
     * `group_id` (`int`): the ID of the permission group this user inherits
       their permissions from
     """
@@ -85,24 +83,20 @@ def set_permissions(
 
     Sets the permissions of a user
 
+    ## Permissions
+    * `ManageUserPermissions`
+
     ## Header
     * `token` (`str`): JWT of the user
 
     ## Body
     * `user_id` (`int`): user id to set permissions for
-
     * `permissions`: list of
-
             * `permission_id` (`int`): ID of permission
-
             * `value`: one of
-
                     * `True`: permission allowed
-
                     * `False`: permission denied
-
                     * `None`: permission inherited
-
     * `group_id`: the ID of the permission group this user inherits their
       permissions from
     """
@@ -127,20 +121,18 @@ def groups_create(
 
     Create a new permission group
 
+    ## Permissions
+    * `ManagePermissionGroups`
+
     ## Header
     * `token` (`str`): JWT of the user
 
     ## Body
     * `name` (`str`): name of permission group
-
     * `permissions`: list of
-
             * `permission_id` (`int`): ID of permission
-
             * `value`: one of
-
                     * `True`: permission allowed
-
                     * `False`: permission denied
 
     ## Returns
@@ -163,22 +155,20 @@ def groups_list(token: JWT) -> IPermissionGroupList:
 
     List available permission groups
 
+    ## Permissions
+    * `ManagePermissionGroups`
+
     ## Header
     * `token` (`str`): JWT of the user
 
     ## Returns
-
+    Object containing:
     * `groups`: list of info about permission groups. Each entry is an object
       containing:
-
             * `group_id` (`int`): ID of permission group
-
             * `name` (`str`): name of permission group
-
             * `permissions`: object containing mappings, with possible values:
-
                     * `True`: permission allowed
-
                     * `False`: permission denied
     """
     return cast(IPermissionGroupList, get(
@@ -199,22 +189,19 @@ def groups_edit(
 
     Edit an existing permission group
 
+    ## Permissions
+    * `ManagePermissionGroups`
+
     ## Header
     * `token` (`str`): JWT of the user
 
     ## Body
     * `group_id` (`int`): permission group ID
-
     * `name` (`str`): new name of permission group
-
     * `permissions`: list of
-
             * `permission_id` (`int`): ID of permission
-
             * `value`: one of
-
                     * `True`: permission allowed
-
                     * `False`: permission denied
     """
     put(
@@ -235,6 +222,9 @@ def groups_remove(
 ) -> None:
     """
     Remove an existing permission group
+
+    ## Permissions
+    * `ManagePermissionGroups`
 
     ## Header
     * `token` (`str`): JWT of the user
