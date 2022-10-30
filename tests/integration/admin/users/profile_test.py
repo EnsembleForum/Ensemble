@@ -7,3 +7,4 @@ Tests for getting user profiles
 * Correct info returned
 * Invalid uid (BadRequest)
 """
+# FIXME: This is missing

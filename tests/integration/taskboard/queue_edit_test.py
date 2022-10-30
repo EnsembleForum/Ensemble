@@ -16,17 +16,17 @@ from ensemble_request.taskboard import (
     queue_edit,
 )
 from tests.integration.conftest import (
-    IAllUsers,
+    ISimpleUsers,
     IBasicServerSetup,
     IMakeQueues
 )
 
 
-def test_no_permission(all_users: IAllUsers, make_queues: IMakeQueues):
+def test_no_permission(simple_users: ISimpleUsers, make_queues: IMakeQueues):
     """Do we fail if we don't have permission"""
     with pytest.raises(Forbidden):
         queue_edit(
-            all_users['users'][0]['token'],
+            simple_users['user']['token'],
             make_queues['queue1_id'],
             "Sneaky student renamed this"
         )

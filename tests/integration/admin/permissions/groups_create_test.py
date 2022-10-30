@@ -10,7 +10,7 @@ Tests for creating permission groups
 * Group created
 """
 import pytest
-from tests.integration.conftest import IBasicServerSetup, IAllUsers
+from tests.integration.conftest import IBasicServerSetup, ISimpleUsers
 from ensemble_request.admin import permissions
 from backend.util.http_errors import BadRequest, Forbidden
 from backend.models.permissions import Permission
@@ -47,11 +47,11 @@ def test_empty_group_name(basic_server_setup: IBasicServerSetup):
                ) == 3
 
 
-def test_no_permission(all_users: IAllUsers):
+def test_no_permission(simple_users: ISimpleUsers):
     """Do we fail to create a group if we don't have permission?"""
     with pytest.raises(Forbidden):
         permissions.groups_create(
-            all_users['mods'][0]['token'],
+            simple_users['mod']['token'],
             'My group',
             [
                 {"permission_id": p.value, "value": False}
@@ -59,7 +59,7 @@ def test_no_permission(all_users: IAllUsers):
             ],
         )
     assert len(
-        permissions.groups_list(all_users['admins'][0]['token'])['groups']
+        permissions.groups_list(simple_users['admin']['token'])['groups']
     ) == 3
 
 

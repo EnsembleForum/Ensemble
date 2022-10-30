@@ -18,16 +18,19 @@ from ensemble_request.browse import (
 )
 from tests.integration.conftest import (
     IBasicServerSetup,
-    IAllUsers,
+    ISimpleUsers,
     IMakePosts,
 )
 
 
-def test_edit_other_user_post(all_users: IAllUsers, make_posts: IMakePosts):
+def test_edit_other_user_post(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
     """
     Does editing another person's post raise a 403 error
     """
-    token = all_users["users"][1]["token"]
+    token = simple_users["user"]["token"]
     with pytest.raises(http_errors.Forbidden):
         post_edit(token, make_posts["post1_id"], "new head", "new text", [])
 

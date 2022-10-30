@@ -14,17 +14,17 @@ from ensemble_request.taskboard import (
     post_list,
 )
 from tests.integration.conftest import (
-    IAllUsers,
+    ISimpleUsers,
     IBasicServerSetup,
 )
 
 
-def test_no_permission(all_users: IAllUsers):
+def test_no_permission(simple_users: ISimpleUsers):
     """
     Testing that when users try to create or delete queues it will fail
     """
     with pytest.raises(Forbidden):
-        queue_create(all_users['users'][0]['token'], "queue3_name")
+        queue_create(simple_users['user']['token'], "queue3_name")
 
 
 def test_empty_name(basic_server_setup: IBasicServerSetup):

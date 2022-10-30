@@ -16,17 +16,17 @@ from ensemble_request.taskboard import (
 )
 from tests.integration.conftest import (
     IBasicServerSetup,
-    IAllUsers,
+    ISimpleUsers,
     IMakeQueues,
 )
 
 
 def test_no_permission(
-    all_users: IAllUsers,
+    simple_users: ISimpleUsers,
     make_queues: IMakeQueues,
 ):
     """Test that we can't delete queues without permission"""
-    user_token = all_users['users'][0]['token']
+    user_token = simple_users['user']['token']
     with pytest.raises(Forbidden):
         queue_delete(user_token, make_queues['queue1_id'])
 

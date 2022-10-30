@@ -13,7 +13,7 @@ Tests for deleting permission groups
 import pytest
 from tests.integration.conftest import (
     IBasicServerSetup,
-    IAllUsers,
+    ISimpleUsers,
     IPermissionGroups,
 )
 from ensemble_request.admin import permissions
@@ -84,13 +84,13 @@ def test_group_transfer_to_same(
 
 
 def test_no_permission(
-    all_users: IAllUsers,
+    simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,
 ):
     """Do we get an error if we don't have permission?"""
     with pytest.raises(Forbidden):
         permissions.groups_remove(
-            all_users['mods'][0]['token'],
+            simple_users['mod']['token'],
             permission_groups['mod']['group_id'],
             permission_groups['admin']['group_id'],
         )
@@ -112,17 +112,17 @@ def test_permissions_removed(
 
 
 def test_users_transferred(
-    all_users: IAllUsers,
+    simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,
 ):
     """Do the users get transferred?"""
     permissions.groups_remove(
-        all_users['admins'][0]['token'],
+        simple_users['admin']['token'],
         permission_groups['mod']['group_id'],
         permission_groups['user']['group_id'],
     )
     # Make sure the moderators got moved into the users group
     assert permissions.get_permissions(
-        all_users['admins'][0]['token'],
-        all_users['mods'][0]['user_id'],
+        simple_users['admin']['token'],
+        simple_users['mod']['user_id'],
     )['group_id'] == permission_groups['user']['group_id']

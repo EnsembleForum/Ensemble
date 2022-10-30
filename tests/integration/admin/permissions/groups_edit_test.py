@@ -13,7 +13,7 @@ Tests for editing permission groups
 import pytest
 from tests.integration.conftest import (
     IBasicServerSetup,
-    IAllUsers,
+    ISimpleUsers,
     IPermissionGroups,
 )
 from ensemble_request.admin import permissions
@@ -74,13 +74,13 @@ def test_admin_group_immutable(
 
 
 def test_no_permission(
-    all_users: IAllUsers,
+    simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,
 ):
     """Do we get an error if we don't have permission?"""
     with pytest.raises(Forbidden):
         permissions.groups_edit(
-            all_users['mods'][0]['token'],
+            simple_users['mod']['token'],
             permission_groups['mod']['group_id'],
             "Renamed",
             permission_groups['mod']['permissions'],
@@ -88,7 +88,7 @@ def test_no_permission(
 
 
 def test_permissions_edited(
-    all_users: IAllUsers,
+    simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,
 ):
     """Can users whose permission group was changed do new things?"""
@@ -100,14 +100,14 @@ def test_permissions_edited(
         if p['permission_id'] == Permission.ManagePermissionGroups.value:
             p['value'] = True
     permissions.groups_edit(
-        all_users['admins'][0]['token'],
+        simple_users['admin']['token'],
         permission_groups['mod']['group_id'],
         permission_groups['mod']['name'],
         perms,
     )
     # They should now be able to do so without errors
     permissions.groups_edit(
-        all_users['mods'][0]['token'],
+        simple_users['mod']['token'],
         permission_groups['mod']['group_id'],
         "Renamed",
         permission_groups['mod']['permissions'],
@@ -115,18 +115,18 @@ def test_permissions_edited(
 
 
 def test_group_name_updated(
-    all_users: IAllUsers,
+    simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,
 ):
     """Does the name of a permission group we edited get updated?"""
     permissions.groups_edit(
-        all_users['admins'][0]['token'],
+        simple_users['admin']['token'],
         permission_groups['mod']['group_id'],
         "Renamed",
         permission_groups['mod']['permissions'],
     )
     new_groups = permissions.groups_list(
-        all_users['admins'][0]['token'])['groups']
+        simple_users['admin']['token'])['groups']
     # Make sure it got renamed
     assert len(list(filter(
         lambda g: g['name'] == "Renamed",

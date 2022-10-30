@@ -9,7 +9,7 @@ Tests for listing permission groups
 * Do we get an error if we don't have permission?
 """
 import pytest
-from tests.integration.conftest import IBasicServerSetup, IAllUsers
+from tests.integration.conftest import IBasicServerSetup, ISimpleUsers
 from ensemble_request.admin import permissions
 from backend.models.permissions.permission import Permission
 from backend.util.http_errors import Forbidden
@@ -54,7 +54,7 @@ def test_admins_have_every_permission(basic_server_setup: IBasicServerSetup):
                 assert p['value'] is True
 
 
-def test_no_permission(all_users: IAllUsers):
+def test_no_permission(simple_users: ISimpleUsers):
     """Do we get an error if we don't have permission?"""
     with pytest.raises(Forbidden):
-        permissions.groups_list(all_users['users'][0]['token'])
+        permissions.groups_list(simple_users['user']['token'])

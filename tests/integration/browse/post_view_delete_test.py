@@ -20,17 +20,20 @@ from ensemble_request.browse import (
     get_comment,
 )
 from tests.integration.conftest import (
-    IAllUsers,
+    ISimpleUsers,
     IBasicServerSetup,
     IMakePosts,
 )
 
 
-def test_delete_other_user_post(all_users: IAllUsers, make_posts: IMakePosts):
+def test_delete_other_user_post(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
     """
     Does deleting another person's post raise a 403 error
     """
-    token = all_users["users"][1]["token"]
+    token = simple_users["user"]["token"]
     with pytest.raises(http_errors.Forbidden):
         post_delete(token, make_posts["post1_id"])
 
