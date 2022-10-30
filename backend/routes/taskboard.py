@@ -66,7 +66,7 @@ def queue_delete(user: User, *_) -> dict:
     """
     user.permissions.assert_can(Permission.ManageQueues)
 
-    queue_id: QueueId = QueueId(int(request.args["queue_id"]))
+    queue_id: QueueId = QueueId(request.args["queue_id"])
     queue = Queue(queue_id)
     queue.delete()
 
@@ -109,6 +109,6 @@ def post_list(user: User, *_) -> IQueueFullInfo:
     * `queues`: [queue_id:int, queue_name: str]
     """
     user.permissions.assert_can(Permission.FollowQueue)
-    queue_id: QueueId = QueueId(int(request.args["queue_id"]))
+    queue_id: QueueId = QueueId(request.args["queue_id"])
     queue = Queue(queue_id)
     return queue.full_info()

@@ -50,7 +50,7 @@ def create(user: User, *_) -> IGroupId:
     """
     user.permissions.assert_can(Permission.ManagePermissionGroups)
     data = json.loads(request.data)
-    name = data['name']
+    name: str = data['name']
     permissions: list[IPermissionValueGroup] = data['permissions']
     if PermissionGroup.from_name(name) is not None:
         raise BadRequest(f"A permission group with name {name} already exists")
@@ -130,7 +130,7 @@ def edit(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.ManagePermissionGroups)
     data = json.loads(request.data)
     group = PermissionGroup(PermissionGroupId(data['group_id']))
-    name = data['name']
+    name: str = data['name']
     permissions: list[IPermissionValueGroup] = data['permissions']
 
     if (duplicate := PermissionGroup.from_name(name)) is not None:

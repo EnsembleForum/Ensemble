@@ -212,6 +212,11 @@ def all_users(
 
 
 class IMakePosts(TypedDict):
+    """
+    Create two posts inside the forum.
+
+    Both posts are created by the admin
+    """
     post1_id: PostId
     post2_id: PostId
     head1: str
@@ -221,6 +226,9 @@ class IMakePosts(TypedDict):
 
 
 class IMakeQueues(TypedDict):
+    """
+    Create two queues on the forum
+    """
     queue1_id: QueueId
     queue2_id: QueueId
     queue_name1: str
@@ -230,7 +238,9 @@ class IMakeQueues(TypedDict):
 @pytest.fixture()
 def make_posts(basic_server_setup: IBasicServerSetup) -> IMakePosts:
     """
-    Create two posts inside the forum
+    Create two posts inside the forum.
+
+    Both posts are created by the admin
     """
     token = basic_server_setup["token"]
     head1 = "First head"
