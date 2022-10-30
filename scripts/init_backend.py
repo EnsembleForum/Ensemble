@@ -3,6 +3,8 @@
 
 Send a default setup request to the server to register an admin
 """
+from backend.util.http_errors import HTTPException
+import ensemble_request
 import requests
 import dotenv
 import os
@@ -18,20 +20,17 @@ if PORT is None:
 URL = f"http://localhost:{PORT}"
 
 try:
-    ret = requests.post(
-        f"{URL}/admin/init",
-        json={
-            "address": "http://localhost:5812/login",
-            "request_type": "get",
-            "username_param": "username",
-            "password_param": "password",
-            "success_regex": "true",
-            "username": "admin1",
-            "password": "admin1",
-            "email": "admin1@example.com",
-            "name_first": "Bophades",
-            "name_last": "Nuts",
-        }
+    ret = ensemble_request.admin.init(
+        address="http://localhost:5812/login",
+        request_type="get",
+        username_param="username",
+        password_param="password",
+        success_regex="true",
+        username="admin1",
+        password="admin1",
+        email="admin1@example.com",
+        name_first="Bophades",
+        name_last="Nuts",
     )
 except requests.ConnectionError:
     print("❗ Couldn't connect to server - is it running?")
@@ -39,10 +38,10 @@ except requests.ConnectionError:
 except requests.RequestException as e:
     print(f"❗ Request error while initialising: {e}")
     exit(1)
-
-if ret.status_code != 200:
+except HTTPException as e:
     print("❌ Failed to initialise the backend")
-    print(ret.text)
+    print(e.heading)
+    print(e.description)
     exit(1)
 
 

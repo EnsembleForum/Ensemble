@@ -3,6 +3,7 @@
 
 Send a simple clear request to the running server
 """
+from backend.util.http_errors import HTTPException
 import ensemble_request
 import requests
 import dotenv
@@ -24,9 +25,10 @@ except requests.ConnectionError:
 except requests.RequestException as e:
     print(f"❗ Request error while clearing: {e}")
     exit(1)
-except Exception as e:
+except HTTPException as e:
     print("❌ Failed to clear the database")
-    print(e.text)
+    print(e.heading)
+    print(e.description)
     exit(1)
 
 

@@ -27,7 +27,7 @@ render.configure(
 )
 
 if len(sys.argv) == 1:
-    server = DocServer(('localhost', 8080), ['request'])
+    server = DocServer(('localhost', 8080), ['ensemble_request'])
     with server:
         url = f'http://localhost:{server.server_port}'
         print(f'pdoc server ready at {url}')
@@ -52,7 +52,7 @@ elif len(sys.argv) == 2:
 
     # Now run pdoc
     pdoc(
-        'request',
+        'ensemble_request',
         output_directory=out_dir
     )
     # And create a .ensemble_docs file there so it can be overwritten easily
