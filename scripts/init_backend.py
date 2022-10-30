@@ -3,12 +3,14 @@
 
 Send a default setup request to the server to register an admin
 """
+import _helpers
 from backend.util.http_errors import HTTPException
 import ensemble_request
 import requests
 import dotenv
 import os
 import clear
+del _helpers
 del clear
 
 dotenv.load_dotenv('.flaskenv')

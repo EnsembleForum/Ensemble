@@ -3,14 +3,15 @@
 
 Send a simple clear request to the running server
 """
+import _helpers
 from backend.util.http_errors import HTTPException
 import ensemble_request
 import requests
 import dotenv
 import os
+del _helpers
 
 dotenv.load_dotenv('.flaskenv')
-
 
 PORT = os.getenv('FLASK_RUN_PORT')
 if PORT is None:
