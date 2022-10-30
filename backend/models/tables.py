@@ -64,6 +64,7 @@ class TUser(_BaseTable):
     name_first = Text()
     name_last = Text()
     email = Text()
+    pronoun = Text()
     permissions = ForeignKey(TPermissionUser)
 
 

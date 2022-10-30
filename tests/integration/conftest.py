@@ -43,6 +43,7 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
     username = "admin1"
     password = "admin1"
     email = "admin@example.com"
+    pronoun = "he/him"
     result = init(
         address=f"{AUTH_URL}/login",
         request_type="get",
@@ -52,6 +53,7 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
         username=username,
         password=password,
         email=email,
+        pronoun=pronoun,
         name_first="Dee",
         name_last="Snuts",
     )
@@ -128,12 +130,14 @@ def all_users(
                 "email": "admin2@example.com",
                 "name_first": "Admin",
                 "name_last": "Istrator",
+                "pronoun": "he/him",
             },
             {
                 "username": "admin3",
                 "email": "admin3@example.com",
                 "name_first": "Admin3",
                 "name_last": "Istrator",
+                "pronoun": "he/him",
             },
         ],
         permission_groups["admin"]["group_id"],
@@ -145,18 +149,21 @@ def all_users(
             {
                 "username": "mod1",
                 "email": "mod1@example.com",
+                "pronoun": "he/him",
                 "name_first": "Mod",
                 "name_last": "Erator",
             },
             {
                 "username": "mod2",
                 "email": "mod2@example.com",
+                "pronoun": "she/her",
                 "name_first": "Mod2",
                 "name_last": "Erator",
             },
             {
                 "username": "mod3",
                 "email": "mod3@example.com",
+                "pronoun": "she/her",
                 "name_first": "Mod3",
                 "name_last": "Erator",
             },
@@ -170,18 +177,21 @@ def all_users(
             {
                 "username": "user1",
                 "email": "user1@example.com",
+                "pronoun": "she/her",
                 "name_first": "User",
                 "name_last": "Ator",
             },
             {
                 "username": "user2",
                 "email": "user2@example.com",
+                "pronoun": "she/her",
                 "name_first": "User2",
                 "name_last": "Ator",
             },
             {
                 "username": "user3",
                 "email": "user3@example.com",
+                "pronoun": "she/her",
                 "name_first": "User3",
                 "name_last": "Ator",
             },

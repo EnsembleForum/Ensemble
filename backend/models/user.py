@@ -35,6 +35,7 @@ class User:
         name_first: str,
         name_last: str,
         email: str,
+        pronoun: str,
         permissions_base: PermissionGroup
     ) -> 'User':
         """
@@ -46,6 +47,8 @@ class User:
         * `name_first` (`str`): first name
 
         * `name_last` (`str`): last name
+
+        * `pronoun` (`str`): pronoun
 
         * `email` (`str`): email address
 
@@ -64,6 +67,7 @@ class User:
                 TUser.name_first: name_first,
                 TUser.name_last: name_last,
                 TUser.email: email,
+                TUser.pronoun: pronoun,
                 TUser.permissions: PermissionUser.create(permissions_base).id,
             }
         ).save().run_sync()[0]
@@ -190,6 +194,17 @@ class User:
         row.save().run_sync()
 
     @property
+    def pronoun(self) -> str:
+        return self._get().pronoun
+
+    @pronoun.setter
+    def pronoun(self, new_pronoun: str):
+        assert_valid_str_field(new_pronoun, "Pronoun")
+        row = self._get()
+        row.email = new_pronoun
+        row.save().run_sync()
+
+    @property
     def permissions(self) -> PermissionUser:
         return PermissionUser(self._get().permissions)
 
@@ -204,6 +219,7 @@ class User:
         return {
             "name_first": row.name_first,
             "name_last": row.name_last,
+            "pronoun": row.pronoun,
             "username": row.username,
             "user_id": UserId(row.id),
         }
@@ -220,6 +236,7 @@ class User:
             "name_first": row.name_first,
             "name_last": row.name_last,
             "username": row.username,
+            "pronoun": row.pronoun,
             "user_id": UserId(row.id),
             "email": row.email,
         }
