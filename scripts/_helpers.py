@@ -3,6 +3,16 @@
 
 Helper code for the scripts
 """
+# flake8: noqa
+# Currently there is no way to ignore specific errors, so we just need to
+# ignore everything - be careful editing this file, since Flake8 won't pick up
+# on anything as a result of this.
+# If we find a way, ignore E402 (import not at top of file)
+
+import sys
+from pathlib import Path
+# Add the top directory to the path so Python doesn't have a hissy fit
+sys.path.append(str(Path(__file__).parent.parent))
 import dotenv
 import os
 import requests

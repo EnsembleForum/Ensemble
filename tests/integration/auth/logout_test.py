@@ -9,18 +9,18 @@ Tests for logging out
 import pytest
 from backend.util import http_errors
 from backend.types.auth import JWT
-from ..conftest import IAllUsers
-from ..request.auth import logout
-from ..request.user import profile
+from ..conftest import IBasicServerSetup
+from ensemble_request.auth import logout
+from ensemble_request.user import profile
 
 
-def test_token_invalidated(all_users: IAllUsers):
+def test_token_invalidated(basic_server_setup: IBasicServerSetup):
     """Does the token get invalidated when we log out?"""
-    logout(all_users['admins'][0]['token'])
+    logout(basic_server_setup['token'])
     with pytest.raises(http_errors.Forbidden):
         profile(
-            all_users['admins'][0]['token'],
-            all_users['admins'][0]['user_id'],
+            basic_server_setup['token'],
+            basic_server_setup['user_id'],
         )
 
 

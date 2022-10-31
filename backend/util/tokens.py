@@ -5,7 +5,7 @@ Code used for cleanly unwrapping JWT tokens from routes
 """
 from flask import request
 from functools import wraps
-from typing import cast, Callable, TypeVar, ParamSpec, Concatenate
+from typing import Callable, TypeVar, ParamSpec, Concatenate
 from backend.models.token import Token
 from backend.models.user import User
 from backend.types.auth import JWT
@@ -56,11 +56,17 @@ def uses_token(
     @wraps(func)
     def wrapper(*args, **kwargs) -> T:
         try:
-            token: JWT = cast(JWT, request.headers["token"])
+            bearer_token = request.headers["Authorization"]
+            if not bearer_token.startswith("Bearer "):
+                raise http_errors.Forbidden(
+                    "Invalid format for JWT. Must be 'Bearer {token}'"
+                )
+            token: JWT = JWT(bearer_token.removeprefix('Bearer '))
         except KeyError:
             raise http_errors.Unauthorized(
                 "This route expected an authentication token, but couldn't "
-                "find it in the request header"
+                "find it in the request header. Tokens must be given in the "
+                "'Authorization' key"
             )
         user = Token.fromJWT(token).user
         return func(user, token, *args, **kwargs)

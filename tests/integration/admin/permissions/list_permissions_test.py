@@ -6,7 +6,7 @@ Tests to ensure list permissions is working
 * All permissions are returned
 """
 from backend.models.permissions.permission import Permission
-from tests.integration.request.admin.permissions import list_permissions
+from ensemble_request.admin.permissions import list_permissions
 from tests.integration.conftest import IBasicServerSetup
 
 

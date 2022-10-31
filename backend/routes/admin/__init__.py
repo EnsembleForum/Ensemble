@@ -154,11 +154,11 @@ def init() -> IAuthInfo:
         "Moderator",
         base_permissions | {
             k: True for k in [
-                Permission.View,
+                Permission.PostView,
                 Permission.ViewPrivate,
                 Permission.ViewAnonymousOP,
-                Permission.Post,
-                Permission.Answer,
+                Permission.PostCreate,
+                Permission.PostComment,
                 Permission.PostOverrideExam,
                 Permission.ViewTaskboard,
                 Permission.TaskboardDelegate,
@@ -176,9 +176,9 @@ def init() -> IAuthInfo:
         "User",
         base_permissions | {
             k: True for k in [
-                Permission.View,
-                Permission.Post,
-                Permission.Answer,
+                Permission.PostView,
+                Permission.PostCreate,
+                Permission.PostComment,
                 Permission.ReportPosts,
             ]
         },

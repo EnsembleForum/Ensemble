@@ -6,20 +6,21 @@ Tests for reply view routes
 """
 import pytest
 from typing import cast
+from ..conftest import ISimpleUsers, IMakePosts
 from backend.types.identifiers import ReplyId
 from backend.util import http_errors
-from tests.integration.request.browse import (
+from ensemble_request.browse import (
     add_reply,
     add_comment,
     get_reply,
 )
 
 
-def test_get_reply_success(all_users, make_posts):
+def test_get_reply_success(simple_users: ISimpleUsers, make_posts: IMakePosts):
     """
     Can we get the full details of a valid reply?
     """
-    token = all_users["users"][0]["token"]
+    token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
     comment_id = add_comment(token, post_id, "first")["comment_id"]
     reply_text = "First reply"
@@ -33,11 +34,11 @@ def test_get_reply_success(all_users, make_posts):
     assert reply["reacts"]["thanks"] == 0
 
 
-def test_invalid_reply_id(all_users, make_posts):
+def test_invalid_reply_id(simple_users: ISimpleUsers, make_posts: IMakePosts):
     """
     If we are given an invalid reply_id, is a 400 error raised?
     """
-    token = all_users["users"][0]["token"]
+    token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
     comment_id = add_comment(token, post_id, "first")["comment_id"]
     reply_id = add_reply(token, comment_id, "reply_text")["reply_id"]
