@@ -9,19 +9,20 @@ Tests for post view routes
 import pytest
 from datetime import datetime, timedelta
 from typing import cast
+from ..conftest import ISimpleUsers, IMakePosts
 from backend.types.identifiers import PostId
 from backend.util import http_errors
-from tests.integration.request.browse import (
+from ensemble_request.browse import (
     post_create,
     post_view,
 )
 
 
-def test_invalid_post_id(all_users, make_posts):
+def test_invalid_post_id(simple_users: ISimpleUsers, make_posts: IMakePosts):
     """
     If we are given an invalid post_id, do we get a 400 error?
     """
-    token = all_users["users"][0]["token"]
+    token = simple_users["user"]["token"]
     invalid_post_id = (
         max(make_posts["post1_id"], make_posts["post2_id"]) + 1
     )
@@ -30,11 +31,11 @@ def test_invalid_post_id(all_users, make_posts):
         post_view(token, invalid_post_id)
 
 
-def test_get_post_success(all_users):
+def test_get_post_success(simple_users: ISimpleUsers):
     """
     Can we get the full details of a valid post?
     """
-    token = all_users["users"][0]["token"]
+    token = simple_users["user"]["token"]
     heading = "heading"
     text = "text"
     post_time = datetime.now()

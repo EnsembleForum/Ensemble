@@ -10,12 +10,12 @@ Tests for post list routes
 import pytest
 from backend.types.identifiers import QueueId
 from backend.util.http_errors import Forbidden, BadRequest
-from tests.integration.request.taskboard import (
+from ensemble_request.taskboard import (
     queue_create,
     post_list,
 )
 from tests.integration.conftest import (
-    IAllUsers,
+    ISimpleUsers,
     IMakeQueues,
     IBasicServerSetup,
 )
@@ -34,14 +34,14 @@ def test_invalid_queue_id(
 
 
 def test_no_permission(
-    all_users: IAllUsers,
+    simple_users: ISimpleUsers,
     make_queues: IMakeQueues,
 ):
     """
     Users shouldn't be able to create queues
     """
     with pytest.raises(Forbidden):
-        post_list(all_users['users'][0]['token'], make_queues["queue1_id"])
+        post_list(simple_users['user']['token'], make_queues["queue1_id"])
 
 
 def test_success(

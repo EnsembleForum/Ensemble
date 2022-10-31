@@ -7,7 +7,7 @@ import { Prettify } from "../global_functions";
 import { APIcall, initReturn, initSchema, loginForm } from "../interfaces";
 import { StyledButton } from "./GlobalProps";
 
-interface Props {}
+interface Props { }
 
 const LoginLayout = styled.div`
   height: 100%;
@@ -24,32 +24,31 @@ const StyledForm = styled(Box)`
 const InitPage = (props: Props) => {
   const navigate = useNavigate();
   const [initDetails, setInitDetails] = React.useState<initSchema>({
-    address: '',
-    request_type: "post",
-    username_param: '',
-    password_param: '',
-    success_regex: '',
-    username: '',
-    password: '',
-    email: '',
-    name_first: '',
-    name_last: ''
+    address: 'http://localhost:5812/login',
+    request_type: "get",
+    username_param: 'username',
+    password_param: 'password',
+    success_regex: 'true',
+    username: 'admin1',
+    password: 'admin1',
+    email: 'admin@example.com',
+    name_first: 'Robin',
+    name_last: 'Banks'
   });
   const onSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     // Here we would call api, which would reroute
-    console.log(initDetails);
-    const api : APIcall = {
+    const api: APIcall = {
       method: "POST",
-      path:"admin/init",
+      path: "admin/init",
       body: initDetails
     }
     ApiFetch(api)
-    .then((data) => {
-      const check = data as initReturn;
-      setToken(check.token)
-      navigate("../../main");
-    });
+      .then((data) => {
+        const check = data as initReturn;
+        setToken(check.token)
+        navigate("/main");
+      });
   }
   return (
     <LoginLayout>
@@ -59,7 +58,7 @@ const InitPage = (props: Props) => {
             return (
               <>
                 <Label htmlFor="password">Password</Label>
-                <Input type="password" name="password" id="password" mb={3} onChange={(e) => setInitDetails(initDetails=>({...initDetails, password: e.target.value}))}/>
+                <Input type="password" name="password" id="password" value={initDetails[eachKey]} mb={3} onChange={(e) => setInitDetails(initDetails => ({ ...initDetails, password: e.target.value }))} />
               </>
             )
           }
@@ -67,9 +66,9 @@ const InitPage = (props: Props) => {
             return (
               <>
                 <Label htmlFor={eachKey}>Request Type</Label>
-                <Select name="request_type" id="request_type" mb={3} value = {initDetails.request_type} onChange={(e) => setInitDetails(initDetails=>({...initDetails, request_type: e.target.value}))}>
-                  <option value = "post">POST</option>
-                  <option value = "get">GET</option>
+                <Select name="request_type" id="request_type" mb={3} value={initDetails.request_type} onChange={(e) => setInitDetails(initDetails => ({ ...initDetails, request_type: e.target.value }))}>
+                  <option value="post">POST</option>
+                  <option value="get">GET</option>
                 </Select>
               </>
             )
@@ -77,7 +76,7 @@ const InitPage = (props: Props) => {
           return (
             <>
               <Label htmlFor={eachKey}>{Prettify(eachKey)}</Label>
-              <Input type="text" name={eachKey} id={eachKey} mb={3} onChange={(e) => setInitDetails(initDetails=>({...initDetails, [eachKey]: e.target.value}))} />
+              <Input type="text" name={eachKey} id={eachKey} mb={3} value={initDetails[eachKey]} onChange={(e) => setInitDetails(initDetails => ({ ...initDetails, [eachKey]: e.target.value }))} />
             </>
           )
         })}

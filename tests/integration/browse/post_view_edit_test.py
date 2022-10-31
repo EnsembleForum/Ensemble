@@ -12,22 +12,25 @@ Tests for post_view/edit
 """
 import pytest
 from backend.util import http_errors
-from tests.integration.request.browse import (
+from ensemble_request.browse import (
     post_edit,
     post_view,
 )
 from tests.integration.conftest import (
     IBasicServerSetup,
-    IAllUsers,
+    ISimpleUsers,
     IMakePosts,
 )
 
 
-def test_edit_other_user_post(all_users: IAllUsers, make_posts: IMakePosts):
+def test_edit_other_user_post(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
     """
     Does editing another person's post raise a 403 error
     """
-    token = all_users["users"][1]["token"]
+    token = simple_users["user"]["token"]
     with pytest.raises(http_errors.Forbidden):
         post_edit(token, make_posts["post1_id"], "new head", "new text", [])
 
@@ -56,9 +59,8 @@ def test_edit_success(
     token = basic_server_setup["token"]
     new_head = "new_head"
     new_text = "new_text"
-    post_id = post_edit(token, make_posts["post1_id"], new_head, new_text, [])[
-        "post_id"]
+    post_edit(token, make_posts["post1_id"], new_head, new_text, [])
 
-    post = post_view(token, post_id)
+    post = post_view(token, make_posts["post1_id"])
     assert post["heading"] == new_head
     assert post["text"] == new_text

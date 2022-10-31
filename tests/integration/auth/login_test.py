@@ -12,7 +12,7 @@ Tests for logging in
 import pytest
 from backend.util import http_errors
 from tests.integration.conftest import IBasicServerSetup
-from tests.integration.request.auth import login, post, URL, JWT
+from ensemble_request.auth import login, post, URL, JWT
 
 
 def test_fails_incorrect_username(basic_server_setup: IBasicServerSetup):

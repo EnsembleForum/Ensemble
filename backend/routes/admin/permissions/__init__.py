@@ -19,17 +19,6 @@ permissions.register_blueprint(user, url_prefix="/user")
 
 @permissions.get('/list_permissions')
 def list_permissions() -> IPermissionList:
-    """
-    Returns info about available permissions.
-
-    ## Returns:
-
-    * permissions: list containing dictionaries of
-
-            * permission_id
-
-            * name
-    """
     return {
         "permissions": [
             {

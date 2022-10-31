@@ -9,7 +9,7 @@ import TextView from "./TextView";
 interface Props {
   postId: number;
 }
-const StyledPostListView=styled.div`
+const StyledPostListView = styled.div`
   width: 100%;
   height: 100%;
   background-color: lightblue;
@@ -30,7 +30,7 @@ const PostView = (props: Props) => {
     comments: [],
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit"
   }*/
-  const fakeDefaultValueList : postView[] = [{
+  const fakeDefaultValueList: postView[] = [{
     post_id: 0,
     heading: "Post1",
     tags: [1, 2],
@@ -58,8 +58,7 @@ const PostView = (props: Props) => {
     <StyledPostListView>
       <TextView heading={postToShow.heading} text={postToShow.text} reacts={postToShow.reacts}></TextView>
       {postToShow.comments.map((commentId) => {
-        console.log(<CommentView key={commentId} commentId={commentId}/>)
-        return (<CommentView key={commentId} commentId={commentId}/>);
+        return (<CommentView key={commentId} commentId={commentId} />);
       })}
 
     </StyledPostListView>

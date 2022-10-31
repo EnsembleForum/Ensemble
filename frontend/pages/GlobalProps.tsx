@@ -7,7 +7,7 @@ export const StyledButton = styled(Button)`
     filter: brightness(85%);
   }
   &:active {
-    background-color: black;
+    background-color:  brightness(50%);
   }
 `
 export const StyledForm = styled(Box)`

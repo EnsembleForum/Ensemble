@@ -16,22 +16,5 @@ user = Blueprint('user', 'user')
 @user.get('/profile')
 @uses_token
 def profile(*_) -> IUserProfile:
-    """
-    Returns detailed info about the
-
-    ### Args:
-    * `token` (`JWT`): token
-    * `user_id` (`UserId`): user ID for user we're viewing the profile of
-
-    ### Returns:
-    * `name_first`: `str`
-    * `name_last`: `str`
-    * `username`: `str`
-    * `email`: `str`
-    * `user_id`: `int`
-
-    Note that this will eventually contain more properties such as pronouns and
-    the like
-    """
     user_id = UserId(request.args["user_id"])
     return User(user_id).profile()

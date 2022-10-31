@@ -74,15 +74,12 @@ def general_error_handler(err: Exception) -> IErrorInfo:
     ### Returns:
     * `IErrorInfo`: _description_
     """
-    # Only include traceback if we're debugging
-    if debug_active():
-        trace = "\n".join(traceback.format_exception(err))
-    else:
-        trace = None
+    trace = "\n".join(traceback.format_exception(err))
+    traceback.print_exception(err)
     # Finally return the info
     return {
         "code": 500,
         "heading": "Internal server error",
         "description": str(err),
-        "traceback": trace,
+        "traceback": trace if debug_active() else None,
     }
