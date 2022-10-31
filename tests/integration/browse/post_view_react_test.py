@@ -7,7 +7,7 @@ Tests for post_view/react
 * Succeeds when multiple users react & unreact to a post
 """
 
-from tests.integration.request.browse import (
+from ensemble_request.browse import (
     post_react,
     post_view,
 )
