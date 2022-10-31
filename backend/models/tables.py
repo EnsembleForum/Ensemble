@@ -67,6 +67,11 @@ class TUser(_BaseTable):
     permissions = ForeignKey(TPermissionUser)
 
 
+class TQueue(_BaseTable):
+    immutable = Boolean()
+    name = Text()
+
+
 class TPost(_BaseTable):
     """
     Table containing all posts
@@ -79,6 +84,7 @@ class TPost(_BaseTable):
     me_too = Integer()
     thanks = Integer()
     timestamp = Timestamp()
+    queue = ForeignKey(TQueue)
 
 
 class TComment(_BaseTable):

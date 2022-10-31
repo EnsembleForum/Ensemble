@@ -60,3 +60,9 @@ class ReplyId(Identifier):
     """
     Identifier for a reply
     """
+
+
+class QueueId(Identifier):
+    """
+    Identifier for a queue
+    """
