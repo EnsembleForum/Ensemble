@@ -23,7 +23,7 @@ class ICommentFullInfo(TypedDict):
     * `timestamp`: `int`
     """
     author: UserId
-    thanks: int
+    thanks: list[UserId]
     replies: list[ReplyId]
     text: str
     timestamp: int

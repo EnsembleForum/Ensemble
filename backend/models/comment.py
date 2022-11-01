@@ -5,6 +5,7 @@ from backend.types.comment import ICommentFullInfo
 from .tables import TReply, TComment
 from .user import User
 from .reply import Reply
+from backend.types.identifiers import UserId
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import CommentId
@@ -146,14 +147,14 @@ class Comment:
         return Post(self._get().parent)
 
     @property
-    def thanks(self) -> int:
+    def thanks(self) -> list[UserId]:
         """
         Returns the number of 'thanks' reacts
 
         ### Returns:
         * int: number of 'thanks' reacts
         """
-        return len(self._get().thanks)
+        return self._get().thanks
 
     def react(self, user: User):
         """

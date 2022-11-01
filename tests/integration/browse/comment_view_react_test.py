@@ -30,16 +30,17 @@ def test_react_one_user(
     Successful reaction by one user
     """
     token = simple_users["user"]["token"]
+    user_id = simple_users["user"]["user_id"]
     post_id = make_posts["post1_id"]
     comment_id = add_comment(token, post_id, "first")["comment_id"]
     comment = get_comment(token, comment_id)
 
-    assert comment["thanks"] == 0
+    assert comment["thanks"] == []
 
     comment_react(token, comment_id)
 
     comment = get_comment(token, comment_id)
-    assert comment["thanks"] == 1
+    assert comment["thanks"] == [user_id]
 
 
 def test_react_multiple_users(
@@ -51,27 +52,29 @@ def test_react_multiple_users(
     """
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
+    user_id1 = simple_users["user"]["user_id"]
+    user_id2 = simple_users["mod"]["user_id"]
     post_id = make_posts["post1_id"]
     comment_id = add_comment(token1, post_id, "first")["comment_id"]
 
     comment = get_comment(token1, comment_id)
-    assert comment["thanks"] == 0
+    assert comment["thanks"] == []
 
     comment_react(token1, comment_id)
     comment = get_comment(token1, comment_id)
-    assert comment["thanks"] == 1
+    assert comment["thanks"] == [user_id1]
 
     comment_react(token2, comment_id)
     comment = get_comment(token1, comment_id)
-    assert comment["thanks"] == 2
+    assert sorted(comment["thanks"]) == sorted([user_id1, user_id2])
 
     comment_react(token1, comment_id)
     comment = get_comment(token1, comment_id)
-    assert comment["thanks"] == 1
+    assert comment["thanks"] == [user_id2]
 
     comment_react(token2, comment_id)
     comment = get_comment(token1, comment_id)
-    assert comment["thanks"] == 0
+    assert comment["thanks"] == []
 
 
 def test_one_user_multiple_comments(
@@ -83,23 +86,24 @@ def test_one_user_multiple_comments(
     """
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
+    user_id = simple_users["mod"]["user_id"]
     post_id = make_posts["post1_id"]
     comment_id1 = add_comment(token1, post_id, "first")["comment_id"]
     comment_id2 = add_comment(token1, post_id, "second")["comment_id"]
 
     comment = get_comment(token2, comment_id1)
-    assert comment["thanks"] == 0
+    assert comment["thanks"] == []
     comment = get_comment(token2, comment_id2)
-    assert comment["thanks"] == 0
+    assert comment["thanks"] == []
 
     comment_react(token2, comment_id1)
     comment_react(token2, comment_id2)
 
     comment = get_comment(token2, comment_id1)
-    assert comment["thanks"] == 1
+    assert comment["thanks"] == [user_id]
 
     comment = get_comment(token2, comment_id2)
-    assert comment["thanks"] == 1
+    assert comment["thanks"] == [user_id]
 
 
 def test_invalid_comment_id(simple_users: ISimpleUsers):

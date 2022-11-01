@@ -22,6 +22,6 @@ class IReplyFullInfo(TypedDict):
     * `timestamp`: `int`
     """
     author: UserId
-    thanks: int
+    thanks: list[UserId]
     text: str
     timestamp: int

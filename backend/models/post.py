@@ -6,7 +6,7 @@ from .user import User
 from .comment import Comment
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
-from backend.types.identifiers import PostId
+from backend.types.identifiers import PostId, UserId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
 from typing import cast, TYPE_CHECKING
 from datetime import datetime
@@ -204,14 +204,14 @@ class Post:
         row.save().run_sync()
 
     @property
-    def me_too(self) -> int:
+    def me_too(self) -> list[UserId]:
         """
         Returns the number of 'me too' reacts
 
         ### Returns:
         * int: number of 'me too' reacts
         """
-        return len(self._get().me_too)
+        return self._get().me_too
 
     def react(self, user: User):
         """

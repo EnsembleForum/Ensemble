@@ -29,15 +29,16 @@ def test_react_one_user(
     Successful reaction by one user
     """
     token = simple_users["user"]["token"]
+    user_id = simple_users["user"]["user_id"]
     post_id = make_posts["post1_id"]
 
     post = post_view(token, post_id)
-    assert post["me_too"] == 0
+    assert post["me_too"] == []
 
     post_react(token, post_id)
 
     post = post_view(token, post_id)
-    assert post["me_too"] == 1
+    assert post["me_too"] == [user_id]
 
 
 def test_react_multiple_users(
@@ -49,26 +50,28 @@ def test_react_multiple_users(
     """
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
+    user_id1 = simple_users["user"]["user_id"]
+    user_id2 = simple_users["mod"]["user_id"]
     post_id = make_posts["post1_id"]
 
     post = post_view(token1, post_id)
-    assert post["me_too"] == 0
+    assert post["me_too"] == []
 
     post_react(token1, post_id)
     post = post_view(token1, post_id)
-    assert post["me_too"] == 1
+    assert post["me_too"] == [user_id1]
 
     post_react(token2, post_id)
     post = post_view(token1, post_id)
-    assert post["me_too"] == 2
+    assert sorted(post["me_too"]) == sorted([user_id1, user_id2])
 
     post_react(token1, post_id)
     post = post_view(token1, post_id)
-    assert post["me_too"] == 1
+    assert post["me_too"] == [user_id2]
 
     post_react(token2, post_id)
     post = post_view(token1, post_id)
-    assert post["me_too"] == 0
+    assert post["me_too"] == []
 
 
 def test_one_user_multiple_posts(
@@ -79,22 +82,23 @@ def test_one_user_multiple_posts(
     Can a user react to more than one post?
     """
     token = simple_users["user"]["token"]
+    user_id = simple_users["user"]["user_id"]
     post_id1 = make_posts["post1_id"]
     post_id2 = make_posts["post2_id"]
 
     post = post_view(token, post_id1)
-    assert post["me_too"] == 0
+    assert post["me_too"] == []
     post = post_view(token, post_id2)
-    assert post["me_too"] == 0
+    assert post["me_too"] == []
 
     post_react(token, post_id1)
     post_react(token, post_id2)
 
     post = post_view(token, post_id1)
-    assert post["me_too"] == 1
+    assert post["me_too"] == [user_id]
 
     post = post_view(token, post_id2)
-    assert post["me_too"] == 1
+    assert post["me_too"] == [user_id]
 
 
 def test_invalid_post_id(simple_users: ISimpleUsers, make_posts: IMakePosts):

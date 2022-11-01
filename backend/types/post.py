@@ -28,7 +28,7 @@ class IPostBasicInfo(TypedDict):
     heading: str
     post_id: PostId
     tags: list[int]
-    me_too: int
+    me_too: list[UserId]
 
 
 class IPostBasicInfoList(TypedDict):
@@ -72,6 +72,6 @@ class IPostFullInfo(TypedDict):
     heading: str
     text: str
     tags: list[int]
-    me_too: int
+    me_too: list[UserId]
     comments: list[CommentId]
     timestamp: int
