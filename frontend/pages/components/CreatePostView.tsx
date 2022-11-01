@@ -41,19 +41,19 @@ const StyledPost = styled.div`
 const CreatePostView = (props: Props) => {
   let [toggle, setToggle] = React.useState<boolean>(false);
   let [post, setPost] = React.useState<createPost>({
-    heading: '', 
-    tags: [], 
+    heading: '',
+    tags: [],
     text: '',
   });
   const { postId, setPostId } = React.useContext(PostContext);
   if (toggle) {
     return (
       <StyledPost>
-        <Input placeholder="Heading" value = {post.heading}  onChange={(e) => setPost(post => ({ ...post, heading: e.target.value }))}></Input>
-        <Textarea placeholder="Text" value = {post.text}  onChange={(e) => setPost(post => ({ ...post, text: e.target.value }))}></Textarea>
+        <Input placeholder="Heading" value={post.heading} onChange={(e) => setPost(post => ({ ...post, heading: e.target.value }))}></Input>
+        <Textarea placeholder="Text" value={post.text} onChange={(e) => setPost(post => ({ ...post, text: e.target.value }))}></Textarea>
         <Input placeholder="Tags separated by a space" onChange={(e) => {
           try {
-            const tmp = e.target.value.split(' ').map(Number).filter(Number).filter( function( item, index, inputArray ) {
+            const tmp = e.target.value.split(' ').map(Number).filter(Number).filter(function (item, index, inputArray) {
               return inputArray.indexOf(item) === index;
             });
             setPost(post => ({ ...post, tags: [...post.tags, ...tmp] }))
@@ -69,8 +69,8 @@ const CreatePostView = (props: Props) => {
             body: post
           }
           ApiFetch(api).then((data) => {
-            const d = data as {post_id: number};
-            setPostId(d.post_id - 1);
+            const d = data as { post_id: number };
+            setPostId(d.post_id);
           }
           );
         }}>Post</StyledButton>

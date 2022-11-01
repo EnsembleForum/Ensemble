@@ -4,6 +4,7 @@ export interface exampleTest {
 }
 
 export interface APIcall {
+  params?: Record<string, string> | undefined;
   method: string, path: string, body?: object | null, customUrl?: string
 }
 
@@ -66,6 +67,7 @@ export interface postListItem {
   post_id: number,
   heading: string,
   tags: number[],
+  author: number,
   reacts: reacts
 }
 
@@ -94,7 +96,7 @@ export interface pageList {
 }
 
 export interface createPost {
-  heading:string, 
-  tags:number[], 
-  text:string,
+  heading: string,
+  tags: number[],
+  text: string,
 }

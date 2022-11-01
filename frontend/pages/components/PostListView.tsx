@@ -8,31 +8,65 @@ import PostContext from "../postContext";
 import PostListItem from "./PostListItem";
 
 // Declaring and typing our props
-interface Props {}
-const StyledLayout=styled.div`
+interface Props { }
+const StyledLayout = styled.div`
   width: 350px;
 `
+const Post = styled.div`
+  max-width: 100%;
+  height: 50px;
+  padding: 20px;
+  border-bottom: 1px solid black;
+  &:hover {
+    background-color: lightgrey;
+    cursor: pointer;
+  }
+  &:active {
+    background-color: darkgrey;
+  }
+  * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`
+
 // Exporting our example component
 const PostListView = (props: Props) => {
   const { postId, setPostId } = React.useContext(PostContext);
-  let defaultProps : postListItem[] = [];
-  const api: APIcall = {
-    method: "GET",
-    path: "browse/post_list",
+  const [posts, setPosts] = React.useState<postListItem[]>();
+  if (posts) {
+    console.log(posts);
+    return (
+      <StyledLayout>
+        {
+          posts.map((each) => {
+            return (
+              <Post onClick={() => {
+                console.log("setting id", each.post_id);
+                setPostId(each.post_id);
+              }}>
+                <p>{each.heading} <br /> {each.author}<br />{each.tags}</p>
+              </Post>
+            );
+          })}
+      </StyledLayout>
+    );
+  } else if (postId > 0) {
+    const api: APIcall = {
+      method: "GET",
+      path: "browse/post_list",
+    }
+    ApiFetch(api)
+      .then((data) => {
+        const test = data as { posts: postListItem[] };
+        setPosts(test.posts);
+      })
   }
-  ApiFetch(api)
-    .then((data) => {
-      console.log("POSTLISTVUEW:", data);
-      defaultProps = data as postListItem[];
-    })
   return (
     <StyledLayout>
-      {defaultProps.map((each) => {
-        console.log("EACH",each);
-        return (<PostListItem post={each}></PostListItem>);
-      })}
+      No post selected
     </StyledLayout>
-  );
+  )
 };
 
 export default PostListView;

@@ -9,6 +9,7 @@ import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
 import PasswordResetPage from './pages/PasswordResetPage';
+import PostContext from './pages/postContext';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
@@ -20,6 +21,10 @@ export function ApiFetch(apiCall: APIcall) {
     headers: { 'Content-Type': 'application/json' }
   };
   if (apiCall.body) { requestOptions.body = JSON.stringify(apiCall.body); }
+  let newparams = '';
+  if (apiCall.params) {
+    newparams = '?' + (new URLSearchParams(apiCall.params)).toString();
+  }
   const token = getToken();
   if (token !== null) { requestOptions.headers.Authorization = `Bearer ${token}`; }
   console.log(requestOptions);
@@ -27,7 +32,7 @@ export function ApiFetch(apiCall: APIcall) {
     apiCall.customUrl = SERVER_PATH;
   }
   return new Promise((resolve, reject) => {
-    fetch(`${apiCall.customUrl}${apiCall.path}`, requestOptions)
+    fetch(`${apiCall.customUrl}${apiCall.path}${newparams}`, requestOptions)
       .then((response) => {
         if (response.status === 200) {
           response.json().then(data => {
@@ -35,14 +40,13 @@ export function ApiFetch(apiCall: APIcall) {
           });
         } else {
           response.json().then(errorMsg => {
-            alert(errorMsg.code + ": " + errorMsg.description);
+            //alert(errorMsg.code + ": " + errorMsg.description);
             reject(errorMsg);
           });
         }
       })
       .catch((err) => {
         console.log(err);
-        alert(err);
       });
   });
 }
@@ -59,20 +63,27 @@ export function getToken(): string | null {
 
 
 function PassThrough() {
+  const [postId, setPostId] = React.useState(0);
+  const value = { postId, setPostId };
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/admin/init" />}></Route>
-        <Route path='/admin/init' element={<InitPage />} />
-        <Route path='/admin' element={<AdminPage page={'initialise_forum'} />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/register' element={<RegisterPage />} />
-        <Route path='/password_reset' element={<PasswordResetPage />} />
-        <Route path='/profile' element={<UserProfilePage userId={0} />} />
-        <Route path='/main' element={<MainPage page="browse" />} />
-        <Route path='/admin/registerusers' element={<UsersRegisterPage />} />
-      </Routes>
-    </Router>
+    <PostContext.Provider value={value}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/admin/init" />}></Route>
+          <Route path='/admin/init' element={<InitPage />} />
+          <Route path='/admin' element={<AdminPage page={'initialise_forum'} />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/register' element={<RegisterPage />} />
+          <Route path='/password_reset' element={<PasswordResetPage />} />
+          <Route path='/profile' element={<UserProfilePage userId={0} />} />
+          <Route path='/browse' element={<BrowsePage />} />
+          <Route path='/taskboard' element={<TaskboardPage />} />
+          <Route path='/admin' element={<AdminPage page={"register_users"} />} />
+          <Route path='/admin/registerusers' element={<UsersRegisterPage />} />
+        </Routes>
+      </Router>
+    </PostContext.Provider>
   );
 }
 export default PassThrough;

@@ -1,68 +1,96 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { Box, IconButton, Text } from "theme-ui";
-import { postView } from "../../interfaces";
+import { ApiFetch } from "../../App";
+import { APIcall, postView } from "../../interfaces";
 import CommentView from "./CommentView";
 import TextView from "./TextView";
+import PostContext from "../postContext";
+
 
 // Declaring and typing our props
-interface Props {
-  postId: number;
-}
+interface Props { }
 const StyledPostListView = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: lightblue;
   padding: 20px;
-  overflow: scroll;
+  overflow: hidden;
 `
 // Exporting our example component
 const PostView = (props: Props) => {
+  const { postId, setPostId } = React.useContext(PostContext);
   // This is the data we would be APIfetching on props change
-  /*const fakeDefaultValue : postView = {
-    post_id: 1,
-    heading: "Post1",
-    tags: [1, 2],
-    reacts: {
-      thanks: 1,
-      me_too: 1
-    },
-    comments: [],
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit"
-  }*/
-  const fakeDefaultValueList: postView[] = [{
-    post_id: 0,
-    heading: "Post1",
-    tags: [1, 2],
-    reacts: {
-      thanks: 1,
-      me_too: 1
-    },
-    comments: [0, 1, 2],
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit"
-  },
-  {
-    post_id: 1,
-    heading: "Post2",
-    tags: [1, 2],
-    reacts: {
-      thanks: 2,
-      me_too: 0
-    },
-    comments: [0],
-    text: "YOOOOOOOt"
-  }]
-  console.log(props.postId);
-  const postToShow = fakeDefaultValueList[props.postId];
-  return (
-    <StyledPostListView>
-      <TextView heading={postToShow.heading} text={postToShow.text} reacts={postToShow.reacts}></TextView>
-      {postToShow.comments.map((commentId) => {
-        return (<CommentView key={commentId} commentId={commentId} />);
-      })}
+  const [currentPost, setCurrentPost] = React.useState<postView>();
+  if (currentPost && currentPost?.post_id === postId) {
+    return (
+      <StyledPostListView>
+        <TextView heading={currentPost.heading} text={currentPost.text} reacts={currentPost.reacts}></TextView>
+        {
+          currentPost.comments.map((commentId) => {
+            return (<CommentView key={commentId} commentId={commentId} />);
+          })
+        }
+      </StyledPostListView >
+    )
+  } else if (postId > 0) {
+    const call: APIcall = {
+      method: "GET",
+      path: "browse/post_view",
+      params: { "post_id": postId.toString() }
+    }
+    console.log("Fetching post to show");
+    ApiFetch(call)
+      .then((data) => {
+        const postToShow = data as postView;
+        console.log("Post to show:", postToShow);
+        postToShow.post_id = postId;
+        setCurrentPost(postToShow);
+      });
+    return (
+      <StyledPostListView>
+      </StyledPostListView>
+    )
+  }
 
-    </StyledPostListView>
+
+
+
+
+
+
+
+  /*
+    console.log(currentPost)
+    if (currentPost && currentPost.post_id === postId) {
+      return (
+        <StyledPostListView>
+          <TextView heading={currentPost.heading} text={currentPost.text} reacts={currentPost.reacts}></TextView>
+          {
+            currentPost.comments.map((commentId) => {
+              return (<CommentView key={commentId} commentId={commentId} />);
+            })
+          }
+        </StyledPostListView >
+      )
+    } else if (postId !== 0 && postId !== 1) {
+      console.log("pfoggers", postId);
+      const api: APIcall = {
+        method: "GET",
+        path: "browse/post_view",
+        params: { "post_id": postId.toString() }
+      }
+      /*ApiFetch(api)
+        .then((data) => {
+          const postToShow = data as postView;
+          console.log("POSTTOSHOW:", postToShow);
+          setCurrentPost(postToShow);
+        });  
+    }*/
+  return (
+    <>Loading</>
   );
+
 };
 
 export default PostView;
