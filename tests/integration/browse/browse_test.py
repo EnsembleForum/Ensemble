@@ -40,7 +40,7 @@ def test_create_one_post(simple_users: ISimpleUsers):
     assert post1_id == post1["post_id"]
     assert heading == post1["heading"]
     assert tags == post1["tags"]
-    assert post1["me_too"] == []
+    assert post1["me_too"] == 0
 
 
 def test_create_multiple_posts(simple_users: ISimpleUsers):

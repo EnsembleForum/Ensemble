@@ -1,7 +1,7 @@
 """
 # Backend / Models / Post
 """
-from .tables import TComment, TPost
+from .tables import TComment, TPost, TPostReacts
 from .user import User
 from .comment import Comment
 from .permissions import Permission
@@ -67,7 +67,7 @@ class Post:
                     TPost.author: author.id,
                     TPost.heading: heading,
                     TPost.text: text,
-                    TPost.me_too: [],
+                    # TPost.me_too: [],
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
                     TPost.queue: Queue.get_main_queue().id,
@@ -226,14 +226,28 @@ class Post:
         row.save().run_sync()
 
     @property
-    def me_too(self) -> list[UserId]:
+    def me_too(self) -> int:
         """
         Returns the number of 'me too' reacts
 
         ### Returns:
         * int: number of 'me too' reacts
         """
-        return self._get().me_too
+        return cast(
+            int,
+            TPostReacts.count().where(TPostReacts.post == self.id).run_sync()
+        )
+
+    def has_reacted(self, user: User) -> bool:
+        """
+        Returns whether the user has reacted to this post
+        """
+        return cast(
+            bool,
+            TPostReacts.count()
+            .where(TPostReacts.post == self.id,
+                   TPostReacts.user == user.id).run_sync() == 1
+        )
 
     def react(self, user: User):
         """
@@ -241,14 +255,18 @@ class Post:
         Unreact to the post if the user has reacted to the post
 
         ### Args:
-        * `user` (`User`): User reacting/unreacting to the post
+        * `user` (`User`): User reacting/un-reacting to the post
         """
-        row = self._get()
-        if user.id in row.me_too:
-            row.me_too.remove(user.id)
+        if not self.has_reacted(user):
+            TPostReacts(
+                {
+                    TPostReacts.user: user.id,
+                    TPostReacts.post: self.id,
+                }
+            ).save().run_sync()
         else:
-            row.me_too.append(user.id)
-        row.save().run_sync()
+            TPostReacts.delete().where(TPostReacts.user == user.id,
+                                       TPostReacts.post == self.id).run_sync()
 
     @property
     def timestamp(self) -> datetime:
@@ -328,4 +346,5 @@ class Post:
             "comments": [c.id for c in self.comments],
             "private": self.private,
             "anonymous": self.anonymous,
+            "author_reacted": self.has_reacted(self.author),
         }

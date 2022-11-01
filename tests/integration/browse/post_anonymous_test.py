@@ -33,7 +33,7 @@ def test_create_one_post_list(simple_users: ISimpleUsers):
     assert post_id == post["post_id"]
     assert heading == post["heading"]
     assert tags == post["tags"]
-    assert post["me_too"] == []
+    assert post["me_too"] == 0
     assert not post["private"]
     assert post["anonymous"]
 
@@ -93,7 +93,7 @@ def test_post_view_diff_users(all_users: IAllUsers):
     assert post["text"] == text
     assert post["comments"] == []
     assert post["tags"] == []
-    assert post["me_too"] == []
+    assert post["me_too"] == 0
     assert not post["private"]
     assert post["anonymous"]
 

@@ -33,12 +33,12 @@ def test_react_one_user(
     post_id = make_posts["post1_id"]
 
     post = post_view(token, post_id)
-    assert post["me_too"] == []
+    assert post["me_too"] == 0
 
     post_react(token, post_id)
 
     post = post_view(token, post_id)
-    assert post["me_too"] == [user_id]
+    assert post["me_too"] == 1
 
 
 def test_react_multiple_users(
@@ -55,23 +55,23 @@ def test_react_multiple_users(
     post_id = make_posts["post1_id"]
 
     post = post_view(token1, post_id)
-    assert post["me_too"] == []
+    assert post["me_too"] == 0
 
     post_react(token1, post_id)
     post = post_view(token1, post_id)
-    assert post["me_too"] == [user_id1]
+    assert post["me_too"] == 1
 
     post_react(token2, post_id)
     post = post_view(token1, post_id)
-    assert sorted(post["me_too"]) == sorted([user_id1, user_id2])
-
+    assert post["me_too"] == 2
+    
     post_react(token1, post_id)
     post = post_view(token1, post_id)
-    assert post["me_too"] == [user_id2]
+    assert post["me_too"] == 1
 
     post_react(token2, post_id)
     post = post_view(token1, post_id)
-    assert post["me_too"] == []
+    assert post["me_too"] == 0
 
 
 def test_one_user_multiple_posts(
@@ -87,18 +87,18 @@ def test_one_user_multiple_posts(
     post_id2 = make_posts["post2_id"]
 
     post = post_view(token, post_id1)
-    assert post["me_too"] == []
+    assert post["me_too"] == 0
     post = post_view(token, post_id2)
-    assert post["me_too"] == []
+    assert post["me_too"] == 0
 
     post_react(token, post_id1)
     post_react(token, post_id2)
 
     post = post_view(token, post_id1)
-    assert post["me_too"] == [user_id]
+    assert post["me_too"] == 1
 
     post = post_view(token, post_id2)
-    assert post["me_too"] == [user_id]
+    assert post["me_too"] == 1
 
 
 def test_invalid_post_id(simple_users: ISimpleUsers, make_posts: IMakePosts):

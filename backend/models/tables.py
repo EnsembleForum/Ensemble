@@ -81,7 +81,7 @@ class TPost(_BaseTable):
     heading = Text()
     text = Text()
     tags = Array(Integer())
-    me_too = Array(Integer())
+    # me_too = Array(Integer())
     timestamp = Timestamp()
     queue = ForeignKey(TQueue)
     private = Boolean()
@@ -110,6 +110,33 @@ class TReply(_BaseTable):
     text = Text()
     thanks = Array(Integer())
     timestamp = Timestamp()
+
+
+class TPostReacts(_BaseTable):
+    """
+    Table containing reactions to a post
+    """
+
+    user = ForeignKey(TUser)
+    post = ForeignKey(TPost)
+
+
+class TCommentReacts(_BaseTable):
+    """
+    Table containing reactions to a comment
+    """
+
+    user = ForeignKey(TUser)
+    post = ForeignKey(TComment)
+
+
+class TReplyReacts(_BaseTable):
+    """
+    Table containing reactions to a reply
+    """
+
+    user = ForeignKey(TUser)
+    post = ForeignKey(TReply)
 
 
 class TToken(_BaseTable):
