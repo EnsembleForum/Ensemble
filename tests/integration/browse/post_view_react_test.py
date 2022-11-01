@@ -36,7 +36,7 @@ def test_react_one_user(
     post = post_view(token, post_id)
     assert post["me_too"] == 0
 
-    post_react(token, post_id)
+    assert post_react(token, post_id)["user_reacted"]
 
     post = post_view(token, post_id)
     assert post["me_too"] == 1
@@ -61,7 +61,7 @@ def test_react_multiple_users(
     post = post_view(token1, post_id)
     assert post["me_too"] == 0
 
-    post_react(token1, post_id)
+    assert post_react(token1, post_id)["user_reacted"]
     post = post_view(token1, post_id)
     assert post["me_too"] == 1
 
@@ -69,7 +69,7 @@ def test_react_multiple_users(
     post = post_view(token1, post_id)
     assert post["me_too"] == 2
 
-    post_react(token1, post_id)
+    assert not post_react(token1, post_id)["user_reacted"]
     post = post_view(token1, post_id)
     assert post["me_too"] == 1
 

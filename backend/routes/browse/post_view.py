@@ -12,6 +12,7 @@ from backend.models.comment import Comment
 from backend.types.identifiers import PostId
 from backend.types.post import IPostFullInfo
 from backend.types.comment import ICommentId
+from backend.types.react import IUserReacted
 from backend.util import http_errors
 from backend.util.tokens import uses_token
 
@@ -78,10 +79,10 @@ def comment(user: User, *_) -> ICommentId:
 
 @post_view.put("/react")
 @uses_token
-def react(user: User, *_) -> dict:
+def react(user: User, *_) -> IUserReacted:
     user.permissions.assert_can(Permission.PostView)
     data = json.loads(request.data)
     post = Post(data["post_id"])
     post.react(user)
 
-    return {}
+    return {"user_reacted": post.has_reacted(user)}

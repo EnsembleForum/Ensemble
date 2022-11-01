@@ -8,6 +8,7 @@ from backend.types.comment import ICommentFullInfo, ICommentId
 from backend.types.reply import IReplyId
 from backend.types.identifiers import CommentId, PostId, ReplyId
 from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
+from backend.types.react import IUserReacted
 
 from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
@@ -331,7 +332,7 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     )
 
 
-def post_react(token: JWT, post_id: PostId):
+def post_react(token: JWT, post_id: PostId) -> IUserReacted:
     """
     # PUT `/browse/post_view/react`
 
@@ -347,14 +348,17 @@ def post_react(token: JWT, post_id: PostId):
     ## Body
     * `post_id` (`PostId`): identifier of the post
     """
-    put(
-        token,
-        f"{URL}/post_view/react",
-        {"post_id": post_id, }
+    return cast(
+        IUserReacted,
+        put(
+            token,
+            f"{URL}/post_view/react",
+            {"post_id": post_id, }
+        )
     )
 
 
-def comment_react(token: JWT, comment_id: CommentId):
+def comment_react(token: JWT, comment_id: CommentId) -> IUserReacted:
     """
     # PUT `/browse/comment_view/react`
 
@@ -370,14 +374,17 @@ def comment_react(token: JWT, comment_id: CommentId):
     ## Body
     * `comment_id` (`CommentId`): identifier of the comment
     """
-    put(
-        token,
-        f"{URL}/comment_view/react",
-        {"comment_id": comment_id, }
+    return cast(
+        IUserReacted,
+        put(
+            token,
+            f"{URL}/comment_view/react",
+            {"comment_id": comment_id, }
+        )
     )
 
 
-def reply_react(token: JWT, reply_id: ReplyId):
+def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
     """
     # PUT `/browse/reply_view/react`
 
@@ -393,8 +400,11 @@ def reply_react(token: JWT, reply_id: ReplyId):
     ## Body
     * `reply_id` (`ReplyId`): identifier of the reply
     """
-    put(
-        token,
-        f"{URL}/reply_view/react",
-        {"reply_id": reply_id, }
+    return cast(
+        IUserReacted,
+        put(
+            token,
+            f"{URL}/reply_view/react",
+            {"reply_id": reply_id, }
+        )
     )

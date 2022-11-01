@@ -38,7 +38,7 @@ def test_react_one_user(
     comment = get_comment(token, comment_id)
     assert comment["thanks"] == 0
 
-    comment_react(token, comment_id)
+    assert comment_react(token, comment_id)["user_reacted"]
 
     comment = get_comment(token, comment_id)
     assert comment["thanks"] == 1
@@ -64,14 +64,15 @@ def test_react_multiple_users(
     comment = get_comment(token1, comment_id)
     assert comment["thanks"] == 0
 
-    comment_react(token1, comment_id)
+    assert comment_react(token1, comment_id)["user_reacted"]
     comment = get_comment(token1, comment_id)
     assert comment["thanks"] == 1
+
     comment_react(token2, comment_id)
     comment = get_comment(token1, comment_id)
     assert comment["thanks"] == 2
 
-    comment_react(token1, comment_id)
+    assert not comment_react(token1, comment_id)["user_reacted"]
     comment = get_comment(token1, comment_id)
     assert comment["thanks"] == 1
 

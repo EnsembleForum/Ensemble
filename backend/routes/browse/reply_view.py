@@ -10,6 +10,7 @@ from backend.models.user import User
 from backend.models.reply import Reply
 from backend.types.identifiers import ReplyId
 from backend.types.reply import IReplyFullInfo
+from backend.types.react import IUserReacted
 from backend.util.tokens import uses_token
 
 reply_view = Blueprint("reply_view", "reply_view")
@@ -26,10 +27,10 @@ def get_reply(user: User, *_) -> IReplyFullInfo:
 
 @reply_view.put("/react")
 @uses_token
-def react(user: User, *_) -> dict:
+def react(user: User, *_) -> IUserReacted:
     user.permissions.assert_can(Permission.PostView)
     data = json.loads(request.data)
-    reply_view = Reply(data["reply_id"])
-    reply_view.react(user)
+    reply = Reply(data["reply_id"])
+    reply.react(user)
 
-    return {}
+    return {"user_reacted": reply.has_reacted(user)}

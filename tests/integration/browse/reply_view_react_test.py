@@ -39,7 +39,7 @@ def test_react_one_user(
 
     assert reply["thanks"] == 0
 
-    reply_react(token, reply_id)
+    assert reply_react(token, reply_id)["user_reacted"]
 
     reply = get_reply(token, reply_id)
     assert reply["thanks"] == 1
@@ -67,7 +67,7 @@ def test_react_multiple_users(
     reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 0
 
-    reply_react(token1, reply_id)
+    assert reply_react(token1, reply_id)["user_reacted"]
     reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 1
 
@@ -75,7 +75,7 @@ def test_react_multiple_users(
     reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 2
 
-    reply_react(token1, reply_id)
+    assert not reply_react(token1, reply_id)["user_reacted"]
     reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 1
 
