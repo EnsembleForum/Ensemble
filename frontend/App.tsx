@@ -27,7 +27,7 @@ export function ApiFetch(apiCall: APIcall) {
   }
   const token = getToken();
   if (token !== null) { requestOptions.headers.Authorization = `Bearer ${token}`; }
-  console.log(requestOptions);
+  // console.log(requestOptions);
   if (!apiCall.customUrl) {
     apiCall.customUrl = SERVER_PATH;
   }

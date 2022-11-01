@@ -19,21 +19,34 @@ interface Props {
   }
 }
 const StyledPost = styled.div`
-  padding: 10px;
+  padding: 10px 10px 0 10px;
   border: 1px solid grey;
   border-radius: 10px;
   overflow: hidden;
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 20px;
+  right: 20px;
   * {
-    margin-bottom: 10px;
+    margin-bottom: 11px;
   }
-  button {
-    margin-right: 10px;
+  textarea {
+    height: 100px;
   }
   background-color: white;
   width: 500px;
+`
+const StyledPostButton = styled(StyledButton)`
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+`
+const SpreadButtons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0;
+  * {
+    margin: 0;
+  }
 `
 
 
@@ -61,29 +74,27 @@ const CreatePostView = (props: Props) => {
             alert("Please only use numbers separated by spaces")
           }
         }}></Input>
+        <SpreadButtons>
+          <StyledButton onClick={(e) => {
+            const api: APIcall = {
+              method: "POST",
+              path: "browse/create",
+              body: post
+            }
+            ApiFetch(api).then((data) => {
+              const d = data as { post_id: number };
+              setPostId(d.post_id);
+            }
+            );
+          }}>New Post</StyledButton>
+          <StyledButton onClick={(e) => { setToggle(false); }}>X</StyledButton>
+        </SpreadButtons>
 
-        <StyledButton onClick={(e) => {
-          const api: APIcall = {
-            method: "POST",
-            path: "browse/create",
-            body: post
-          }
-          ApiFetch(api).then((data) => {
-            const d = data as { post_id: number };
-            setPostId(d.post_id);
-          }
-          );
-        }}>Post</StyledButton>
-        <StyledButton onClick={(e) => {
-          setToggle(false);
-        }}>X</StyledButton>
       </StyledPost>
     )
   } else {
     return (
-      <StyledButton onClick={(e) => {
-        setToggle(true);
-      }}>Post</StyledButton>
+      <StyledPostButton onClick={(e) => { setToggle(true) }}>Post</StyledPostButton>
     )
   }
 };

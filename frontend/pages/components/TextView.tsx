@@ -8,6 +8,7 @@ import { StyledButton } from "../GlobalProps";
 interface Props {
   text?: string,
   heading?: string,
+  author?: number,
   reacts?: {
     thanks: number,
     me_too: number
@@ -17,7 +18,6 @@ interface Props {
 
 const StyledText = styled.div`
   padding: 10px;
-  border: 1px solid grey;
   border-radius: 2px;
   overflow: hidden;
   * {
@@ -32,7 +32,7 @@ const PostView = (props: Props) => {
     heading = <h1>{props.heading}</h1>
   }
   if (props.reacts) {
-    reacts = <div>thanks: {props.reacts.thanks} <br/> me_too: {props.reacts.me_too}</div>;
+    reacts = <div>thanks: {props.reacts.thanks} <br /> me_too: {props.reacts.me_too}</div>;
   }
   return (
     <StyledText>

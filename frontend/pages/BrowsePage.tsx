@@ -27,7 +27,6 @@ const Layout = styled.div`
 const BrowsePage = (props: Props) => {
   const [postId, setPostId] = React.useState(0);
   const [load, setLoad] = React.useState(false);
-  console.log(postId);
   const value = { postId, setPostId };
   if (!load) {
     const api: APIcall = {

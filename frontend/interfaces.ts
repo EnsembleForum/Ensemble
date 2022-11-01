@@ -73,6 +73,7 @@ export interface postListItem {
 
 export interface postView {
   post_id: number,
+  author: number,
   heading: string,
   tags: number[],
   reacts: reacts,
