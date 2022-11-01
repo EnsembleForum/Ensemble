@@ -44,7 +44,7 @@ def test_react_one_user(
     reply = get_reply(token, reply_id)
     assert reply["thanks"] == 1
     assert reply["user_reacted"]
-    
+
     reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 1
     assert not reply["user_reacted"]
