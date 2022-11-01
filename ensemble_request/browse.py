@@ -347,3 +347,26 @@ def post_react(token: JWT, post_id: PostId):
         f"{URL}/post_view/react",
         {"post_id": post_id, }
     )
+
+
+def comment_react(token: JWT, comment_id: CommentId):
+    """
+    # PUT `/browse/comment_view/react`
+
+    Reacts to a comment if user has not reacted to that comment
+    Un-reacts to a comment if the user has reacted to that comment
+
+    ## Permissions
+    * `PostView`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `comment_id` (`CommentId`): identifier of the comment
+    """
+    put(
+        token,
+        f"{URL}/comment_view/react",
+        {"comment_id": comment_id, }
+    )

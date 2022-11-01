@@ -77,13 +77,6 @@ def comment(user: User, *_) -> ICommentId:
 @post_view.put("/react")
 @uses_token
 def react(user: User, *_) -> dict:
-    """
-    Add or remove a 'Me Too' react by the user to a post
-
-    ## Body:
-    * `post_id` (`PostId`): identifier of the post to react to
-    * `token` (`JWT`): JWT of the user
-    """
     user.permissions.assert_can(Permission.PostView)
     data = json.loads(request.data)
     post = Post(data["post_id"])

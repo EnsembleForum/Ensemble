@@ -5,6 +5,7 @@ Tests for post_view/react
 
 * Succeeds when one user tries to react to a post
 * Succeeds when multiple users react & unreact to a post
+* Fails when the given post_id does not exist
 """
 import pytest
 from backend.util import http_errors

@@ -60,7 +60,7 @@ class Comment:
                     TComment.author: author.id,
                     TComment.text: text,
                     TComment.parent: post.id,
-                    TComment.thanks: 0,
+                    TComment.thanks: [],
                     TComment.timestamp: datetime.now()
                 }
             )
@@ -153,7 +153,22 @@ class Comment:
         ### Returns:
         * int: number of 'thanks' reacts
         """
-        return self._get().thanks
+        return len(self._get().thanks)
+
+    def react(self, user: User):
+        """
+        React to the post if the user has not reacted to the post
+        Unreact to the post if the user has reacted to the post
+
+        ### Args:
+        * `user` (`User`): User reacting/unreacting to the post
+        """
+        row = self._get()
+        if user.id in row.thanks:
+            row.thanks.remove(user.id)
+        else:
+            row.thanks.append(user.id)
+        row.save().run_sync()
 
     @property
     def timestamp(self) -> datetime:

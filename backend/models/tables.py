@@ -94,7 +94,7 @@ class TComment(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TPost)
     text = Text()
-    thanks = Integer()
+    thanks = Array(Integer())
     timestamp = Timestamp()
 
 
