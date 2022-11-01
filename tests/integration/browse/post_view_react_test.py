@@ -29,7 +29,7 @@ def test_react_one_user(
     Successful reaction by one user
     """
     token = simple_users["user"]["token"]
-    user_id = simple_users["user"]["user_id"]
+    token1 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
 
     post = post_view(token, post_id)
@@ -39,6 +39,11 @@ def test_react_one_user(
 
     post = post_view(token, post_id)
     assert post["me_too"] == 1
+    assert post["user_reacted"]
+    
+    post = post_view(token1, post_id)
+    assert post["me_too"] == 1
+    assert not post["user_reacted"]
 
 
 def test_react_multiple_users(
@@ -50,8 +55,6 @@ def test_react_multiple_users(
     """
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
-    user_id1 = simple_users["user"]["user_id"]
-    user_id2 = simple_users["mod"]["user_id"]
     post_id = make_posts["post1_id"]
 
     post = post_view(token1, post_id)
@@ -64,7 +67,7 @@ def test_react_multiple_users(
     post_react(token2, post_id)
     post = post_view(token1, post_id)
     assert post["me_too"] == 2
-    
+
     post_react(token1, post_id)
     post = post_view(token1, post_id)
     assert post["me_too"] == 1
@@ -82,7 +85,6 @@ def test_one_user_multiple_posts(
     Can a user react to more than one post?
     """
     token = simple_users["user"]["token"]
-    user_id = simple_users["user"]["user_id"]
     post_id1 = make_posts["post1_id"]
     post_id2 = make_posts["post2_id"]
 

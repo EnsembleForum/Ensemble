@@ -7,7 +7,7 @@ from .comment import Comment
 from .permissions import Permission
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
-from backend.types.identifiers import PostId, UserId
+from backend.types.identifiers import PostId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
 from typing import cast, TYPE_CHECKING
 from datetime import datetime
@@ -246,7 +246,7 @@ class Post:
             bool,
             TPostReacts.count()
             .where(TPostReacts.post == self.id,
-                   TPostReacts.user == user.id).run_sync() == 1
+                   TPostReacts.user == user.id).run_sync()
         )
 
     def react(self, user: User):
@@ -310,7 +310,6 @@ class Post:
         row.anonymous = new_anonymous
         row.save().run_sync()
 
-    @property
     def basic_info(self) -> IPostBasicInfo:
         """
         Returns the basic info of a post
@@ -328,8 +327,7 @@ class Post:
             "anonymous": self.anonymous,
         }
 
-    @property
-    def full_info(self) -> IPostFullInfo:
+    def full_info(self, user: User) -> IPostFullInfo:
         """
         Returns the full info of a post
 
@@ -346,5 +344,5 @@ class Post:
             "comments": [c.id for c in self.comments],
             "private": self.private,
             "anonymous": self.anonymous,
-            "author_reacted": self.has_reacted(self.author),
+            "user_reacted": self.has_reacted(user),
         }

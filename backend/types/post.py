@@ -72,14 +72,14 @@ class IPostFullInfo(TypedDict):
     * `timestamp`: `int`
     * `private`: `bool`
     * `anonymous`: `bool`
-    * `author_reacted`: `bool`
+    * `user_reacted`: `bool`
     """
     author: UserId
     heading: str
     text: str
     tags: list[int]
     me_too: int
-    author_reacted: bool
+    user_reacted: bool
     comments: list[CommentId]
     timestamp: int
     private: bool

@@ -26,7 +26,7 @@ def get_post(user: User, *_) -> IPostFullInfo:
     post = Post(post_id)
     if not post.can_view(user):
         user.permissions.assert_can(Permission.ViewPrivate)
-    return post.full_info
+    return post.full_info(user)
 
 
 @post_view.put("/edit")
