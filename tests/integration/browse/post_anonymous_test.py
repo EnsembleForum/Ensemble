@@ -98,10 +98,10 @@ def test_post_view_diff_users(all_users: IAllUsers):
     assert post["anonymous"]
 
     # Admin can view User 1's post
-    assert post_view(admin_token, post_id)
+    post_view(admin_token, post_id)
 
     # Mod can view User 1's post
-    assert post_view(mod_token, post_id)
+    post_view(mod_token, post_id)
 
     # User 2 can view User 1's post
-    assert post_view(user_token2, post_id)
+    post_view(user_token2, post_id)

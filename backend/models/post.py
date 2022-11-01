@@ -94,6 +94,16 @@ class Post:
             TPost.select().order_by(TPost.id, ascending=False).run_sync()
         ]
 
+    def can_view(self, user: User) -> bool:
+        """
+        Returns whether the user can view this post
+        ### Returns:
+        * `bool`: whether the user can view the post
+        """
+        if self.private and self.author != user:
+            return user.permissions.can(Permission.ViewPrivate)
+        return True
+
     @classmethod
     def can_view_list(cls, user: User) -> list["Post"]:
         """
@@ -101,14 +111,7 @@ class Post:
         ### Returns:
         * `list[Post]`: list of posts
         """
-        permitted_list = []
-        for p in cls.all():
-            if not p.private:
-                permitted_list.append(p)
-            else:
-                if p.author == user or \
-                        user.permissions.can(Permission.ViewPrivate):
-                    permitted_list.append(p)
+        permitted_list = [p for p in cls.all() if p.can_view(user)]
 
         return permitted_list
 

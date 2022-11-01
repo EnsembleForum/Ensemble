@@ -24,7 +24,7 @@ def get_post(user: User, *_) -> IPostFullInfo:
     user.permissions.assert_can(Permission.PostView)
     post_id = PostId(request.args["post_id"])
     post = Post(post_id)
-    if post.private and post.author != user:
+    if not post.can_view(user):
         user.permissions.assert_can(Permission.ViewPrivate)
     return post.full_info
 
