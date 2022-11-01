@@ -84,6 +84,7 @@ def react(user: User, *_) -> dict:
     * `post_id` (`PostId`): identifier of the post to react to
     * `token` (`JWT`): JWT of the user
     """
+    user.permissions.assert_can(Permission.PostView)
     data = json.loads(request.data)
     post = Post(data["post_id"])
     post.react(user)

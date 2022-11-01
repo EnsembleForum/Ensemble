@@ -327,13 +327,20 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
 
 
 def post_react(token: JWT, post_id: PostId):
-    # TODO follow doc style above
     """
-    Add or remove a 'Me Too' react by the user to a post
+    # PUT `/browse/post_view/react`
 
-    ## Body:
-    * `post_id` (`PostId`): identifier of the post to react to
-    * `token` (`JWT`): JWT of the user
+    Reacts to a post if user has not reacted to that post
+    Un-reacts to a post if the user has reacted to that post
+
+    ## Permissions
+    * `PostView`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `post_id` (`PostId`): identifier of the post
     """
     put(
         token,
