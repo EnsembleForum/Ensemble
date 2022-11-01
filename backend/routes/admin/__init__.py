@@ -10,12 +10,14 @@ from .users import users
 from backend.models.auth_config import AuthConfig
 from backend.models.permissions import PermissionGroup, Permission
 from backend.models.token import Token
+from backend.models.queue import Queue
 from backend.models.user import User
 from backend.types.auth import IAuthInfo
 from backend.types.admin import IIsFirstRun
 from backend.util import http_errors
 from backend.util.validators import assert_valid_str_field, assert_email_valid
 from backend.util.auth_check import do_auth_check
+from backend.types.admin import is_valid_request_type
 
 
 admin = Blueprint('admin', 'admin')
@@ -68,22 +70,27 @@ def init() -> IAuthInfo:
             "disabled."
         )
     data = json.loads(request.data.decode('utf-8'))
-    address = data["address"]
-    request_type = data["request_type"]
-    username_param = data["username_param"]
-    password_param = data["password_param"]
-    success_regex = data["success_regex"]
-    username = data["username"]
-    password = data["password"]
-    email = data["email"]
-    name_first = data["name_first"]
-    name_last = data["name_last"]
+    address: str = data["address"]
+    request_type = str(data["request_type"]).lower()
+    username_param: str = data["username_param"]
+    password_param: str = data["password_param"]
+    success_regex: str = data["success_regex"]
+    username: str = data["username"]
+    password: str = data["password"]
+    email: str = data["email"]
+    name_first: str = data["name_first"]
+    name_last: str = data["name_last"]
 
     # Validate data
     assert_email_valid(email)
     assert_valid_str_field(name_first, "First name")
     assert_valid_str_field(name_last, "Last name")
     assert_valid_str_field(username, "Username")
+
+    if not is_valid_request_type(request_type):
+        raise http_errors.BadRequest(
+            "Request type must be one of 'get', 'post', 'put', 'delete'"
+        )
 
     # Make sure we can log in with the auth system
     if not do_auth_check(
@@ -128,81 +135,60 @@ def init() -> IAuthInfo:
         success_regex
     )
 
+    # Base dictionary of permissions
+    # all users should have no permissions by default
+    base_permissions = {
+        k: False for k in Permission
+    }
+
     # Create permission groups
     admin = PermissionGroup.create(
         "Administrator",
         {
-            Permission.View: True,
-            Permission.ViewPrivate: True,
-            Permission.ViewAnonymousOP: True,
-            Permission.Post: True,
-            Permission.Answer: True,
-            Permission.PostOverrideExam: True,
-            Permission.ViewTaskboard: True,
-            Permission.Delegate: True,
-            Permission.FollowQueue: True,
-            Permission.ReportPosts: True,
-            Permission.ClosePosts: True,
-            Permission.DeletePosts: True,
-            Permission.ViewReports: True,
-            Permission.ManageUserPermissions: True,
-            Permission.AddUsers: True,
-            Permission.RemoveUsers: True,
-            Permission.ViewAllUsers: True,
-            Permission.ManageAuthConfig: True,
-            Permission.ManagePermissionGroups: True,
+            # Admins have every permission
+            k: True for k in Permission
         },
         immutable=True,
     )
     PermissionGroup.create(
         "Moderator",
-        {
-            Permission.View: True,
-            Permission.ViewPrivate: True,
-            Permission.ViewAnonymousOP: True,
-            Permission.Post: True,
-            Permission.Answer: True,
-            Permission.PostOverrideExam: True,
-            Permission.ViewTaskboard: True,
-            Permission.Delegate: True,
-            Permission.FollowQueue: True,
-            Permission.ReportPosts: True,
-            Permission.ClosePosts: True,
-            Permission.DeletePosts: True,
-            Permission.ViewReports: True,
-            Permission.ManageUserPermissions: False,
-            Permission.AddUsers: False,
-            Permission.RemoveUsers: False,
-            Permission.ViewAllUsers: True,
-            Permission.ManageAuthConfig: False,
-            Permission.ManagePermissionGroups: False,
+        base_permissions | {
+            k: True for k in [
+                Permission.PostView,
+                Permission.ViewPrivate,
+                Permission.ViewAnonymousOP,
+                Permission.PostCreate,
+                Permission.PostComment,
+                Permission.PostOverrideExam,
+                Permission.ViewTaskboard,
+                Permission.TaskboardDelegate,
+                Permission.FollowQueue,
+                Permission.ReportPosts,
+                Permission.ClosePosts,
+                Permission.DeletePosts,
+                Permission.ViewReports,
+                Permission.ViewAllUsers,
+            ]
         },
         immutable=False,
     )
     PermissionGroup.create(
         "User",
-        {
-            Permission.View: True,
-            Permission.ViewPrivate: False,
-            Permission.ViewAnonymousOP: False,
-            Permission.Post: True,
-            Permission.Answer: True,
-            Permission.PostOverrideExam: False,
-            Permission.ViewTaskboard: False,
-            Permission.Delegate: False,
-            Permission.FollowQueue: False,
-            Permission.ReportPosts: True,
-            Permission.ClosePosts: False,
-            Permission.DeletePosts: False,
-            Permission.ViewReports: False,
-            Permission.ManageUserPermissions: False,
-            Permission.AddUsers: False,
-            Permission.RemoveUsers: False,
-            Permission.ViewAllUsers: False,
-            Permission.ManageAuthConfig: False,
-            Permission.ManagePermissionGroups: False,
+        base_permissions | {
+            k: True for k in [
+                Permission.PostView,
+                Permission.PostCreate,
+                Permission.PostComment,
+                Permission.ReportPosts,
+            ]
         },
         immutable=False,
+    )
+
+    # Create the main queue
+    Queue.create(
+        "Main queue",
+        immutable=True,
     )
 
     # Register first user

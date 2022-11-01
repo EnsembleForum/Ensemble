@@ -8,8 +8,10 @@ from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId
 from backend.types.post import IPostBasicInfo, IPostFullInfo, IReacts
-from typing import cast
+from typing import cast, TYPE_CHECKING
 from datetime import datetime
+if TYPE_CHECKING:
+    from backend.models.queue import Queue
 
 
 class Post:
@@ -55,7 +57,7 @@ class Post:
         """
         assert_valid_str_field(heading, "heading")
         assert_valid_str_field(text, "post")
-
+        from .queue import Queue
         val = (
             TPost(
                 {
@@ -65,7 +67,8 @@ class Post:
                     TPost.me_too: 0,
                     TPost.thanks: 0,
                     TPost.tags: tags,
-                    TPost.timestamp: datetime.now()
+                    TPost.timestamp: datetime.now(),
+                    TPost.queue: Queue.get_main_queue().id,
                 }
             )
             .save()
@@ -103,16 +106,12 @@ class Post:
             .run_sync()
         ]
 
-    @classmethod
-    def delete(cls, post_id: PostId) -> PostId:
+    def delete(self):
         """
-        Deletes a post from the database
+        Deletes this post from the database
 
-        ### Returns:
-        * `PostId`: identifier of the deleted post
         """
-        TPost.delete().where(TPost.id == post_id).run_sync()
-        return post_id
+        TPost.delete().where(TPost.id == self.id).run_sync()
 
     def _get(self) -> TPost:
         """
@@ -166,6 +165,21 @@ class Post:
         return User(self._get().author)
 
     @property
+    def queue(self) -> "Queue":
+        """
+        Returns a reference to the queue that the post belongs in
+
+        ### Returns:
+        * `Queue`: Queue that has the post
+        """
+        from .queue import Queue
+        return Queue(self._get().queue)
+
+    @queue.setter
+    def queue(self, new_queue: "Queue"):
+        self._get().queue = new_queue.id
+
+    @property
     def tags(self) -> list[int]:
         """
         Returns a list of tags attached to the post
@@ -197,11 +211,17 @@ class Post:
         return self._get().me_too
 
     def me_too_inc(self):
+        """
+        Increments the number of me_too's this post has
+        """
         row = self._get()
         row.me_too += 1
         row.save().run_sync()
 
     def me_too_dec(self):
+        """
+        Decrements the number of me_too's this post has
+        """
         row = self._get()
         row.me_too -= 1
         row.save().run_sync()
@@ -217,11 +237,17 @@ class Post:
         return self._get().thanks
 
     def thanks_inc(self):
+        """
+        Increments the number of thanks' this post has
+        """
         row = self._get()
         row.thanks += 1
         row.save().run_sync()
 
     def thanks_dec(self):
+        """
+        Decrements the number of thanks' this post has
+        """
         row = self._get()
         row.thanks -= 1
         row.save().run_sync()

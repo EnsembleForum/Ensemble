@@ -3,7 +3,7 @@
 
 Tests for debug routes
 """
-from .request.debug import echo, fail
+from ensemble_request.debug import echo, fail
 from backend.util import http_errors
 
 

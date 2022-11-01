@@ -2,9 +2,31 @@
   // Disable automatic indentation detection
   // and force a tab size
   "editor.detectIndentation": false,
+  // Exclude unwanted files from the explorer
+  "files.exclude": {
+    "**/__pycache__": true, // Python caches
+    "**/.*_cache": true,
+    "**/.classpath": true,
+    "**/.factorypath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.venv": true, // Python virtual environments
+    "**/*.class": true,
+    "**/*.egg-info": true,
+    "**/node_modules": true // NodeJS Modules
+  },
+  // Language-specific settings
   "[python]": {
     "editor.tabSize": 4,
-    "editor.rulers": [79]
+    "editor.rulers": [
+      79
+    ]
+  },
+  "[json]": {
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.tabSize": 2
   },
   "[javascript]": {
     "editor.tabSize": 2
@@ -15,41 +37,41 @@
   "[typescriptreact]": {
     "editor.tabSize": 2
   },
-
   // Link up docstring template
   "autoDocstring.customTemplatePath": "config/docstring_template.mustache",
-
   // Enable linters
   "python.linting.enabled": true,
   "python.linting.flake8CategorySeverity.E": "Warning",
   "python.linting.flake8CategorySeverity.F": "Warning",
   "python.linting.flake8Enabled": true,
   "python.linting.mypyEnabled": true,
-
   // Use autopep8 formatter
   "python.formatting.provider": "autopep8",
-
   // Switch off Pylance, since we're using MyPy instead
   "python.analysis.typeCheckingMode": "off",
-
   // Testing
-  "python.testing.pytestArgs": ["tests"],
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
-
+  // Auto imports make life sorta annoying when you're trying to find stuff
+  // in your code - disable them
+  "python.analysis.autoImportCompletions": false,
   // Spell checker
   "cSpell.language": "en-gb",
   "cSpell.words": [
     "autouse",
+    "docformat",
     "doesnt",
     "dotenv",
     "flaskenv",
     "Khor",
     "Neel",
+    "pdoc",
     "Sesi",
     "Taskboard",
     "werkzeug"
   ],
-"python.pythonPath": "c:\\Users\\neeldutta\\Desktop\\3900\\capstone-project-h18a-ensemble\\.venv\\Scripts\\python.exe",
-"prettier.enable": false
+  "prettier.enable": false,
 }

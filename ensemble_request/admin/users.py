@@ -20,14 +20,26 @@ def register(
     """
     Register a collection of users
 
-    ## Body:
-    * `users` (`list[IUserRegisterInfo]`): list of user info to add
+    ## Permissions
+    * `AddUsers`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `users`: list of user info to add. Each user must be an object of:
+            * `name_first` (`str`): First name
+            * `name_last` (`str`): Last name
+            * `username` (`str`): Username (which they will log in using)
+            * `email` (`str`): Email address through which they will receive
+              notifications
+
     * `group_id` (`PermissionGroupId`): permission group ID to assign all users
       to.
 
-    ## Returns:
+    ## Returns
     * `user_ids`: list of
-          * `int`
+          * `int`: ID for the user
     """
     return cast(IUserIdList, post(
         token,
@@ -43,12 +55,18 @@ def all(token: JWT) -> IUserBasicInfoList:
     """
     Returns a list of basic info about all forum users
 
-    ### Returns:
-    * `users`: `list`, containing dictionaries of:
-          * `name_first`: `str`
-          * `name_last`: `str`
-          * `username`: `str`
-          * `user_id`: `int`
+    ## Permissions
+    * `ViewAllUsers`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ### Returns
+    * `users`: list of users, containing objects of
+            * `name_first` (`str`): First name
+            * `name_last` (`str`): Last name
+            * `username` (`str`): Username
+            * `user_id` (`int`): ID of the user
     """
     return cast(IUserBasicInfoList, get(
         token,

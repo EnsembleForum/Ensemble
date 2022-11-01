@@ -1,5 +1,5 @@
 """
-# Tests / Integration / Functions / Debug
+# Request / Debug
 
 Functions that shadow server routes starting at /debug
 """
@@ -14,17 +14,25 @@ URL = f"{URL}/debug"
 
 def echo(value: str) -> IEcho:
     """
-    Echo an input. This returns the given value, but also prints it to stdout
-    on the server. Useful for debugging tests.
+    ## GET `debug/echo`
 
-    ## Params:
+    Echo an input. This returns the given value, but also prints it to stdout
+    and stderr on the server. Useful for debugging tests.
+
+    ## Params
     * `value` (`str`): value to echo
+
+    ## Returns
+    Object containing:
+    * `value`: the same value
     """
     return cast(IEcho, get(None, f"{URL}/echo", {"value": value}))
 
 
 def clear() -> None:
     """
+    ## DELETE `debug/clear`
+
     Clear the database.
     """
     delete(None, f"{URL}/clear", {})
@@ -32,14 +40,20 @@ def clear() -> None:
 
 def shutdown() -> None:
     """
+    ## POST `debug/shutdown`
+
     Initiate a server shutdown.
+
+    Currently this route is unused and unimplemented.
     """
     post(None, f"{URL}/shutdown", {})
 
 
 def fail() -> NoReturn:
     """
-    Raise a 500 error. Used to test error handling
+    ## GET `debug/fail`
+
+    Raise a 500 error. Used to test the custom error handling.
     """
     get(None, f"{URL}/fail", {})
     # If we reach this point then we have problems

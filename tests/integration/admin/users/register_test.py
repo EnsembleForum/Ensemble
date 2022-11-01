@@ -17,10 +17,10 @@ Tests for bulk registering users
 """
 import pytest
 from backend.util import http_errors
-from tests.integration.request.admin import users
+from ensemble_request.admin import users
 from tests.integration.conftest import (
     IBasicServerSetup,
-    IAllUsers,
+    ISimpleUsers,
     IPermissionGroups,
 )
 
@@ -326,13 +326,13 @@ def test_invalid_name_last(
 
 
 def test_no_permission(
-    all_users: IAllUsers,
+    simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,
 ):
     """Do we get an error if we don't have permission to register a user?"""
     with pytest.raises(http_errors.Forbidden):
         users.register(
-            all_users["mods"][0]["token"],
+            simple_users["mod"]["token"],
             [{
                 "name_first": "Henry",
                 "name_last": "VIII",

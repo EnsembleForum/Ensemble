@@ -12,42 +12,55 @@ Tests for post_view/edit
 """
 import pytest
 from backend.util import http_errors
-from tests.integration.request.browse import (
+from ensemble_request.browse import (
     post_edit,
     post_view,
 )
+from tests.integration.conftest import (
+    IBasicServerSetup,
+    ISimpleUsers,
+    IMakePosts,
+)
 
 
-def test_edit_other_user_post(all_users, make_posts):
+def test_edit_other_user_post(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
     """
     Does editing another person's post raise a 403 error
     """
-    token = all_users["users"][1]["token"]
+    token = simple_users["user"]["token"]
     with pytest.raises(http_errors.Forbidden):
         post_edit(token, make_posts["post1_id"], "new head", "new text", [])
 
 
-def test_edit_no_head(all_users, make_posts):
+def test_edit_empty_params(
+    basic_server_setup: IBasicServerSetup,
+    make_posts: IMakePosts,
+):
     """
     Does editing a post raise a 400 error when head or text is empty?
     """
-    token = all_users["users"][0]["token"]
+    token = basic_server_setup["token"]
     with pytest.raises(http_errors.BadRequest):
         post_edit(token, make_posts["post1_id"], "", "new text", [])
     with pytest.raises(http_errors.BadRequest):
         post_edit(token, make_posts["post1_id"], "new head", "", [])
 
 
-def test_edit_success(all_users, make_posts):
+def test_edit_success(
+    basic_server_setup: IBasicServerSetup,
+    make_posts: IMakePosts,
+):
     """
     Successful edit of one of the posts
     """
-    token = all_users["users"][0]["token"]
+    token = basic_server_setup["token"]
     new_head = "new_head"
     new_text = "new_text"
-    post_id = post_edit(token, make_posts["post1_id"], new_head, new_text, [])[
-        "post_id"]
+    post_edit(token, make_posts["post1_id"], new_head, new_text, [])
 
-    post = post_view(token, post_id)
+    post = post_view(token, make_posts["post1_id"])
     assert post["heading"] == new_head
     assert post["text"] == new_text

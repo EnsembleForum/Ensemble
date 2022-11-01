@@ -17,7 +17,7 @@ class Permission(Enum):
         return cast(PermissionId, super().value)
 
     # Viewing
-    View = 0
+    PostView = 0
     """User can view public posts"""
     ViewPrivate = 1
     """User can view private posts"""
@@ -25,9 +25,9 @@ class Permission(Enum):
     """User can view who made an anonymous post"""
 
     # Posting
-    Post = 10
+    PostCreate = 10
     """User can create posts"""
-    Answer = 11
+    PostComment = 11
     """User can create answers to posts"""
     PostOverrideExam = 12
     """User can create public posts, even when exam mode is enabled"""
@@ -35,11 +35,14 @@ class Permission(Enum):
     # Taskboard and queues
     ViewTaskboard = 20
     """User can view the taskboard overview"""
-    Delegate = 21
+    TaskboardDelegate = 21
     """User can move a post from the main queue to a specialised queue"""
     FollowQueue = 22
     """User can subscribe to queues to get notifications when posts are moved
     into them"""
+    ManageQueues = 23
+    """User can manage taskboard queues, including creating and deleting them.
+    """
 
     # Moderation
     ReportPosts = 30
@@ -65,5 +68,6 @@ class Permission(Enum):
     ManageAuthConfig = 50
     """User can manage authentication options"""
     ManagePermissionGroups = 51
-    """manage permissions groups, including creation, deletion and modification
+    """User can manage permissions groups, including creation, deletion and
+    modification
     """

@@ -27,30 +27,9 @@ groups = Blueprint('groups', 'groups')
 @groups.post('/create')
 @uses_token
 def create(user: User, *_) -> IGroupId:
-    """
-    Create a new permission group
-
-    ## Body:
-    * `name` (`str`): name of permission group
-
-    * `permissions`: list of
-
-            * `permission_id`: ID of permission
-
-            * `value`: one of
-
-                    * `True`: permission allowed
-
-                    * `False`: permission denied
-
-                    * `None`: permission inherited
-
-    ## Returns:
-    * `IGroupId`: ID for new group
-    """
     user.permissions.assert_can(Permission.ManagePermissionGroups)
     data = json.loads(request.data)
-    name = data['name']
+    name: str = data['name']
     permissions: list[IPermissionValueGroup] = data['permissions']
     if PermissionGroup.from_name(name) is not None:
         raise BadRequest(f"A permission group with name {name} already exists")
@@ -64,28 +43,6 @@ def create(user: User, *_) -> IGroupId:
 @groups.get('/list')
 @uses_token
 def list_groups(user: User, *_) -> IPermissionGroupList:
-    """
-    List available permission groups
-
-    ## Returns:
-
-    * `groups`: list of info about permission groups. Each entry is an object
-      containing:
-
-            * `group_id`: ID of permission group
-
-            * `name`: name of permission group
-
-            * `permissions`: list of
-
-                    * `permission_id`: ID of permission
-
-                    * `value`: one of
-
-                            * `True`: permission allowed
-
-                            * `False`: permission denied
-    """
     user.permissions.assert_can(Permission.ManagePermissionGroups)
     groups = PermissionGroup.all()
     return {"groups": [
@@ -107,30 +64,10 @@ def list_groups(user: User, *_) -> IPermissionGroupList:
 @groups.put('/edit')
 @uses_token
 def edit(user: User, *_) -> dict:
-    """
-    Edit an existing permission group
-
-    ## Body:
-    * `group_id` (`PermissionGroupId`): permission group ID
-
-    * `name` (`str`): new name of permission group
-
-    * `permissions`: list of
-
-            * `permission_id`: ID of permission
-
-            * `value`: one of
-
-                    * `True`: permission allowed
-
-                    * `False`: permission denied
-
-                    * `None`: permission inherited
-    """
     user.permissions.assert_can(Permission.ManagePermissionGroups)
     data = json.loads(request.data)
     group = PermissionGroup(PermissionGroupId(data['group_id']))
-    name = data['name']
+    name: str = data['name']
     permissions: list[IPermissionValueGroup] = data['permissions']
 
     if (duplicate := PermissionGroup.from_name(name)) is not None:
@@ -150,12 +87,6 @@ def edit(user: User, *_) -> dict:
 @groups.delete('/remove')
 @uses_token
 def remove(user: User, *_) -> dict:
-    """
-    Remove an existing permission group
-
-    ## Body:
-    * `group_id` (`PermissionGroupId`): permission group ID
-    """
     user.permissions.assert_can(Permission.ManagePermissionGroups)
     group = PermissionGroup(PermissionGroupId(int(request.args['group_id'])))
     transfer_group = PermissionGroup(

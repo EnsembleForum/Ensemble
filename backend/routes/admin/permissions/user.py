@@ -26,27 +26,6 @@ user = Blueprint('user', 'user')
 @user.put('/set_permissions')
 @uses_token
 def set_permissions(user: User, *_) -> dict:
-    """
-    Sets the permissions of a user
-
-    ## Body:
-    * `user_id` (`UserId`): user id to set permissions for
-
-    * `permissions`: list of
-
-            * `permission_id`: ID of permission
-
-            * `value`: one of
-
-                    * `True`: permission allowed
-
-                    * `False`: permission denied
-
-                    * `None`: permission inherited
-
-    * `group_id`: the ID of the permission group this user inherits their
-      permissions from
-    """
     user.permissions.assert_can(Permission.ManageUserPermissions)
     data = json.loads(request.data)
     target_user = User(UserId(data['user_id']))
@@ -65,31 +44,8 @@ def set_permissions(user: User, *_) -> dict:
 @user.get('/get_permissions')
 @uses_token
 def get_permissions(user: User, *_) -> IPermissionUser:
-    """
-    Returns the permissions of a user
-
-    ## Params:
-    * `user_id` (`UserId`): user id to query permissions for
-
-    ## Returns:
-
-    * `permissions`: list of
-
-            * `permission_id`: ID of permission
-
-            * `value`: one of
-
-                    * `True`: permission allowed
-
-                    * `False`: permission denied
-
-                    * `None`: permission inherited
-
-    * `group_id`: the ID of the permission group this user inherits their
-      permissions from
-    """
     user.permissions.assert_can(Permission.ManageUserPermissions)
-    target_user = User(UserId(int(request.args['user_id'])))
+    target_user = User(UserId(request.args['user_id']))
     permissions = target_user.permissions
 
     return {
