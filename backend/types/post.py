@@ -22,6 +22,7 @@ class IPostBasicInfo(TypedDict):
     * `post_id`: `PostId`
     * `tags`: `list[int]`
     * `me_too`: `int`
+    * `is_private`: `bool`
     """
 
     author: UserId
@@ -29,6 +30,7 @@ class IPostBasicInfo(TypedDict):
     post_id: PostId
     tags: list[int]
     me_too: list[UserId]
+    is_private: bool
 
 
 class IPostBasicInfoList(TypedDict):
@@ -67,6 +69,7 @@ class IPostFullInfo(TypedDict):
     * `me_too`: `int`
     * `comments`: `list[CommentId]`
     * `timestamp`: `int`
+    * `is_private`: `bool`
     """
     author: UserId
     heading: str
@@ -75,3 +78,4 @@ class IPostFullInfo(TypedDict):
     me_too: list[UserId]
     comments: list[CommentId]
     timestamp: int
+    is_private: bool

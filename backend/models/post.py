@@ -4,6 +4,7 @@
 from .tables import TComment, TPost
 from .user import User
 from .comment import Comment
+from .permissions import Permission
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId, UserId
@@ -92,6 +93,24 @@ class Post:
             Post(p["id"]) for p in
             TPost.select().order_by(TPost.id, ascending=False).run_sync()
         ]
+
+    @classmethod
+    def can_view_list(cls, user: User) -> list["Post"]:
+        """
+        Returns a list of posts that the given user has permissions to view
+        ### Returns:
+        * `list[Post]`: list of posts
+        """
+        permitted_list = []
+        for p in cls.all():
+            if not p.private:
+                permitted_list.append(p)
+            else:
+                if p.author == user or \
+                        user.permissions.can(Permission.ViewPrivate):
+                    permitted_list.append(p)
+
+        return permitted_list
 
     @property
     def comments(self) -> list["Comment"]:
@@ -284,6 +303,7 @@ class Post:
             "post_id": PostId(self.id),
             "tags": self.tags,
             "me_too": self.me_too,
+            "is_private": self.private,
         }
 
     @property
@@ -302,4 +322,5 @@ class Post:
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
             "comments": [c.id for c in self.comments],
+            "is_private": self.private,
         }

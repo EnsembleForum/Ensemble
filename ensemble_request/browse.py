@@ -92,7 +92,8 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
 
 
 def post_create(
-    token: JWT, heading: str, text: str, tags: list[int]
+    token: JWT, heading: str, text: str, tags: list[int],
+    private: bool = False, anonymous: bool = False
 ) -> IPostId:
     """
     ## POST `/browse/create`
@@ -109,6 +110,8 @@ def post_create(
     * `heading` (`str`): heading of the post
     * `text` (`str`): text of the post
     * `tags` (`list[int]`): tags attached to the new post (ignore for sprint 1)
+    * `private` (`bool`): whether the post is private
+    * `anonymous` (`bool`): whether the author is anonymous
 
     ## Returns
     Object containing:
@@ -123,6 +126,8 @@ def post_create(
                 "heading": heading,
                 "text": text,
                 "tags": tags,
+                "private": private,
+                "anonymous": anonymous,
             },
         ),
     )
