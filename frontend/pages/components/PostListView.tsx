@@ -3,7 +3,8 @@ import React, { JSXElementConstructor } from "react";
 import { Box, IconButton, Text } from "theme-ui";
 import { forEachChild } from "typescript";
 import { ApiFetch } from "../../App";
-import { postListItem } from "../../interfaces";
+import { APIcall, postListItem } from "../../interfaces";
+import PostContext from "../postContext";
 import PostListItem from "./PostListItem";
 
 // Declaring and typing our props
@@ -13,30 +14,23 @@ const StyledLayout=styled.div`
 `
 // Exporting our example component
 const PostListView = (props: Props) => {
-  const defaultProps : postListItem[] = [{
-    post_id: 1,
-    heading: "Post1",
-    tags: [1, 2],
-    reacts: {
-      thanks: 1,
-      me_too: 1
-    }
-  }, 
-  {
-    post_id: 2,
-    heading: "Post2",
-    tags: [2],
-    reacts: {
-      thanks: 1,
-      me_too: 1
-    }
-  }];
+  const { postId, setPostId } = React.useContext(PostContext);
+  let defaultProps : postListItem[] = [];
+  const api: APIcall = {
+    method: "GET",
+    path: "browse/post_list",
+  }
+  ApiFetch(api)
+    .then((data) => {
+      console.log("POSTLISTVUEW:", data);
+      defaultProps = data as postListItem[];
+    })
   return (
     <StyledLayout>
       {defaultProps.map((each) => {
+        console.log("EACH",each);
         return (<PostListItem post={each}></PostListItem>);
       })}
-      
     </StyledLayout>
   );
 };

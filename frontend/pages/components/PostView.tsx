@@ -52,7 +52,7 @@ const PostView = (props: Props) => {
     comments: [0],
     text: "YOOOOOOOt"
   }]
-
+  console.log(props.postId);
   const postToShow = fakeDefaultValueList[props.postId];
   return (
     <StyledPostListView>

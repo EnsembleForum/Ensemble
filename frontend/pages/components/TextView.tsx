@@ -11,7 +11,8 @@ interface Props {
   reacts?: {
     thanks: number,
     me_too: number
-  }
+  },
+  answer?: boolean;
 }
 
 const StyledText = styled.div`

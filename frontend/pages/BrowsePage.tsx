@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import React, { createContext, JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import CreatePostView from "./components/CreatePostView";
 import PostListView from "./components/PostListView";
 import PostView from "./components/PostView";
 import PostContext from "./postContext";
@@ -19,6 +20,7 @@ const BrowsePage = (props: Props) => {
       <StyledLayout>
         <PostListView/>
         <PostView postId = {postId} />
+        <CreatePostView/>
       </StyledLayout>
     </PostContext.Provider>
   );

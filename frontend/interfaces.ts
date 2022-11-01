@@ -92,3 +92,9 @@ export interface userView {
 export interface pageList {
   [key: string]: JSX.Element,
 }
+
+export interface createPost {
+  heading:string, 
+  tags:number[], 
+  text:string,
+}
