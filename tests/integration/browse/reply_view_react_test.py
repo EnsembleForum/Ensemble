@@ -38,7 +38,7 @@ def test_react_one_user(
 
     assert reply["thanks"] == 0
 
-    reply_react(token, comment_id)
+    reply_react(token, reply_id)
 
     reply = get_reply(token, reply_id)
     assert reply["thanks"] == 1
@@ -58,23 +58,23 @@ def test_react_multiple_users(
     reply_id = add_reply(token1, comment_id, "helo")["reply_id"]
 
     reply = get_reply(token1, reply_id)
-    reply = get_reply(token1, comment_id)
+    reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 0
 
-    reply_react(token1, comment_id)
-    reply = get_reply(token1, comment_id)
+    reply_react(token1, reply_id)
+    reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 1
 
-    reply_react(token2, comment_id)
-    reply = get_reply(token1, comment_id)
+    reply_react(token2, reply_id)
+    reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 2
 
-    reply_react(token1, comment_id)
-    reply = get_reply(token1, comment_id)
+    reply_react(token1, reply_id)
+    reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 1
 
-    reply_react(token2, comment_id)
-    reply = get_reply(token1, comment_id)
+    reply_react(token2, reply_id)
+    reply = get_reply(token1, reply_id)
     assert reply["thanks"] == 0
 
 
