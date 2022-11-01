@@ -26,7 +26,9 @@ def get_post(user: User, *_) -> IPostFullInfo:
     post_id = PostId(request.args["post_id"])
     post = Post(post_id)
     if not post.can_view(user):
-        user.permissions.assert_can(Permission.ViewPrivate)
+        raise http_errors.Forbidden(
+            "Do not have permissions to view this post"
+            )
     return post.full_info(user)
 
 
