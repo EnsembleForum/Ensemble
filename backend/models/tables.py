@@ -106,7 +106,7 @@ class TReply(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TComment)
     text = Text()
-    thanks = Integer()
+    thanks = Array(Integer())
     timestamp = Timestamp()
 
 

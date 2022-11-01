@@ -3,6 +3,7 @@
 
 Reply View routes
 """
+import json
 from flask import Blueprint, request
 from backend.models.permissions import Permission
 from backend.models.user import User
@@ -21,3 +22,14 @@ def get_reply(user: User, *_) -> IReplyFullInfo:
     reply_id = ReplyId(request.args["reply_id"])
     reply = Reply(reply_id)
     return reply.full_info
+
+
+@reply_view.put("/react")
+@uses_token
+def react(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.PostView)
+    data = json.loads(request.data)
+    reply_view = Reply(data["reply_id"])
+    reply_view.react(user)
+
+    return {}

@@ -59,7 +59,7 @@ class Reply:
                     TReply.author: author.id,
                     TReply.text: text,
                     TReply.parent: comment.id,
-                    TReply.thanks: 0,
+                    TReply.thanks: [],
                     TReply.timestamp: datetime.now()
                 }
             )
@@ -136,7 +136,22 @@ class Reply:
         ### Returns:
         * int: number of 'thanks' reacts
         """
-        return self._get().thanks
+        return len(self._get().thanks)
+
+    def react(self, user: User):
+        """
+        React to the reply if the user has not reacted to the reply
+        Unreact to the reply if the user has reacted to the reply
+
+        ### Args:
+        * `user` (`User`): User reacting/un-reacting to the reply
+        """
+        row = self._get()
+        if user.id in row.thanks:
+            row.thanks.remove(user.id)
+        else:
+            row.thanks.append(user.id)
+        row.save().run_sync()
 
     @property
     def timestamp(self) -> datetime:

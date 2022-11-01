@@ -1,7 +1,7 @@
 """
 # Tests / Integration / Browse / Comment View / React
 
-Tests for get_comment/react
+Tests for comment_view/react
 
 * Succeeds when one user tries to react to a comment
 * Succeeds when multiple users react & unreact to a comment
@@ -33,7 +33,7 @@ def test_react_one_user(
     post_id = make_posts["post1_id"]
     comment_id = add_comment(token, post_id, "first")["comment_id"]
     comment = get_comment(token, comment_id)
-    
+
     assert comment["thanks"] == 0
 
     comment_react(token, comment_id)
@@ -53,7 +53,7 @@ def test_react_multiple_users(
     token2 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
     comment_id = add_comment(token1, post_id, "first")["comment_id"]
-    
+
     comment = get_comment(token1, comment_id)
     assert comment["thanks"] == 0
 
@@ -79,25 +79,25 @@ def test_one_user_multiple_comments(
     make_posts: IMakePosts
 ):
     """
-    Can a user react to more than one post?
+    Can a user react to more than one comment?
     """
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
     comment_id1 = add_comment(token1, post_id, "first")["comment_id"]
     comment_id2 = add_comment(token1, post_id, "second")["comment_id"]
-    
+
     comment = get_comment(token2, comment_id1)
     assert comment["thanks"] == 0
     comment = get_comment(token2, comment_id2)
     assert comment["thanks"] == 0
-    
+
     comment_react(token2, comment_id1)
     comment_react(token2, comment_id2)
-    
+
     comment = get_comment(token2, comment_id1)
     assert comment["thanks"] == 1
-    
+
     comment = get_comment(token2, comment_id2)
     assert comment["thanks"] == 1
 
@@ -107,6 +107,6 @@ def test_invalid_comment_id(simple_users: ISimpleUsers):
     If we are given an invalid comment_id, do we get a 400 error?
     """
     token = simple_users["user"]["token"]
-    invalid_post_id = CommentId(1)
+    invalid_comment_id = CommentId(1)
     with pytest.raises(http_errors.BadRequest):
-        comment_react(token, invalid_post_id)
+        comment_react(token, invalid_comment_id)

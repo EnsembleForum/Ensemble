@@ -157,11 +157,11 @@ class Comment:
 
     def react(self, user: User):
         """
-        React to the post if the user has not reacted to the post
-        Unreact to the post if the user has reacted to the post
+        React to the comment if the user has not reacted to the comment
+        Unreact to the comment if the user has reacted to the comment
 
         ### Args:
-        * `user` (`User`): User reacting/unreacting to the post
+        * `user` (`User`): User reacting/unreacting to the comment
         """
         row = self._get()
         if user.id in row.thanks:
