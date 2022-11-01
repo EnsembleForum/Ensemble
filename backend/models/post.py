@@ -303,7 +303,8 @@ class Post:
             "post_id": PostId(self.id),
             "tags": self.tags,
             "me_too": self.me_too,
-            "is_private": self.private,
+            "private": self.private,
+            "anonymous": self.anonymous,
         }
 
     @property
@@ -322,5 +323,6 @@ class Post:
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
             "comments": [c.id for c in self.comments],
-            "is_private": self.private,
+            "private": self.private,
+            "anonymous": self.anonymous,
         }

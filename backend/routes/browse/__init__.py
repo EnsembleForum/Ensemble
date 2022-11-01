@@ -39,8 +39,9 @@ def create(user: User, *_) -> IPostId:
     text: str = data["text"]
     tags: list[int] = data["tags"]
     private: bool = data["private"]
+    anonymous: bool = data["anonymous"]
 
-    post_id = Post.create(user, heading, text, tags, private).id
+    post_id = Post.create(user, heading, text, tags, private, anonymous).id
 
     return {"post_id": post_id}
 

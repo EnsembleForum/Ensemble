@@ -48,4 +48,5 @@ def test_get_post_success(simple_users: ISimpleUsers):
         float(post["timestamp"])) - post_time < timedelta(seconds=5)
     assert post["tags"] == []
     assert post["me_too"] == []
-    assert not post["is_private"]
+    assert not post["private"]
+    assert not post["anonymous"]

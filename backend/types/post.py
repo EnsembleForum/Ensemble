@@ -21,16 +21,17 @@ class IPostBasicInfo(TypedDict):
     * `heading`: `str`
     * `post_id`: `PostId`
     * `tags`: `list[int]`
-    * `me_too`: `int`
-    * `is_private`: `bool`
+    * `me_too`: `list[UserId]`
+    * `private`: `bool`
+    * `anonymous`: `bool`
     """
-
     author: UserId
     heading: str
     post_id: PostId
     tags: list[int]
     me_too: list[UserId]
-    is_private: bool
+    private: bool
+    anonymous: bool
 
 
 class IPostBasicInfoList(TypedDict):
@@ -42,9 +43,10 @@ class IPostBasicInfoList(TypedDict):
         * `heading`: `str`
         * `post_id`: `PostId`
         * `tags`: `list[int]`
-        * `reacts`: `IReacts`
+        * `me_too`: `list[UserId]`
+        * `private`: `bool`
+        * `anonymous`: `bool`
     """
-
     posts: list[IPostBasicInfo]
 
 
@@ -54,7 +56,6 @@ class IPostId(TypedDict):
 
     * `post_id`: `PostId`
     """
-
     post_id: PostId
 
 
@@ -66,10 +67,11 @@ class IPostFullInfo(TypedDict):
     * `heading`: `str`
     * `text`: `str`
     * `tags`: `list[int]`
-    * `me_too`: `int`
+    * `me_too`: `list[UserId]`
     * `comments`: `list[CommentId]`
     * `timestamp`: `int`
-    * `is_private`: `bool`
+    * `private`: `bool`
+    * `anonymous`: `bool`
     """
     author: UserId
     heading: str
@@ -78,4 +80,5 @@ class IPostFullInfo(TypedDict):
     me_too: list[UserId]
     comments: list[CommentId]
     timestamp: int
-    is_private: bool
+    private: bool
+    anonymous: bool
