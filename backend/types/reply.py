@@ -20,8 +20,10 @@ class IReplyFullInfo(TypedDict):
     * `text`: `str`
     * `thanks`: `int`
     * `timestamp`: `int`
+    * `user_reacted`: `bool`
     """
     author: UserId
-    thanks: list[UserId]
+    thanks: int
     text: str
     timestamp: int
+    user_reacted: bool

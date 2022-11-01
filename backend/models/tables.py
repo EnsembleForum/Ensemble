@@ -127,7 +127,7 @@ class TCommentReacts(_BaseTable):
     """
 
     user = ForeignKey(TUser)
-    post = ForeignKey(TComment)
+    comment = ForeignKey(TComment)
 
 
 class TReplyReacts(_BaseTable):
@@ -136,7 +136,7 @@ class TReplyReacts(_BaseTable):
     """
 
     user = ForeignKey(TUser)
-    post = ForeignKey(TReply)
+    reply = ForeignKey(TReply)
 
 
 class TToken(_BaseTable):

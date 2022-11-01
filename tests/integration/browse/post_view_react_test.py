@@ -6,6 +6,7 @@ Tests for post_view/react
 * Succeeds when one user tries to react to a post
 * Succeeds when multiple users react & unreact to a post
 * User can react to more than one post
+* The person viewing the post can see if he has reacted to the post
 * Fails when the given post_id does not exist
 """
 import pytest
@@ -40,7 +41,7 @@ def test_react_one_user(
     post = post_view(token, post_id)
     assert post["me_too"] == 1
     assert post["user_reacted"]
-    
+
     post = post_view(token1, post_id)
     assert post["me_too"] == 1
     assert not post["user_reacted"]

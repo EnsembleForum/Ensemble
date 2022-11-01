@@ -21,7 +21,7 @@ def get_reply(user: User, *_) -> IReplyFullInfo:
     user.permissions.assert_can(Permission.PostView)
     reply_id = ReplyId(request.args["reply_id"])
     reply = Reply(reply_id)
-    return reply.full_info
+    return reply.full_info(user)
 
 
 @reply_view.put("/react")

@@ -2,9 +2,8 @@
 # Backend / Models / Reply
 """
 from backend.types.reply import IReplyFullInfo
-from .tables import TReply
+from .tables import TReply, TReplyReacts
 from .user import User
-from backend.types.identifiers import UserId
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import ReplyId
@@ -60,7 +59,7 @@ class Reply:
                     TReply.author: author.id,
                     TReply.text: text,
                     TReply.parent: comment.id,
-                    TReply.thanks: [],
+                    # TReply.thanks: [],
                     TReply.timestamp: datetime.now()
                 }
             )
@@ -130,14 +129,29 @@ class Reply:
         return Comment(self._get().parent)
 
     @property
-    def thanks(self) -> list[UserId]:
+    def thanks(self) -> int:
         """
         Returns the number of 'thanks' reacts
 
         ### Returns:
         * int: number of 'thanks' reacts
         """
-        return self._get().thanks
+        return cast(
+            int,
+            TReplyReacts.count()
+            .where(TReplyReacts.reply == self.id).run_sync()
+        )
+
+    def has_reacted(self, user: User) -> bool:
+        """
+        Returns whether the user has reacted to this comment
+        """
+        return cast(
+            bool,
+            TReplyReacts.count()
+            .where(TReplyReacts.reply == self.id,
+                   TReplyReacts.user == user.id).run_sync()
+        )
 
     def react(self, user: User):
         """
@@ -147,12 +161,18 @@ class Reply:
         ### Args:
         * `user` (`User`): User reacting/un-reacting to the reply
         """
-        row = self._get()
-        if user.id in row.thanks:
-            row.thanks.remove(user.id)
+        if not self.has_reacted(user):
+            TReplyReacts(
+                {
+                    TReplyReacts.user: user.id,
+                    TReplyReacts.reply: self.id,
+                }
+            ).save().run_sync()
         else:
-            row.thanks.append(user.id)
-        row.save().run_sync()
+            TReplyReacts.delete()\
+                .where(TReplyReacts.user == user.id,
+                       TReplyReacts.reply == self.id)\
+                .run_sync()
 
     @property
     def timestamp(self) -> datetime:
@@ -164,8 +184,7 @@ class Reply:
         """
         return self._get().timestamp
 
-    @property
-    def full_info(self) -> IReplyFullInfo:
+    def full_info(self, user: User) -> IReplyFullInfo:
         """
         Returns the full info of a reply
 
@@ -177,4 +196,5 @@ class Reply:
             "thanks": self.thanks,
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
+            "user_reacted": self.has_reacted(user),
         }

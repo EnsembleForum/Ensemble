@@ -22,7 +22,7 @@ comment_view = Blueprint("comment_view", "comment_view")
 def get_comment(user: User, *_) -> ICommentFullInfo:
     user.permissions.assert_can(Permission.PostView)
     comment = Comment(CommentId(request.args["comment_id"]))
-    return comment.full_info
+    return comment.full_info(user)
 
 
 @comment_view.post("/reply")
