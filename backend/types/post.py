@@ -64,7 +64,7 @@ class IPostFullInfo(TypedDict):
     * `heading`: `str`
     * `text`: `str`
     * `tags`: `list[int]`
-    * `reacts`: `IReacts`
+    * `me_too`: `int`
     * `comments`: `list[CommentId]`
     * `timestamp`: `int`
     """
