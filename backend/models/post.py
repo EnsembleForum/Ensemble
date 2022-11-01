@@ -4,8 +4,7 @@
 from .tables import TComment, TPost
 from .user import User
 from .comment import Comment
-from .content import Content
-from backend.util.db_queries import get_by_id  # assert_id_exists,
+from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
@@ -15,7 +14,7 @@ if TYPE_CHECKING:
     from backend.models.queue import Queue
 
 
-class Post(Content):
+class Post:
     """
     Represents a post of Ensemble
     """
@@ -30,9 +29,8 @@ class Post(Content):
         ### Raises:
         * `IdNotFound`: post does not exist
         """
-        super().__init__(TPost, id, "post")
-        # assert_id_exists(TPost, id, "Post")
-        # self.__id = id
+        assert_id_exists(TPost, id, "Post")
+        self.__id = id
 
     @classmethod
     def create(
@@ -41,6 +39,8 @@ class Post(Content):
         heading: str,
         text: str,
         tags: list[int],
+        private: bool = False,
+        anonymous: bool = False
     ) -> "Post":
         """
         Create a new post
@@ -70,6 +70,8 @@ class Post(Content):
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
                     TPost.queue: Queue.get_main_queue().id,
+                    TPost.private: private,
+                    TPost.anonymous: anonymous,
                 }
             )
             .save()
@@ -102,30 +104,30 @@ class Post(Content):
         return [
             Comment(c["id"])
             for c in TComment.select()
-            .where(TComment.parent == super().id)
+            .where(TComment.parent == self.__id)
             .order_by(TComment.id, ascending=False)
             .run_sync()
         ]
 
-    # def delete(self):
-    #     """
-    #     Deletes this post from the database
+    def delete(self):
+        """
+        Deletes this post from the database
 
-    #     """
-    #     TPost.delete().where(TPost.id == self.id).run_sync()
+        """
+        TPost.delete().where(TPost.id == self.id).run_sync()
 
     def _get(self) -> TPost:
         """
         Return a reference to the underlying database row
         """
-        return get_by_id(TPost, super().id)
+        return get_by_id(TPost, self.__id)
 
     @property
     def id(self) -> PostId:
         """
         Identifier of the post
         """
-        return PostId(super().id)
+        return self.__id
 
     @property
     def heading(self) -> str:
@@ -237,6 +239,38 @@ class Post(Content):
         return self._get().timestamp
 
     @property
+    def private(self) -> bool:
+        """
+        Returns true if the post is a private post
+
+        ### Returns:
+        * bool: private
+        """
+        return self._get().private
+
+    @private.setter
+    def private(self, new_private: bool):
+        row = self._get()
+        row.private = new_private
+        row.save().run_sync()
+
+    @property
+    def anonymous(self) -> bool:
+        """
+        Returns true if the post is an anonymous post
+
+        ### Returns:
+        * bool: anonymous
+        """
+        return self._get().anonymous
+
+    @anonymous.setter
+    def anonymous(self, new_anonymous: bool):
+        row = self._get()
+        row.anonymous = new_anonymous
+        row.save().run_sync()
+
+    @property
     def basic_info(self) -> IPostBasicInfo:
         """
         Returns the basic info of a post
@@ -247,7 +281,7 @@ class Post(Content):
         return {
             "author": self.author.id,
             "heading": self.heading,
-            "post_id": PostId(super().id),
+            "post_id": PostId(self.id),
             "tags": self.tags,
             "me_too": self.me_too,
         }

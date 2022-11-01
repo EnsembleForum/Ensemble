@@ -84,6 +84,8 @@ class TPost(_BaseTable):
     me_too = Array(Integer())
     timestamp = Timestamp()
     queue = ForeignKey(TQueue)
+    private = Boolean()
+    anonymous = Boolean()
 
 
 class TComment(_BaseTable):

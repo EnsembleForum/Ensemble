@@ -78,7 +78,7 @@ def test_react_multiple_users(
     assert reply["thanks"] == 0
 
 
-def test_one_user_multiple_comments(
+def test_one_user_multiple_replies(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts
 ):
