@@ -3,6 +3,7 @@ import React, { JSXElementConstructor } from "react";
 import { Box, IconButton, Input, Text } from "theme-ui";
 import { postView } from "../../interfaces";
 import { StyledButton } from "../GlobalProps";
+import AuthorView from "./AuthorView";
 
 // Declaring and typing our props
 interface Props {
@@ -25,20 +26,25 @@ const StyledText = styled.div`
   }
 `
 // Exporting our example component
-const PostView = (props: Props) => {
+const TextView = (props: Props) => {
   let heading = <></>;
   let reacts = <></>;
+  let author = <></>
   if (props.heading) {
     heading = <h1>{props.heading}</h1>
   }
   if (props.reacts) {
     reacts = <div>thanks: {props.reacts.thanks} <br /> me_too: {props.reacts.me_too}</div>;
   }
+  if (props.author) {
+    heading = <AuthorView userId={props.author}/>
+  }
   return (
     <StyledText>
       {heading}
       <p>{props.text}</p>
       {reacts}
+
       <div>
         <Input></Input>
         <StyledButton>Post</StyledButton>
@@ -47,4 +53,4 @@ const PostView = (props: Props) => {
   );
 };
 
-export default PostView;
+export default TextView;

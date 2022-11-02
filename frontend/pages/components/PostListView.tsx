@@ -6,6 +6,7 @@ import { ApiFetch } from "../../App";
 import { APIcall, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
 import PostContext from "../postContext";
+import AuthorView from "./AuthorView";
 import PostListItem from "./PostListItem";
 
 // Declaring and typing our props
@@ -52,7 +53,7 @@ const PostListView = (props: Props) => {
                 <ActivePost onClick={() => {
                   setPostId(each.post_id);
                 }}>
-                  {each.heading} <br /> {each.author}<br />Tags: {each.tags}
+                  {each.heading} <br /> <AuthorView userId={each.author}/><br />Tags: {each.tags}
                 </ActivePost>
               );
             }
@@ -60,7 +61,7 @@ const PostListView = (props: Props) => {
               <Post onClick={() => {
                 setPostId(each.post_id);
               }}>
-                {each.heading} <br /> {each.author}<br />Tags: {each.tags}
+                {each.heading} <br /> <AuthorView userId={each.author}/><br />Tags: {each.tags}
               </Post>
             );
           })}
