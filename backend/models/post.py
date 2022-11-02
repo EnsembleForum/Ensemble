@@ -1,13 +1,14 @@
 """
 # Backend / Models / Post
 """
-from .tables import TComment, TPost
+from .tables import TComment, TPost, TPostReacts
 from .user import User
 from .comment import Comment
-from backend.util.db_queries import assert_id_exists, get_by_id
+from .permissions import Permission
+from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId
-from backend.types.post import IPostBasicInfo, IPostFullInfo, IReacts
+from backend.types.post import IPostBasicInfo, IPostFullInfo
 from typing import cast, TYPE_CHECKING
 from datetime import datetime
 if TYPE_CHECKING:
@@ -39,6 +40,8 @@ class Post:
         heading: str,
         text: str,
         tags: list[int],
+        private: bool = False,
+        anonymous: bool = False
     ) -> "Post":
         """
         Create a new post
@@ -64,11 +67,12 @@ class Post:
                     TPost.author: author.id,
                     TPost.heading: heading,
                     TPost.text: text,
-                    TPost.me_too: 0,
-                    TPost.thanks: 0,
+                    # TPost.me_too: [],
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
                     TPost.queue: Queue.get_main_queue().id,
+                    TPost.private: private,
+                    TPost.anonymous: anonymous,
                 }
             )
             .save()
@@ -89,6 +93,27 @@ class Post:
             Post(p["id"]) for p in
             TPost.select().order_by(TPost.id, ascending=False).run_sync()
         ]
+
+    def can_view(self, user: User) -> bool:
+        """
+        Returns whether the user can view this post
+        ### Returns:
+        * `bool`: whether the user can view the post
+        """
+        if self.private and self.author != user:
+            return user.permissions.can(Permission.ViewPrivate)
+        return True
+
+    @classmethod
+    def can_view_list(cls, user: User) -> list["Post"]:
+        """
+        Returns a list of posts that the given user has permissions to view
+        ### Returns:
+        * `list[Post]`: list of posts
+        """
+        permitted_list = [p for p in cls.all() if p.can_view(user)]
+
+        return permitted_list
 
     @property
     def comments(self) -> list["Comment"]:
@@ -208,49 +233,40 @@ class Post:
         ### Returns:
         * int: number of 'me too' reacts
         """
-        return self._get().me_too
+        return cast(
+            int,
+            TPostReacts.count().where(TPostReacts.post == self.id).run_sync()
+        )
 
-    def me_too_inc(self):
+    def has_reacted(self, user: User) -> bool:
         """
-        Increments the number of me_too's this post has
+        Returns whether the user has reacted to this post
         """
-        row = self._get()
-        row.me_too += 1
-        row.save().run_sync()
+        return cast(
+            bool,
+            TPostReacts.count()
+            .where(TPostReacts.post == self.id,
+                   TPostReacts.user == user.id).run_sync()
+        )
 
-    def me_too_dec(self):
+    def react(self, user: User):
         """
-        Decrements the number of me_too's this post has
-        """
-        row = self._get()
-        row.me_too -= 1
-        row.save().run_sync()
+        React to the post if the user has not reacted to the post
+        Unreact to the post if the user has reacted to the post
 
-    @property
-    def thanks(self) -> int:
+        ### Args:
+        * `user` (`User`): User reacting/un-reacting to the post
         """
-        Returns the number of 'thanks' reacts
-
-        ### Returns:
-        * int: number of 'thanks' reacts
-        """
-        return self._get().thanks
-
-    def thanks_inc(self):
-        """
-        Increments the number of thanks' this post has
-        """
-        row = self._get()
-        row.thanks += 1
-        row.save().run_sync()
-
-    def thanks_dec(self):
-        """
-        Decrements the number of thanks' this post has
-        """
-        row = self._get()
-        row.thanks -= 1
-        row.save().run_sync()
+        if not self.has_reacted(user):
+            TPostReacts(
+                {
+                    TPostReacts.user: user.id,
+                    TPostReacts.post: self.id,
+                }
+            ).save().run_sync()
+        else:
+            TPostReacts.delete().where(TPostReacts.user == user.id,
+                                       TPostReacts.post == self.id).run_sync()
 
     @property
     def timestamp(self) -> datetime:
@@ -263,19 +279,37 @@ class Post:
         return self._get().timestamp
 
     @property
-    def reacts(self) -> IReacts:
+    def private(self) -> bool:
         """
-        Returns the reactions to the post
+        Returns true if the post is a private post
 
         ### Returns:
-        * IReacts: Dictionary containing the reactions
+        * bool: private
         """
-        return {
-            "thanks": self.thanks,
-            "me_too": self.me_too,
-        }
+        return self._get().private
+
+    @private.setter
+    def private(self, new_private: bool):
+        row = self._get()
+        row.private = new_private
+        row.save().run_sync()
 
     @property
+    def anonymous(self) -> bool:
+        """
+        Returns true if the post is an anonymous post
+
+        ### Returns:
+        * bool: anonymous
+        """
+        return self._get().anonymous
+
+    @anonymous.setter
+    def anonymous(self, new_anonymous: bool):
+        row = self._get()
+        row.anonymous = new_anonymous
+        row.save().run_sync()
+
     def basic_info(self) -> IPostBasicInfo:
         """
         Returns the basic info of a post
@@ -286,13 +320,14 @@ class Post:
         return {
             "author": self.author.id,
             "heading": self.heading,
-            "post_id": self.id,
+            "post_id": PostId(self.id),
             "tags": self.tags,
-            "reacts": self.reacts,
+            "me_too": self.me_too,
+            "private": self.private,
+            "anonymous": self.anonymous,
         }
 
-    @property
-    def full_info(self) -> IPostFullInfo:
+    def full_info(self, user: User) -> IPostFullInfo:
         """
         Returns the full info of a post
 
@@ -303,8 +338,11 @@ class Post:
             "author": self.author.id,
             "heading": self.heading,
             "tags": self.tags,
-            "reacts": self.reacts,
+            "me_too": self.me_too,
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
             "comments": [c.id for c in self.comments],
+            "private": self.private,
+            "anonymous": self.anonymous,
+            "user_reacted": self.has_reacted(user),
         }

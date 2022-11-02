@@ -2,12 +2,11 @@
 # Backend / Models / Reply
 """
 from backend.types.reply import IReplyFullInfo
-from .tables import TReply
+from .tables import TReply, TReplyReacts
 from .user import User
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import ReplyId
-from backend.types.post import IReacts
 from typing import cast, TYPE_CHECKING
 from datetime import datetime
 if TYPE_CHECKING:
@@ -59,9 +58,8 @@ class Reply:
                 {
                     TReply.author: author.id,
                     TReply.text: text,
-                    TReply.me_too: 0,
                     TReply.parent: comment.id,
-                    TReply.thanks: 0,
+                    # TReply.thanks: [],
                     TReply.timestamp: datetime.now()
                 }
             )
@@ -131,32 +129,6 @@ class Reply:
         return Comment(self._get().parent)
 
     @property
-    def me_too(self) -> int:
-        """
-        Returns the number of 'me too' reacts
-
-        ### Returns:
-        * int: number of 'me too' reacts
-        """
-        return self._get().me_too
-
-    def me_too_inc(self):
-        """
-        Increments the number of me_too's this reply has
-        """
-        row = self._get()
-        row.me_too += 1
-        row.save().run_sync()
-
-    def me_too_dec(self):
-        """
-        Decrements the number of me_too's this reply has
-        """
-        row = self._get()
-        row.me_too -= 1
-        row.save().run_sync()
-
-    @property
     def thanks(self) -> int:
         """
         Returns the number of 'thanks' reacts
@@ -164,23 +136,43 @@ class Reply:
         ### Returns:
         * int: number of 'thanks' reacts
         """
-        return self._get().thanks
+        return cast(
+            int,
+            TReplyReacts.count()
+            .where(TReplyReacts.reply == self.id).run_sync()
+        )
 
-    def thanks_inc(self):
+    def has_reacted(self, user: User) -> bool:
         """
-        Increments the number of thanks' this reply has
+        Returns whether the user has reacted to this comment
         """
-        row = self._get()
-        row.thanks += 1
-        row.save().run_sync()
+        return cast(
+            bool,
+            TReplyReacts.count()
+            .where(TReplyReacts.reply == self.id,
+                   TReplyReacts.user == user.id).run_sync()
+        )
 
-    def thanks_dec(self):
+    def react(self, user: User):
         """
-        Decrements the number of thanks' this reply has
+        React to the reply if the user has not reacted to the reply
+        Unreact to the reply if the user has reacted to the reply
+
+        ### Args:
+        * `user` (`User`): User reacting/un-reacting to the reply
         """
-        row = self._get()
-        row.thanks -= 1
-        row.save().run_sync()
+        if not self.has_reacted(user):
+            TReplyReacts(
+                {
+                    TReplyReacts.user: user.id,
+                    TReplyReacts.reply: self.id,
+                }
+            ).save().run_sync()
+        else:
+            TReplyReacts.delete()\
+                .where(TReplyReacts.user == user.id,
+                       TReplyReacts.reply == self.id)\
+                .run_sync()
 
     @property
     def timestamp(self) -> datetime:
@@ -192,21 +184,7 @@ class Reply:
         """
         return self._get().timestamp
 
-    @property
-    def reacts(self) -> IReacts:
-        """
-        Returns the reactions to the reply
-
-        ### Returns:
-        * IReacts: Dictionary containing the reactions
-        """
-        return {
-            "thanks": self.thanks,
-            "me_too": self.me_too,
-        }
-
-    @property
-    def full_info(self) -> IReplyFullInfo:
+    def full_info(self, user: User) -> IReplyFullInfo:
         """
         Returns the full info of a reply
 
@@ -215,7 +193,8 @@ class Reply:
         """
         return {
             "author": self.author.id,
-            "reacts": self.reacts,
+            "thanks": self.thanks,
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
+            "user_reacted": self.has_reacted(user),
         }

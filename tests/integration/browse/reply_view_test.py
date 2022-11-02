@@ -30,8 +30,7 @@ def test_get_reply_success(simple_users: ISimpleUsers, make_posts: IMakePosts):
 
     assert reply["text"] == reply_text
     assert isinstance(reply["timestamp"], int)
-    assert reply["reacts"]["me_too"] == 0
-    assert reply["reacts"]["thanks"] == 0
+    assert reply["thanks"] == 0
 
 
 def test_invalid_reply_id(simple_users: ISimpleUsers, make_posts: IMakePosts):
