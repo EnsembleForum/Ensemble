@@ -44,11 +44,6 @@ const PostView = (props: Props) => {
       .then((data) => {
         const postToShow = data as postView;
         postToShow.post_id = postId;
-        const call: APIcall = {
-          method: "GET",
-          path: "browse/post_view",
-          params: { "post_id": postId.toString() }
-        }
         setCurrentPost(postToShow);
       });
     return (

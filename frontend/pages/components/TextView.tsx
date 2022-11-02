@@ -24,6 +24,9 @@ const StyledText = styled.div`
   * {
     margin-bottom: 10px;
   }
+  h1 {
+    margin-top: 0px;
+  }
 `
 // Exporting our example component
 const TextView = (props: Props) => {
@@ -37,11 +40,13 @@ const TextView = (props: Props) => {
     reacts = <div>thanks: {props.reacts.thanks} <br /> me_too: {props.reacts.me_too}</div>;
   }
   if (props.author) {
-    heading = <AuthorView userId={props.author}/>
+    author = <AuthorView userId={props.author}/>
   }
   return (
     <StyledText>
       {heading}
+      {author}
+
       <p>{props.text}</p>
       {reacts}
 
