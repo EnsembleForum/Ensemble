@@ -18,6 +18,8 @@ const StyledLayout = styled.div`
   p {
     margin-left: 10px;
   }
+  overflow-y: scroll;
+  overflow-x: hidden;
 `
 const Post = styled.div`
   max-width: 100%;
@@ -30,7 +32,6 @@ const Post = styled.div`
     cursor: pointer;
   }
   * {
-    overflow: hidden;
     text-overflow: ellipsis;
   }
 `

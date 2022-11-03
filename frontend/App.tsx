@@ -9,7 +9,6 @@ import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
 import PasswordResetPage from './pages/PasswordResetPage';
-import PostContext from './pages/postContext';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
@@ -63,11 +62,8 @@ export function getToken(): string | null {
 
 
 function PassThrough() {
-  const [postId, setPostId] = React.useState(0);
-  const value = { postId, setPostId };
 
   return (
-    <PostContext.Provider value={value}>
       <Router>
         <Routes>
           <Route path="/" element={<Navigate to="/admin/init" />}></Route>
@@ -83,7 +79,6 @@ function PassThrough() {
           <Route path='/admin/registerusers' element={<UsersRegisterPage />} />
         </Routes>
       </Router>
-    </PostContext.Provider>
   );
 }
 export default PassThrough;

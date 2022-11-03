@@ -7,6 +7,7 @@ import CommentView from "./CommentView";
 import TextView from "./TextView";
 import PostContext from "../postContext";
 import { theme } from "../../theme";
+import CommentContext from "../commentContext";
 
 
 // Declaring and typing our props
@@ -16,23 +17,30 @@ const StyledPostListView = styled.div`
   height: 100vh;
   background-color: ${theme.colors?.background};
   padding: 20px;
-  overflow: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden;
 `
 // Exporting our example component
 const PostView = (props: Props) => {
+  const [commentCount, setCommentCount] = React.useState(0);
+  const value = { commentCount, setCommentCount};
   const { postId, setPostId } = React.useContext(PostContext);
   // This is the data we would be APIfetching on props change
   const [currentPost, setCurrentPost] = React.useState<postView>();
   if (currentPost && currentPost?.post_id === postId) {
     return (
-      <StyledPostListView>
-        <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.reacts}></TextView>
-        {
-          currentPost.comments.map((commentId) => {
-            return (<CommentView key={commentId} commentId={commentId} />);
-          })
-        }
-      </StyledPostListView >
+      <CommentContext.Provider value={value}>
+       <StyledPostListView>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.reacts} id={postId} type={"postcomment"}></TextView>
+          <hr/>
+          <h3>Replies</h3>
+          {
+            currentPost.comments.map((commentId) => {
+              return (<CommentView key={commentId} commentId={commentId} />);
+            })
+          }
+        </StyledPostListView >
+      </CommentContext.Provider>
     )
   } else if (postId > 0) {
     const call: APIcall = {
@@ -47,12 +55,17 @@ const PostView = (props: Props) => {
         setCurrentPost(postToShow);
       });
     return (
-      <StyledPostListView>
-      </StyledPostListView>
+      <CommentContext.Provider value={value}>
+        <StyledPostListView>
+        </StyledPostListView>
+      </CommentContext.Provider>
+
     )
   }
   return (
-    <StyledPostListView></StyledPostListView>
+    <CommentContext.Provider value={value}>
+      <StyledPostListView></StyledPostListView>
+    </CommentContext.Provider>
   );
 
 };

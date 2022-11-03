@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const StyledNavbar = styled.div`
-  height: 60px;
+  height: 10vh;
   width: 100vw;
   display: flex;
   border-bottom: 1px solid lightgrey;
