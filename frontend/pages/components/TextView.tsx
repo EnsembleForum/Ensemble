@@ -67,6 +67,7 @@ const StyledPostButton = styled(StyledButton)`
 const TextView = (props: Props) => {
   const [text, setText] = React.useState<string>();
   const [toggleReply, setToggleReply] = React.useState<boolean>(false);
+  const [toggleReact, setToggleReact] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
   const routes = {
     "postcomment": ["browse/post_view/comment", "Me too: "],
@@ -78,9 +79,6 @@ const TextView = (props: Props) => {
   let author = <></>
   if (props.heading) {
     heading = <h1>{props.heading}</h1>
-  }
-  if (props.reacts) {
-    reacts = <div>{routes[props.type][1]} {props.reacts}</div>;
   }
   if (props.author) {
     author = <AuthorView userId={props.author}/>
@@ -108,8 +106,12 @@ const TextView = (props: Props) => {
       <StyledPost>
         {heading}
         {author}
+        <br/>
+        <StyledButton onClick={(e) => {
+         
+
+        }}>{routes[props.type][1]} {props.reacts}</StyledButton>
         <p>{props.text}</p>
-        {reacts}
         { toggleReply ? reply : replyButton}
       </StyledPost>
       { props.type === "postcomment" ? <></>: <StyledBorder/>}

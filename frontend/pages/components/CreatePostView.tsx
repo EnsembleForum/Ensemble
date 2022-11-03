@@ -10,14 +10,7 @@ import TaskboardPage from "../TaskboardPage";
 import TextView from "./TextView";
 
 // Declaring and typing our props
-interface Props {
-  text?: string,
-  heading?: string,
-  reacts?: {
-    thanks: number,
-    me_too: number
-  }
-}
+interface Props {}
 const StyledPost = styled.div`
   padding: 10px 10px 0 10px;
   border: 1px solid grey;
