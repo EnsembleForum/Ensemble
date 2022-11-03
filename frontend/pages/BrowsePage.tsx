@@ -19,8 +19,7 @@ const StyledLayout = styled.div`
 const Layout = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
-  max-height: 100%;
+  height: 100vh;
 `
 
 
@@ -47,8 +46,9 @@ const BrowsePage = (props: Props) => {
         <StyledLayout>
           <PostListView />
           <PostView />
-          <CreatePostView />
         </StyledLayout>
+        <CreatePostView />
+
       </Layout>
     </PostContext.Provider>
   );

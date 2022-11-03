@@ -14,7 +14,7 @@ import CommentContext from "../commentContext";
 interface Props { }
 const StyledPostListView = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   background-color: ${theme.colors?.background};
   padding: 20px;
   overflow-y: scroll;
@@ -31,9 +31,8 @@ const PostView = (props: Props) => {
     return (
       <CommentContext.Provider value={value}>
        <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.reacts} id={postId} type={"postcomment"}></TextView>
-          <hr/>
-          <h3>Replies</h3>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} type={"postcomment"}></TextView>
+          <hr/><h2>Replies</h2>
           {
             currentPost.comments.map((commentId) => {
               return (<CommentView key={commentId} commentId={commentId} />);

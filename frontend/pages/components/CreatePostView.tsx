@@ -39,6 +39,11 @@ const StyledPostButton = styled(StyledButton)`
   position: absolute;
   bottom: 20px;
   right: 20px;
+  filter: drop-shadow(0 0 0.5rem crimson);
+  &:hover {
+    filter: drop-shadow(0 0 0.5rem crimson);
+    filter: brightness(85%);
+  }
 `
 const SpreadButtons = styled.div`
   display: flex;
@@ -57,6 +62,8 @@ const CreatePostView = (props: Props) => {
     heading: '',
     tags: [],
     text: '',
+    private: false,
+    anonymous: false,
   });
   const { postId, setPostId } = React.useContext(PostContext);
   if (toggle) {
@@ -94,7 +101,7 @@ const CreatePostView = (props: Props) => {
     )
   } else {
     return (
-      <StyledPostButton onClick={(e) => { setToggle(true) }}>Post</StyledPostButton>
+      <StyledPostButton onClick={(e) => { setToggle(true) }}>New Post</StyledPostButton>
     )
   }
 };

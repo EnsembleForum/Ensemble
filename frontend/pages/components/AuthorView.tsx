@@ -19,6 +19,7 @@ const StyledAuthor = styled.a`
   }
 `
 const ActiveAuthor = styled(StyledAuthor)`
+  margin-top: 0;
   text-decoration: underline;
   font-weight: 700;
 `
@@ -67,9 +68,7 @@ const AuthorView = (props: Props) => {
         setAuthor(user);
       });
     return (
-      <StyledText>
-        Loading
-      </StyledText>
+      <></>
     );
   }  
 };

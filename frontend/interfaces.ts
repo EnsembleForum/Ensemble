@@ -76,16 +76,22 @@ export interface postView {
   author: number,
   heading: string,
   tags: number[],
-  reacts: reacts,
+  me_too: number,
   comments: number[],
   text: string,
+  timestamp: number,
+  anonymous:boolean,
+  private:boolean, 
+  user_reacted:boolean
 }
+
 export interface commentView {
-  text: string, replies: number[], timestamp: number, reacts: reacts, author: number
+  thanks: number;
+  text: string, replies: number[], timestamp: number, author: number
 }
 
 export interface replyView {
-  text: string, timestamp: number, reacts: reacts, author: number
+  text: string, timestamp: number, thanks: number, author: number
 }
 
 export interface userView {
@@ -100,4 +106,6 @@ export interface createPost {
   heading: string,
   tags: number[],
   text: string,
+  private:boolean, 
+  anonymous:boolean,
 }

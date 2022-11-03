@@ -1,13 +1,17 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { Box, IconButton, Text } from "theme-ui";
+import { ApiFetch } from "../../App";
 import { Prettify } from "../../global_functions";
+import { APIcall } from "../../interfaces";
 import { theme } from "../../theme";
+import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props {
-  page: "taskboard" | "browse" | "admin";
+  page: "taskboard" | "browse" | "admin" | "login";
 }
 
 export const StyledNavbar = styled.div`
@@ -36,7 +40,9 @@ export const StyledNavbar = styled.div`
   }
   h1 {
     font-weight: 300;
-
+  }
+  button {
+    margin-right: 10px;
   }
   background-color: ${theme.colors?.muted};
 `;
@@ -44,6 +50,19 @@ export const StyledNavbar = styled.div`
 // Exporting our example component
 const Navbar = (props: Props) => {
   const navigate = useNavigate();
+  const logout = (
+  <StyledButton onClick={(e) => {
+    const api: APIcall = {
+      method: "POST",
+      path: "auth/logout",
+    }
+    // eslint-disable-next-line no-restricted-globals
+    ApiFetch(api).then(()=>{
+      navigate(0);
+    });
+  }}>Logout</StyledButton>);
+  const login = (<StyledButton onClick={(e) => navigate("/login")}>Login</StyledButton>);
+
   let pages = [
     "browse",
     "taskboard",
@@ -58,6 +77,7 @@ const Navbar = (props: Props) => {
           navigate("/" + page)
         }}>{Prettify(page)}</a>)
       })}
+      {login} {logout}
     </StyledNavbar>
   );
 };

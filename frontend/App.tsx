@@ -67,8 +67,7 @@ function PassThrough() {
       <Router>
         <Routes>
           <Route path="/" element={<Navigate to="/admin/init" />}></Route>
-          <Route path='/admin/init' element={<InitPage />} />
-          <Route path='/admin' element={<AdminPage page={'initialise_forum'} />} />
+          <Route path='/admin/init' element={<AdminPage page={'initialise_forum'} />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterPage />} />
           <Route path='/password_reset' element={<PasswordResetPage />} />

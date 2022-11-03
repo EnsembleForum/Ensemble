@@ -13,7 +13,6 @@ interface Props {
   commentId: number;
 }
 const StyledPostListView=styled.div`
-background-color: lightyellow;
 
 `
 // Exporting our example component
@@ -24,7 +23,7 @@ const CommentView = (props: Props) => {
   if (comment) {
     return (
       <StyledPostListView>
-        <TextView text={comment.text} reacts={comment.reacts} type="postcomment" id={postId}></TextView>
+        <TextView text={comment.text} reacts={comment.thanks} type="commentreply" id={postId} author={comment.author}></TextView>
         {comment.replies.map((replyId) => {
           return (<ReplyView key={replyId} replyId={replyId}/>);
         })}

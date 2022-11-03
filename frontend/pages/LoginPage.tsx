@@ -5,13 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button, } from "theme-ui";
 import { ApiFetch, setToken } from "../App";
 import { APIcall, loginForm } from "../interfaces";
+import Navbar from "./components/Navbar";
 import { StyledButton } from "./GlobalProps";
 
 
 interface Props { }
 
 const LoginLayout = styled.div`
-  height: 100%;
+  height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,6 +45,9 @@ const LoginPage = (props: Props) => {
       })
   }
   return (
+    <>
+    <Navbar page={"login"}/>
+
     <LoginLayout>
       <StyledForm as="form" onSubmit={onSubmit}>
         <Label htmlFor="username">Username</Label>
@@ -53,6 +57,7 @@ const LoginPage = (props: Props) => {
         <StyledButton type="submit">Submit</StyledButton>
       </StyledForm>
     </LoginLayout>
+    </>
   );
 };
 
