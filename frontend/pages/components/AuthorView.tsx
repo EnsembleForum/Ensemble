@@ -26,7 +26,7 @@ const ActiveAuthor = styled(StyledAuthor)`
 
 const StyledText = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   padding: 10px;
   border-radius: 10px;
   overflow: hidden;
