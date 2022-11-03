@@ -12,6 +12,7 @@ from backend.models.comment import Comment
 from backend.types.identifiers import PostId
 from backend.types.post import IPostFullInfo
 from backend.types.comment import ICommentId
+from backend.types.react import IUserReacted
 from backend.util import http_errors
 from backend.util.tokens import uses_token
 
@@ -24,7 +25,11 @@ def get_post(user: User, *_) -> IPostFullInfo:
     user.permissions.assert_can(Permission.PostView)
     post_id = PostId(request.args["post_id"])
     post = Post(post_id)
-    return post.full_info
+    if not post.can_view(user):
+        raise http_errors.Forbidden(
+            "Do not have permissions to view this post"
+            )
+    return post.full_info(user)
 
 
 @post_view.put("/edit")
@@ -72,3 +77,14 @@ def comment(user: User, *_) -> ICommentId:
     comment_id = Comment.create(user, post, text).id
 
     return {"comment_id": comment_id}
+
+
+@post_view.put("/react")
+@uses_token
+def react(user: User, *_) -> IUserReacted:
+    user.permissions.assert_can(Permission.PostView)
+    data = json.loads(request.data)
+    post = Post(data["post_id"])
+    post.react(user)
+
+    return {"user_reacted": post.has_reacted(user)}

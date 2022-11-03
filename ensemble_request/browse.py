@@ -8,6 +8,7 @@ from backend.types.comment import ICommentFullInfo, ICommentId
 from backend.types.reply import IReplyId
 from backend.types.identifiers import CommentId, PostId, ReplyId
 from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
+from backend.types.react import IUserReacted
 
 from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
@@ -92,7 +93,8 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
 
 
 def post_create(
-    token: JWT, heading: str, text: str, tags: list[int]
+    token: JWT, heading: str, text: str, tags: list[int],
+    private: bool = False, anonymous: bool = False
 ) -> IPostId:
     """
     ## POST `/browse/create`
@@ -109,6 +111,8 @@ def post_create(
     * `heading` (`str`): heading of the post
     * `text` (`str`): text of the post
     * `tags` (`list[int]`): tags attached to the new post (ignore for sprint 1)
+    * `private` (`bool`): whether the post is private
+    * `anonymous` (`bool`): whether the author is anonymous
 
     ## Returns
     Object containing:
@@ -123,6 +127,8 @@ def post_create(
                 "heading": heading,
                 "text": text,
                 "tags": tags,
+                "private": private,
+                "anonymous": anonymous,
             },
         ),
     )
@@ -323,4 +329,82 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
                 "reply_id": reply_id,
             },
         ),
+    )
+
+
+def post_react(token: JWT, post_id: PostId) -> IUserReacted:
+    """
+    # PUT `/browse/post_view/react`
+
+    Reacts to a post if user has not reacted to that post
+    Un-reacts to a post if the user has reacted to that post
+
+    ## Permissions
+    * `PostView`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `post_id` (`PostId`): identifier of the post
+    """
+    return cast(
+        IUserReacted,
+        put(
+            token,
+            f"{URL}/post_view/react",
+            {"post_id": post_id, }
+        )
+    )
+
+
+def comment_react(token: JWT, comment_id: CommentId) -> IUserReacted:
+    """
+    # PUT `/browse/comment_view/react`
+
+    Reacts to a comment if user has not reacted to that comment
+    Un-reacts to a comment if the user has reacted to that comment
+
+    ## Permissions
+    * `PostView`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `comment_id` (`CommentId`): identifier of the comment
+    """
+    return cast(
+        IUserReacted,
+        put(
+            token,
+            f"{URL}/comment_view/react",
+            {"comment_id": comment_id, }
+        )
+    )
+
+
+def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
+    """
+    # PUT `/browse/reply_view/react`
+
+    Reacts to a reply if user has not reacted to that reply
+    Un-reacts to a reply if the user has reacted to that reply
+
+    ## Permissions
+    * `PostView`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `reply_id` (`ReplyId`): identifier of the reply
+    """
+    return cast(
+        IUserReacted,
+        put(
+            token,
+            f"{URL}/reply_view/react",
+            {"reply_id": reply_id, }
+        )
     )
