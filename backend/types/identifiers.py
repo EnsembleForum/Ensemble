@@ -66,3 +66,8 @@ class QueueId(Identifier):
     """
     Identifier for a queue
     """
+
+class FeedbackId(Identifier):
+    """
+    Identifier for a feedback
+    """

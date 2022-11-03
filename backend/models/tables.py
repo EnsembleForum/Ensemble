@@ -86,6 +86,13 @@ class TPost(_BaseTable):
     thanks = Integer()
     timestamp = Timestamp()
     queue = ForeignKey(TQueue)
+    isClosed = Boolean()
+    feedback = Text()
+
+
+class TFeedbackOptions(_BaseTable):
+    title = Text()
+    message = Text()
 
 
 class TComment(_BaseTable):

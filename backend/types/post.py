@@ -75,3 +75,13 @@ class IPostFullInfo(TypedDict):
     reacts: IReacts
     comments: list[CommentId]
     timestamp: int
+
+
+class IPostFeedback(TypedDict):
+    """
+    Full info about a feedback
+
+    * `feedback` (`_string_`): feedback message for the post
+    """
+    title: str
+    message: str

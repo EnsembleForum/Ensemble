@@ -69,6 +69,8 @@ class Post:
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
                     TPost.queue: Queue.get_main_queue().id,
+                    TPost.isClosed: False,
+                    TPost.feedback: '',
                 }
             )
             .save()
@@ -274,6 +276,26 @@ class Post:
             "thanks": self.thanks,
             "me_too": self.me_too,
         }
+
+    @property
+    def isClosed(self) -> bool:
+        return self._get().isClosed
+
+    @isClosed.setter
+    def isClosed(self, newStatus):
+        row = self._get()
+        row.isClosed = newStatus
+        row.save().run_sync()
+
+    @property
+    def feedback(self) -> str:
+        return self._get().feedback
+
+    @feedback.setter
+    def feedback(self, feedbackMessage: str):
+        row = self._get()
+        row.feedback = feedbackMessage
+        row.save().run_sync()
 
     @property
     def basic_info(self) -> IPostBasicInfo:

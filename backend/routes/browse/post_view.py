@@ -115,3 +115,19 @@ def comment(user: User, *_) -> ICommentId:
     comment_id = Comment.create(user, post, text).id
 
     return {"comment_id": comment_id}
+
+
+@post_view.put("/close")
+@uses_token
+def close(*_) -> IPostId:
+    data = json.loads(request.data)
+    newClosed: bool = data["isClosed"]
+    newFeedback: str = data["feedback"]
+
+    post_id: PostId = data["post_id"]
+    post = Post(data[post_id])
+
+    post.isClosed = newClosed
+    post.feedback = newFeedback
+
+    return {"post_id": post_id}
