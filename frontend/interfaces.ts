@@ -4,6 +4,7 @@ export interface exampleTest {
 }
 
 export interface APIcall {
+  params?: Record<string, string> | undefined;
   method: string, path: string, body?: object | null, customUrl?: string
 }
 
@@ -66,23 +67,31 @@ export interface postListItem {
   post_id: number,
   heading: string,
   tags: number[],
+  author: number,
   reacts: reacts
 }
 
 export interface postView {
   post_id: number,
+  author: number,
   heading: string,
   tags: number[],
-  reacts: reacts,
+  me_too: number,
   comments: number[],
   text: string,
+  timestamp: number,
+  anonymous:boolean,
+  private:boolean, 
+  user_reacted:boolean
 }
+
 export interface commentView {
-  text: string, replies: number[], timestamp: number, reacts: reacts, author: number
+  thanks: number;
+  text: string, replies: number[], timestamp: number, author: number
 }
 
 export interface replyView {
-  text: string, timestamp: number, reacts: reacts, author: number
+  text: string, timestamp: number, thanks: number, author: number
 }
 
 export interface userView {
@@ -91,4 +100,12 @@ export interface userView {
 
 export interface pageList {
   [key: string]: JSX.Element,
+}
+
+export interface createPost {
+  heading: string,
+  tags: number[],
+  text: string,
+  private:boolean, 
+  anonymous:boolean,
 }

@@ -3,8 +3,8 @@ import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { Prettify } from "../global_functions";
 import { pageList } from "../interfaces";
 import { theme } from "../theme";
+import Navbar, { StyledNavbar } from "./components/Navbar";
 import InitPage from "./InitPage";
-import { Navbar } from "./MainPage";
 import RegisterPage from "./RegisterPage";
 import TaskboardPage from "./TaskboardPage";
 import UsersRegisterPage from "./UsersRegisterPage";
@@ -13,7 +13,7 @@ interface Props {
   page: "initialise_forum" | "register_users";
 }
 
-const AdminPanel = styled(Navbar)`
+const AdminPanel = styled(StyledNavbar)`
   background-color: white;
   align-items: center;
   justify-content: center;
@@ -43,7 +43,8 @@ const AdminPage = (props: Props) => {
   };
   return (
     <>
-      <AdminPanel as="nav">
+      <Navbar page="admin" />
+      <AdminPanel>
         {Object.keys(pages).map((key) => {
           let active = '';
           if (key === currPage) {

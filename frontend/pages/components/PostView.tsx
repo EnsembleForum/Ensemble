@@ -1,68 +1,72 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { Box, IconButton, Text } from "theme-ui";
-import { postView } from "../../interfaces";
+import { ApiFetch } from "../../App";
+import { APIcall, postView } from "../../interfaces";
 import CommentView from "./CommentView";
 import TextView from "./TextView";
+import PostContext from "../postContext";
+import { theme } from "../../theme";
+import CommentContext from "../commentContext";
+
 
 // Declaring and typing our props
-interface Props {
-  postId: number;
-}
+interface Props { }
 const StyledPostListView = styled.div`
   width: 100%;
-  height: 100%;
-  background-color: lightblue;
+  height: 90vh;
+  background-color: ${theme.colors?.background};
   padding: 20px;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 `
 // Exporting our example component
 const PostView = (props: Props) => {
+  const [commentCount, setCommentCount] = React.useState(0);
+  const value = { commentCount, setCommentCount};
+  const { postId, setPostId } = React.useContext(PostContext);
   // This is the data we would be APIfetching on props change
-  /*const fakeDefaultValue : postView = {
-    post_id: 1,
-    heading: "Post1",
-    tags: [1, 2],
-    reacts: {
-      thanks: 1,
-      me_too: 1
-    },
-    comments: [],
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit"
-  }*/
-  const fakeDefaultValueList: postView[] = [{
-    post_id: 0,
-    heading: "Post1",
-    tags: [1, 2],
-    reacts: {
-      thanks: 1,
-      me_too: 1
-    },
-    comments: [0, 1, 2],
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit"
-  },
-  {
-    post_id: 1,
-    heading: "Post2",
-    tags: [1, 2],
-    reacts: {
-      thanks: 2,
-      me_too: 0
-    },
-    comments: [0],
-    text: "YOOOOOOOt"
-  }]
+  const [currentPost, setCurrentPost] = React.useState<postView>();
+  if (currentPost && currentPost?.post_id === postId) {
+    return (
+      <CommentContext.Provider value={value}>
+       <StyledPostListView>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} type={"postcomment"}></TextView>
+          <hr/><h2>Replies</h2>
+          {
+            currentPost.comments.map((commentId) => {
+              return (<CommentView key={commentId} commentId={commentId} />);
+            })
+          }
+        </StyledPostListView >
+      </CommentContext.Provider>
+    )
+  } else if (postId > 0) {
+    const call: APIcall = {
+      method: "GET",
+      path: "browse/post_view",
+      params: { "post_id": postId.toString() }
+    }
+    ApiFetch(call)
+      .then((data) => {
+        const postToShow = data as postView;
+        postToShow.post_id = postId;
+        setCurrentPost(postToShow);
+      });
+    return (
+      <CommentContext.Provider value={value}>
+        <StyledPostListView>
+        </StyledPostListView>
+      </CommentContext.Provider>
 
-  const postToShow = fakeDefaultValueList[props.postId];
+    )
+  }
   return (
-    <StyledPostListView>
-      <TextView heading={postToShow.heading} text={postToShow.text} reacts={postToShow.reacts}></TextView>
-      {postToShow.comments.map((commentId) => {
-        return (<CommentView key={commentId} commentId={commentId} />);
-      })}
-
-    </StyledPostListView>
+    <CommentContext.Provider value={value}>
+      <StyledPostListView></StyledPostListView>
+    </CommentContext.Provider>
   );
+
 };
 
 export default PostView;
