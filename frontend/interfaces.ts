@@ -87,12 +87,13 @@ export interface postView {
 }
 
 export interface commentView {
-  thanks: number;
+  thanks: number,
+  comment_id: number,
   text: string, replies: number[] | replyView[], timestamp: number, author: number
 }
 
 export interface replyView {
-  text: string, timestamp: number, thanks: number, author: number
+  reply_id: number, text: string, timestamp: number, thanks: number, author: number
 }
 
 export interface userView {

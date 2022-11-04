@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, IconButton, Input, Text } from "theme-ui";
+import { isPropertySignature } from "typescript";
 import { ApiFetch } from "../../App";
 import { APIcall, postView } from "../../interfaces";
 import CommentContext from "../commentContext";
@@ -31,9 +33,7 @@ const StyledText = styled.div`
     color: white;
   }
 `
-
 const StyledPost = styled.div`
-  padding-bottom: 10px;
 `
 const StyledBorder = styled.div`
   height: 1px;
@@ -46,7 +46,6 @@ const StyledReply = styled.div`
   button {
     border: 1px solid black;
     height: 40px;
-
   }
   input {
     border-right: 0;
@@ -55,7 +54,8 @@ const StyledReply = styled.div`
   }  
 `
 const StyledReplyButton = styled(StyledButton)`
-  border-radius: 0 10px 10px 0;
+    border-radius: 0 10px 10px 0;
+
 `
 const StyledPostButton = styled(StyledButton)`
   border-left: 0;
@@ -72,7 +72,7 @@ const TextView = (props: Props) => {
   const routes = {
     "post": ["browse/post_view/comment", "Me too: ", "browse/post_view/react", "post_id"],
     "comment": ["browse/comment_view/reply", "Thanks: ", "browse/comment_view/react", "comment_id"],
-    "reply": ["browse/reply_view/reply", "Thanks: ", "browse/reply_view/react", "reply_id"],
+    "reply": ["browse/comment_view/reply", "Thanks: ", "browse/reply_view/react", "comment_id"],
   }
   let heading = <></>;
   let reacts = <></>;
@@ -83,6 +83,12 @@ const TextView = (props: Props) => {
   if (props.author) {
     author = <AuthorView userId={props.author}/>
   }
+  if (props.type === "reply") {
+    const StyledPost = styled.div`
+      padding-left: 100px;
+    `
+  } 
+  
   const reply = (
   <StyledReply>
     <Input placeholder="Reply" value={text} onChange={(e)=>setText(e.target.value)} ></Input>
@@ -93,26 +99,25 @@ const TextView = (props: Props) => {
           body: {"text": text}
         }
         call.body[routes[props.type][3]] = props.id;
-        console.log(call);
+        console.log("ID:", props.id, call);
         ApiFetch(call).then(()=>{
           setCommentCount(commentCount + 1);
-          console.log(commentCount);
           setToggleReply(false);
         });
     }}>Post</StyledPostButton>
-    <StyledReplyButton onClick={(e) => setToggleReply(false)}>X</StyledReplyButton>
+    <StyledReplyButton onClick={() => setToggleReply(false)}>X</StyledReplyButton>
   </StyledReply>)
-  const replyButton = (<StyledButton onClick={(e) => setToggleReply(true)}>Reply</StyledButton>);
-
+  const replyButton = (<StyledButton onClick={() => setToggleReply(true)}>↩️</StyledButton>);
+  const navigate = useNavigate();
   return (
     <StyledText>
-      <StyledPost>
+      
+      <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
         {heading}
         {author}
         <br/>
         <p>{props.text}</p>
         <StyledButton onClick={(e) => {
-          const path = routes[props.type][2];
           const key = routes[props.type][3];
           const call : APIcall = {
             method: "PUT",
@@ -124,6 +129,7 @@ const TextView = (props: Props) => {
             () => {
               if (toggleReact) {setToggleReact(0)}
               else {setToggleReact(1)}
+              navigate("/browse");
             }
           );
         }}>{routes[props.type][1]} {

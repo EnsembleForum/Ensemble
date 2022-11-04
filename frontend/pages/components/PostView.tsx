@@ -29,45 +29,47 @@ const PostView = (props: Props) => {
   const [comments, setComments] = React.useState<commentView[]>();
   const [currentPost, setCurrentPost] = React.useState<postView>();
 
-  useEffect(() => {
-    async function getPost() {
-      console.log("getting post");
-      const call: APIcall = {
+  async function getPost() {
+    const call: APIcall = {
+      method: "GET",
+      path: "browse/post_view",
+      params: { "post_id": postId.toString() }
+    }
+    const postToShow = await ApiFetch(call) as postView;
+    let commentArray : commentView[] = [];
+    for (const commentId of postToShow.comments) {
+      const call : APIcall = {
         method: "GET",
-        path: "browse/post_view",
-        params: { "post_id": postId.toString() }
+        path: "browse/comment_view",
+        params: {"comment_id": commentId.toString()}
       }
-      const postToShow = await ApiFetch(call) as postView;
-      setCurrentPost(postToShow);
-      let promiseArray = [];
-      for (const commentId of postToShow.comments) {
+      const comment = await(ApiFetch(call)) as commentView;
+      commentArray.push(comment);
+    }
+    console.log("Fetched comments", commentArray);
+    for (const comment of commentArray) {
+      let replyArray : replyView[] = [];
+      for (const replyId of comment.replies) {
         const call : APIcall = {
           method: "GET",
-          path: "browse/comment_view",
-          params: {"comment_id": commentId.toString()}
+          path: "browse/reply_view",
+          params: {"reply_id": replyId.toString()}
         }
-        promiseArray.push(ApiFetch(call));
+        const reply = await ApiFetch(call) as replyView;
+        replyArray.push(reply);
       }
-      let commentArray : commentView[] = await Promise.all(promiseArray) as commentView[];
-      for (const comment of commentArray) {
-        let replyArray = [];
-        for (const replyId of comment.replies) {
-          const call : APIcall = {
-            method: "GET",
-            path: "browse/reply_view",
-            params: {"reply_id": replyId.toString()}
-          }
-          replyArray.push(ApiFetch(call));
-        }
-        comment.replies = await Promise.all(promiseArray) as replyView[];
-      }
-      setCurrentPost(postToShow);
-      setComments(commentArray);
+      comment.replies = replyArray;
     }
-    if (postId !== 0 && !currentPost && !comments) {
+    setCurrentPost(postToShow);
+    setComments(commentArray);
+  }
+
+  useEffect(() => {
+    if (postId !== 0) {
       getPost();
     }
-  })
+  },[commentCount])
+
   // This is the data we would be APIfetching on props change
   if (currentPost && currentPost?.post_id === postId && comments) {
     return (
@@ -78,16 +80,15 @@ const PostView = (props: Props) => {
           {
             comments.map((comment) => {
               return (
-                <StyledPostListView>
-                  <TextView text={comment.text} reacts={comment.thanks} type="comment" id={postId} author={comment.author}></TextView>
+                  <>
+                  <TextView key = {comment.comment_id} text={comment.text} reacts={comment.thanks} type="comment" id={comment.comment_id} author={comment.author}></TextView>
                   {comment.replies.map((reply) => {
                     const rep = reply as replyView;
                     return (
-                      <p>{rep.text}, {rep.thanks}, {rep.author}</p>
-                      //<TextView text={rep.text} reacts={rep.thanks} type="reply" author={rep.author} id={0}></TextView>
+                      <TextView text={rep.text} reacts={rep.thanks} type="reply" author={rep.author} id={comment.comment_id}></TextView>
                     )
                   })}
-                </StyledPostListView >
+                  </>
               )
             })
           }
@@ -95,6 +96,7 @@ const PostView = (props: Props) => {
       </CommentContext.Provider>
     )
   } else if (postId !== 0) {
+    getPost();
     return (
       <StyledPostListView> Loading... </StyledPostListView>
     );

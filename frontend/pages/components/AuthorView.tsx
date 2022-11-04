@@ -53,7 +53,7 @@ const AuthorView = (props: Props) => {
         </div>
       )
     } else {
-      return (<StyledAuthor onMouseEnter={(e) => setToggle(true)}> Author: {author.username} </StyledAuthor>)
+      return (<StyledAuthor onMouseEnter={(e) => setToggle(true)}> {author.username} </StyledAuthor>)
     }
     
   } else {
