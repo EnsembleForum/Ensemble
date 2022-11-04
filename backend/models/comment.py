@@ -5,6 +5,7 @@ from backend.types.comment import ICommentFullInfo
 from .tables import TReply, TComment, TCommentReacts
 from .user import User
 from .reply import Reply
+from backend.models.queue import Queue
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import CommentId
@@ -183,9 +184,12 @@ class Comment:
         if self.accepted:
             self.accepted = False
             self.parent.answered = False
+            self.parent.queue = Queue.get_main_queue()
         else:
             self.accepted = True
             self.parent.answered = True
+            print(Queue.get_queue("Answered queue").name)
+            self.parent.queue = Queue.get_queue("Answered queue")
 
     def has_reacted(self, user: User) -> bool:
         """

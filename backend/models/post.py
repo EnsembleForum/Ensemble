@@ -228,7 +228,9 @@ class Post:
 
     @queue.setter
     def queue(self, new_queue: "Queue"):
-        self._get().queue = new_queue.id
+        row = self._get()
+        row.queue = new_queue.id
+        row.save().run_sync()
 
     @property
     def tags(self) -> list[int]:
@@ -373,4 +375,5 @@ class Post:
             "anonymous": self.anonymous,
             "user_reacted": self.has_reacted(user),
             "answered": self.answered,
+            "queue": self.queue.id
         }

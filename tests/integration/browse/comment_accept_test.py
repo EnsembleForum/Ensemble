@@ -7,6 +7,7 @@ Tests for comment_view/accept
     a comment as accepted
 * Tests for browse/post_view and browse/post_list showing the post as answered
     when the post has at least one comment marked as accepted
+* Tests for post being sent to answered queue when it is marked as answered
 """
 import pytest
 from backend.util import http_errors
@@ -18,7 +19,8 @@ from ensemble_request.browse import (
     post_create,
     post_list
 )
-from tests.integration.conftest import IAllUsers
+from ensemble_request.taskboard import post_list
+from tests.integration.conftest import IAllUsers, ISimpleUsers
 
 
 def test_get_marking_accepted(
@@ -119,3 +121,24 @@ def test_comment_order(
     comments = post_view(user_token1, post_id)["comments"]
 
     assert comments == [comment_id4, comment_id2, comment_id3, comment_id1]
+
+
+def test_answered_queue(
+    simple_users: ISimpleUsers
+):
+    """
+    Does marking a comment as accepted send the post to the answered queue?
+    """
+    user_token = simple_users["user"]["token"]
+    mod_token = simple_users["mod"]["token"]
+
+    post_id = post_create(user_token, "head", "text", [])["post_id"]
+    post1_queue = post_view(user_token, post_id)["queue"]
+    assert post_list(mod_token, post1_queue)["queue_name"] == "Main queue"
+
+    comment_id = add_comment(mod_token, post_id, "first")["comment_id"]
+    accept_comment(user_token, comment_id)
+
+    post2_queue = post_view(user_token, post_id)["queue"]
+
+    assert post_list(mod_token, post2_queue)["queue_name"] == "Answered queue"

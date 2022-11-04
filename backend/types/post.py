@@ -1,5 +1,5 @@
 from typing import TypedDict
-from .identifiers import CommentId, PostId, UserId
+from .identifiers import CommentId, PostId, UserId, QueueId
 
 
 class IReacts(TypedDict):
@@ -76,6 +76,7 @@ class IPostFullInfo(TypedDict):
     * `anonymous`: `bool`
     * `user_reacted`: `bool`
     * `answered`: `bool`
+    * `queue`: `QueueId`
     """
     author: UserId
     heading: str
@@ -88,3 +89,4 @@ class IPostFullInfo(TypedDict):
     private: bool
     anonymous: bool
     answered: bool
+    queue: QueueId
