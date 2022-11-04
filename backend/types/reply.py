@@ -8,7 +8,6 @@ class IReplyId(TypedDict):
 
     * `reply_id`: `ReplyId`
     """
-
     reply_id: ReplyId
 
 
@@ -22,6 +21,7 @@ class IReplyFullInfo(TypedDict):
     * `timestamp`: `int`
     * `user_reacted`: `bool`
     """
+    reply_id: ReplyId
     author: UserId
     thanks: int
     text: str

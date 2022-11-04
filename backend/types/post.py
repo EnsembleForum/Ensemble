@@ -26,9 +26,9 @@ class IPostBasicInfo(TypedDict):
     * `anonymous`: `bool`
     * `answered`: `bool`
     """
+    post_id: PostId
     author: UserId
     heading: str
-    post_id: PostId
     tags: list[int]
     me_too: int
     private: bool
@@ -78,6 +78,7 @@ class IPostFullInfo(TypedDict):
     * `answered`: `bool`
     * `queue`: `QueueId`
     """
+    post_id: PostId
     author: UserId
     heading: str
     text: str

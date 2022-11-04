@@ -23,9 +23,9 @@ const CommentView = (props: Props) => {
   if (comment) {
     return (
       <StyledPostListView>
-        <TextView text={comment.text} reacts={comment.thanks} type="commentreply" id={postId} author={comment.author}></TextView>
+        <TextView text={comment.text} reacts={comment.thanks} type="comment" id={postId} author={comment.author}></TextView>
         {comment.replies.map((replyId) => {
-          return (<ReplyView key={replyId} replyId={replyId}/>);
+          //return (<ReplyView key={replyId} replyId={replyId} commentId={props.commentId}/>);
         })}
       </StyledPostListView>
     ); 
@@ -38,8 +38,8 @@ const CommentView = (props: Props) => {
     ApiFetch(call).then((data)=>{
       const out = data as commentView;
       console.log(out);
-      setComment(out);
       setCommentCount(commentCount + 1);
+      setComment(out);
     });
     return <>LOL</>
   }

@@ -241,6 +241,7 @@ class Comment:
         * ICommentFullInfo: Dictionary containing full info a comment
         """
         return {
+            "comment_id": self.id,
             "author": self.author.id,
             "thanks": self.thanks,
             "text": self.text,

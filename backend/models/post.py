@@ -364,6 +364,7 @@ class Post:
         * IPostFullInfo: Dictionary containing full info a post
         """
         return {
+            "post_id": self.id,
             "author": self.author.id,
             "heading": self.heading,
             "tags": self.tags,
