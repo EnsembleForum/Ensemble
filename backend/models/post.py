@@ -124,13 +124,22 @@ class Post:
         ### Returns:
         * `list[Comment]`: list of comments
         """
-        return [
+        comments = [
             Comment(c["id"])
             for c in TComment.select()
             .where(TComment.parent == self.__id)
             .order_by(TComment.id, ascending=False)
             .run_sync()
         ]
+
+        accepted = []
+        normal = []
+        for c in comments:
+            if c.accepted:
+                accepted.append(c)
+            else:
+                normal.append(c)
+        return accepted + normal
 
     def delete(self):
         """

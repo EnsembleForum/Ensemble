@@ -80,7 +80,7 @@ def test_get_post_list_answered(
     all_users: IAllUsers,
 ):
     """
-    Can we mark a comment as accepted?
+    Do posts returned by post_list show that they are answered correctly?
     """
     user_token1 = all_users["users"][0]["token"]
     user_token2 = all_users["users"][1]["token"]
@@ -92,7 +92,30 @@ def test_get_post_list_answered(
     posts = post_list(user_token1)
     assert not posts["posts"][0]["answered"]
 
-    accept_comment(user_token1, comment_id)["accepted"]
+    accept_comment(user_token1, comment_id)
 
     posts = post_list(user_token1)
     assert posts["posts"][0]["answered"]
+
+
+def test_comment_order(
+    all_users: IAllUsers,
+):
+    """
+    Can we mark a comment as accepted?
+    """
+    user_token1 = all_users["users"][0]["token"]
+    user_token2 = all_users["users"][1]["token"]
+
+    post_id = post_create(user_token1, "head", "text", [])["post_id"]
+    comment_id1 = add_comment(user_token2, post_id, "first")["comment_id"]
+    comment_id2 = add_comment(user_token2, post_id, "second")["comment_id"]
+    comment_id3 = add_comment(user_token2, post_id, "third")["comment_id"]
+    comment_id4 = add_comment(user_token2, post_id, "fourth")["comment_id"]
+
+    accept_comment(user_token1, comment_id2)
+    accept_comment(user_token1, comment_id4)
+
+    comments = post_view(user_token1, post_id)["comments"]
+
+    assert comments == [comment_id4, comment_id2, comment_id3, comment_id1]
