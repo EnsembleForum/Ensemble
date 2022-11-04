@@ -82,8 +82,10 @@ const ActiveReactButton = styled(InactiveReactButton)`
 
 // Exporting our example component
 const TextView = (props: Props) => {
-  const [text, setText] = React.useState<string>();
+  const [inputText, setInputText] = React.useState<string>();
   const [toggleReply, setToggleReply] = React.useState<boolean>(false);
+  const [editText, setEditText] = React.useState<string>();
+  const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
 
   const routes = {
@@ -100,11 +102,7 @@ const TextView = (props: Props) => {
   if (props.author) {
     author = <AuthorView userId={props.author}/>
   }
-  if (props.type === "reply") {
-    const StyledPost = styled.div`
-      padding-left: 100px;
-    `
-  } 
+
   function react() {
     const key = routes[props.type][3];
     const call : APIcall = {
@@ -114,7 +112,7 @@ const TextView = (props: Props) => {
     }
     call.body[key] = props.id;
     ApiFetch(call).then(
-      (data) => {
+      () => {
         setCommentCount(commentCount + 1);
       }
     );
@@ -122,12 +120,12 @@ const TextView = (props: Props) => {
   
   const reply = (
   <StyledReply>
-    <Input placeholder="Reply" value={text} onChange={(e)=>setText(e.target.value)} ></Input>
+    <Input placeholder="Reply" value={inputText} onChange={(e)=>setInputText(e.target.value)} ></Input>
     <StyledPostButton onClick={(e) => {
         const call : APIcall = {
           method: "POST",
           path: routes[props.type][0],
-          body: {"text": text}
+          body: {"text": inputText}
         }
         call.body[routes[props.type][3]] = props.id;
         console.log("ID:", props.id, call);
@@ -139,13 +137,15 @@ const TextView = (props: Props) => {
   </StyledReply>)
   const replyButton = (<InactiveReactButton onClick={() => setToggleReply(true)}>↩️</InactiveReactButton>);
   const activeReplyButton = (<ActiveReactButton onClick={() => setToggleReply(false)}>↩️</ActiveReactButton>);
+  const editButton = (<InactiveReactButton onClick={() => setToggleEdit(true)}>✍️</InactiveReactButton>);
+  const activeEditButton = (<ActiveReactButton onClick={() => setToggleEdit(false)}>✍️</ActiveReactButton>);
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
         {heading}
         {author}
         <br/>
-        <p>{props.text}</p>
+        {toggleEdit ? <></> : <p>{props.text}</p>}
         {props.userReacted ? 
           <ActiveReactButton onClick={() => react()}>{routes[props.type][1]} <>{
             props.reacts }</></ActiveReactButton>
@@ -154,6 +154,7 @@ const TextView = (props: Props) => {
             props.reacts }</></InactiveReactButton>
         }
         { toggleReply ? activeReplyButton : replyButton }
+        { toggleEdit ? activeEditButton : editButton }
         { toggleReply ? reply : <></>}
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}
