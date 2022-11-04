@@ -1,8 +1,12 @@
 """
 # Tests / Integration / Browse / Comment View / Accept
 
-Tests for comment view routes
-
+Tests for comment_view/accept
+* Can the post author, mods and admins mark and unmark a comment as accepted
+* Fails when another user besides the post author, mod or admin tries to mark
+    a comment as accepted
+* Tests for browse/post_view and browse/post_list showing the post as answered
+    when the post has at least one comment marked as accepted
 """
 import pytest
 from backend.util import http_errors
@@ -11,16 +15,17 @@ from ensemble_request.browse import (
     get_comment,
     post_view,
     accept_comment,
-    post_create
+    post_create,
+    post_list
 )
 from tests.integration.conftest import IAllUsers
 
 
-def test_get_comment_success(
+def test_get_marking_accepted(
     all_users: IAllUsers,
 ):
     """
-    Can we mark a comment as accepted?
+    Can the post author, admins and mods a comment as accepted?
     """
     user_token1 = all_users["users"][0]["token"]
     user_token2 = all_users["users"][1]["token"]
@@ -29,7 +34,7 @@ def test_get_comment_success(
 
     post_id = post_create(user_token1, "head", "text", [])["post_id"]
     comment_text = "first"
-    comment_id = add_comment(user_token1, post_id, comment_text)["comment_id"]
+    comment_id = add_comment(user_token2, post_id, comment_text)["comment_id"]
 
     post = post_view(user_token1, post_id)
     comment = get_comment(user_token1, comment_id)
@@ -69,3 +74,25 @@ def test_get_comment_success(
 
     with pytest.raises(http_errors.Forbidden):
         accept_comment(user_token2, comment_id)
+
+
+def test_get_post_list_answered(
+    all_users: IAllUsers,
+):
+    """
+    Can we mark a comment as accepted?
+    """
+    user_token1 = all_users["users"][0]["token"]
+    user_token2 = all_users["users"][1]["token"]
+
+    post_id = post_create(user_token1, "head", "text", [])["post_id"]
+    comment_text = "first"
+    comment_id = add_comment(user_token2, post_id, comment_text)["comment_id"]
+
+    posts = post_list(user_token1)
+    assert not posts["posts"][0]["answered"]
+
+    accept_comment(user_token1, comment_id)["accepted"]
+
+    posts = post_list(user_token1)
+    assert posts["posts"][0]["answered"]
