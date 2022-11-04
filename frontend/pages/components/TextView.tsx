@@ -14,11 +14,12 @@ import AuthorView from "./AuthorView";
 interface Props {
   text: string,
   heading?: string,
-  author?: number,
+  author: number,
   id: number,
   reacts: number,
   userReacted: boolean,
   type: "post" | "comment" | "reply",
+  tags?: number[],
   answer?: boolean,
 }
 
@@ -84,24 +85,26 @@ const ActiveReactButton = styled(InactiveReactButton)`
 const TextView = (props: Props) => {
   const [inputText, setInputText] = React.useState<string>();
   const [toggleReply, setToggleReply] = React.useState<boolean>(false);
-  const [editText, setEditText] = React.useState<string>();
+  const [editHeading, setEditHeading] = React.useState<string>(props.heading as string);
+  const [editText, setEditText] = React.useState<string>(props.text as string);
   const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
 
   const routes = {
-    "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id"],
-    "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id"],
-    "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id"],
+    "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "browse/post_view/edit"],
+    "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "browse/comment_view/edit"],
+    "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "browse/reply_view/edit"],
   }
   let heading = <></>;
-  let reacts = <></>;
-  let author = <></>
   if (props.heading) {
     heading = <h1>{props.heading}</h1>
   }
-  if (props.author) {
-    author = <AuthorView userId={props.author}/>
+  let tags = <></>;
+  if (props.tags) {
+    console.log(tags);
+    tags = <>Tags: {props.tags.map((each) => {return <>{each} </>})}</>
   }
+  let author = <AuthorView userId={props.author}/>
 
   function react() {
     const key = routes[props.type][3];
@@ -138,7 +141,34 @@ const TextView = (props: Props) => {
   const replyButton = (<InactiveReactButton onClick={() => setToggleReply(true)}>↩️</InactiveReactButton>);
   const activeReplyButton = (<ActiveReactButton onClick={() => setToggleReply(false)}>↩️</ActiveReactButton>);
   const editBox = (
-    <Textarea></Textarea>
+    <>
+      {props.type === "post" ?
+      <>
+        <Textarea value={editHeading} onChange={(e) => setEditHeading(e.target.value)}></Textarea> 
+        Tags Todo {/*<Textarea value={editTags} onChange={(e) => setEditTags(e.target.value)}></Textarea>*/}
+      </>: <></>
+      }
+      <Textarea value={editText} onChange={(e) => setEditText(e.target.value)}></Textarea>
+      <StyledButton onClick={() => {
+        const call : APIcall = {
+          method: "PUT",
+          path: routes[props.type][4],
+          body: { text: editText, }
+        }
+        call.body[routes[props.type][3]] = props.id;
+        if (props.type === "post") {
+          call.body.tags = (props.tags ? props.tags : []);
+          call.body.heading = editHeading;
+        }
+        console.log(call);
+        ApiFetch(call).then(
+          () => {
+            setToggleEdit(false);
+            setCommentCount(commentCount + 1);
+          }
+        );
+      }}></StyledButton>
+    </>
   );
   const editButton = (<InactiveReactButton onClick={() => setToggleEdit(true)}>✍️</InactiveReactButton>);
   const activeEditButton = (<ActiveReactButton onClick={() => setToggleEdit(false)}>✍️</ActiveReactButton>);
@@ -147,8 +177,9 @@ const TextView = (props: Props) => {
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
         {heading}
         {author}
+        {tags}
         <br/>
-        {toggleEdit ? <></> : <p>{props.text}</p>}
+        {toggleEdit ? editBox : <p>{props.text}</p>}
         {props.userReacted ? 
           <ActiveReactButton onClick={() => react()}>{routes[props.type][1]} <>{
             props.reacts }</></ActiveReactButton>

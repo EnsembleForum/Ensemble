@@ -75,7 +75,7 @@ const PostView = (props: Props) => {
     return (
       <CommentContext.Provider value={value}>
        <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} userReacted={currentPost.user_reacted} type="post"></TextView>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} userReacted={currentPost.user_reacted} tags={currentPost.tags} type="post"></TextView>
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
