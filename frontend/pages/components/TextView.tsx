@@ -87,9 +87,9 @@ const TextView = (props: Props) => {
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
 
   const routes = {
-    "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id"],
-    "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id"],
-    "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id"],
+    "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id"],
+    "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "comment_id"],
+    "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "reply_id"],
   }
   let heading = <></>;
   let reacts = <></>;
@@ -106,7 +106,7 @@ const TextView = (props: Props) => {
     `
   } 
   function react() {
-    const key = routes[props.type][3];
+    const key = routes[props.type][4];
     const call : APIcall = {
       method: "PUT",
       path: routes[props.type][2],
@@ -114,7 +114,7 @@ const TextView = (props: Props) => {
     }
     call.body[key] = props.id;
     ApiFetch(call).then(
-      (data) => {
+      () => {
         setCommentCount(commentCount + 1);
       }
     );
