@@ -192,6 +192,7 @@ class Reply:
         * IReplyFullInfo: Dictionary containing full info a reply
         """
         return {
+            "reply_id": self.id,
             "author": self.author.id,
             "thanks": self.thanks,
             "text": self.text,
