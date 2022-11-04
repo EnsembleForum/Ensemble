@@ -4,8 +4,9 @@ export interface exampleTest {
 }
 
 export interface APIcall {
+  [key: string]: any,
   params?: Record<string, string> | undefined;
-  method: string, path: string, body?: object | null, customUrl?: string
+  method: string, path: string, body?: any, customUrl?: string
 }
 
 export interface userToAdd {
@@ -87,7 +88,7 @@ export interface postView {
 
 export interface commentView {
   thanks: number;
-  text: string, replies: number[], timestamp: number, author: number
+  text: string, replies: number[] | replyView[], timestamp: number, author: number
 }
 
 export interface replyView {

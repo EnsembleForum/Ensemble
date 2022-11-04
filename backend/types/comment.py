@@ -8,7 +8,6 @@ class ICommentId(TypedDict):
 
     * `comment_id`: `CommentId`
     """
-
     comment_id: CommentId
 
 
@@ -22,6 +21,7 @@ class ICommentFullInfo(TypedDict):
     * `replies`: `list[ReplyId]`
     * `timestamp`: `int`
     """
+    comment_id: CommentId
     author: UserId
     thanks: int
     replies: list[ReplyId]

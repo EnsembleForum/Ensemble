@@ -14,7 +14,7 @@ interface Props {
   author?: number,
   id: number,
   reacts: number,
-  type: "postcomment" | "commentreply" | "replyreply",
+  type: "post" | "comment" | "reply",
   answer?: boolean,
 }
 
@@ -70,9 +70,9 @@ const TextView = (props: Props) => {
   const [toggleReact, setToggleReact] = React.useState<number>(0);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
   const routes = {
-    "postcomment": ["browse/post_view/comment", "Me too: ", "browse/post_view/react", "post_id"],
-    "commentreply": ["browse/comment_view/reply", "Thanks: ", "browse/comment_view/react", "comment_id"],
-    "replyreply": ["browse/reply_view/reply", "Thanks: ", "browse/reply_view/react", "reply_id"],
+    "post": ["browse/post_view/comment", "Me too: ", "browse/post_view/react", "post_id"],
+    "comment": ["browse/comment_view/reply", "Thanks: ", "browse/comment_view/react", "comment_id"],
+    "reply": ["browse/reply_view/reply", "Thanks: ", "browse/reply_view/react", "reply_id"],
   }
   let heading = <></>;
   let reacts = <></>;
@@ -90,11 +90,14 @@ const TextView = (props: Props) => {
         const call : APIcall = {
           method: "POST",
           path: routes[props.type][0],
-          body: {"post_id": props.id, "text": text}
+          body: {"text": text}
         }
+        call.body[routes[props.type][3]] = props.id;
         console.log(call);
         ApiFetch(call).then(()=>{
           setCommentCount(commentCount + 1);
+          console.log(commentCount);
+          setToggleReply(false);
         });
     }}>Post</StyledPostButton>
     <StyledReplyButton onClick={(e) => setToggleReply(false)}>X</StyledReplyButton>
@@ -109,11 +112,14 @@ const TextView = (props: Props) => {
         <br/>
         <p>{props.text}</p>
         <StyledButton onClick={(e) => {
+          const path = routes[props.type][2];
+          const key = routes[props.type][3];
           const call : APIcall = {
             method: "PUT",
             path: routes[props.type][2],
-            body: {post_id: props.id}
+            body: {key: props.id}
           }
+          call.body[key] = props.id;
           ApiFetch(call).then(
             () => {
               if (toggleReact) {setToggleReact(0)}
@@ -124,7 +130,7 @@ const TextView = (props: Props) => {
         toggleReact ? props.reacts + toggleReact : props.reacts - toggleReact}</StyledButton>
         { toggleReply ? reply : replyButton}
       </StyledPost>
-      { props.type === "postcomment" ? <></>: <StyledBorder/>}
+      { props.type === "post" ? <></>: <StyledBorder/>}
     </StyledText>
   );
 };
