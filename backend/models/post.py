@@ -41,7 +41,8 @@ class Post:
         text: str,
         tags: list[int],
         private: bool = False,
-        anonymous: bool = False
+        anonymous: bool = False,
+        answered: bool = False
     ) -> "Post":
         """
         Create a new post
@@ -67,7 +68,7 @@ class Post:
                     TPost.author: author.id,
                     TPost.heading: heading,
                     TPost.text: text,
-                    # TPost.me_too: [],
+                    TPost.answered: False,
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
                     TPost.queue: Queue.get_main_queue().id,
@@ -163,6 +164,22 @@ class Post:
         assert_valid_str_field(new_heading, "new heading")
         row = self._get()
         row.heading = new_heading
+        row.save().run_sync()
+
+    @property
+    def answered(self) -> bool:
+        """
+        Returns whether the post has at least one comment marked as accepted
+        """
+        return self._get().answered
+
+    @answered.setter
+    def answered(self, is_answered):
+        """
+        Sets whether the post is answered
+        """
+        row = self._get()
+        row.answered = is_answered
         row.save().run_sync()
 
     @property
@@ -325,6 +342,7 @@ class Post:
             "me_too": self.me_too,
             "private": self.private,
             "anonymous": self.anonymous,
+            "answered": self.answered,
         }
 
     def full_info(self, user: User) -> IPostFullInfo:
@@ -345,4 +363,5 @@ class Post:
             "private": self.private,
             "anonymous": self.anonymous,
             "user_reacted": self.has_reacted(user),
+            "answered": self.answered,
         }

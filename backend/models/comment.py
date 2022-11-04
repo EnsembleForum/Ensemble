@@ -60,7 +60,7 @@ class Comment:
                     TComment.author: author.id,
                     TComment.text: text,
                     TComment.parent: post.id,
-                    # TComment.thanks: [],
+                    TComment.accepted: False,
                     TComment.timestamp: datetime.now()
                 }
             )
@@ -159,6 +159,34 @@ class Comment:
             .where(TCommentReacts.comment == self.id).run_sync()
         )
 
+    @property
+    def accepted(self) -> bool:
+        """
+        Returns whether the comment has been marked as accepted
+        """
+        return self._get().accepted
+
+    @accepted.setter
+    def accepted(self, is_accepted):
+        """
+        Returns whether the comment has been marked as accepted
+        """
+        row = self._get()
+        row.accepted = is_accepted
+        row.save().run_sync()
+
+    def accepted_toggle(self):
+        """
+        Mark comment as accepted if it was not
+        Mark comment as unaccepted if it was accepted
+        """
+        if self.accepted:
+            self.accepted = False
+            self.parent.answered = False
+        else:
+            self.accepted = True
+            self.parent.answered = True
+
     def has_reacted(self, user: User) -> bool:
         """
         Returns whether the user has reacted to this comment
@@ -215,4 +243,5 @@ class Comment:
             "replies": [r.id for r in self.replies],
             "timestamp": int(self.timestamp.timestamp()),
             "user_reacted": self.has_reacted(user),
+            "accepted": self.accepted,
         }

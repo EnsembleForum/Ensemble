@@ -4,7 +4,11 @@
 Helper functions for requesting post browsing code
 """
 from typing import cast
-from backend.types.comment import ICommentFullInfo, ICommentId
+from backend.types.comment import (
+    ICommentFullInfo,
+    ICommentId,
+    ICommentAccepted
+)
 from backend.types.reply import IReplyId
 from backend.types.identifiers import CommentId, PostId, ReplyId
 from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
@@ -406,5 +410,30 @@ def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
             token,
             f"{URL}/reply_view/react",
             {"reply_id": reply_id, }
+        )
+    )
+
+
+def accept_comment(token: JWT, comment_id: CommentId) -> ICommentAccepted:
+    """
+    # PUT `/browse/comment_view/accept`
+
+    Toggles whether a comment is marked as accepted
+
+    ## Permissions
+    * `PostView`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `comment_id` (`CommentId`): identifier of the comment
+    """
+    return cast(
+        ICommentAccepted,
+        put(
+            token,
+            f"{URL}/comment_view/accept",
+            {"comment_id": comment_id, }
         )
     )

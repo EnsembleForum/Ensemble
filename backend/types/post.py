@@ -24,6 +24,7 @@ class IPostBasicInfo(TypedDict):
     * `me_too`: `int`
     * `private`: `bool`
     * `anonymous`: `bool`
+    * `answered`: `bool`
     """
     author: UserId
     heading: str
@@ -32,6 +33,7 @@ class IPostBasicInfo(TypedDict):
     me_too: int
     private: bool
     anonymous: bool
+    answered: bool
 
 
 class IPostBasicInfoList(TypedDict):
@@ -73,6 +75,7 @@ class IPostFullInfo(TypedDict):
     * `private`: `bool`
     * `anonymous`: `bool`
     * `user_reacted`: `bool`
+    * `answered`: `bool`
     """
     author: UserId
     heading: str
@@ -84,3 +87,4 @@ class IPostFullInfo(TypedDict):
     timestamp: int
     private: bool
     anonymous: bool
+    answered: bool

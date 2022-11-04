@@ -81,11 +81,11 @@ class TPost(_BaseTable):
     heading = Text()
     text = Text()
     tags = Array(Integer())
-    # me_too = Array(Integer())
     timestamp = Timestamp()
     queue = ForeignKey(TQueue)
     private = Boolean()
     anonymous = Boolean()
+    answered = Boolean()
 
 
 class TComment(_BaseTable):
@@ -98,6 +98,7 @@ class TComment(_BaseTable):
     text = Text()
     thanks = Array(Integer())
     timestamp = Timestamp()
+    accepted = Boolean()
 
 
 class TReply(_BaseTable):
