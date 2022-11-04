@@ -40,6 +40,18 @@ const StyledText = styled.div`
 const AuthorView = (props: Props) => {
   let [toggle, setToggle] = React.useState<boolean>(false);
   const [author, setAuthor] = React.useState<userView>();
+  React.useEffect(() => {
+    const call: APIcall = {
+      method: "GET",
+      path: "user/profile",
+      params: { "user_id": props.userId.toString() }
+    }
+    ApiFetch(call)
+      .then((data) => {
+        const user = data as userView;
+        setAuthor(user);
+      });
+  }, [])
   if (author) {
     if (toggle) {
       return (
@@ -54,23 +66,11 @@ const AuthorView = (props: Props) => {
       )
     } else {
       return (<StyledAuthor onMouseEnter={(e) => setToggle(true)}> {author.username} </StyledAuthor>)
-    }
-    
-  } else {
-    const call: APIcall = {
-      method: "GET",
-      path: "user/profile",
-      params: { "user_id": props.userId.toString() }
-    }
-    ApiFetch(call)
-      .then((data) => {
-        const user = data as userView;
-        setAuthor(user);
-      });
-    return (
-      <></>
-    );
-  }  
+    } 
+  }
+  return (
+    <></>
+  );
 };
 
 export default AuthorView;

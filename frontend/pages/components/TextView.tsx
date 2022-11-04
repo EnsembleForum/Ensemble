@@ -43,6 +43,8 @@ const StyledBorder = styled.div`
 `
 
 const StyledReply = styled.div`
+  margin-top: 5px;
+
   display: flex;
   content-align: center;
   button {
@@ -61,11 +63,16 @@ const StyledReplyButton = styled(StyledButton)`
 `
 const StyledPostButton = styled(StyledButton)`
   border-left: 0;
-  border-radius: 0;
+  border-radius: 0 10px 10px 0;
 `
 const InactiveReactButton = styled(StyledButton)`
+  padding: 5px;
+  margin-right: 5px;
+  background-color: darkgrey;
+  color: white;
+
 `
-const ActiveReactButton = styled(StyledButton)`
+const ActiveReactButton = styled(InactiveReactButton)`
   background-color: ${theme.colors?.primary};
   font-weight: 900;
 `
@@ -80,9 +87,9 @@ const TextView = (props: Props) => {
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
 
   const routes = {
-    "post": ["browse/post_view/comment", "Me too: ", "browse/post_view/react", "post_id"],
-    "comment": ["browse/comment_view/reply", "Thanks: ", "browse/comment_view/react", "comment_id"],
-    "reply": ["browse/comment_view/reply", "Thanks: ", "browse/reply_view/react", "comment_id"],
+    "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id"],
+    "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id"],
+    "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id"],
   }
   let heading = <></>;
   let reacts = <></>;
@@ -129,9 +136,9 @@ const TextView = (props: Props) => {
           setToggleReply(false);
         });
     }}>Post</StyledPostButton>
-    <StyledReplyButton onClick={() => setToggleReply(false)}>X</StyledReplyButton>
   </StyledReply>)
-  const replyButton = (<StyledButton onClick={() => setToggleReply(true)}>↩️</StyledButton>);
+  const replyButton = (<InactiveReactButton onClick={() => setToggleReply(true)}>↩️</InactiveReactButton>);
+  const activeReplyButton = (<ActiveReactButton onClick={() => setToggleReply(false)}>↩️</ActiveReactButton>);
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
@@ -146,8 +153,8 @@ const TextView = (props: Props) => {
           <InactiveReactButton onClick={() => react()}>{routes[props.type][1]} <>{
             props.reacts }</></InactiveReactButton>
         }
-        
-        { toggleReply ? reply : replyButton}
+        { toggleReply ? activeReplyButton : replyButton }
+        { toggleReply ? reply : <></>}
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}
     </StyledText>
