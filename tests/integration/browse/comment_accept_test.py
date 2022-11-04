@@ -102,7 +102,7 @@ def test_comment_order(
     all_users: IAllUsers,
 ):
     """
-    Can we mark a comment as accepted?
+    Are comments sorted by accepted first, then by newest to oldest
     """
     user_token1 = all_users["users"][0]["token"]
     user_token2 = all_users["users"][1]["token"]
