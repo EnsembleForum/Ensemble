@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, IconButton, Input, Text } from "theme-ui";
+import { Box, Button, IconButton, Input, Text, Textarea } from "theme-ui";
 import { isPropertySignature } from "typescript";
 import { ApiFetch } from "../../App";
 import { APIcall, postView } from "../../interfaces";
@@ -137,6 +137,9 @@ const TextView = (props: Props) => {
   </StyledReply>)
   const replyButton = (<InactiveReactButton onClick={() => setToggleReply(true)}>↩️</InactiveReactButton>);
   const activeReplyButton = (<ActiveReactButton onClick={() => setToggleReply(false)}>↩️</ActiveReactButton>);
+  const editBox = (
+    <Textarea></Textarea>
+  );
   const editButton = (<InactiveReactButton onClick={() => setToggleEdit(true)}>✍️</InactiveReactButton>);
   const activeEditButton = (<ActiveReactButton onClick={() => setToggleEdit(false)}>✍️</ActiveReactButton>);
   return (
