@@ -17,10 +17,11 @@ from ensemble_request.browse import (
     post_view,
     accept_comment,
     post_create,
-    post_list
+    post_list,
+    comment_react
 )
 from ensemble_request.taskboard import queue_post_list
-from tests.integration.conftest import IAllUsers, ISimpleUsers
+from tests.integration.conftest import IAllUsers, ISimpleUsers, IMakePosts
 
 
 def test_get_marking_accepted(
@@ -121,6 +122,46 @@ def test_comment_order(
     comments = post_view(user_token1, post_id)["comments"]
 
     assert comments == [comment_id4, comment_id2, comment_id3, comment_id1]
+
+
+def test_post_view_comments_thanks_order(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts
+):
+    """
+    Are comments of a post sorted correctly by
+    accepted -> thanks -> newest to oldest?
+    """
+    token1 = simple_users["user"]["token"]
+    token2 = simple_users["mod"]["token"]
+    token3 = simple_users["admin"]["token"]
+    post_id = make_posts["post1_id"]
+
+    comment_id1 = add_comment(token1, post_id, "first")["comment_id"]
+    comment_id2 = add_comment(token1, post_id, "second")["comment_id"]
+    comment_id3 = add_comment(token1, post_id, "third")["comment_id"]
+    comment_id4 = add_comment(token1, post_id, "fourth")["comment_id"]
+    comment_id5 = add_comment(token1, post_id, "fifth")["comment_id"]
+
+    # Comment 3 is accepted and has 2 thanks
+    comment_react(token1, comment_id3)
+    comment_react(token2, comment_id3)
+    accept_comment(token3, comment_id3)
+
+    # Comment 1 is accepted and has 1 thanks
+    comment_react(token2, comment_id1)
+    accept_comment(token3, comment_id1)
+
+    # Comment 2 has 3 thanks
+    comment_react(token1, comment_id2)
+    comment_react(token3, comment_id2)
+    comment_react(token2, comment_id2)
+
+    comments = post_view(token1, post_id)["comments"]
+    correct_order = [comment_id3, comment_id1,
+                     comment_id2, comment_id5, comment_id4]
+
+    assert comments == correct_order
 
 
 def test_answered_queue(

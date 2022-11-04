@@ -19,7 +19,7 @@ from tests.integration.conftest import (
 from ensemble_request.browse import (
     comment_react,
     get_comment,
-    add_comment
+    add_comment,
 )
 
 

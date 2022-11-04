@@ -120,7 +120,7 @@ class Post:
     def comments(self) -> list["Comment"]:
         """
         Returns a list of all comments belonging to the post
-        TODO Should this be ordered from newest to oldest?
+        Comments are sorted by marked as accepted, thanks then newest to oldest
         ### Returns:
         * `list[Comment]`: list of comments
         """
@@ -132,14 +132,19 @@ class Post:
             .run_sync()
         ]
 
-        accepted = []
-        normal = []
-        for c in comments:
-            if c.accepted:
-                accepted.append(c)
-            else:
-                normal.append(c)
-        return accepted + normal
+        # accepted = []
+        # normal = []
+        # for c in comments:
+        #     if c.accepted:
+        #         accepted.append(c)
+        #     else:
+        #         normal.append(c)
+        # return accepted + normal
+
+        return sorted(
+            comments,
+            key=lambda x: (not x.accepted, -x.thanks, -x.id)
+        )
 
     def delete(self):
         """
