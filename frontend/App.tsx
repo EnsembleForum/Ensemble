@@ -39,12 +39,13 @@ export function ApiFetch(apiCall: APIcall) {
           });
         } else {
           response.json().then(errorMsg => {
-            //alert(errorMsg.code + ": " + errorMsg.description);
+            alert(errorMsg.code + ": " + errorMsg.description);
             reject(errorMsg);
           });
         }
       })
       .catch((err) => {
+        alert(err);
         console.log(err);
       });
   });

@@ -26,7 +26,7 @@ const ActiveAuthor = styled(StyledAuthor)`
 
 const StyledText = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   padding: 10px;
   border-radius: 10px;
   overflow: hidden;
@@ -53,7 +53,7 @@ const AuthorView = (props: Props) => {
         </div>
       )
     } else {
-      return (<StyledAuthor onMouseEnter={(e) => setToggle(true)}> Author: {author.username} </StyledAuthor>)
+      return (<StyledAuthor onMouseEnter={(e) => setToggle(true)}> {author.username} </StyledAuthor>)
     }
     
   } else {

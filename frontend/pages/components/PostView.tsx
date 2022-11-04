@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor } from "react";
+import React, { JSXElementConstructor, useEffect } from "react";
 import { Box, IconButton, Text } from "theme-ui";
 import { ApiFetch } from "../../App";
-import { APIcall, postView } from "../../interfaces";
+import { APIcall, commentView, postView, replyView } from "../../interfaces";
 import CommentView from "./CommentView";
 import TextView from "./TextView";
 import PostContext from "../postContext";
@@ -20,53 +20,90 @@ const StyledPostListView = styled.div`
   overflow-y: scroll;
   overflow-x: hidden;
 `
+
 // Exporting our example component
 const PostView = (props: Props) => {
   const [commentCount, setCommentCount] = React.useState(0);
   const value = { commentCount, setCommentCount};
   const { postId, setPostId } = React.useContext(PostContext);
-  // This is the data we would be APIfetching on props change
+  const [comments, setComments] = React.useState<commentView[]>();
   const [currentPost, setCurrentPost] = React.useState<postView>();
-  if (currentPost && currentPost?.post_id === postId) {
-    return (
-      <CommentContext.Provider value={value}>
-       <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} type={"postcomment"}></TextView>
-          <hr/><h2>Replies</h2>
-          {
-            currentPost.comments.map((commentId) => {
-              return (<CommentView key={commentId} commentId={commentId} />);
-            })
-          }
-        </StyledPostListView >
-      </CommentContext.Provider>
-    )
-  } else if (postId > 0) {
+
+  async function getPost() {
     const call: APIcall = {
       method: "GET",
       path: "browse/post_view",
       params: { "post_id": postId.toString() }
     }
-    ApiFetch(call)
-      .then((data) => {
-        const postToShow = data as postView;
-        postToShow.post_id = postId;
-        setCurrentPost(postToShow);
-      });
+    const postToShow = await ApiFetch(call) as postView;
+    let commentArray : commentView[] = [];
+    for (const commentId of postToShow.comments) {
+      const call : APIcall = {
+        method: "GET",
+        path: "browse/comment_view",
+        params: {"comment_id": commentId.toString()}
+      }
+      const comment = await(ApiFetch(call)) as commentView;
+      commentArray.push(comment);
+    }
+    console.log("Fetched comments", commentArray);
+    for (const comment of commentArray) {
+      let replyArray : replyView[] = [];
+      for (const replyId of comment.replies) {
+        const call : APIcall = {
+          method: "GET",
+          path: "browse/reply_view",
+          params: {"reply_id": replyId.toString()}
+        }
+        const reply = await ApiFetch(call) as replyView;
+        replyArray.push(reply);
+      }
+      comment.replies = replyArray;
+    }
+    setCurrentPost(postToShow);
+    setComments(commentArray);
+  }
+
+  useEffect(() => {
+    if (postId !== 0) {
+      getPost();
+    }
+  },[commentCount])
+
+  // This is the data we would be APIfetching on props change
+  if (currentPost && currentPost?.post_id === postId && comments) {
     return (
       <CommentContext.Provider value={value}>
-        <StyledPostListView>
+       <StyledPostListView>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} type="post"></TextView>
+          <hr/><h2>Replies</h2>
+          {
+            comments.map((comment) => {
+              return (
+                  <>
+                  <TextView key = {comment.comment_id} text={comment.text} reacts={comment.thanks} type="comment" id={comment.comment_id} author={comment.author}></TextView>
+                  {comment.replies.map((reply) => {
+                    const rep = reply as replyView;
+                    return (
+                      <TextView text={rep.text} reacts={rep.thanks} type="reply" author={rep.author} id={comment.comment_id}></TextView>
+                    )
+                  })}
+                  </>
+              )
+            })
+          }
         </StyledPostListView>
       </CommentContext.Provider>
-
     )
+  } else if (postId !== 0) {
+    getPost();
+    return (
+      <StyledPostListView> Loading... </StyledPostListView>
+    );
   }
   return (
-    <CommentContext.Provider value={value}>
-      <StyledPostListView></StyledPostListView>
-    </CommentContext.Provider>
+    <StyledPostListView></StyledPostListView>
   );
-
 };
 
 export default PostView;
