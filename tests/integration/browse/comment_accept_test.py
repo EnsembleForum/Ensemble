@@ -19,7 +19,7 @@ from ensemble_request.browse import (
     post_create,
     post_list
 )
-from ensemble_request.taskboard import post_list
+from ensemble_request.taskboard import queue_post_list
 from tests.integration.conftest import IAllUsers, ISimpleUsers
 
 
@@ -134,11 +134,14 @@ def test_answered_queue(
 
     post_id = post_create(user_token, "head", "text", [])["post_id"]
     post1_queue = post_view(user_token, post_id)["queue"]
-    assert post_list(mod_token, post1_queue)["queue_name"] == "Main queue"
+    queue =  queue_post_list(mod_token, post1_queue)
+    assert queue["queue_name"] == "Main queue"
 
     comment_id = add_comment(mod_token, post_id, "first")["comment_id"]
     accept_comment(user_token, comment_id)
 
     post2_queue = post_view(user_token, post_id)["queue"]
 
-    assert post_list(mod_token, post2_queue)["queue_name"] == "Answered queue"
+    queue = queue_post_list(mod_token, post2_queue)
+    assert queue["queue_name"] == "Answered queue"
+    assert post_id in queue["posts"]

@@ -125,7 +125,7 @@ def queue_edit(token: JWT, queue_id: QueueId, new_name: str):
     )
 
 
-def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
+def queue_post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     """
     ## GET `/taskboard/queue/post_list`
 
