@@ -25,7 +25,7 @@ browse.register_blueprint(reply_view, url_prefix="/reply_view")
 def post_list(user: User, *_) -> IPostBasicInfoList:
     user.permissions.assert_can(Permission.PostView)
 
-    posts_info = [p.basic_info for p in Post.all()]
+    posts_info = [p.basic_info() for p in Post.can_view_list(user)]
 
     return {"posts": posts_info}
 
@@ -38,8 +38,10 @@ def create(user: User, *_) -> IPostId:
     heading: str = data["heading"]
     text: str = data["text"]
     tags: list[int] = data["tags"]
+    private: bool = data["private"]
+    anonymous: bool = data["anonymous"]
 
-    post_id = Post.create(user, heading, text, tags).id
+    post_id = Post.create(user, heading, text, tags, private, anonymous).id
 
     return {"post_id": post_id}
 

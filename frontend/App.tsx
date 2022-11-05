@@ -20,14 +20,18 @@ export function ApiFetch(apiCall: APIcall) {
     headers: { 'Content-Type': 'application/json' }
   };
   if (apiCall.body) { requestOptions.body = JSON.stringify(apiCall.body); }
+  let newparams = '';
+  if (apiCall.params) {
+    newparams = '?' + (new URLSearchParams(apiCall.params)).toString();
+  }
   const token = getToken();
   if (token !== null) { requestOptions.headers.Authorization = `Bearer ${token}`; }
-  console.log(requestOptions);
+  // console.log(requestOptions);
   if (!apiCall.customUrl) {
     apiCall.customUrl = SERVER_PATH;
   }
   return new Promise((resolve, reject) => {
-    fetch(`${apiCall.customUrl}${apiCall.path}`, requestOptions)
+    fetch(`${apiCall.customUrl}${apiCall.path}${newparams}`, requestOptions)
       .then((response) => {
         if (response.status === 200) {
           response.json().then(data => {
@@ -41,8 +45,8 @@ export function ApiFetch(apiCall: APIcall) {
         }
       })
       .catch((err) => {
-        console.log(err);
         alert(err);
+        console.log(err);
       });
   });
 }
@@ -59,20 +63,22 @@ export function getToken(): string | null {
 
 
 function PassThrough() {
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/admin/init" />}></Route>
-        <Route path='/admin/init' element={<InitPage />} />
-        <Route path='/admin' element={<AdminPage page={'initialise_forum'} />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/register' element={<RegisterPage />} />
-        <Route path='/password_reset' element={<PasswordResetPage />} />
-        <Route path='/profile' element={<UserProfilePage userId={0} />} />
-        <Route path='/main' element={<MainPage page="browse" />} />
-        <Route path='/admin/registerusers' element={<UsersRegisterPage />} />
-      </Routes>
-    </Router>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/admin/init" />}></Route>
+          <Route path='/admin/init' element={<AdminPage page={'initialise_forum'} />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/register' element={<RegisterPage />} />
+          <Route path='/password_reset' element={<PasswordResetPage />} />
+          <Route path='/profile' element={<UserProfilePage userId={0} />} />
+          <Route path='/browse' element={<BrowsePage />} />
+          <Route path='/taskboard' element={<TaskboardPage />} />
+          <Route path='/admin' element={<AdminPage page={"register_users"} />} />
+          <Route path='/admin/registerusers' element={<UsersRegisterPage />} />
+        </Routes>
+      </Router>
   );
 }
 export default PassThrough;
