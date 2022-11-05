@@ -114,6 +114,7 @@ class Queue:
         ### Returns:
         * `queue`: main queue
         """
+        # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Main queue")
 
     @classmethod
@@ -124,6 +125,7 @@ class Queue:
         ### Returns:
         * `queue`: answered queue
         """
+        # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Answered queue")
 
     # TODO: Revisit in sprint 2 to think of a way to organise

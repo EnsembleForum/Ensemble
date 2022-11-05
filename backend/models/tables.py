@@ -85,7 +85,7 @@ class TPost(_BaseTable):
     queue = ForeignKey(TQueue)
     private = Boolean()
     anonymous = Boolean()
-    answered = Boolean()
+    answered = Integer(null=True)
 
 
 class TComment(_BaseTable):
@@ -97,7 +97,6 @@ class TComment(_BaseTable):
     parent = ForeignKey(TPost)
     text = Text()
     timestamp = Timestamp()
-    accepted = Boolean()
 
 
 class TReply(_BaseTable):

@@ -34,7 +34,7 @@ class Permission(Enum):
 
     # Comments
     CommentAccept = 13
-    """User can mark a comment as accepted"""
+    """Non-OP user can mark a comment as accepted"""
 
     # Taskboard and queues
     ViewTaskboard = 20

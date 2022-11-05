@@ -58,13 +58,7 @@ def accept(user: User, *_) -> ICommentAccepted:
     data = json.loads(request.data)
     comment = Comment(data["comment_id"])
 
-    if comment.parent.author != user and\
-            not user.permissions.can(Permission.CommentAccept):
-        raise http_errors.Forbidden(
-            "Do not have permissions mark as accepted"
-        )
-
-    comment.accepted_toggle()
+    comment.accepted_toggle(user)
 
     return {"accepted": comment.accepted}
 

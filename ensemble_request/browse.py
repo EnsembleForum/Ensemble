@@ -425,9 +425,6 @@ def accept_comment(token: JWT, comment_id: CommentId) -> ICommentAccepted:
 
     ## Permissions
     * `PostView`
-
-    * `text` (`str`): new text of the comment
-                        (should be given the old text if unedited)
     """
     return cast(
         ICommentAccepted,
@@ -457,10 +454,6 @@ def comment_edit(
 
     ## Body
     * `comment_id` (`CommentId`): identifier of the comment
-
-    ## Returns
-    * `accepted` (`bool`): True if the comment was marked as accepted,
-                           False otherwise
     """
     put(
         token,

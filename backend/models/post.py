@@ -7,7 +7,7 @@ from .comment import Comment
 from .permissions import Permission
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
-from backend.types.identifiers import PostId
+from backend.types.identifiers import PostId, CommentId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
 from typing import cast, TYPE_CHECKING
 from datetime import datetime
@@ -42,7 +42,6 @@ class Post:
         tags: list[int],
         private: bool = False,
         anonymous: bool = False,
-        answered: bool = False
     ) -> "Post":
         """
         Create a new post
@@ -68,7 +67,6 @@ class Post:
                     TPost.author: author.id,
                     TPost.heading: heading,
                     TPost.text: text,
-                    TPost.answered: False,
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
                     TPost.queue: Queue.get_main_queue().id,
@@ -172,19 +170,26 @@ class Post:
         row.save().run_sync()
 
     @property
-    def answered(self) -> bool:
+    def answered(self) -> Comment | None:
         """
-        Returns whether the post has at least one comment marked as accepted
+        Returns the comment that is marked as accepted
         """
-        return self._get().answered
+        ans = self._get().answered
+        if not ans:
+            return None
+        else:
+            return Comment(CommentId(ans))
 
     @answered.setter
-    def answered(self, is_answered):
+    def answered(self, comment: Comment | None):
         """
         Sets whether the post is answered
         """
         row = self._get()
-        row.answered = is_answered
+        if comment is not None:
+            row.answered = comment.id
+        else:
+            row.answered = comment
         row.save().run_sync()
 
     @property
@@ -349,7 +354,7 @@ class Post:
             "me_too": self.me_too,
             "private": self.private,
             "anonymous": self.anonymous,
-            "answered": self.answered,
+            "answered": self.answered is not None,
         }
 
     def full_info(self, user: User) -> IPostFullInfo:
@@ -371,6 +376,6 @@ class Post:
             "private": self.private,
             "anonymous": self.anonymous,
             "user_reacted": self.has_reacted(user),
-            "answered": self.answered,
-            "queue": self.queue.id
+            "answered": self.answered is not None,
+            "queue": self.queue.name
         }

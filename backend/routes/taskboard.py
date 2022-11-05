@@ -21,7 +21,7 @@ taskboard = Blueprint('taskboard', 'taskboard')
 @taskboard.get("/queue_list")
 @uses_token
 def queue_list(user: User, *_) -> IQueueList:
-    user.permissions.assert_can(Permission.ManageQueues)
+    user.permissions.assert_can(Permission.ViewTaskboard)
     return {"queues": list(map(lambda q: q.basic_info(), Queue.all()))}
 
 
