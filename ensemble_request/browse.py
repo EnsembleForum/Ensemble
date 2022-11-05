@@ -408,3 +408,34 @@ def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
             {"reply_id": reply_id, }
         )
     )
+
+
+def comment_edit(
+    token: JWT,
+    comment_id: CommentId,
+    text: str,
+):
+    """
+    # PUT `/browse/comment_view/edit`
+
+    Edits the text of the comment
+
+    ## Permissions
+    * `PostCreate`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `comment_id` (`CommentId`): identifier of the comment
+    * `text` (`str`): new text of the post
+                        (should be given the old text if unedited)
+    """
+    put(
+        token,
+        f"{URL}/comment_view/edit",
+        {
+            "comment_id": comment_id,
+            "text": text,
+        },
+    )
