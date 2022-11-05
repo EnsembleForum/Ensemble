@@ -14,6 +14,7 @@ from backend.types.comment import ICommentFullInfo
 from backend.types.react import IUserReacted
 from backend.types.reply import IReplyId
 from backend.util.tokens import uses_token
+from backend.util import http_errors
 
 comment_view = Blueprint("comment_view", "comment_view")
 
@@ -48,3 +49,21 @@ def react(user: User, *_) -> IUserReacted:
     comment.react(user)
 
     return {"user_reacted": comment.has_reacted(user)}
+
+
+@comment_view.put("/edit")
+@uses_token
+def edit(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.PostCreate)
+    data = json.loads(request.data)
+    comment_id: CommentId = data["comment_id"]
+    new_text: str = data["text"]
+
+    comment = Comment(comment_id)
+
+    if user != comment.author:
+        raise http_errors.Forbidden(
+            "Attempting to edit another user's comment")
+
+    comment.text = new_text
+    return {}

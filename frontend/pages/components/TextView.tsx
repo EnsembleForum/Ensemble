@@ -16,6 +16,7 @@ interface Props {
   heading?: string,
   author: number,
   id: number,
+  commentId?: number,
   reacts: number,
   userReacted: boolean,
   type: "post" | "comment" | "reply",
@@ -45,7 +46,6 @@ const StyledBorder = styled.div`
 
 const StyledReply = styled.div`
   margin-top: 5px;
-
   display: flex;
   content-align: center;
   button {
@@ -57,6 +57,9 @@ const StyledReply = styled.div`
     border-radius: 10px 0 0 10px;
     height: 40px;
   }  
+`
+const StyledReplyButton = styled(StyledButton)`
+    border-radius: 0 10px 10px 0;
 `
 const StyledPostButton = styled(StyledButton)`
   border-left: 0;
@@ -87,9 +90,9 @@ const TextView = (props: Props) => {
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
 
   const routes = {
-    "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "browse/post_view/edit"],
-    "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "browse/comment_view/edit"],
-    "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "browse/reply_view/edit"],
+    "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id", "browse/post_view/edit"],
+    "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "comment_id", "browse/comment_view/edit"],
+    "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "reply_id", "browse/reply_view/edit"],
   }
   let heading = <></>;
   if (props.heading) {
@@ -103,7 +106,7 @@ const TextView = (props: Props) => {
   let author = <AuthorView userId={props.author}/>
 
   function react() {
-    const key = routes[props.type][3];
+    const key = routes[props.type][4];
     const call : APIcall = {
       method: "PUT",
       path: routes[props.type][2],
@@ -120,19 +123,23 @@ const TextView = (props: Props) => {
   const reply = (
   <StyledReply>
     <Input placeholder="Reply" value={inputText} onChange={(e)=>setInputText(e.target.value)} ></Input>
-    <StyledPostButton onClick={(e) => {
+    <ActiveReactButton onClick={(e) => {
         const call : APIcall = {
           method: "POST",
           path: routes[props.type][0],
           body: {"text": inputText}
         }
-        call.body[routes[props.type][3]] = props.id;
+        if (props.commentId) {
+          call.body[routes[props.type][3]] = props.commentId;
+        } else {
+          call.body[routes[props.type][3]] = props.id;
+        }
         console.log("ID:", props.id, call);
         ApiFetch(call).then(()=>{
           setCommentCount(commentCount + 1);
           setToggleReply(false);
         });
-    }}>Post</StyledPostButton>
+    }}>Post</ActiveReactButton>
   </StyledReply>)
   const replyButton = (<InactiveReactButton onClick={() => setToggleReply(true)}>↩️</InactiveReactButton>);
   const activeReplyButton = (<ActiveReactButton onClick={() => setToggleReply(false)}>↩️</ActiveReactButton>);
@@ -149,10 +156,10 @@ const TextView = (props: Props) => {
       <StyledButton onClick={() => {
         const call : APIcall = {
           method: "PUT",
-          path: routes[props.type][4],
+          path: routes[props.type][5],
           body: { text: editText, }
         }
-        call.body[routes[props.type][3]] = props.id;
+        call.body[routes[props.type][4]] = props.id;
         if (props.type === "post") {
           call.body.tags = (props.tags ? props.tags : []);
           call.body.heading = editHeading;

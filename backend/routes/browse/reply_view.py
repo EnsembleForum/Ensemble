@@ -12,6 +12,7 @@ from backend.types.identifiers import ReplyId
 from backend.types.reply import IReplyFullInfo
 from backend.types.react import IUserReacted
 from backend.util.tokens import uses_token
+from backend.util import http_errors
 
 reply_view = Blueprint("reply_view", "reply_view")
 
@@ -34,3 +35,21 @@ def react(user: User, *_) -> IUserReacted:
     reply.react(user)
 
     return {"user_reacted": reply.has_reacted(user)}
+
+
+@reply_view.put("/edit")
+@uses_token
+def edit(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.PostCreate)
+    data = json.loads(request.data)
+    reply_id: ReplyId = data["reply_id"]
+    new_text: str = data["text"]
+
+    reply = Reply(reply_id)
+
+    if user != reply.author:
+        raise http_errors.Forbidden(
+            "Attempting to edit another user's comment")
+
+    reply.text = new_text
+    return {}

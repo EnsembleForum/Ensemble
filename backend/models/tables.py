@@ -81,7 +81,6 @@ class TPost(_BaseTable):
     heading = Text()
     text = Text()
     tags = Array(Integer())
-    # me_too = Array(Integer())
     timestamp = Timestamp()
     queue = ForeignKey(TQueue)
     private = Boolean()
@@ -96,7 +95,6 @@ class TComment(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TPost)
     text = Text()
-    thanks = Array(Integer())
     timestamp = Timestamp()
 
 
@@ -108,7 +106,6 @@ class TReply(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TComment)
     text = Text()
-    thanks = Array(Integer())
     timestamp = Timestamp()
 
 
