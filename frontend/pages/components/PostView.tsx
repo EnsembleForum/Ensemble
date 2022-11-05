@@ -85,7 +85,7 @@ const PostView = (props: Props) => {
                   {comment.replies.map((reply) => {
                     const rep = reply as replyView;
                     return (
-                      <TextView text={rep.text} reacts={rep.thanks} type="reply" author={rep.author} id={rep.reply_id} userReacted={rep.user_reacted}></TextView>
+                      <TextView text={rep.text} reacts={rep.thanks} type="reply" author={rep.author} id={rep.reply_id} commentId={comment.comment_id} userReacted={rep.user_reacted}></TextView>
                     )
                   })}
                   </>
