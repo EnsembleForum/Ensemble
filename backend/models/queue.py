@@ -115,7 +115,7 @@ class Queue:
         * `queue`: main queue
         """
         return cls.get_queue("Main queue")
-    
+
     @classmethod
     def get_answered_queue(cls) -> "Queue":
         """
