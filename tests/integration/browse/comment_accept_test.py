@@ -175,11 +175,10 @@ def test_comment_order(
     comment_id4 = add_comment(user_token2, post_id, "fourth")["comment_id"]
 
     accept_comment(user_token1, comment_id2)
-    accept_comment(user_token1, comment_id4)
 
     comments = post_view(user_token1, post_id)["comments"]
 
-    assert comments == [comment_id4, comment_id2, comment_id3, comment_id1]
+    assert comments == [comment_id2, comment_id4, comment_id3, comment_id1]
 
 
 def test_post_view_comments_thanks_order(
@@ -237,8 +236,8 @@ def test_answered_queue(
     post_queue_name = post_view(user_token, post_id)["queue"]
     assert post_queue_name == "Answered queue"
 
-    # queue_id = get_queue(queue_list(mod_token)['queues'],
-    #                      "Answered queue")["queue_id"]
+    queue_id = get_queue(queue_list(mod_token)['queues'],
+                         "Answered queue")["queue_id"]
 
-    # queue = queue_post_list(mod_token, queue_id)
-    # assert post_id in queue["posts"]
+    queue = queue_post_list(mod_token, queue_id)
+    assert post_id in queue["posts"]
