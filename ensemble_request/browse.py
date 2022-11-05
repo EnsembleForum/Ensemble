@@ -428,7 +428,7 @@ def comment_edit(
 
     ## Body
     * `comment_id` (`CommentId`): identifier of the comment
-    * `text` (`str`): new text of the post
+    * `text` (`str`): new text of the comment
                         (should be given the old text if unedited)
     """
     put(
@@ -436,6 +436,37 @@ def comment_edit(
         f"{URL}/comment_view/edit",
         {
             "comment_id": comment_id,
+            "text": text,
+        },
+    )
+
+
+def reply_edit(
+    token: JWT,
+    reply_id: ReplyId,
+    text: str,
+):
+    """
+    # PUT `/browse/reply_view/edit`
+
+    Edits the text of the comment
+
+    ## Permissions
+    * `PostCreate`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `reply_id` (`ReplyId`): identifier of the comment
+    * `text` (`str`): new text of the reply
+                        (should be given the old text if unedited)
+    """
+    put(
+        token,
+        f"{URL}/reply_view/edit",
+        {
+            "reply_id": reply_id,
             "text": text,
         },
     )
