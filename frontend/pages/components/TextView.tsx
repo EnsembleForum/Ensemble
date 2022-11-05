@@ -16,6 +16,7 @@ interface Props {
   heading?: string,
   author?: number,
   id: number,
+  commentId?: number,
   reacts: number,
   userReacted: boolean,
   type: "post" | "comment" | "reply",
@@ -44,7 +45,6 @@ const StyledBorder = styled.div`
 
 const StyledReply = styled.div`
   margin-top: 5px;
-
   display: flex;
   content-align: center;
   button {
@@ -59,7 +59,6 @@ const StyledReply = styled.div`
 `
 const StyledReplyButton = styled(StyledButton)`
     border-radius: 0 10px 10px 0;
-
 `
 const StyledPostButton = styled(StyledButton)`
   border-left: 0;
@@ -129,7 +128,11 @@ const TextView = (props: Props) => {
           path: routes[props.type][0],
           body: {"text": text}
         }
-        call.body[routes[props.type][3]] = props.id;
+        if (props.commentId) {
+          call.body[routes[props.type][3]] = props.commentId;
+        } else {
+          call.body[routes[props.type][3]] = props.id;
+        }
         console.log("ID:", props.id, call);
         ApiFetch(call).then(()=>{
           setCommentCount(commentCount + 1);
