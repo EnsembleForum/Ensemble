@@ -9,6 +9,7 @@ Tests for the default queue
 """
 import pytest
 from backend.util.http_errors import BadRequest
+from tests.integration.helpers import get_queue
 from ensemble_request.taskboard import (
     queue_post_list,
     queue_list,
@@ -45,7 +46,7 @@ def test_default_queue_cannot_delete(basic_server_setup: IBasicServerSetup):
 
 def test_new_post_default(basic_server_setup: IBasicServerSetup):
     token = basic_server_setup['token']
-    default_queue = get_main_queue(queue_list(token)['queues'])
+    default_queue = get_queue(queue_list(token)['queues'], "Main queue")
     posts = queue_post_list(token, default_queue['queue_id'])['posts']
     assert len(posts) == 0
     post_create(token, 'first_post', 'post_content', [])

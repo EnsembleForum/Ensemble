@@ -181,7 +181,7 @@ def test_comment_order(
     assert comments == [comment_id2, comment_id4, comment_id3, comment_id1]
 
 
-def test_post_view_comments_thanks_order(
+def test_post_view_comments_order(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts
 ):
