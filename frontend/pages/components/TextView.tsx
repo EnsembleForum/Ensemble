@@ -1,10 +1,11 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, IconButton, Input, Text } from "theme-ui";
+import { Box, Button, IconButton, Input, Text } from "theme-ui";
 import { isPropertySignature } from "typescript";
 import { ApiFetch } from "../../App";
 import { APIcall, postView } from "../../interfaces";
+import { theme } from "../../theme";
 import CommentContext from "../commentContext";
 import { StyledButton } from "../GlobalProps";
 import AuthorView from "./AuthorView";
@@ -16,6 +17,7 @@ interface Props {
   author?: number,
   id: number,
   reacts: number,
+  userReacted: boolean,
   type: "post" | "comment" | "reply",
   answer?: boolean,
 }
@@ -41,6 +43,8 @@ const StyledBorder = styled.div`
 `
 
 const StyledReply = styled.div`
+  margin-top: 5px;
+
   display: flex;
   content-align: center;
   button {
@@ -59,20 +63,33 @@ const StyledReplyButton = styled(StyledButton)`
 `
 const StyledPostButton = styled(StyledButton)`
   border-left: 0;
-  border-radius: 0;
+  border-radius: 0 10px 10px 0;
 `
+const InactiveReactButton = styled(StyledButton)`
+  padding: 5px;
+  margin-right: 5px;
+  background-color: darkgrey;
+  color: white;
+
+`
+const ActiveReactButton = styled(InactiveReactButton)`
+  background-color: ${theme.colors?.primary};
+  font-weight: 900;
+`
+
+
 
 
 // Exporting our example component
 const TextView = (props: Props) => {
   const [text, setText] = React.useState<string>();
   const [toggleReply, setToggleReply] = React.useState<boolean>(false);
-  const [toggleReact, setToggleReact] = React.useState<number>(0);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
+
   const routes = {
-    "post": ["browse/post_view/comment", "Me too: ", "browse/post_view/react", "post_id"],
-    "comment": ["browse/comment_view/reply", "Thanks: ", "browse/comment_view/react", "comment_id"],
-    "reply": ["browse/comment_view/reply", "Thanks: ", "browse/reply_view/react", "comment_id"],
+    "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id"],
+    "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "comment_id"],
+    "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "reply_id"],
   }
   let heading = <></>;
   let reacts = <></>;
@@ -88,6 +105,20 @@ const TextView = (props: Props) => {
       padding-left: 100px;
     `
   } 
+  function react() {
+    const key = routes[props.type][4];
+    const call : APIcall = {
+      method: "PUT",
+      path: routes[props.type][2],
+      body: {key: props.id}
+    }
+    call.body[key] = props.id;
+    ApiFetch(call).then(
+      () => {
+        setCommentCount(commentCount + 1);
+      }
+    );
+  }
   
   const reply = (
   <StyledReply>
@@ -105,36 +136,25 @@ const TextView = (props: Props) => {
           setToggleReply(false);
         });
     }}>Post</StyledPostButton>
-    <StyledReplyButton onClick={() => setToggleReply(false)}>X</StyledReplyButton>
   </StyledReply>)
-  const replyButton = (<StyledButton onClick={() => setToggleReply(true)}>↩️</StyledButton>);
-  const navigate = useNavigate();
+  const replyButton = (<InactiveReactButton onClick={() => setToggleReply(true)}>↩️</InactiveReactButton>);
+  const activeReplyButton = (<ActiveReactButton onClick={() => setToggleReply(false)}>↩️</ActiveReactButton>);
   return (
     <StyledText>
-      
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
         {heading}
         {author}
         <br/>
         <p>{props.text}</p>
-        <StyledButton onClick={(e) => {
-          const key = routes[props.type][3];
-          const call : APIcall = {
-            method: "PUT",
-            path: routes[props.type][2],
-            body: {key: props.id}
-          }
-          call.body[key] = props.id;
-          ApiFetch(call).then(
-            () => {
-              if (toggleReact) {setToggleReact(0)}
-              else {setToggleReact(1)}
-              navigate("/browse");
-            }
-          );
-        }}>{routes[props.type][1]} {
-        toggleReact ? props.reacts + toggleReact : props.reacts - toggleReact}</StyledButton>
-        { toggleReply ? reply : replyButton}
+        {props.userReacted ? 
+          <ActiveReactButton onClick={() => react()}>{routes[props.type][1]} <>{
+            props.reacts }</></ActiveReactButton>
+          :
+          <InactiveReactButton onClick={() => react()}>{routes[props.type][1]} <>{
+            props.reacts }</></InactiveReactButton>
+        }
+        { toggleReply ? activeReplyButton : replyButton }
+        { toggleReply ? reply : <></>}
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}
     </StyledText>

@@ -67,3 +67,21 @@ def accept(user: User, *_) -> ICommentAccepted:
     comment.accepted_toggle()
 
     return {"accepted": comment.accepted}
+
+
+@comment_view.put("/edit")
+@uses_token
+def edit(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.PostCreate)
+    data = json.loads(request.data)
+    comment_id: CommentId = data["comment_id"]
+    new_text: str = data["text"]
+
+    comment = Comment(comment_id)
+
+    if user != comment.author:
+        raise http_errors.Forbidden(
+            "Attempting to edit another user's comment")
+
+    comment.text = new_text
+    return {}

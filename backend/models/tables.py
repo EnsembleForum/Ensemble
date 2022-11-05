@@ -96,7 +96,6 @@ class TComment(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TPost)
     text = Text()
-    thanks = Array(Integer())
     timestamp = Timestamp()
     accepted = Boolean()
 
@@ -109,7 +108,6 @@ class TReply(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TComment)
     text = Text()
-    thanks = Array(Integer())
     timestamp = Timestamp()
 
 

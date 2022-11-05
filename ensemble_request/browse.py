@@ -426,6 +426,32 @@ def accept_comment(token: JWT, comment_id: CommentId) -> ICommentAccepted:
     ## Permissions
     * `PostView`
 
+    * `text` (`str`): new text of the comment
+                        (should be given the old text if unedited)
+    """
+    return cast(
+        ICommentAccepted,
+        put(
+            token,
+            f"{URL}/comment_view/accept",
+            {"comment_id": comment_id, }
+        )
+    )
+
+
+def comment_edit(
+    token: JWT,
+    comment_id: CommentId,
+    text: str,
+):
+    """
+    # PUT `/browse/comment_view/edit`
+
+    Edits the text of the comment
+
+    ## Permissions
+    * `PostCreate`
+
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -436,11 +462,42 @@ def accept_comment(token: JWT, comment_id: CommentId) -> ICommentAccepted:
     * `accepted` (`bool`): True if the comment was marked as accepted,
                            False otherwise
     """
-    return cast(
-        ICommentAccepted,
-        put(
-            token,
-            f"{URL}/comment_view/accept",
-            {"comment_id": comment_id, }
-        )
+    put(
+        token,
+        f"{URL}/comment_view/edit",
+        {
+            "comment_id": comment_id,
+            "text": text,
+        },
+    )
+
+
+def reply_edit(
+    token: JWT,
+    reply_id: ReplyId,
+    text: str,
+):
+    """
+    # PUT `/browse/reply_view/edit`
+
+    Edits the text of the comment
+
+    ## Permissions
+    * `PostCreate`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `reply_id` (`ReplyId`): identifier of the comment
+    * `text` (`str`): new text of the reply
+                        (should be given the old text if unedited)
+    """
+    put(
+        token,
+        f"{URL}/reply_view/edit",
+        {
+            "reply_id": reply_id,
+            "text": text,
+        },
     )

@@ -75,17 +75,17 @@ const PostView = (props: Props) => {
     return (
       <CommentContext.Provider value={value}>
        <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} type="post"></TextView>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} userReacted={currentPost.user_reacted} type="post"></TextView>
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
               return (
                   <>
-                  <TextView key = {comment.comment_id} text={comment.text} reacts={comment.thanks} type="comment" id={comment.comment_id} author={comment.author}></TextView>
+                  <TextView key = {comment.comment_id} text={comment.text} reacts={comment.thanks} type="comment" id={comment.comment_id} author={comment.author} userReacted={comment.user_reacted}></TextView>
                   {comment.replies.map((reply) => {
                     const rep = reply as replyView;
                     return (
-                      <TextView text={rep.text} reacts={rep.thanks} type="reply" author={rep.author} id={comment.comment_id}></TextView>
+                      <TextView text={rep.text} reacts={rep.thanks} type="reply" author={rep.author} id={rep.reply_id} userReacted={rep.user_reacted}></TextView>
                     )
                   })}
                   </>
@@ -97,12 +97,9 @@ const PostView = (props: Props) => {
     )
   } else if (postId !== 0) {
     getPost();
-    return (
-      <StyledPostListView> Loading... </StyledPostListView>
-    );
   }
   return (
-    <StyledPostListView></StyledPostListView>
+    <StyledPostListView> Loading... </StyledPostListView>
   );
 };
 
