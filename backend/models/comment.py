@@ -188,8 +188,7 @@ class Comment:
         else:
             self.accepted = True
             self.parent.answered = True
-            print(Queue.get_queue("Answered queue").name)
-            self.parent.queue = Queue.get_queue("Answered queue")
+            self.parent.queue = Queue.get_answered_queue()
 
     def has_reacted(self, user: User) -> bool:
         """

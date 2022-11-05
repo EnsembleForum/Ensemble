@@ -114,9 +114,17 @@ class Queue:
         ### Returns:
         * `queue`: main queue
         """
-        q = TQueue.objects()\
-            .where(TQueue.name == "Main queue").first().run_sync()
-        return Queue(q.id)
+        return cls.get_queue("Main queue")
+    
+    @classmethod
+    def get_answered_queue(cls) -> "Queue":
+        """
+        Gets the answered queue
+
+        ### Returns:
+        * `queue`: answered queue
+        """
+        return cls.get_queue("Answered queue")
 
     # TODO: Revisit in sprint 2 to think of a way to organise
     def posts(self) -> list["Post"]:
