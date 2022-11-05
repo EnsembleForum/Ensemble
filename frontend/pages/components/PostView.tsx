@@ -99,7 +99,7 @@ const PostView = (props: Props) => {
     getPost();
   }
   return (
-    <StyledPostListView> Loading... </StyledPostListView>
+    <StyledPostListView></StyledPostListView>
   );
 };
 

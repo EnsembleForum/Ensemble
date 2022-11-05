@@ -58,10 +58,6 @@ const StyledReply = styled.div`
     height: 40px;
   }  
 `
-const StyledReplyButton = styled(StyledButton)`
-    border-radius: 0 10px 10px 0;
-
-`
 const StyledPostButton = styled(StyledButton)`
   border-left: 0;
   border-radius: 0 10px 10px 0;
@@ -144,8 +140,9 @@ const TextView = (props: Props) => {
     <>
       {props.type === "post" ?
       <>
+        Tags Todo
         <Textarea value={editHeading} onChange={(e) => setEditHeading(e.target.value)}></Textarea> 
-        Tags Todo {/*<Textarea value={editTags} onChange={(e) => setEditTags(e.target.value)}></Textarea>*/}
+        {/*<Textarea value={editTags} onChange={(e) => setEditTags(e.target.value)}></Textarea>*/}
       </>: <></>
       }
       <Textarea value={editText} onChange={(e) => setEditText(e.target.value)}></Textarea>
@@ -167,7 +164,7 @@ const TextView = (props: Props) => {
             setCommentCount(commentCount + 1);
           }
         );
-      }}></StyledButton>
+      }}>Post</StyledButton>
     </>
   );
   const editButton = (<InactiveReactButton onClick={() => setToggleEdit(true)}>✍️</InactiveReactButton>);
@@ -177,7 +174,7 @@ const TextView = (props: Props) => {
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
         {heading}
         {author}
-        {tags}
+        {toggleEdit ? <></> : tags}
         <br/>
         {toggleEdit ? editBox : <p>{props.text}</p>}
         {props.userReacted ? 
