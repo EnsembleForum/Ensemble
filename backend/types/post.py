@@ -76,7 +76,7 @@ class IPostFullInfo(TypedDict):
     * `private`: `bool`
     * `anonymous`: `bool`
     * `user_reacted`: `bool`
-    * `answered`: `bool`
+    * `answered`: `Optional[CommentId]`
     * `queue`: `str`
     """
     post_id: PostId
