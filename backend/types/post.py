@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 from .identifiers import CommentId, PostId, UserId
 
 
@@ -48,6 +48,7 @@ class IPostBasicInfoList(TypedDict):
         * `me_too`: `list[UserId]`
         * `private`: `bool`
         * `anonymous`: `bool`
+        * `answered`: `bool`
     """
     posts: list[IPostBasicInfo]
 
@@ -89,5 +90,5 @@ class IPostFullInfo(TypedDict):
     timestamp: int
     private: bool
     anonymous: bool
-    answered: bool
+    answered: Optional[CommentId]
     queue: str

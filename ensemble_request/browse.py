@@ -46,6 +46,7 @@ def post_list(token: JWT) -> IPostBasicInfoList:
             * `me_too` (`int`): number of me too's, the post received
             * `private` (`bool`): whether this is a private post
             * `anonymous` (`bool`): whether this is an anonymous post
+            * `answered`: (`bool`): whether this post is answered
     """
     return cast(
         IPostBasicInfoList,

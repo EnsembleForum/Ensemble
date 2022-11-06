@@ -189,7 +189,7 @@ class Post:
         if comment is not None:
             row.answered = comment.id
         else:
-            row.answered = comment
+            row.answered = None
         row.save().run_sync()
 
     @property
@@ -376,6 +376,6 @@ class Post:
             "private": self.private,
             "anonymous": self.anonymous,
             "user_reacted": self.has_reacted(user),
-            "answered": self.answered is not None,
+            "answered": self.answered.id if self.answered else None,
             "queue": self.queue.name
         }

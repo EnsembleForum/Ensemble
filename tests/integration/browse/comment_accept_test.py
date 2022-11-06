@@ -42,7 +42,7 @@ def test_OP_mark_accepted(simple_users: ISimpleUsers):
     assert accept_comment(token, comment_id)["accepted"]
     post = post_view(token, post_id)
     comment = get_comment(token, comment_id)
-    assert post["answered"]
+    assert post["answered"] == comment_id
     assert comment["accepted"]
 
 
@@ -61,13 +61,13 @@ def test_mod_mark_accepted(
     post = post_view(mod_token, post_id)
     comment = get_comment(mod_token, comment_id)
 
-    # Post author can mark comment as accepted
+    # Mod can mark comment as accepted
     assert not post["answered"]
     assert not comment["accepted"]
     assert accept_comment(mod_token, comment_id)["accepted"]
     post = post_view(mod_token, post_id)
     comment = get_comment(mod_token, comment_id)
-    assert post["answered"]
+    assert post["answered"] == comment_id
     assert comment["accepted"]
 
 
@@ -86,13 +86,13 @@ def test_admin_mark_accepted(
     post = post_view(admin_token, post_id)
     comment = get_comment(admin_token, comment_id)
 
-    # Post author can mark comment as accepted
+    # Admin can mark comment as accepted
     assert not post["answered"]
     assert not comment["accepted"]
     assert accept_comment(admin_token, comment_id)["accepted"]
     post = post_view(admin_token, post_id)
     comment = get_comment(admin_token, comment_id)
-    assert post["answered"]
+    assert post["answered"] == comment_id
     assert comment["accepted"]
 
 
@@ -227,17 +227,25 @@ def test_answered_queue(
     mod_token = simple_users["mod"]["token"]
 
     post_id = post_create(user_token, "head", "text", [])["post_id"]
-    post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Main queue"
 
     comment_id = add_comment(mod_token, post_id, "first")["comment_id"]
-    accept_comment(user_token, comment_id)
 
+    # Accepting a comment sends the post to the answered queue
+    accept_comment(user_token, comment_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
     assert post_queue_name == "Answered queue"
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
                          "Answered queue")["queue_id"]
+    queue = queue_post_list(mod_token, queue_id)
+    assert post_id in queue["posts"]
 
+    # Un-accepting the accepted comment sends the post to the main queue
+    accept_comment(user_token, comment_id)
+    post_queue_name = post_view(user_token, post_id)["queue"]
+    assert post_queue_name == "Main queue"
+
+    queue_id = get_queue(queue_list(mod_token)['queues'],
+                         "Main queue")["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
