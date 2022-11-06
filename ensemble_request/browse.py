@@ -85,7 +85,8 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
     * `private` (`bool`): whether this is a private post
     * `anonymous` (`bool`): whether this is an anonymous post
     * `user_reacted` (`bool`): whether the user has reacted to this post
-    * `answered` (`bool`): whether this post has a comment marked as an answer
+    * `answered` (`Optional[int]`): CommentId of the accepted comment,
+                                    None if no comment is accepted
     * `queue` (`QueueId`): queue that this post belongs to
     """
     return cast(
