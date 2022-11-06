@@ -10,7 +10,8 @@ from backend.models.auth_config import AuthConfig
 from backend.models.token import Token
 from backend.models.permissions import Permission
 from backend.util import http_errors
-from backend.types.auth import IAuthInfo, JWT
+from backend.util.tokens import uses_token
+from backend.types.auth import IAuthInfo, JWT, IUserPermissions
 
 
 auth = Blueprint('auth', 'auth')
@@ -65,3 +66,16 @@ def logout() -> dict:
         # screen
         pass
     return {}
+
+
+@auth.get('/permissions')
+@uses_token
+def permissions(user: User, *_) -> IUserPermissions:
+    return {
+        "permissions": [
+            {
+                "permission_id": p.value,
+                "value": user.permissions.can(p),
+            } for p in Permission
+        ],
+    }

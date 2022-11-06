@@ -25,3 +25,14 @@ class IAuthInfo(TypedDict):
     user_id: UserId
     token: JWT
     permissions: list[IPermissionValueGroup]
+
+
+class IUserPermissions(TypedDict):
+    """
+    Info on the permissions of a current user
+
+    * `permissions`: List of objects containing:
+            * `permission_id` (`int`): ID of permission
+            * `value` (`bool`): whether permission is granted
+    """
+    permissions: list[IPermissionValueGroup]
