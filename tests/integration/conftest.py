@@ -5,7 +5,7 @@ Configuration for tests
 """
 import pytest
 from typing import TypedDict
-from backend.types.identifiers import UserId, PostId, QueueId
+from backend.types.identifiers import PostId, QueueId
 from backend.types.permissions import IPermissionGroup
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
@@ -24,15 +24,7 @@ def before_each(request: pytest.FixtureRequest):
     echo(f"{request.module.__name__}.{request.function.__name__}")
 
 
-class IBasicServerSetup(TypedDict):
-    """
-    Set up the server
-
-    * user_id
-    * token
-    """
-    user_id: UserId
-    token: JWT
+IBasicServerSetup = IAuthInfo
 
 
 @pytest.fixture
@@ -43,7 +35,7 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
     username = "admin1"
     password = "admin1"
     email = "admin@example.com"
-    result = init(
+    return init(
         address=f"{AUTH_URL}/login",
         request_type="get",
         username_param="username",
@@ -55,10 +47,6 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
         name_first="Dee",
         name_last="Snuts",
     )
-    return {
-        "user_id": result["user_id"],
-        "token": result["token"],
-    }
 
 
 class IPermissionGroups(TypedDict):
@@ -143,10 +131,7 @@ def simple_users(
     )
     # Log everyone in and return their info
     return {
-        "admin": {
-            "token": basic_server_setup["token"],
-            "user_id": basic_server_setup["user_id"],
-        },
+        "admin": basic_server_setup,
         "mod": login("mod1", "mod1"),
         "user": login("user1", "user1"),
     }

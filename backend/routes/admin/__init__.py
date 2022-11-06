@@ -204,6 +204,12 @@ def init() -> IAuthInfo:
     return {
         "user_id": user.id,
         "token": Token.create(user).encode(),
+        "permissions": [
+            {
+                "permission_id": p.value,
+                "value": user.permissions.can(p),
+            } for p in Permission
+        ],
     }
 
 

@@ -5,6 +5,7 @@ Types used within authentication
 """
 from typing import NewType, TypedDict
 from .identifiers import UserId
+from .permissions import IPermissionValueGroup
 
 
 JWT = NewType('JWT', str)
@@ -17,6 +18,10 @@ class IAuthInfo(TypedDict):
 
     * `user_id`: `UserId`
     * `token`: `JWT`
+    * `permissions`: List of objects containing:
+            * `permission_id` (`int`): ID of permission
+            * `value` (`bool`): whether permission is granted
     """
     user_id: UserId
     token: JWT
+    permissions: list[IPermissionValueGroup]

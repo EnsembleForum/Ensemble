@@ -8,6 +8,7 @@ from flask import Blueprint, request
 from backend.models.user import User
 from backend.models.auth_config import AuthConfig
 from backend.models.token import Token
+from backend.models.permissions import Permission
 from backend.util import http_errors
 from backend.types.auth import IAuthInfo, JWT
 
@@ -43,6 +44,12 @@ def login() -> IAuthInfo:
     return {
         "user_id": u.id,
         "token": Token.create(u).encode(),
+        "permissions": [
+            {
+                "permission_id": p.value,
+                "value": u.permissions.can(p),
+            } for p in Permission
+        ],
     }
 
 
