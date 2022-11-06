@@ -5,12 +5,14 @@ Post View routes
 """
 import json
 from flask import Blueprint, request
+from backend.models.permissions import Permission
 from backend.models.post import Post
 from backend.models.user import User
 from backend.models.comment import Comment
 from backend.types.identifiers import PostId
 from backend.types.post import IPostFullInfo, IPostId
 from backend.types.comment import ICommentId
+from backend.types.react import IUserReacted
 from backend.util import http_errors
 from backend.util.tokens import uses_token
 
@@ -19,40 +21,21 @@ post_view = Blueprint("post_view", "post_view")
 
 @post_view.get("")
 @uses_token
-def get_post(*_) -> IPostFullInfo:
-    """
-    Get the detailed info of a post
-
-    ## Body:
-    * `post_id` (`PostId`): identifier of the post
-    * `token` (`JWT`): JWT of the user
-
-    ## Returns:
-    * `IPostFullInfo`: Dictionary containing full info a post
-    """
+def get_post(user: User, *_) -> IPostFullInfo:
+    user.permissions.assert_can(Permission.PostView)
     post_id = PostId(request.args["post_id"])
     post = Post(post_id)
-    return post.full_info
+    if not post.can_view(user):
+        raise http_errors.Forbidden(
+            "Do not have permissions to view this post"
+            )
+    return post.full_info(user)
 
 
 @post_view.put("/edit")
 @uses_token
-def edit(user: User, *_) -> IPostId:
-    """
-    Edits the heading/text/tags of the post
-
-    ## Body:
-    * `post_id` (`PostId`): identifier of the post
-    * `heading` (`str`): new heading of the post
-                        (should be given the old heading if unedited)
-    * `text` (`str`): new text of the post
-                        (should be given the old text if unedited)
-    * `tags` (`list[int]`): new tags of the post (ignore for sprint 1)
-    * `token` (`JWT`): JWT of the user
-
-    ## Returns:
-    * `IPostId`: identifier of the post
-    """
+def edit(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.PostCreate)
     data = json.loads(request.data)
     post_id: PostId = data["post_id"]
     new_heading: str = data["heading"]
@@ -67,25 +50,14 @@ def edit(user: User, *_) -> IPostId:
     post.heading = new_heading
     post.text = new_text
     post.tags = new_tags
-    return {"post_id": post.id}
+    return {}
 
 
 @post_view.delete("/self_delete")
 @uses_token
 def delete(user: User, *_) -> dict:
-    """
-    Deletes a post
-
-    ## Body:
-    * `post_id` (`PostId`): identifier of the post
-    * `token` (`JWT`): JWT of the user
-
-    ## Returns:
-    * `IPostId`: identifier of the post
-    """
-    post_id = PostId(int(request.args["post_id"]))
-
-    post = Post(post_id)
+    user.permissions.assert_can(Permission.PostCreate)
+    post = Post(PostId(request.args["post_id"]))
 
     if user != post.author:
         raise http_errors.Forbidden("Attempting to delete another user's post")
@@ -97,17 +69,7 @@ def delete(user: User, *_) -> dict:
 @post_view.post("/comment")
 @uses_token
 def comment(user: User, *_) -> ICommentId:
-    """
-    Creates a new comment
-
-    ## Body:
-    * `text` (`str`): text of the comment
-    * `post_id` (`PostId`): identifier of the post to comment on
-    * `token` (`JWT`): JWT of the user
-
-    ## Returns:
-    * `ICommentId`: identifier of the comment
-    """
+    user.permissions.assert_can(Permission.PostComment)
     data = json.loads(request.data)
     text: str = data["text"]
     post = Post(data["post_id"])
@@ -127,7 +89,13 @@ def close(*_) -> IPostId:
     post_id: PostId = data["post_id"]
     post = Post(data[post_id])
 
-    post.isClosed = newClosed
-    post.feedback = newFeedback
-
     return {"post_id": post_id}
+@post_view.put("/react")
+@uses_token
+def react(user: User, *_) -> IUserReacted:
+    user.permissions.assert_can(Permission.PostView)
+    data = json.loads(request.data)
+    post = Post(data["post_id"])
+    post.react(user)
+
+    return {"user_reacted": post.has_reacted(user)}

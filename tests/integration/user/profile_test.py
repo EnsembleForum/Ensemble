@@ -10,43 +10,43 @@ Tests for user profile route
 import pytest
 from backend.util import http_errors
 from backend.types.identifiers import UserId
-from ..request.user import profile
-from ..conftest import IAllUsers
+from ensemble_request.user import profile
+from ..conftest import ISimpleUsers
 
 
-def test_view_own_profile(all_users: IAllUsers):
+def test_view_own_profile(simple_users: ISimpleUsers):
     """Can we view our own profile?"""
     assert profile(
-        all_users['users'][0]['token'],
-        all_users['users'][0]['user_id'],
+        simple_users['user']['token'],
+        simple_users['user']['user_id'],
     ) == {
         "name_first": "User",
         "name_last": "Ator",
         "username": "user1",
         "email": "user1@example.com",
         "pronoun": "he/him",
-        "user_id": all_users['users'][0]['user_id'],
+        "user_id": simple_users['user']['user_id'],
     }
 
 
-def test_view_other_profile(all_users: IAllUsers):
+def test_view_other_profile(simple_users: ISimpleUsers):
     """Can we view our own profile?"""
     assert profile(
-        all_users['users'][0]['token'],
-        all_users['users'][1]['user_id'],
+        simple_users['user']['token'],
+        simple_users['mod']['user_id'],
     ) == {
         "name_first": "User2",
         "name_last": "Ator",
         "username": "user2",
         "email": "user2@example.com",
         "pronoun": "he/him",
-        "user_id": all_users['users'][1]['user_id'],
+        "user_id": simple_users['user']['user_id'],
     }
 
 
-def test_view_invalid_id(all_users: IAllUsers):
+def test_view_invalid_id(simple_users: ISimpleUsers):
     """Do we get a BadRequest when we try to view the profile of an invalid
     user?
     """
     with pytest.raises(http_errors.BadRequest):
-        profile(all_users['users'][0]['token'], UserId(-1))
+        profile(simple_users['user']['token'], UserId(-1))

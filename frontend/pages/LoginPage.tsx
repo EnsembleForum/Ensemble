@@ -2,16 +2,17 @@ import styled from "@emotion/styled";
 import { stripBasename } from "@remix-run/router";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
-import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button,  } from "theme-ui";
+import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button, } from "theme-ui";
 import { ApiFetch, setToken } from "../App";
 import { APIcall, loginForm } from "../interfaces";
+import Navbar from "./components/Navbar";
 import { StyledButton } from "./GlobalProps";
 
 
-interface Props {}
+interface Props { }
 
 const LoginLayout = styled.div`
-  height: 100%;
+  height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,30 +30,34 @@ const LoginPage = (props: Props) => {
     password: '',
   });
   const onSubmit = (e: { preventDefault: () => void; }) => {
-      e.preventDefault();
-      // Here we would call api, which would reroute
-      const api : APIcall = {
-        method: "POST",
-        path: "auth/login",
-        body: loginDetails
-      }
-      ApiFetch(api)
+    e.preventDefault();
+    // Here we would call api, which would reroute
+    const api: APIcall = {
+      method: "POST",
+      path: "auth/login",
+      body: loginDetails
+    }
+    ApiFetch(api)
       .then((data) => {
-        const check = data as {token: string};
-      setToken(check.token)
-        navigate("../../main");
+        const check = data as { token: string };
+        setToken(check.token)
+        navigate("/browse");
       })
   }
   return (
+    <>
+    <Navbar page={"login"}/>
+
     <LoginLayout>
       <StyledForm as="form" onSubmit={onSubmit}>
         <Label htmlFor="username">Username</Label>
-        <Input type="text" name="username" id="username" mb={3} onChange={(e) => setLoginDetails(loginDetails=>({...loginDetails, username: e.target.value}))} />
+        <Input type="text" name="username" id="username" mb={3} onChange={(e) => setLoginDetails(loginDetails => ({ ...loginDetails, username: e.target.value }))} />
         <Label htmlFor="password">Password</Label>
-        <Input type="password" name="password" id="password" mb={3} onChange={(e) => setLoginDetails(loginDetails=>({...loginDetails, password: e.target.value}))}/>
+        <Input type="password" name="password" id="password" mb={3} onChange={(e) => setLoginDetails(loginDetails => ({ ...loginDetails, password: e.target.value }))} />
         <StyledButton type="submit">Submit</StyledButton>
       </StyledForm>
     </LoginLayout>
+    </>
   );
 };
 

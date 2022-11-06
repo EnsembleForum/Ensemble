@@ -7,6 +7,7 @@ import json
 from flask import Blueprint, request
 from backend.models.post import Post
 from backend.models.user import User
+from backend.models.permissions import Permission
 from backend.types.post import IPostBasicInfoList, IPostId
 from .post_view import post_view
 from .comment_view import comment_view
@@ -21,19 +22,10 @@ browse.register_blueprint(reply_view, url_prefix="/reply_view")
 
 @browse.get("/post_list")
 @uses_token
-def post_list(*_) -> IPostBasicInfoList:
-    """
-    Get a list of posts
+def post_list(user: User, *_) -> IPostBasicInfoList:
+    user.permissions.assert_can(Permission.PostView)
 
-    ## Body:
-    * `token` (`JWT`): JWT of the user
-
-    ## Returns:
-    * `IPostBasicInfoList`: List of basic info of posts
-    """
-    posts = Post.all()
-
-    posts_info = [p.basic_info for p in posts]
+    posts_info = [p.basic_info() for p in Post.can_view_list(user)]
 
     return {"posts": posts_info}
 
@@ -41,24 +33,15 @@ def post_list(*_) -> IPostBasicInfoList:
 @browse.post("/create")
 @uses_token
 def create(user: User, *_) -> IPostId:
-    """
-    Create a post
-
-    ## Body:
-    * `token` (`JWT`): JWT of the user
-    * `heading` (`str`): heading of the post
-    * `text` (`str`): text of the post
-    * `tags` (`list[int]`): tags attached to the new post (ignore for sprint 1)
-
-    ## Returns:
-    * `IPostId`: identifier of the post
-    """
+    user.permissions.assert_can(Permission.PostCreate)
     data = json.loads(request.data)
     heading: str = data["heading"]
     text: str = data["text"]
     tags: list[int] = data["tags"]
+    private: bool = data["private"]
+    anonymous: bool = data["anonymous"]
 
-    post_id = Post.create(user, heading, text, tags).id
+    post_id = Post.create(user, heading, text, tags, private, anonymous).id
 
     return {"post_id": post_id}
 

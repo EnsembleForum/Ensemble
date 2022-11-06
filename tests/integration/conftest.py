@@ -9,12 +9,12 @@ from backend.types.identifiers import UserId, PostId, QueueId
 from backend.types.permissions import IPermissionGroup
 from backend.types.auth import JWT, IAuthInfo
 from mock.auth import AUTH_URL
-from tests.integration.request.debug import clear, echo
-from tests.integration.request.browse import post_create
-from tests.integration.request.taskboard import queue_create
-from .request.admin import init, users
-from .request.admin.permissions import groups_list
-from .request.auth import login
+from ensemble_request.debug import clear, echo
+from ensemble_request.browse import post_create
+from ensemble_request.admin import init, users
+from ensemble_request.admin.permissions import groups_list
+from ensemble_request.auth import login
+from ensemble_request.taskboard import queue_create
 
 
 @pytest.fixture(autouse=True)
@@ -94,6 +94,68 @@ def permission_groups(
     }
 
 
+class ISimpleUsers(TypedDict):
+    """
+    Represents one of each type of user
+
+    * admin (token, user_id)
+    * mod (token, user_id)
+    * user (token, user_id)
+    """
+    admin: IAuthInfo
+    mod: IAuthInfo
+    user: IAuthInfo
+
+
+@pytest.fixture
+def simple_users(
+    basic_server_setup: IBasicServerSetup,
+    permission_groups: IPermissionGroups,
+) -> ISimpleUsers:
+    """
+    Register all users available through the mock auth server
+
+    * 3 admins
+
+    * 3 moderators
+
+    * 3 users
+    """
+    # Moderator
+    users.register(
+        basic_server_setup["token"],
+        [{
+            "username": "mod1",
+            "email": "mod1@example.com",
+            "name_first": "Mod",
+            "name_last": "Erator",
+            "pronoun": "he/him"
+        }],
+        permission_groups["mod"]["group_id"],
+    )
+    # Users
+    users.register(
+        basic_server_setup["token"],
+        [{
+            "username": "user1",
+            "email": "user1@example.com",
+            "name_first": "User",
+            "name_last": "Ator",
+            "pronoun": "he/him"
+        }],
+        permission_groups["user"]["group_id"],
+    )
+    # Log everyone in and return their info
+    return {
+        "admin": {
+            "token": basic_server_setup["token"],
+            "user_id": basic_server_setup["user_id"],
+        },
+        "mod": login("mod1", "mod1"),
+        "user": login("user1", "user1"),
+    }
+
+
 class IAllUsers(TypedDict):
     """
     Represents all users
@@ -109,7 +171,7 @@ class IAllUsers(TypedDict):
 
 @pytest.fixture
 def all_users(
-    basic_server_setup: IBasicServerSetup,
+    simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,
 ) -> IAllUsers:
     """
@@ -123,7 +185,7 @@ def all_users(
     """
     # Admins
     users.register(
-        basic_server_setup["token"],
+        simple_users["admin"]["token"],
         [
             {
                 "username": "admin2",
@@ -144,7 +206,7 @@ def all_users(
     )
     # Moderators
     users.register(
-        basic_server_setup["token"],
+        simple_users["admin"]["token"],
         [
             {
                 "username": "mod1",
@@ -172,7 +234,7 @@ def all_users(
     )
     # Users
     users.register(
-        basic_server_setup["token"],
+        simple_users["admin"]["token"],
         [
             {
                 "username": "user1",
@@ -201,20 +263,17 @@ def all_users(
     # Log everyone in and return their info
     return {
         "admins": [
-            {
-                "token": basic_server_setup["token"],
-                "user_id": basic_server_setup["user_id"],
-            },
+            simple_users["admin"],
             login("admin2", "admin2"),
             login("admin3", "admin3"),
         ],
         "mods": [
-            login("mod1", "mod1"),
+            simple_users["mod"],
             login("mod2", "mod2"),
             login("mod3", "mod3"),
         ],
         "users": [
-            login("user1", "user1"),
+            simple_users["user"],
             login("user2", "user2"),
             login("user3", "user3"),
         ],
@@ -233,16 +292,6 @@ class IMakePosts(TypedDict):
     head2: str
     text1: str
     text2: str
-
-
-class IMakeQueues(TypedDict):
-    """
-    Create two queues on the forum
-    """
-    queue1_id: QueueId
-    queue2_id: QueueId
-    queue_name1: str
-    queue_name2: str
 
 
 @pytest.fixture()
@@ -270,12 +319,22 @@ def make_posts(basic_server_setup: IBasicServerSetup) -> IMakePosts:
     }
 
 
+class IMakeQueues(TypedDict):
+    """
+    Create two queues on the forum
+    """
+    queue1_id: QueueId
+    queue2_id: QueueId
+    queue_name1: str
+    queue_name2: str
+
+
 @pytest.fixture()
-def make_queues(all_users: IAllUsers) -> IMakeQueues:
+def make_queues(basic_server_setup: IBasicServerSetup) -> IMakeQueues:
     """
     Create two queues inside the forum
     """
-    token = all_users["admins"][0]["token"]
+    token = basic_server_setup["token"]
     queue_name1 = "First queue"
     queue_name2 = "Second queue"
     queue1_id = queue_create(token, queue_name1)["queue_id"]

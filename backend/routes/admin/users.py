@@ -20,17 +20,6 @@ users = Blueprint('users', 'users')
 @uses_token
 def register(user: User, *_) -> IUserIdList:
     """
-    Register a collection of users
-
-    ## Body:
-    * `users` (`list[IUserRegisterInfo]`): list of user info to add
-    * `group_id` (`PermissionGroupId`): permission group ID to assign all users
-      to.
-
-    ## Returns:
-    * `user_ids`: list of
-          * `int`
-
     ## TODO:
     * Improve error messages to be more helpful to user
     """
@@ -93,16 +82,6 @@ def register(user: User, *_) -> IUserIdList:
 @users.get('/all')
 @uses_token
 def all(user: User, *_) -> IUserBasicInfoList:
-    """
-    Returns a list of basic info about all forum users
-
-    ### Returns:
-    * `users`: `list`, containing dictionaries of:
-          * `name_first`: `str`
-          * `name_last`: `str`
-          * `username`: `str`
-          * `user_id`: `int`
-    """
     user.permissions.assert_can(Permission.ViewAllUsers)
     return {
         "users": list(map(lambda u: u.basic_info(), User.all()))

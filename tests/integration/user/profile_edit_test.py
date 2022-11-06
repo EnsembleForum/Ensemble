@@ -7,7 +7,7 @@ Tests for editing a user profile
 """
 
 
-from ..request.user import profile_edit_first, profile_edit_last
+from ensemble_request.user import profile_edit_first, profile_edit_last
 from ..conftest import (
     IAllUsers,
 )

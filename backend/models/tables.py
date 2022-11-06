@@ -82,10 +82,10 @@ class TPost(_BaseTable):
     heading = Text()
     text = Text()
     tags = Array(Integer())
-    me_too = Integer()
-    thanks = Integer()
     timestamp = Timestamp()
     queue = ForeignKey(TQueue)
+    private = Boolean()
+    anonymous = Boolean()
     isClosed = Boolean()
     feedback = Text()
 
@@ -93,6 +93,7 @@ class TPost(_BaseTable):
 class TFeedbackOptions(_BaseTable):
     title = Text()
     message = Text()
+
 
 
 class TComment(_BaseTable):
@@ -103,8 +104,6 @@ class TComment(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TPost)
     text = Text()
-    me_too = Integer()
-    thanks = Integer()
     timestamp = Timestamp()
 
 
@@ -116,9 +115,34 @@ class TReply(_BaseTable):
     author = ForeignKey(TUser)
     parent = ForeignKey(TComment)
     text = Text()
-    me_too = Integer()
-    thanks = Integer()
     timestamp = Timestamp()
+
+
+class TPostReacts(_BaseTable):
+    """
+    Table containing reactions to a post
+    """
+
+    user = ForeignKey(TUser)
+    post = ForeignKey(TPost)
+
+
+class TCommentReacts(_BaseTable):
+    """
+    Table containing reactions to a comment
+    """
+
+    user = ForeignKey(TUser)
+    comment = ForeignKey(TComment)
+
+
+class TReplyReacts(_BaseTable):
+    """
+    Table containing reactions to a reply
+    """
+
+    user = ForeignKey(TUser)
+    reply = ForeignKey(TReply)
 
 
 class TToken(_BaseTable):

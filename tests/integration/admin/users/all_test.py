@@ -10,8 +10,8 @@ Tests for listing all users
 """
 import pytest
 from backend.util import http_errors
-from tests.integration.request.admin import users
-from tests.integration.conftest import IBasicServerSetup, IAllUsers
+from ensemble_request.admin import users
+from tests.integration.conftest import IBasicServerSetup, ISimpleUsers
 
 
 def test_single_user(basic_server_setup: IBasicServerSetup):
@@ -27,12 +27,12 @@ def test_single_user(basic_server_setup: IBasicServerSetup):
     }
 
 
-def test_returns_all(all_users: IAllUsers):
+def test_returns_all(simple_users: ISimpleUsers):
     """Are the correct number of users returned?"""
-    assert len(users.all(all_users["admins"][0]["token"])["users"]) == 9
+    assert len(users.all(simple_users["admin"]["token"])["users"]) == 3
 
 
-def test_unauthorised(all_users: IAllUsers):
+def test_unauthorised(simple_users: ISimpleUsers):
     """Do we fail to get the info if we don't have permission?"""
     with pytest.raises(http_errors.Forbidden):
-        users.all(all_users["users"][0]["token"])
+        users.all(simple_users["user"]["token"])

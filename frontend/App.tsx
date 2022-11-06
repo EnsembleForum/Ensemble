@@ -14,61 +14,71 @@ import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
 import UsersRegisterPage from './pages/UsersRegisterPage';
 
-export function ApiFetch (apiCall : APIcall) {
-  const requestOptions : requestOptions = {
+export function ApiFetch(apiCall: APIcall) {
+  const requestOptions: requestOptions = {
     method: apiCall.method,
-    headers: { 'Content-Type': 'application/json'}
+    headers: { 'Content-Type': 'application/json' }
   };
   if (apiCall.body) { requestOptions.body = JSON.stringify(apiCall.body); }
-  if (apiCall.token) { requestOptions.headers.Authorization = `Bearer ${apiCall.token}`; }
-  console.log(JSON.stringify(requestOptions));
+  let newparams = '';
+  if (apiCall.params) {
+    newparams = '?' + (new URLSearchParams(apiCall.params)).toString();
+  }
+  const token = getToken();
+  if (token !== null) { requestOptions.headers.Authorization = `Bearer ${token}`; }
+  // console.log(requestOptions);
   if (!apiCall.customUrl) {
     apiCall.customUrl = SERVER_PATH;
   }
   return new Promise((resolve, reject) => {
-    fetch(`${apiCall.customUrl}${apiCall.path}`, requestOptions)
+    fetch(`${apiCall.customUrl}${apiCall.path}${newparams}`, requestOptions)
       .then((response) => {
-        console.log(response);
-        if (response.status === 400 || response.status === 403) {
-          response.json().then((errorMsg) => {
-            console.log(errorMsg.error);
-            alert(errorMsg.error);
-            reject(errorMsg);
-          });
-        } else if (response.status === 200) {
+        if (response.status === 200) {
           response.json().then(data => {
             resolve(data);
           });
+        } else {
+          response.json().then(errorMsg => {
+            alert(errorMsg.code + ": " + errorMsg.description);
+            reject(errorMsg);
+          });
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        alert(err);
+        console.log(err);
+      });
   });
 }
 
 export function setToken(value: string) {
+  console.log("get: " + window.localStorage.getItem("token"))
   window.localStorage.setItem("token", value);
+  console.log("set: " + window.localStorage.getItem("token"))
 }
-export function getToken() : string | null {
+export function getToken(): string | null {
   const token = window.localStorage.getItem("token");
   return token;
 }
 
 
-function PassThrough () {
+function PassThrough() {
+
   return (
-    <Router>
+      <Router>
         <Routes>
-          <Route path = "/" element={<Navigate to="/admin/init" />}></Route>
-          <Route path='/admin/init' element={<InitPage/>} />
-          <Route path='/admin' element={<AdminPage/>} />
-          <Route path='/auth/login' element={<LoginPage/>} />
-          <Route path='/auth/register' element={<RegisterPage/>} />
-          <Route path='/auth/password_reset' element={<PasswordResetPage/>} />
-          <Route path='/user/profile' element={<UserProfilePage userId={0}/>} />
-          <Route path='/main' element={<MainPage page = "browse"/>} />
-          <Route path='/admin/users/register' element={<UsersRegisterPage/>} />
+          <Route path="/" element={<Navigate to="/admin/init" />}></Route>
+          <Route path='/admin/init' element={<AdminPage page={'initialise_forum'} />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/register' element={<RegisterPage />} />
+          <Route path='/password_reset' element={<PasswordResetPage />} />
+          <Route path='/profile' element={<UserProfilePage userId={0} />} />
+          <Route path='/browse' element={<BrowsePage />} />
+          <Route path='/taskboard' element={<TaskboardPage />} />
+          <Route path='/admin' element={<AdminPage page={"register_users"} />} />
+          <Route path='/admin/registerusers' element={<UsersRegisterPage />} />
         </Routes>
-    </Router>
+      </Router>
   );
 }
 export default PassThrough;

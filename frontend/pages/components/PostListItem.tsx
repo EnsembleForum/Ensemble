@@ -31,7 +31,6 @@ const PostListItem = (props: Props) => {
   return (
     <Post onClick={() => setPostId(props.post.post_id-1)}>
       <h1>{props.post.heading}</h1>
-
     </Post>
   );
 };

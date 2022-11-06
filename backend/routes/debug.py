@@ -18,13 +18,6 @@ debug = Blueprint('debug', 'debug')
 
 @debug.get('/echo')
 def echo() -> IEcho:
-    """
-    Echo an input. This returns the given value, but also prints it to stdout
-    on the server. Useful for debugging tests.
-
-    ## Params:
-    * `value` (`str`): value to echo
-    """
     try:
         value = request.args['value']
     except KeyError:
@@ -41,18 +34,12 @@ def echo() -> IEcho:
 
 @debug.delete('/clear')
 def clear() -> dict:
-    """
-    Clear the database.
-    """
     db_status.clear_all()
     return {}
 
 
 @debug.post('/shutdown')
 def shutdown() -> dict:
-    """
-    Initiate a server shutdown.
-    """
     print("Initiated server shutdown")
     # TODO
     return {}
@@ -60,9 +47,6 @@ def shutdown() -> dict:
 
 @debug.get('/fail')
 def fail() -> NoReturn:
-    """
-    Raise an error 500
-    """
     raise Exception("You brought this upon yourself.")
 
 
