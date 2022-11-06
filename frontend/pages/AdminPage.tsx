@@ -5,6 +5,7 @@ import { pageList } from "../interfaces";
 import { theme } from "../theme";
 import InitPage from "./InitPage";
 import { Navbar } from "./MainPage";
+import ManagePermissionsPage from "./ManagePermissionsPage";
 import RegisterPage from "./RegisterPage";
 import TaskboardPage from "./TaskboardPage";
 import UsersRegisterPage from "./UsersRegisterPage";
@@ -40,6 +41,7 @@ const AdminPage = (props: Props) => {
   let pages: pageList = {
     "initialise_forum": <InitPage />,
     "register_users": <UsersRegisterPage />,
+    "manage_user_permissions": <ManagePermissionsPage/>
   };
   return (
     <>

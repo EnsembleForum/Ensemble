@@ -89,6 +89,19 @@ export interface userView {
   name_first: string, name_last: string, username: string, email: string, user_id: number
 }
 
+export interface userPermissionsDetails {
+  permissions: userPermission[];
+  group_id: number;
+}
+
+export interface userPermission {
+  permission_id: number;
+  value?: boolean
+}
+
+export interface permissionType {
+  permission_id: number, name: string
+}
 export interface pageList {
   [key: string]: JSX.Element,
 }

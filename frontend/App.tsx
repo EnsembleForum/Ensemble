@@ -14,10 +14,10 @@ import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
 import UsersRegisterPage from './pages/UsersRegisterPage';
 
-export function ApiFetch(apiCall: APIcall) {
+export function ApiFetch<T>(apiCall: APIcall) {
   const requestOptions: requestOptions = {
     method: apiCall.method,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   };
   if (apiCall.body) { requestOptions.body = JSON.stringify(apiCall.body); }
   const token = getToken();
@@ -26,7 +26,7 @@ export function ApiFetch(apiCall: APIcall) {
   if (!apiCall.customUrl) {
     apiCall.customUrl = SERVER_PATH;
   }
-  return new Promise((resolve, reject) => {
+  return new Promise<T>((resolve, reject) => {
     fetch(`${apiCall.customUrl}${apiCall.path}`, requestOptions)
       .then((response) => {
         if (response.status === 200) {
