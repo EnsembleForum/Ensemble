@@ -38,19 +38,20 @@ def profile(token: JWT, user_id: UserId) -> IUserProfile:
     ))
 
 
-def profile_edit_first(token: JWT, user_id: UserId, new_name: str) -> IUserProfile:
+def profile_edit_first(token: JWT, user_id: UserId, new_name: str) \
+        -> IUserProfile:
     return cast(IUserProfile, put(
         token,
         f'{URL}/profile/edit_name_first',
         {
             "user_id": user_id,
             "new_name": new_name,
-        }
-        ,
+        },
     ))
 
 
-def profile_edit_last(token: JWT, user_id: UserId, new_name: str) -> IUserProfile:
+def profile_edit_last(token: JWT, user_id: UserId, new_name: str) \
+        -> IUserProfile:
     return cast(IUserProfile, put(
         token,
         f'{URL}/profile/edit_name_last',
