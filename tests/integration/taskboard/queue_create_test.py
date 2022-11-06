@@ -42,3 +42,13 @@ def test_success(basic_server_setup: IBasicServerSetup):
     queue = queue_create(basic_server_setup['token'], "my queue")
     details = post_list(basic_server_setup['token'], queue['queue_id'])
     assert details['queue_name'] == "my queue"
+
+
+def test_name_alr_exists(basic_server_setup: IBasicServerSetup):
+    """
+    Do we get a bad request if the queue name already exists
+    """
+    queue_name = "my queue"
+    queue_create(basic_server_setup['token'], queue_name)
+    with pytest.raises(BadRequest):
+        queue_create(basic_server_setup['token'], queue_name)

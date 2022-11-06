@@ -5,7 +5,7 @@ Helper functions for requesting queue-related code
 """
 from typing import cast
 from backend.types.queue import IQueueId, IQueueFullInfo, IQueueList
-from backend.types.identifiers import QueueId
+from backend.types.identifiers import QueueId, PostId
 from backend.types.auth import JWT
 from .consts import URL
 from .helpers import post, get, delete, put
@@ -88,7 +88,6 @@ def queue_delete(token: JWT, queue_id: QueueId):
     ## Params
     * `queue_id` (`int`): ID of the queue to delete
     """
-    IQueueList,
     delete(
         token,
         f"{URL}/queue_list/delete",
@@ -114,7 +113,6 @@ def queue_edit(token: JWT, queue_id: QueueId, new_name: str):
     * `queue_id` (`int`): the ID of the queue to edit
     * `new_name` (`str`): the new name of the queue
     """
-    IQueueList,
     put(
         token,
         f"{URL}/queue_list/edit",
@@ -154,4 +152,30 @@ def post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
                 "queue_id": queue_id,
             }
         ),
+    )
+
+
+def queue_post_add(token: JWT, queue_id: QueueId, post_id: PostId):
+    """
+    ## GET `/taskboard/queue/post_add`
+
+    Get a detailed info of a queue
+
+    ## Permissions
+    * `TaskboardDelegate`
+
+    ## Header
+    * `Authorization` (`JWT`): JWT of the user
+
+    ## Params
+    * `queue_id` (`int`): ID of the queue to send the post to
+    * `post_id` (`int`): ID of post whose queue is being changed
+    """
+    put(
+        token,
+        f"{URL}/queue/post_add",
+        {
+            "queue_id": queue_id,
+            "post_id": post_id,
+        }
     )

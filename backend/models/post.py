@@ -67,7 +67,6 @@ class Post:
                     TPost.author: author.id,
                     TPost.heading: heading,
                     TPost.text: text,
-                    # TPost.me_too: [],
                     TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
                     TPost.queue: Queue.get_main_queue().id,

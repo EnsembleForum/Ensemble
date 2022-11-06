@@ -153,7 +153,7 @@ def post_edit(
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `post_id` (`PostId`): identifier of the post
+    * `post_id` (`int`): identifier of the post
     * `heading` (`str`): new heading of the post
                         (should be given the old heading if unedited)
     * `text` (`str`): new text of the post
@@ -240,7 +240,7 @@ def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
     * `Authorization` (`str`): JWT of the user
 
     ## Params
-    * `comment_id` (`CommentId`): identifier of the comment
+    * `comment_id` (`int`): identifier of the comment
 
     ## Returns
     Object containing:
@@ -277,7 +277,7 @@ def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `comment_id` (`CommentId`): identifier of the comment to reply to
+    * `comment_id` (`int`): identifier of the comment to reply to
     * `text` (`str`): text of the comment
 
     ## Returns
@@ -310,7 +310,7 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     * `Authorization` (`str`): JWT of the user
 
     ## Params
-    * `reply_id` (`ReplyId`): identifier of the reply
+    * `reply_id` (`int`): identifier of the reply
 
     ## Returns
     * `author` (`int`): ID of the author of the reply
@@ -346,7 +346,7 @@ def post_react(token: JWT, post_id: PostId) -> IUserReacted:
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `post_id` (`PostId`): identifier of the post
+    * `post_id` (`int`): identifier of the post
     """
     return cast(
         IUserReacted,
@@ -372,7 +372,7 @@ def comment_react(token: JWT, comment_id: CommentId) -> IUserReacted:
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `comment_id` (`CommentId`): identifier of the comment
+    * `comment_id` (`int`): identifier of the comment
     """
     return cast(
         IUserReacted,
@@ -398,7 +398,7 @@ def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `reply_id` (`ReplyId`): identifier of the reply
+    * `reply_id` (`int`): identifier of the reply
     """
     return cast(
         IUserReacted,
@@ -427,7 +427,7 @@ def comment_edit(
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `comment_id` (`CommentId`): identifier of the comment
+    * `comment_id` (`int`): identifier of the comment
     * `text` (`str`): new text of the comment
                         (should be given the old text if unedited)
     """
@@ -458,7 +458,7 @@ def reply_edit(
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `reply_id` (`ReplyId`): identifier of the comment
+    * `reply_id` (`int`): identifier of the comment
     * `text` (`str`): new text of the reply
                         (should be given the old text if unedited)
     """

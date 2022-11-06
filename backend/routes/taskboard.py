@@ -7,7 +7,8 @@ import json
 from flask import Blueprint, request
 from backend.models.user import User
 from backend.models.queue import Queue
-from backend.types.identifiers import QueueId
+from backend.models.post import Post
+from backend.types.identifiers import QueueId, PostId
 from backend.types.queue import IQueueFullInfo, IQueueList
 from backend.util.tokens import uses_token
 from backend.util.validators import assert_valid_str_field
@@ -72,3 +73,18 @@ def post_list(user: User, *_) -> IQueueFullInfo:
     queue_id: QueueId = QueueId(request.args["queue_id"])
     queue = Queue(queue_id)
     return queue.full_info()
+
+
+@taskboard.put("/queue/post_add")
+@uses_token
+def queue_post_add(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.TaskboardDelegate)
+    queue_id: QueueId = QueueId(request.args["queue_id"])
+    post_id: PostId = PostId(request.args["post_id"])
+
+    post = Post(post_id)
+    queue = Queue(queue_id)
+
+    post.queue = queue
+
+    return {}

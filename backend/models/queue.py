@@ -63,6 +63,10 @@ class Queue:
         """
         assert_valid_str_field(name, "queue_name")
 
+        if name in [q.name for q in cls.all()]:
+            raise http_errors.BadRequest(
+                "There is already a queue with that name")
+
         val = (
             TQueue(
                 {
