@@ -7,7 +7,7 @@ import pytest
 from typing import TypedDict
 from backend.types.identifiers import PostId, QueueId
 from backend.types.permissions import IPermissionGroup
-from backend.types.auth import JWT, IAuthInfo
+from backend.types.auth import IAuthInfo
 from mock.auth import AUTH_URL
 from ensemble_request.debug import clear, echo
 from ensemble_request.browse import post_create
