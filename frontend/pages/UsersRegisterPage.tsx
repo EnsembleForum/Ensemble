@@ -79,7 +79,7 @@ const UsersRegisterPage = (props: Props) => {
       .then((data) => {
         void data;
         setRegisterList([]);
-        navigate("/main");
+        navigate("/admin");
       })
   }
   const resetGroupPermission = (e: { preventDefault: () => void; target: { value: string; }; }) => {

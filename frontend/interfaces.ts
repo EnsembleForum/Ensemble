@@ -4,7 +4,9 @@ export interface exampleTest {
 }
 
 export interface APIcall {
-  method: string, path: string, body?: object | null, customUrl?: string
+  [key: string]: any,
+  params?: Record<string, string> | undefined;
+  method: string, path: string, body?: any, customUrl?: string
 }
 
 export interface userToAdd {
@@ -66,23 +68,34 @@ export interface postListItem {
   post_id: number,
   heading: string,
   tags: number[],
+  author: number,
   reacts: reacts
 }
 
 export interface postView {
   post_id: number,
+  author: number,
   heading: string,
   tags: number[],
-  reacts: reacts,
+  me_too: number,
   comments: number[],
   text: string,
+  timestamp: number,
+  anonymous:boolean,
+  private:boolean, 
+  user_reacted:boolean
 }
+
 export interface commentView {
-  text: string, replies: number[], timestamp: number, reacts: reacts, author: number
+  user_reacted: boolean;
+  thanks: number,
+  comment_id: number,
+  text: string, replies: number[] | replyView[], timestamp: number, author: number
 }
 
 export interface replyView {
-  text: string, timestamp: number, reacts: reacts, author: number
+  user_reacted: boolean;
+  reply_id: number, text: string, timestamp: number, thanks: number, author: number
 }
 
 export interface userView {
@@ -104,4 +117,12 @@ export interface permissionType {
 }
 export interface pageList {
   [key: string]: JSX.Element,
+}
+
+export interface createPost {
+  heading: string,
+  tags: number[],
+  text: string,
+  private:boolean, 
+  anonymous:boolean,
 }

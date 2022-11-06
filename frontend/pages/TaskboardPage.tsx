@@ -1,11 +1,15 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import Navbar from "./components/Navbar";
 
-interface Props {}
+interface Props { }
 
 const TaskboardPage = (props: Props) => {
   return (
-    <>Taskboard</>
+    <>
+      <Navbar page="taskboard" />
+      Taskboard
+    </>
   );
 };
 

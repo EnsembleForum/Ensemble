@@ -47,7 +47,7 @@ const InitPage = (props: Props) => {
       .then((data) => {
         const check = data as initReturn;
         setToken(check.token)
-        navigate("/main");
+        navigate("/browse");
       });
   }
   return (
