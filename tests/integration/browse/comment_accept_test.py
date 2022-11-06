@@ -7,7 +7,8 @@ Tests for comment_view/accept
     a comment as accepted
 * Tests for browse/post_view and browse/post_list showing the post as answered
     when the post has at least one comment marked as accepted
-* Tests for post being sent to answered queue when it is marked as answered
+* Tests for post being sent to answered queue when it is marked as answered,
+    and sent back to the main queue when it is marked as unanswered
 """
 import pytest
 from backend.util import http_errors
@@ -222,6 +223,8 @@ def test_answered_queue(
 ):
     """
     Does marking a comment as accepted send the post to the answered queue?
+    Does marking the accepted comment as unaccepted send the post back
+    to the main queue?
     """
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
