@@ -83,11 +83,14 @@ def comment(user: User, *_) -> ICommentId:
 @uses_token
 def close(*_) -> IPostId:
     data = json.loads(request.data)
-    newClosed: bool = data["isClosed"]
-    newFeedback: str = data["feedback"]
+    # TODO: Implement closed
+    # newClosed: bool = data["isClosed"]
+
+    # Removed implementation
+    # newFeedback: str = data["feedback"]
 
     post_id: PostId = data["post_id"]
-    post = Post(data[post_id])
+    # post = Post(data[post_id])
 
     return {"post_id": post_id}
 
