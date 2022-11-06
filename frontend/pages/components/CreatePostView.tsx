@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
-import { Box, IconButton, Input, Text, Textarea } from "theme-ui";
+import { Box, Checkbox, IconButton, Input, Text, Textarea } from "theme-ui";
 import { TypeFlags } from "typescript";
 import { ApiFetch } from "../../App";
 import { APIcall, createPost, postView } from "../../interfaces";
@@ -74,6 +74,14 @@ const CreatePostView = (props: Props) => {
             alert("Please only use numbers separated by spaces")
           }
         }}></Input>
+        Private:
+        <input
+          type="checkbox"
+          checked={post.private}
+          onChange={() => {
+            const privateChecked = !post.private;
+            setPost(post => ({ ...post, private: privateChecked }));}}
+          />
         <SpreadButtons>
           <StyledButton onClick={(e) => {
             const api: APIcall = {
@@ -89,7 +97,6 @@ const CreatePostView = (props: Props) => {
           }}>New Post</StyledButton>
           <StyledButton onClick={(e) => { setToggle(false); }}>X</StyledButton>
         </SpreadButtons>
-
       </StyledPost>
     )
   } else {

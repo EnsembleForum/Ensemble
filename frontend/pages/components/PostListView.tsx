@@ -44,7 +44,7 @@ const ActivePost = styled(Post)`
 const PostListView = (props: Props) => {
   const { postId, setPostId } = React.useContext(PostContext);
   const [posts, setPosts] = React.useState<postListItem[]>();
-  if (posts && posts.length >= postId) {
+  if (posts && posts.length > 0) {
     return (
       <StyledLayout>
         {
@@ -73,9 +73,11 @@ const PostListView = (props: Props) => {
       method: "GET",
       path: "browse/post_list",
     }
+    console.log(api);
     ApiFetch(api)
       .then((data) => {
         const test = data as { posts: postListItem[] };
+        console.log("Post list: ", test)
         setPosts(test.posts);
       })
   }
