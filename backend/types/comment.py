@@ -20,6 +20,8 @@ class ICommentFullInfo(TypedDict):
     * `thanks`: `int`
     * `replies`: `list[ReplyId]`
     * `timestamp`: `int`
+    * `user_reacted`: `bool`
+    * `accepted`: `bool`
     """
     comment_id: CommentId
     author: UserId
@@ -28,3 +30,13 @@ class ICommentFullInfo(TypedDict):
     text: str
     timestamp: int
     user_reacted: bool
+    accepted: bool
+
+
+class ICommentAccepted(TypedDict):
+    """
+    Whether a comment is marked as accepted
+
+    * `accepted`: `bool`
+    """
+    accepted: bool

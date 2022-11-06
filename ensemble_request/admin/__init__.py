@@ -72,6 +72,9 @@ def init(
     Object containing:
     * `user_id`: `UserId`
     * `token`: `JWT`
+    * `permissions`: List of objects, each containing:
+            * `permission_id` (`int`): ID of the permission
+            * `value` (`bool`): whether the permission is granted
     """
     return cast(IAuthInfo, post(None, f"{URL}/init", {
         "address": address,

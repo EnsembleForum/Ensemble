@@ -168,6 +168,7 @@ def init() -> IAuthInfo:
                 Permission.DeletePosts,
                 Permission.ViewReports,
                 Permission.ViewAllUsers,
+                Permission.CommentAccept
             ]
         },
         immutable=False,
@@ -191,6 +192,12 @@ def init() -> IAuthInfo:
         immutable=True,
     )
 
+    # Create the answered queue
+    Queue.create(
+        "Answered queue",
+        immutable=True
+    )
+
     # Register first user
     user = User.create(
         username,
@@ -204,6 +211,12 @@ def init() -> IAuthInfo:
     return {
         "user_id": user.id,
         "token": Token.create(user).encode(),
+        "permissions": [
+            {
+                "permission_id": p.value,
+                "value": user.permissions.can(p),
+            } for p in Permission
+        ],
     }
 
 

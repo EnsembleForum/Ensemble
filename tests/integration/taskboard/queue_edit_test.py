@@ -12,7 +12,7 @@ import pytest
 from backend.types.identifiers import QueueId
 from backend.util.http_errors import Forbidden, BadRequest
 from ensemble_request.taskboard import (
-    post_list,
+    queue_post_list,
     queue_edit,
 )
 from tests.integration.conftest import (
@@ -65,7 +65,7 @@ def test_success(
         make_queues['queue1_id'],
         "My new queue name",
     )
-    assert post_list(
+    assert queue_post_list(
         basic_server_setup['token'],
         make_queues['queue1_id'],
     )['queue_name'] == "My new queue name"

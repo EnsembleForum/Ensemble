@@ -4,7 +4,11 @@
 Helper functions for requesting post browsing code
 """
 from typing import cast
-from backend.types.comment import ICommentFullInfo, ICommentId
+from backend.types.comment import (
+    ICommentFullInfo,
+    ICommentId,
+    ICommentAccepted
+)
 from backend.types.reply import IReplyId
 from backend.types.identifiers import CommentId, PostId, ReplyId
 from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
@@ -39,9 +43,10 @@ def post_list(token: JWT) -> IPostBasicInfoList:
             * `heading` (`str`): title of the post
             * `tags` (`list[int]`): list of tag IDs for the post (not
               implemented yet)
-            * `reacts`: object containing
-                    * `thanks` (`int`): amount of thanks the post received
-                    * `me_too` (`int`): number of me too's, the post received
+            * `me_too` (`int`): number of me too's, the post received
+            * `private` (`bool`): whether this is a private post
+            * `anonymous` (`bool`): whether this is an anonymous post
+            * `answered`: (`bool`): whether this post is answered
     """
     return cast(
         IPostBasicInfoList,
@@ -74,11 +79,15 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
     * `heading` (`str`): heading of the post
     * `text` (`str`): main text of the post
     * `tags` (`list[int]`): list of tag IDs for the post
-    * `reacts` (object containing):
-            * `thanks` (`int`): amount of thanks the post received
-            * `me_too` (`int`): number of me too's, the post received
+    * `me_too` (`int`): number of me too's, the post received
     * `comments` (`list[int]`): list of IDs of comments
     * `timestamp` (`int`): UNIX timestamp of the post
+    * `private` (`bool`): whether this is a private post
+    * `anonymous` (`bool`): whether this is an anonymous post
+    * `user_reacted` (`bool`): whether the user has reacted to this post
+    * `answered` (`Optional[int]`): CommentId of the accepted comment,
+                                    None if no comment is accepted
+    * `queue` (`QueueId`): queue that this post belongs to
     """
     return cast(
         IPostFullInfo,
@@ -245,12 +254,13 @@ def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
     ## Returns
     Object containing:
     * `author` (`int`): ID of the comment author
-    * `reacts`: object containing
-            * `thanks` (`int`): amount of thanks the comment received
-            * `me_too` (`int`): number of me too's, the comment received
+    * `thanks` (`int`): amount of thanks the comment received
     * `replies` (`list[int]`): list of reply IDs for replies to this comment
     * `text` (`str`): text of the comment
     * `timestamp` (`int`): UNIX timestamp of the comment
+    * `user_reacted` (`bool`): True if the user has reacted to this reply
+    * `accepted` (`bool`): True if the comment is marked as an answer,
+                           False otherwise
     """
     return cast(
         ICommentFullInfo,
@@ -314,11 +324,10 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
 
     ## Returns
     * `author` (`int`): ID of the author of the reply
-    * `reacts`: object containing
-            * `thanks` (`int`): amount of thanks the reply received
-            * `me_too` (`int`): number of me too's, the reply received
+    * `thanks`(`int`): amount of thanks the reply received
     * `text` (`str`): text of the reply
     * `timestamp` (`int`): UNIX timestamp of the reply
+    * `user_reacted` (`bool`): True if the user has reacted to this reply
     """
     return cast(
         IReplyFullInfo,
@@ -406,6 +415,25 @@ def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
             token,
             f"{URL}/reply_view/react",
             {"reply_id": reply_id, }
+        )
+    )
+
+
+def accept_comment(token: JWT, comment_id: CommentId) -> ICommentAccepted:
+    """
+    # PUT `/browse/comment_view/accept`
+
+    Toggles whether a comment is marked as accepted
+
+    ## Permissions
+    * `PostView`
+    """
+    return cast(
+        ICommentAccepted,
+        put(
+            token,
+            f"{URL}/comment_view/accept",
+            {"comment_id": comment_id, }
         )
     )
 

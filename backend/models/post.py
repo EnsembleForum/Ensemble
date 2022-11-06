@@ -7,7 +7,7 @@ from .comment import Comment
 from .permissions import Permission
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
-from backend.types.identifiers import PostId
+from backend.types.identifiers import PostId, CommentId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
 from typing import cast, TYPE_CHECKING
 from datetime import datetime
@@ -41,7 +41,7 @@ class Post:
         text: str,
         tags: list[int],
         private: bool = False,
-        anonymous: bool = False
+        anonymous: bool = False,
     ) -> "Post":
         """
         Create a new post
@@ -118,17 +118,22 @@ class Post:
     def comments(self) -> list["Comment"]:
         """
         Returns a list of all comments belonging to the post
-        TODO Should this be ordered from newest to oldest?
+        Comments are sorted by marked as accepted, thanks then newest to oldest
         ### Returns:
         * `list[Comment]`: list of comments
         """
-        return [
+        comments = [
             Comment(c["id"])
             for c in TComment.select()
             .where(TComment.parent == self.__id)
             .order_by(TComment.id, ascending=False)
             .run_sync()
         ]
+
+        return sorted(
+            comments,
+            key=lambda x: (not x.accepted, -x.thanks, -x.id)
+        )
 
     def delete(self):
         """
@@ -162,6 +167,29 @@ class Post:
         assert_valid_str_field(new_heading, "new heading")
         row = self._get()
         row.heading = new_heading
+        row.save().run_sync()
+
+    @property
+    def answered(self) -> Comment | None:
+        """
+        Returns the comment that is marked as accepted
+        """
+        ans = self._get().answered
+        if not ans:
+            return None
+        else:
+            return Comment(CommentId(ans))
+
+    @answered.setter
+    def answered(self, comment: Comment | None):
+        """
+        Sets whether the post is answered
+        """
+        row = self._get()
+        if comment is not None:
+            row.answered = comment.id
+        else:
+            row.answered = None
         row.save().run_sync()
 
     @property
@@ -201,7 +229,9 @@ class Post:
 
     @queue.setter
     def queue(self, new_queue: "Queue"):
-        self._get().queue = new_queue.id
+        row = self._get()
+        row.queue = new_queue.id
+        row.save().run_sync()
 
     @property
     def tags(self) -> list[int]:
@@ -324,6 +354,7 @@ class Post:
             "me_too": self.me_too,
             "private": self.private,
             "anonymous": self.anonymous,
+            "answered": self.answered is not None,
         }
 
     def full_info(self, user: User) -> IPostFullInfo:
@@ -345,4 +376,6 @@ class Post:
             "private": self.private,
             "anonymous": self.anonymous,
             "user_reacted": self.has_reacted(user),
+            "answered": self.answered.id if self.answered else None,
+            "queue": self.queue.name
         }
