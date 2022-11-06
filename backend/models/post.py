@@ -310,7 +310,6 @@ class Post:
         row.anonymous = new_anonymous
         row.save().run_sync()
 
-
     def basic_info(self) -> IPostBasicInfo:
         """
         Returns the basic info of a post

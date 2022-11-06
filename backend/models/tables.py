@@ -95,7 +95,6 @@ class TFeedbackOptions(_BaseTable):
     message = Text()
 
 
-
 class TComment(_BaseTable):
     """
     Table containing all comments

@@ -90,6 +90,8 @@ def close(*_) -> IPostId:
     post = Post(data[post_id])
 
     return {"post_id": post_id}
+
+
 @post_view.put("/react")
 @uses_token
 def react(user: User, *_) -> IUserReacted:

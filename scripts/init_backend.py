@@ -33,7 +33,7 @@ try:
         email="admin1@example.com",
         name_first="Bophades",
         name_last="Nuts",
-        pronoun = "he/him",
+        pronoun="he/him",
     )
 except requests.ConnectionError:
     print("❗ Couldn't connect to server - is it running?")

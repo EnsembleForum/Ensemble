@@ -35,12 +35,12 @@ def test_view_other_profile(simple_users: ISimpleUsers):
         simple_users['user']['token'],
         simple_users['mod']['user_id'],
     ) == {
-        "name_first": "User2",
-        "name_last": "Ator",
-        "username": "user2",
-        "email": "user2@example.com",
+        "name_first": "Mod",
+        "name_last": "Erator",
+        "username": "mod1",
+        "email": "mod1@example.com",
         "pronoun": "he/him",
-        "user_id": simple_users['user']['user_id'],
+        "user_id": simple_users['mod']['user_id'],
     }
 
 

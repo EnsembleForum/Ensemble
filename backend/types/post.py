@@ -85,6 +85,3 @@ class IPostFullInfo(TypedDict):
     timestamp: int
     private: bool
     anonymous: bool
-
-
-

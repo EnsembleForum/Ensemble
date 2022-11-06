@@ -209,13 +209,6 @@ def all_users(
         simple_users["admin"]["token"],
         [
             {
-                "username": "mod1",
-                "email": "mod1@example.com",
-                "name_first": "Mod",
-                "name_last": "Erator",
-                "pronoun": "he/him",
-            },
-            {
                 "username": "mod2",
                 "email": "mod2@example.com",
                 "name_first": "Mod2",
@@ -236,13 +229,6 @@ def all_users(
     users.register(
         simple_users["admin"]["token"],
         [
-            {
-                "username": "user1",
-                "email": "user1@example.com",
-                "name_first": "User",
-                "name_last": "Ator",
-                "pronoun": "he/him",
-            },
             {
                 "username": "user2",
                 "email": "user2@example.com",
