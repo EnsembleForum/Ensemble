@@ -72,31 +72,6 @@ def test_mod_mark_accepted(
     assert comment["accepted"]
 
 
-def test_admin_mark_accepted(
-    simple_users: ISimpleUsers,
-    make_posts: IMakePosts
-):
-    """
-    Can an admin mark a comment he did not write as accepted?
-    """
-    user_token = simple_users["user"]["token"]
-    admin_token = simple_users["admin"]["token"]
-    post_id = make_posts["post1_id"]
-    comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
-
-    post = post_view(admin_token, post_id)
-    comment = get_comment(admin_token, comment_id)
-
-    # Admin can mark comment as accepted
-    assert not post["answered"]
-    assert not comment["accepted"]
-    assert accept_comment(admin_token, comment_id)["accepted"]
-    post = post_view(admin_token, post_id)
-    comment = get_comment(admin_token, comment_id)
-    assert post["answered"] == comment_id
-    assert comment["accepted"]
-
-
 def test_get_marking_accepted(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts
