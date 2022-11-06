@@ -1,6 +1,5 @@
 from typing import TypedDict
 from .identifiers import FeedbackId
-from .post import IReacts
 
 
 class IFeedbackId(TypedDict):

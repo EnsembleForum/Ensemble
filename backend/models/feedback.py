@@ -5,7 +5,7 @@ from .tables import TFeedbackOptions
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import FeedbackId
-from backend.types.feedback import IFeedbackId, IFeedbackFullInfo
+from backend.types.feedback import IFeedbackFullInfo
 from typing import cast
 
 

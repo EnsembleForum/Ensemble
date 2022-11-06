@@ -1,14 +1,8 @@
 import json
 from flask import Blueprint, request
-from backend.models.post import Post
 from backend.models.feedback import Feedback
-from backend.models.user import User
-from backend.models.comment import Comment
-from backend.types.identifiers import PostId, FeedbackId
-from backend.types.post import IPostFullInfo, IPostId, IPostFeedback
+from backend.types.identifiers import FeedbackId
 from backend.types.feedback import IFeedbackId, IFeedbackFullInfo
-from backend.types.comment import ICommentId
-from backend.util import http_errors
 from backend.util.tokens import uses_token
 
 post_feedback = Blueprint("post_feedback", "post_feedback")
@@ -31,6 +25,7 @@ def get_feedback(*_) -> IFeedbackFullInfo:
     feedback_id: FeedbackId = data["feedback_id"]
     feedback = Feedback(feedback_id)
     return feedback.full_info
+
 
 @post_feedback.put("/edit")
 @uses_token
@@ -57,12 +52,3 @@ def add(*_) -> IFeedbackId:
     feedback_id = Feedback.create(title, message).id
 
     return {"feedback_id": feedback_id}
-
-
-
-
-'''
-edit
-add
-mvvm
-'''
