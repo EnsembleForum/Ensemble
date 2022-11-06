@@ -13,6 +13,7 @@ import AuthorView from "./AuthorView";
 // Declaring and typing our props
 interface Props {
   text: string,
+  private?: boolean,
   heading?: string,
   author?: number,
   id: number,
@@ -76,7 +77,24 @@ const ActiveReactButton = styled(InactiveReactButton)`
   font-weight: 900;
 `
 
+const OptionsBar = styled.div`
+  display: flex;
+  margin: 0;
+`
 
+
+const Private = styled.div`
+  margin-left: 10px;
+  background-color: lightgrey;
+  margin-right: 20px;
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  max-width: 100px;
+`
 
 
 // Exporting our example component
@@ -99,11 +117,6 @@ const TextView = (props: Props) => {
   if (props.author) {
     author = <AuthorView userId={props.author}/>
   }
-  if (props.type === "reply") {
-    const StyledPost = styled.div`
-      padding-left: 100px;
-    `
-  } 
   function react() {
     const key = routes[props.type][4];
     const call : APIcall = {
@@ -145,7 +158,10 @@ const TextView = (props: Props) => {
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
-        {heading}
+        <OptionsBar>
+          {heading}
+          {props.private ? <Private>PRIVATE</Private>: <></>}
+        </OptionsBar>
         {author}
         <br/>
         <p>{props.text}</p>

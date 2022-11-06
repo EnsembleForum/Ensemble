@@ -58,7 +58,7 @@ const Navbar = (props: Props) => {
     }
     // eslint-disable-next-line no-restricted-globals
     ApiFetch(api).then(()=>{
-      navigate(0);
+      navigate("/login");
     });
   }}>Logout</StyledButton>);
   const login = (<StyledButton onClick={(e) => navigate("/login")}>Login</StyledButton>);

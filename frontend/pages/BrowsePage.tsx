@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { createContext, JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import React, { createContext, JSXElementConstructor, MouseEvent, ReactElement, useEffect } from "react";
 import { ApiFetch } from "../App";
 import { APIcall, postListItem } from "../interfaces";
 import CreatePostView from "./components/CreatePostView";
@@ -27,7 +27,8 @@ const BrowsePage = (props: Props) => {
   const [postId, setPostId] = React.useState(0);
   const [load, setLoad] = React.useState(false);
   const value = { postId, setPostId };
-  if (!load) {
+
+  React.useEffect(()=>{
     const api: APIcall = {
       method: "GET",
       path: "browse/post_list",
@@ -35,10 +36,11 @@ const BrowsePage = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         const test = data as { posts: postListItem[] };
-        setPostId(test.posts.length);
-        setLoad(true);
+        if (test.posts.length) {
+          setPostId(test.posts[0].post_id);
+        }
       })
-  }
+  }, [])
   return (
     <PostContext.Provider value={value}>
       <Layout>
