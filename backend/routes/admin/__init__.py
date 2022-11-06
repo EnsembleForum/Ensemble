@@ -168,6 +168,7 @@ def init() -> IAuthInfo:
                 Permission.DeletePosts,
                 Permission.ViewReports,
                 Permission.ViewAllUsers,
+                Permission.CommentAccept
             ]
         },
         immutable=False,
@@ -189,6 +190,12 @@ def init() -> IAuthInfo:
     Queue.create(
         "Main queue",
         immutable=True,
+    )
+
+    # Create the answered queue
+    Queue.create(
+        "Answered queue",
+        immutable=True
     )
 
     # Register first user

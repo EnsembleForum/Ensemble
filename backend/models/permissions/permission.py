@@ -32,6 +32,10 @@ class Permission(Enum):
     PostOverrideExam = 12
     """User can create public posts, even when exam mode is enabled"""
 
+    # Comments
+    CommentAccept = 13
+    """Non-OP user can mark a comment as accepted"""
+
     # Taskboard and queues
     ViewTaskboard = 20
     """User can view the taskboard overview"""

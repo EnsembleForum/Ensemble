@@ -9,8 +9,9 @@ Tests for the default queue
 """
 import pytest
 from backend.util.http_errors import BadRequest
+from tests.integration.helpers import get_queue
 from ensemble_request.taskboard import (
-    post_list,
+    queue_post_list,
     queue_list,
     queue_delete,
 )
@@ -21,11 +22,20 @@ from tests.integration.conftest import (
     IBasicServerSetup,
 )
 
+# Helper function to get main queue
+
+
+def get_main_queue(queues):
+    for q in queues:
+        if q["queue_name"] == "Main queue":
+            return q
+
 
 def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     queues = queue_list(basic_server_setup['token'])['queues']
-    assert len(queues) == 1
-    assert queues[0]['queue_name'] == "Main queue"
+    assert len(queues) == 2
+    queue_names = sorted([q['queue_name'] for q in queues])
+    assert queue_names == sorted(["Main queue", "Answered queue"])
 
 
 def test_default_queue_cannot_delete(basic_server_setup: IBasicServerSetup):
@@ -36,9 +46,9 @@ def test_default_queue_cannot_delete(basic_server_setup: IBasicServerSetup):
 
 def test_new_post_default(basic_server_setup: IBasicServerSetup):
     token = basic_server_setup['token']
-    default_queue = queue_list(token)['queues'][0]
-    posts = post_list(token, default_queue['queue_id'])['posts']
+    default_queue = get_queue(queue_list(token)['queues'], "Main queue")
+    posts = queue_post_list(token, default_queue['queue_id'])['posts']
     assert len(posts) == 0
     post_create(token, 'first_post', 'post_content', [])
-    posts = post_list(token, default_queue['queue_id'])['posts']
+    posts = queue_post_list(token, default_queue['queue_id'])['posts']
     assert len(posts) == 1
