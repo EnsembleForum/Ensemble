@@ -1,5 +1,5 @@
 """
-# Tests / Integration / Browse / Delete Queue
+# Tests / Integration / Task Board / Queue Delete
 
 Tests for the deleting queues
 
