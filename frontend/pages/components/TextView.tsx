@@ -89,7 +89,6 @@ const OptionsBar = styled.div`
 const Private = styled.div`
   margin-left: 10px;
   background-color: lightgrey;
-  margin-right: 20px;
   padding: 5px;
   border-radius: 10px;
   font-weight: 700;
