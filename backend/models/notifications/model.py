@@ -124,6 +124,9 @@ class Notification:
 
     @property
     def post(self) -> Optional[Post]:
+        """
+        Post associated with the notification
+        """
         if (post_id := self._get().post) is not None:
             return Post(post_id)
         else:
@@ -131,6 +134,9 @@ class Notification:
 
     @property
     def comment(self) -> Optional[Comment]:
+        """
+        Comment associated with the notification
+        """
         if (comment_id := self._get().comment) is not None:
             return Comment(comment_id)
         else:
@@ -138,6 +144,9 @@ class Notification:
 
     @property
     def reply(self) -> Optional[Reply]:
+        """
+        Reply associated with the notification
+        """
         if (reply_id := self._get().reply) is not None:
             return Reply(reply_id)
         else:
