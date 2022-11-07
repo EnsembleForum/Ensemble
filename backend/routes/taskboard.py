@@ -79,8 +79,9 @@ def post_list(user: User, *_) -> IQueueFullInfo:
 @uses_token
 def queue_post_add(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.TaskboardDelegate)
-    queue_id: QueueId = QueueId(request.args["queue_id"])
-    post_id: PostId = PostId(request.args["post_id"])
+    data = json.loads(request.data)
+    queue_id: QueueId = QueueId(data["queue_id"])
+    post_id: PostId = PostId(data["post_id"])
 
     post = Post(post_id)
     queue = Queue(queue_id)
