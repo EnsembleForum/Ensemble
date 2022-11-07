@@ -120,14 +120,11 @@ const TextView = (props: Props) => {
     "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "reply_id", "browse/reply_view/edit"],
   }
   let heading = <></>;
-  let reacts = <></>;
   let author = <></>;
   if (props.heading) {
     heading = <h1>{props.heading}</h1>
   }
-  if (props.anonymous && !getPermission(2, userPermissions)) {
-    author = <Anonymous>Anonymous</Anonymous> 
-  } else if (props.author) {
+  if (props.author && getPermission(2, userPermissions)) {
     author = <AuthorView userId={props.author}/>;
   } 
   let tags = <></>;
@@ -213,6 +210,7 @@ const TextView = (props: Props) => {
         <OptionsBar>
           {heading}
           {props.private ? <Private>PRIVATE</Private>: <></>}
+          {props.anonymous ? <Private>ANONYMOUS</Private>: <></>}
         </OptionsBar>
         {author}
         {toggleEdit ? <></> : tags}
