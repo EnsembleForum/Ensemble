@@ -98,10 +98,8 @@ const Private = styled.div`
   text-align: center;
   max-width: 100px;
 `
-const Anonymous = styled.a`
-  margin-top: 0;
-  text-decoration: underline;
-  font-weight: 700;
+const Anonymous = styled(Private)`
+  max-width: 130px;
 `
 
 // Exporting our example component
@@ -210,7 +208,7 @@ const TextView = (props: Props) => {
         <OptionsBar>
           {heading}
           {props.private ? <Private>PRIVATE</Private>: <></>}
-          {props.anonymous ? <Private>ANONYMOUS</Private>: <></>}
+          {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
         </OptionsBar>
         {author}
         {toggleEdit ? <></> : tags}
