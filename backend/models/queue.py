@@ -101,6 +101,12 @@ class Queue:
             .order_by(TQueue.name, ascending=False).run_sync()]
 
     @classmethod
+    def get_queue(cls, queue_name: str) -> "Queue":
+        q = TQueue.objects()\
+            .where(TQueue.name == queue_name).first().run_sync()
+        return Queue(q.id)
+
+    @classmethod
     def get_main_queue(cls) -> "Queue":
         """
         Gets the main queue
@@ -108,9 +114,19 @@ class Queue:
         ### Returns:
         * `queue`: main queue
         """
-        q = TQueue.objects()\
-            .where(TQueue.immutable.eq(True)).first().run_sync()
-        return Queue(q.id)
+        # TODO: Remember not to use duplicate queue names otherwise this breaks
+        return cls.get_queue("Main queue")
+
+    @classmethod
+    def get_answered_queue(cls) -> "Queue":
+        """
+        Gets the answered queue
+
+        ### Returns:
+        * `queue`: answered queue
+        """
+        # TODO: Remember not to use duplicate queue names otherwise this breaks
+        return cls.get_queue("Answered queue")
 
     # TODO: Revisit in sprint 2 to think of a way to organise
     def posts(self) -> list["Post"]:
