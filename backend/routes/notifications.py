@@ -16,7 +16,7 @@ from backend.types.notifications import INotificationList
 notifications = Blueprint('notifications', 'notifications')
 
 
-@notifications.post('/list')
+@notifications.get('/list')
 @uses_token
 def list_notifs(user: User, *_) -> INotificationList:
     return {
