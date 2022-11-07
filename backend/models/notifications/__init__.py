@@ -3,7 +3,7 @@
 
 Models for dealing with notifications
 """
-from .enum import NotificationType
+from .notification_type import NotificationType
 from .model import Notification
 
 

@@ -155,7 +155,7 @@ class TNotification(_BaseTable):
     Table containing notifications
     """
 
-    notify_type = Integer()
+    notif_type = Integer()
     """Type of notification (as per notifications.NotificationType)"""
 
     user_to = ForeignKey(TUser)

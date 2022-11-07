@@ -8,9 +8,7 @@ from enum import Enum
 
 class NotificationType(Enum):
     Commented = 0
-    """Someone commented on your post"""
-    Replied = 1
-    """Someone replied to your comment"""
+    """Someone commented on your post, or replied to your comment"""
 
     Reacted = 10
     """Someone reacted to your post/comment/reply"""
