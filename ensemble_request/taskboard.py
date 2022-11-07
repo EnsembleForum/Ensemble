@@ -157,9 +157,9 @@ def queue_post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
 
 def queue_post_add(token: JWT, queue_id: QueueId, post_id: PostId):
     """
-    ## GET `/taskboard/queue/post_add`
+    ## PUT `/taskboard/queue/post_add`
 
-    Get a detailed info of a queue
+    Move a post to a queue
 
     ## Permissions
     * `TaskboardDelegate`
