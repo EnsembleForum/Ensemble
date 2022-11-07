@@ -1,7 +1,7 @@
 """
-# Backend / Models / Commented
+# Backend / Models / Notifications / Types / Closed
 
-Notification for "Someone commented on your post, or replied to your comment"
+Notification for "A moderator closed your post"
 """
 from backend.models.post import Post
 from .. import NotificationType
@@ -22,14 +22,12 @@ class NotificationClosed(Notification):
         post: Post,
     ) -> 'NotificationClosed':
         """
-        Create a notification that someone commented or replied to a user
+        Create a notification that someone closed your post
 
         ### Args:
         * `user_to` (`User`): user receiving the notification
 
-        * `user_from` (`User`): user who wrote the comment/reply
-
-        * `ref` (`Comment | Reply`): reference to the comment/reply
+        * `post` (`Post`): reference to the post that was closed
 
         ### Returns:
         * `NotificationCommented`: notification object

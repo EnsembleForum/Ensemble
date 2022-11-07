@@ -1,5 +1,5 @@
 """
-# Backend / Models / Commented
+# Backend / Models / Notifications / Types / Commented
 
 Notification for "Someone commented on your post, or replied to your comment"
 """
