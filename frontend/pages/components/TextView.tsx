@@ -3,11 +3,12 @@ import React, { JSXElementConstructor } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, IconButton, Input, Text } from "theme-ui";
 import { isPropertySignature, JsxElement } from "typescript";
-import { ApiFetch } from "../../App";
+import { ApiFetch, getPermission } from "../../App";
 import { APIcall, postView } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
 import { StyledButton } from "../GlobalProps";
+import PermissionsContext from "../permissionsContext";
 import AuthorView from "./AuthorView";
 
 // Declaring and typing our props
@@ -107,6 +108,7 @@ const TextView = (props: Props) => {
   const [text, setText] = React.useState<string>();
   const [toggleReply, setToggleReply] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
+  const { userPermissions, setUserPermissions } = React.useContext(PermissionsContext);
 
   const routes = {
     "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id"],
@@ -119,9 +121,12 @@ const TextView = (props: Props) => {
   if (props.heading) {
     heading = <h1>{props.heading}</h1>
   }
-  if (props.author) {
-    author = (props.anonymous ? <Anonymous>Anonymous</Anonymous> : <AuthorView userId={props.author}/>);
-  }
+  
+  if (props.anonymous && !getPermission(2, userPermissions)) {
+    author = <Anonymous>Anonymous</Anonymous> 
+  } else if (props.author) {
+    author = <AuthorView userId={props.author}/>;
+  } 
   function react() {
     const key = routes[props.type][4];
     const call : APIcall = {
