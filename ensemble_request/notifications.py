@@ -60,6 +60,10 @@ def seen(token: JWT, notification_id: NotificationId, value: bool):
     ## Body
     * `notification_id` (`int`): ID of the notification
     * `value` (`bool`): whether the notification should count as seen or not
+
+    ## Errors
+    * `BadRequest`: invalid notification ID
+    * `Forbidden`: cannot see notifications not belonging to user
     """
     put(
         token,

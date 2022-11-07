@@ -14,7 +14,6 @@ from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import NotificationId
 from backend.types.notifications import INotificationInfo
 from typing import cast, Optional
-from abc import abstractmethod
 
 
 class Notification:
@@ -132,6 +131,16 @@ class Notification:
         ).save().run_sync()[0]
         return cast(NotificationId, val["id"])
 
+    @classmethod
+    def all(self, user: User) -> list['Notification']:
+        """
+        Returns a list of notifications for a user
+        """
+        notifs = TNotification.objects()\
+            .where(TNotification.user_to == user.id)\
+            .run_sync()
+        return [Notification(n.id) for n in notifs]
+
     def _get(self) -> TNotification:
         """
         Return a reference to the underlying database row
@@ -225,8 +234,8 @@ class Notification:
         else:
             return None
 
-    @abstractmethod
     def get_info(self) -> INotificationInfo:
         """
         Returns information about the notification
         """
+        raise NotImplementedError("This needs to be implemented by a subclass")
