@@ -63,6 +63,10 @@ class Queue:
         """
         assert_valid_str_field(name, "queue_name")
 
+        if name in [q.name for q in cls.all()]:
+            raise http_errors.BadRequest(
+                "There is already a queue with that name")
+
         val = (
             TQueue(
                 {
@@ -86,6 +90,9 @@ class Queue:
     @name.setter
     def name(self, new_name: str):
         assert_valid_str_field(new_name, "queue_name")
+        if new_name in [q.name for q in self.all() if q.id != self.id]:
+            raise http_errors.BadRequest(
+                "There is already a queue with that name")
         row = self._get()
         row.name = new_name
         row.save().run_sync()
