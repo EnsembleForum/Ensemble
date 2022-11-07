@@ -100,7 +100,7 @@ const PostView = (props: Props) => {
     return <StyledPostListView> Loading... </StyledPostListView>
   }
   return (
-    <StyledPostListView> </StyledPostListView>
+    <StyledPostListView></StyledPostListView>
   );
 };
 
