@@ -4,6 +4,7 @@
 Mappings between notification type and notification subclass
 """
 from .notification_type import NotificationType
+from .model import Notification
 from .types import (
     NotificationAccepted,
     NotificationClosed,
@@ -15,7 +16,7 @@ from .types import (
 )
 
 
-mappings = {
+mappings: dict[NotificationType, type[Notification]] = {
     NotificationType.Accepted: NotificationAccepted,
     NotificationType.Commented: NotificationCommented,
     NotificationType.Closed: NotificationClosed,
