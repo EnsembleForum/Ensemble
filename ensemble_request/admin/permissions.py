@@ -21,6 +21,9 @@ def list_permissions(token: JWT) -> IPermissionList:
 
     Returns info about available permissions.
 
+    This route is deprecated, as permissions are now stored in
+    `resources/permissions.json`, which can be accessed by the frontend.
+
     ## Header
     * `Authorization` (`str`): JWT of the user
 
