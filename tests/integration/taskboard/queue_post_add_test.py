@@ -1,11 +1,10 @@
 """
-# Tests / Integration / Browse / Delete Queue
+# Tests / Integration / Taskboard / Post Add
 
-Tests for the deleting queues
+Tests for taskboard/queue/post_add
 
-* Invalid ID
-* No permission
-* Delete queue success
+* Fails when person without permission tries to move posts in the taskboard
+* Succeeds in moving post to different queues
 """
 
 import pytest
