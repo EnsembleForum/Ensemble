@@ -18,7 +18,7 @@ class NotificationType(Enum):
     Closed = 20
     """Mod closed your post"""
     Deleted = 21
-    """Mod deleted your post"""
+    """Mod deleted your post/comment/reply"""
 
     Accepted = 30
     """Your answer got accepted"""
