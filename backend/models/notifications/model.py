@@ -113,9 +113,10 @@ class Notification:
         """
         val = TNotification(
             {
-                TNotification.user_to: user_to,
+                TNotification.user_to: user_to.id,
                 TNotification.notif_type: notif_type.value,
-                TNotification.user_from: user_from,
+                TNotification.user_from: (
+                    user_from.id if user_from is not None else None),
                 TNotification.post: post.id if post is not None else None,
                 TNotification.comment: (
                     comment.id if comment is not None else None),
