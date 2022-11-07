@@ -6,6 +6,7 @@ Tests for editing queues
 * No permission
 * Invalid ID
 * Empty name
+* Rename with existing name
 * Success
 """
 import pytest
