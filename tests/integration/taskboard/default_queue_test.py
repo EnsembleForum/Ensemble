@@ -22,14 +22,6 @@ from tests.integration.conftest import (
     IBasicServerSetup,
 )
 
-# Helper function to get main queue
-
-
-def get_main_queue(queues):
-    for q in queues:
-        if q["queue_name"] == "Main queue":
-            return q
-
 
 def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     queues = queue_list(basic_server_setup['token'])['queues']

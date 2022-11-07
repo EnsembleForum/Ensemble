@@ -70,3 +70,7 @@ def test_success(
 
     queue = queue_post_list(token, queue_id2)
     assert post_id in queue["posts"]
+
+    # Post no longer in "First Queue" specialised queue
+    queue = queue_post_list(token, queue_id1)
+    assert post_id not in queue["posts"]

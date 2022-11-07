@@ -32,7 +32,7 @@ def queue_create(user: User, *_) -> IQueueId:
     user.permissions.assert_can(Permission.ManageQueues)
 
     data = json.loads(request.data)
-    queue_name: str = data["queue_name"]
+    queue_name = data["queue_name"]
     queue_id = Queue.create(queue_name).id
 
     return {"queue_id": queue_id}
@@ -43,7 +43,7 @@ def queue_create(user: User, *_) -> IQueueId:
 def queue_delete(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.ManageQueues)
 
-    queue_id: QueueId = QueueId(request.args["queue_id"])
+    queue_id = QueueId(request.args["queue_id"])
     queue = Queue(queue_id)
     queue.delete()
 
@@ -57,7 +57,7 @@ def queue_edit(user: User, *_) -> dict:
 
     data = json.loads(request.data)
 
-    queue_id: QueueId = QueueId(data["queue_id"])
+    queue_id = QueueId(data["queue_id"])
     new_name = data['new_name']
     queue = Queue(queue_id)
     assert_valid_str_field(new_name, 'queue_name')
@@ -70,7 +70,7 @@ def queue_edit(user: User, *_) -> dict:
 @uses_token
 def post_list(user: User, *_) -> IQueueFullInfo:
     user.permissions.assert_can(Permission.FollowQueue)
-    queue_id: QueueId = QueueId(request.args["queue_id"])
+    queue_id = QueueId(request.args["queue_id"])
     queue = Queue(queue_id)
     return queue.full_info()
 
@@ -80,8 +80,8 @@ def post_list(user: User, *_) -> IQueueFullInfo:
 def queue_post_add(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.TaskboardDelegate)
     data = json.loads(request.data)
-    queue_id: QueueId = QueueId(data["queue_id"])
-    post_id: PostId = PostId(data["post_id"])
+    queue_id = QueueId(data["queue_id"])
+    post_id = PostId(data["post_id"])
 
     post = Post(post_id)
     queue = Queue(queue_id)
