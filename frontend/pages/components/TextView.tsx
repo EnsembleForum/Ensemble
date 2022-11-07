@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, IconButton, Input, Text } from "theme-ui";
-import { isPropertySignature } from "typescript";
+import { isPropertySignature, JsxElement } from "typescript";
 import { ApiFetch } from "../../App";
 import { APIcall, postView } from "../../interfaces";
 import { theme } from "../../theme";
@@ -14,6 +14,7 @@ import AuthorView from "./AuthorView";
 interface Props {
   text: string,
   private?: boolean,
+  anonymous?: boolean,
   heading?: string,
   author?: number,
   id: number,
@@ -95,7 +96,11 @@ const Private = styled.div`
   text-align: center;
   max-width: 100px;
 `
-
+const Anonymous = styled.a`
+  margin-top: 0;
+  text-decoration: underline;
+  font-weight: 700;
+`
 
 // Exporting our example component
 const TextView = (props: Props) => {
@@ -110,12 +115,12 @@ const TextView = (props: Props) => {
   }
   let heading = <></>;
   let reacts = <></>;
-  let author = <></>
+  let author = <></>;
   if (props.heading) {
     heading = <h1>{props.heading}</h1>
   }
   if (props.author) {
-    author = <AuthorView userId={props.author}/>
+    author = (props.anonymous ? <Anonymous>Anonymous</Anonymous> : <AuthorView userId={props.author}/>);
   }
   function react() {
     const key = routes[props.type][4];
