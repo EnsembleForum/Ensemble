@@ -77,6 +77,7 @@ class NotificationReacted(Notification):
             post_id = self._post.id
         return {
             "notification_id": self.id,
+            "seen": self.seen,
             "heading": f"Someone {action} {title}",
             "body": "",
             "post": post_id,

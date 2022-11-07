@@ -68,6 +68,7 @@ class NotificationUnaccepted(Notification):
     def get_info(self) -> INotificationInfo:
         return {
             "notification_id": self.id,
+            "seen": self.seen,
             "heading": (
                 f"{self.user_from.name_first} unaccepted your answer for "
                 f"{self.post.text}"

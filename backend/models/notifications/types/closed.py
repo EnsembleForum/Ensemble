@@ -48,6 +48,7 @@ class NotificationClosed(Notification):
     def get_info(self) -> INotificationInfo:
         return {
             "notification_id": self.id,
+            "seen": self.seen,
             "heading": f"A moderator closed your post {self.post.heading}",
             "body": "",  # TODO: If we implement closed post feedback, include
                          # that here

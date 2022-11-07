@@ -12,6 +12,7 @@ class INotificationInfo(TypedDict):
     Information for a notification
 
     * `notification_id` (`int`): ID of notification
+    * `seen` (`bool`): whether the post has been seen
     * `heading` (`str`): Heading of notification text
     * `body` (`str`): Body of notification text
     * `post` (`int`, optional): ID of post related to notification
@@ -23,6 +24,7 @@ class INotificationInfo(TypedDict):
     * `queue` (`int`, optional): ID of queue related to the notification
     """
     notification_id: NotificationId
+    seen: bool
     heading: str
     body: str
     post: Optional[PostId]
@@ -37,6 +39,7 @@ class INotificationList(TypedDict):
 
     * `notifications`: list of objects, each containing:
             * `notification_id` (`int`): ID of notification
+            * `seen` (`bool`): whether the post has been seen
             * `heading` (`str`): Heading of notification text
             * `body` (`str`): Body of notification text
             * `post` (`int`): ID of post related to notification
@@ -45,5 +48,7 @@ class INotificationList(TypedDict):
             * `reply` (`int`): ID of reply related to the notification. If this
             property is non-null, then `comment` and `post` will also be
             defined.
+            * `queue` (`int`, optional): ID of queue related to the
+              notification
     """
     notifications: list[INotificationInfo]

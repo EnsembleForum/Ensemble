@@ -77,6 +77,7 @@ class NotificationDeleted(Notification):
             post_id = self._post.id
         return {
             "notification_id": self.id,
+            "seen": self.seen,
             "heading": f"A moderator deleted your {type} {title}",
             "body": "",
             "post": post_id,

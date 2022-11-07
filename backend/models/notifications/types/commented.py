@@ -87,6 +87,7 @@ class NotificationCommented(Notification):
             reply_id = None
         return {
             "notification_id": self.id,
+            "seen": self.seen,
             "heading": f"{self.user_from.name_first} {action} {title}",
             "body": body,
             "post": self.post.id,

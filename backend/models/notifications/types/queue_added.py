@@ -67,6 +67,7 @@ class NotificationQueueAdded(Notification):
     def get_info(self) -> INotificationInfo:
         return {
             "notification_id": self.id,
+            "seen": self.seen,
             "heading": f"New post in queue {self.queue.name}",
             "body": self.post.heading,
             "post": self.post.id,

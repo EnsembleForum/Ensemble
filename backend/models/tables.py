@@ -161,8 +161,8 @@ class TNotification(_BaseTable):
     user_to = ForeignKey(TUser)
     """User the notification is directed to"""
 
-    viewed = Boolean()
-    """Whether the notification has been viewed"""
+    seen = Boolean()
+    """Whether the notification has been seen"""
 
     user_from = ForeignKey(TUser, null=True)
     """User who gave the notification, if any"""

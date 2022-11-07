@@ -126,7 +126,7 @@ class Notification:
                 TNotification.comment: (
                     comment.id if comment is not None else None),
                 TNotification.reply: reply.id if reply is not None else None,
-                TNotification.viewed: False,
+                TNotification.seen: False,
                 TNotification.queue: queue.id if queue is not None else None,
             }
         ).save().run_sync()[0]
@@ -153,16 +153,16 @@ class Notification:
         return User(self._get().user_to)
 
     @property
-    def viewed(self) -> bool:
+    def seen(self) -> bool:
         """
-        Whether this notification has been viewed or not
+        Whether this notification has been seen or not
         """
-        return self._get().viewed
+        return self._get().seen
 
-    @viewed.setter
-    def viewed(self, new_val: bool):
+    @seen.setter
+    def seen(self, new_val: bool):
         row = self._get()
-        row.viewed = new_val
+        row.seen = new_val
         row.save().run_sync()
 
     @property
