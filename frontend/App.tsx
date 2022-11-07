@@ -1,14 +1,15 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { SERVER_PATH } from './constants';
-import { APIcall, requestOptions } from './interfaces';
+import { APIcall, requestOptions, userPermission } from './interfaces';
 import AdminPage from './pages/AdminPage';
 import BrowsePage from './pages/BrowsePage';
 import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
 import PasswordResetPage from './pages/PasswordResetPage';
+import PermissionsContext from './pages/permissionsContext';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
@@ -51,9 +52,9 @@ export function ApiFetch(apiCall: APIcall) {
   });
 }
 
-export function setToken(value: string) {
+export function setToken(token: string) {
   console.log("get: " + window.localStorage.getItem("token"))
-  window.localStorage.setItem("token", value);
+  window.localStorage.setItem("token", token);
   console.log("set: " + window.localStorage.getItem("token"))
 }
 export function getToken(): string | null {
@@ -61,25 +62,52 @@ export function getToken(): string | null {
   return token;
 }
 
+export function getPermission(id : number, userPermissions : userPermission[]) {
+  for (const permission of userPermissions) {
+    if (permission.permission_id === id ) {
+      return permission.value;
+    }
+  }
+  return false;
+}
 
 function PassThrough() {
-
+  const [userPermissions, setUserPermissions] = React.useState<userPermission[]>([]);
+  const value = {userPermissions, setUserPermissions};
+  const [firstRun, setFirstRun] = React.useState<boolean>(true);
+  const api: APIcall = {
+    method: "GET",
+    path: "admin/is_first_run",
+  }
+  ApiFetch(api).then((data) => {
+    const first = data as {value: boolean};
+    setFirstRun(first.value);
+  })
   return (
+    <PermissionsContext.Provider value={value}>
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate to="/admin/init" />}></Route>
-          <Route path='/admin/init' element={<AdminPage page={'initialise_forum'} />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/register' element={<RegisterPage />} />
-          <Route path='/password_reset' element={<PasswordResetPage />} />
-          <Route path='/profile' element={<UserProfilePage userId={0} />} />
-          <Route path='/browse' element={<BrowsePage />} />
-          <Route path='/taskboard' element={<TaskboardPage />} />
-          <Route path='/admin' element={<AdminPage page={"register_users"} />} />
-          <Route path='/admin/registerusers' element={<UsersRegisterPage />} />
+          {firstRun ? (
+            <><Route path="/" element={<Navigate to="/admin/init" />}></Route>
+            <Route path='/admin/init' element={<InitPage />} /></>
+          ) : (
+            <>
+            <Route path="/" element={<Navigate to="/browse" />}></Route>
+            <Route path='/admin/init' element={<Navigate to="/browse" />} />
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/register' element={<RegisterPage />} />
+            <Route path='/password_reset' element={<PasswordResetPage />} />
+            <Route path='/profile' element={<UserProfilePage userId={0} />} />
+            <Route path='/browse' element={<BrowsePage />}/>
+            {console.log(userPermissions)}
+            {console.log(getPermission(20, userPermissions))}
+            {getPermission(20, userPermissions) ? <Route path='/taskboard' element={<TaskboardPage />} /> : <></>}
+            {getPermission(40, userPermissions)  ? <Route path='/admin' element={<AdminPage page={"register_users"} />} /> : <></>}
+            </>
+          )}
         </Routes>
       </Router>
-  );
+    </PermissionsContext.Provider>
+  )  
 }
 export default PassThrough;
-
