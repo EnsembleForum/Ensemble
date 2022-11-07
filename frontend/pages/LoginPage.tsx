@@ -4,9 +4,10 @@ import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button, } from "theme-ui";
 import { ApiFetch, setToken } from "../App";
-import { APIcall, loginForm } from "../interfaces";
+import { APIcall, initReturn, loginForm } from "../interfaces";
 import Navbar from "./components/Navbar";
 import { StyledButton } from "./GlobalProps";
+import PermissionsContext from "./permissionsContext";
 
 
 interface Props { }
@@ -24,6 +25,7 @@ const StyledForm = styled(Box)`
   border-radius: 2%;
 `;
 const LoginPage = (props: Props) => {
+  const { userPermissions, setUserPermissions } = React.useContext(PermissionsContext);
   const navigate = useNavigate();
   const [loginDetails, setLoginDetails] = React.useState<loginForm>({
     username: '',
@@ -39,15 +41,16 @@ const LoginPage = (props: Props) => {
     }
     ApiFetch(api)
       .then((data) => {
-        const check = data as { token: string };
-        setToken(check.token)
+        const check = data as initReturn;
+        console.log(check);
+        setToken(check.token);
+        setUserPermissions(check.permissions)
         navigate("/browse");
       })
   }
   return (
     <>
     <Navbar page={"login"}/>
-
     <LoginLayout>
       <StyledForm as="form" onSubmit={onSubmit}>
         <Label htmlFor="username">Username</Label>
