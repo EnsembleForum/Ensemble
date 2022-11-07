@@ -75,7 +75,7 @@ const PostView = (props: Props) => {
     return (
       <CommentContext.Provider value={value}>
        <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} userReacted={currentPost.user_reacted} type="post" private={currentPost.private}></TextView>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} userReacted={currentPost.user_reacted} tags={currentPost.tags} type="post"  private={currentPost.private}></TextView>
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
@@ -99,7 +99,7 @@ const PostView = (props: Props) => {
     getPost();
   }
   return (
-    <StyledPostListView> Loading... </StyledPostListView>
+    <StyledPostListView></StyledPostListView>
   );
 };
 
