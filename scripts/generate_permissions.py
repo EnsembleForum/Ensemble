@@ -19,3 +19,4 @@ for p in Permission:
 
 with open("resources/permissions.json", "w") as f:
     json.dump(output, f, indent=2)
+    f.write('\n')

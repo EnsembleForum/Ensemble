@@ -1,87 +1,35 @@
 """
 # Tests / Backend / Permission Test
 
-Unit tests for `PermissionSet` type.
+Tests to ensure permissions stay in sync.
+
+If either of tests tests are failing, it is because the
+resources/permissions.json file is not up-to-date.
+
+You can fix this by running `python scripts/generate_permissions.py`
 """
-'''
-Commented out for type safety - these tests no-longer work,
-I'm just keeping them until I write new tests.
-
-from backend.models import Permission, PermissionSet
-
-def test_name():
-    """Can we use the name property?"""
-    s = PermissionSet('my set', None, set(), set())
-    assert s.name == 'my set'
+import json
+from backend.models.permissions import Permission
 
 
-def test_all_disallowed_default():
-    """Are all permissions denied by default?"""
-    s = PermissionSet('test', None, set(), set())
-    for p in Permission:
-        assert not s.can(p)
-
-
-def test_allow():
-    """Can we grant permissions to users?"""
-    s = PermissionSet('my set', None, set(), set())
-    s.allow({Permission.Post})
-    assert s.can(Permission.Post)
-
-
-def test_disallow():
-    """Can we disallow granted permissions?"""
-    s = PermissionSet('my set', None, set(), set())
-    s.allow({Permission.Post})
-    s.disallow({Permission.Post})
-    assert not s.can(Permission.Post)
-
-
-def test_inherit():
-    """Do permission sets correctly inherit permissions from their parent?"""
-    s = PermissionSet('daddy', None, set(), set())
-    parent.allow({Permission.Post})
-    s = PermissionSet('child', parent)
-    assert s.can(Permission.Post)
-
-
-def test_override():
-    """Can permission sets override permissions from their parent?"""
-    parent = PermissionSet('daddy')
-    parent.allow({Permission.Post})
-    s = PermissionSet('child', parent)
-    s.disallow({Permission.Post})
-    assert not s.can(Permission.Post)
-
-
-def test_unassign():
-    """Can permissions be unassigned, meaning they will inherit from their
-    parent again?
+def test_permissions_backend_to_json():
     """
-    parent = PermissionSet('daddy')
-    parent.allow({Permission.Post})
-    s = PermissionSet('child', parent)
-    s.disallow({Permission.Post})
-    s.unassign({Permission.Post})
-    assert s.can(Permission.Post)
-    # Now prevent the parent from posting
-    parent.disallow({Permission.Post})
-    # Does it also affect the child?
-    assert not s.can(Permission.Post)
+    Are all permissions defined on the backend present in the JSON
+    """
+    with open("resources/permissions.json") as f:
+        perms: dict = json.load(f)
+    for p in Permission:
+        key = str(p.value)
+        assert key in perms.keys()
+        assert perms[key]["name"] == p.name
 
 
-def test_multi_inheritance():
-    """Can we have chains of permissions that inherit from each other?"""
-    grandparent = PermissionSet('nan')
-    parent = PermissionSet('daddy', grandparent)
-    child = PermissionSet('child', parent)
-    # First the grandparent lets them post
-    grandparent.allow({Permission.Post})
-    assert child.can(Permission.Post)
-    # Then the parent stops them
-    parent.disallow({Permission.Post})
-    assert not child.can(Permission.Post)
-    # Then they be a naughty boy and give themselves permission
-    child.allow({Permission.Post})
-    assert child.can(Permission.Post)
-'''
+def test_permissions_json_to_backend():
+    """
+    Are all permissions defined in the JSON present in the backend
+    """
+    with open("resources/permissions.json") as f:
+        perms: dict = json.load(f)
+    for p in perms:
+        perm = Permission(int(p))
+        assert perm.name == perms[p]["name"]
