@@ -36,10 +36,7 @@ class NotificationClosed(Notification):
         return NotificationClosed(cls._create(
             user_to,
             NotificationType.Closed,
-            None,
-            post,
-            None,
-            None,
+            post=post,
         ))
 
     @property
@@ -57,4 +54,5 @@ class NotificationClosed(Notification):
             "post": self.post.id,
             "comment": None,
             "reply": None,
+            "queue": None,
         }

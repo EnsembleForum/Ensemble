@@ -4,15 +4,14 @@
 Notification for "A new post was added to a queue you follow"
 """
 from backend.models.post import Post
+from backend.models.queue import Queue
 from .. import NotificationType
 from .. import Notification
 from ...user import User
-from ...comment import Comment
-from ...reply import Reply
 from backend.types.notifications import INotificationInfo
 
 
-class NotificationCommented(Notification):
+class NotificationQueueAdded(Notification):
     """
     Notification for "A new post was added to a queue you follow"
     """
@@ -22,8 +21,9 @@ class NotificationCommented(Notification):
         cls,
         user_to: User,
         user_from: User,
-        ref: Comment | Reply,
-    ) -> 'NotificationCommented':
+        post: Post,
+        queue: Queue,
+    ) -> 'NotificationQueueAdded':
         """
         Create a notification that a post was added to a queue you follow
 
@@ -37,22 +37,13 @@ class NotificationCommented(Notification):
         ### Returns:
         * `NotificationCommented`: notification object
         """
-        if isinstance(ref, Comment):
-            post = ref.parent
-            comment = ref
-            reply = None
-        else:
-            post = ref.parent.parent
-            comment = ref.parent
-            reply = ref
 
-        return NotificationCommented(cls._create(
+        return NotificationQueueAdded(cls._create(
             user_to,
-            NotificationType.Commented,
+            NotificationType.QueueAdded,
             user_from,
             post,
-            comment,
-            reply,
+            queue=queue,
         ))
 
     @property
@@ -68,27 +59,18 @@ class NotificationCommented(Notification):
         return p
 
     @property
-    def comment(self) -> Comment:
-        c = self._comment
-        assert c is not None
-        return c
+    def queue(self) -> Queue:
+        q = self._queue
+        assert q is not None
+        return q
 
     def get_info(self) -> INotificationInfo:
-        if self._reply is not None:
-            action = "replied to your comment"
-            title = self.comment.text
-            body = self._reply.text
-            reply_id = self._reply.id
-        else:
-            action = "commented on your post"
-            title = self.post.heading
-            body = self.comment.text
-            reply_id = None
         return {
             "notification_id": self.id,
-            "heading": f"{self.user_from.name_first} {action} {title}",
-            "body": body,
+            "heading": f"New post in queue {self.queue.name}",
+            "body": self.post.heading,
             "post": self.post.id,
-            "comment": self.comment.id,
-            "reply": reply_id,
+            "comment": None,
+            "reply": None,
+            "queue": self.queue.id,
         }

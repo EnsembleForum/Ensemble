@@ -50,10 +50,9 @@ class NotificationDeleted(Notification):
         return NotificationDeleted(cls._create(
             user_to,
             NotificationType.Deleted,
-            None,
-            post,
-            comment,
-            reply,
+            post=post,
+            comment=comment,
+            reply=reply,
         ))
 
     def get_info(self) -> INotificationInfo:
@@ -83,4 +82,5 @@ class NotificationDeleted(Notification):
             "post": post_id,
             "comment": comment_id,
             "reply": reply_id,
+            "queue": None,
         }

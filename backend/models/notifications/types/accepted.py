@@ -45,7 +45,6 @@ class NotificationAccepted(Notification):
             user_from,
             post,
             comment,
-            None,
         ))
 
     @property
@@ -77,4 +76,5 @@ class NotificationAccepted(Notification):
             "post": self.post.id,
             "comment": self.comment.id,
             "reply": None,
+            "queue": None,
         }

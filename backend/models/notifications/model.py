@@ -8,6 +8,7 @@ from ..user import User
 from ..post import Post
 from ..comment import Comment
 from ..reply import Reply
+from ..queue import Queue
 from . import NotificationType
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import NotificationId
@@ -84,6 +85,7 @@ class Notification:
         post: Optional[Post] = None,
         comment: Optional[Comment] = None,
         reply: Optional[Reply] = None,
+        queue: Optional[Queue] = None,
     ) -> NotificationId:
         """
         Create a new notification in the database.
@@ -108,6 +110,9 @@ class Notification:
         * `reply` (`Optional[Reply]`, optional): reply associated with
           notification. Defaults to `None`.
 
+        * `queue` (`Optional[Queue]`, optional): queue associated with
+          notification. Defaults to `None`.
+
         ### Returns:
         * `NotificationId`: ID of new notification
         """
@@ -122,6 +127,7 @@ class Notification:
                     comment.id if comment is not None else None),
                 TNotification.reply: reply.id if reply is not None else None,
                 TNotification.viewed: False,
+                TNotification.queue: queue.id if queue is not None else None,
             }
         ).save().run_sync()[0]
         return cast(NotificationId, val["id"])
@@ -204,6 +210,18 @@ class Notification:
         """
         if (reply_id := self._get().reply) is not None:
             return Reply(reply_id)
+        else:
+            return None
+
+    @property
+    def _queue(self) -> Optional[Queue]:
+        """
+        Queue associated with the notification
+
+        This method is private and should only be accessed by subclasses.
+        """
+        if (queue_id := self._get().queue) is not None:
+            return Queue(queue_id)
         else:
             return None
 

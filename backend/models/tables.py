@@ -175,3 +175,6 @@ class TNotification(_BaseTable):
 
     reply = ForeignKey(TReply, null=True)
     """Reply the notification is related to"""
+
+    queue = ForeignKey(TQueue, null=True)
+    """Queue the notification is related to"""

@@ -92,4 +92,5 @@ class NotificationCommented(Notification):
             "post": self.post.id,
             "comment": self.comment.id,
             "reply": reply_id,
+            "queue": None,
         }
