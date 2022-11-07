@@ -1,3 +1,4 @@
+
 export function Prettify(str: string) {
   const standards: { [key: string]: string } = {
     "name_first": "First Name",

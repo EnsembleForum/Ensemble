@@ -2,18 +2,20 @@ import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, IconButton, Input, Text, Textarea } from "theme-ui";
-import { isPropertySignature } from "typescript";
-import { ApiFetch } from "../../App";
+import { isPropertySignature, JsxElement } from "typescript";
+import { ApiFetch, getPermission } from "../../App";
 import { APIcall, postView } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
 import { StyledButton } from "../GlobalProps";
+import PermissionsContext from "../permissionsContext";
 import AuthorView from "./AuthorView";
 
 // Declaring and typing our props
 interface Props {
   text: string,
   private?: boolean,
+  anonymous?: boolean,
   heading?: string,
   author: number,
   id: number,
@@ -87,7 +89,6 @@ const OptionsBar = styled.div`
 const Private = styled.div`
   margin-left: 10px;
   background-color: lightgrey;
-  margin-right: 20px;
   padding: 5px;
   border-radius: 10px;
   font-weight: 700;
@@ -96,7 +97,9 @@ const Private = styled.div`
   text-align: center;
   max-width: 100px;
 `
-
+const Anonymous = styled(Private)`
+  max-width: 130px;
+`
 
 // Exporting our example component
 const TextView = (props: Props) => {
@@ -106,6 +109,7 @@ const TextView = (props: Props) => {
   const [editText, setEditText] = React.useState<string>(props.text as string);
   const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
+  const { userPermissions, setUserPermissions } = React.useContext(PermissionsContext);
 
   const routes = {
     "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id", "browse/post_view/edit"],
@@ -113,15 +117,18 @@ const TextView = (props: Props) => {
     "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "reply_id", "browse/reply_view/edit"],
   }
   let heading = <></>;
+  let author = <></>;
   if (props.heading) {
     heading = <h1>{props.heading}</h1>
   }
+  if (props.author && getPermission(2, userPermissions)) {
+    author = <AuthorView userId={props.author}/>;
+  } 
   let tags = <></>;
   if (props.tags) {
     console.log(tags);
     tags = <>Tags: {props.tags.map((each) => {return <>{each} </>})}</>
   }
-  let author = <AuthorView userId={props.author}/>
 
   function react() {
     const key = routes[props.type][4];
@@ -200,6 +207,7 @@ const TextView = (props: Props) => {
         <OptionsBar>
           {heading}
           {props.private ? <Private>PRIVATE</Private>: <></>}
+          {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
         </OptionsBar>
         {author}
         {toggleEdit ? <></> : tags}

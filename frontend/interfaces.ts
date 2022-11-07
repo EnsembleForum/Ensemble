@@ -20,7 +20,7 @@ export interface usersRegister {
 
 export interface initReturn {
   [key: string]: any,
-  userId: number, token: string
+  userId: number, token: string, permissions: userPermission[];
 }
 // you would think you would be able to write data instanceof initReturn 
 // but no :((( you have to check individual properties e.g.
@@ -112,4 +112,9 @@ export interface createPost {
   text: string,
   private:boolean, 
   anonymous:boolean,
+}
+
+export interface userPermission {
+  permission_id: number,
+  value: boolean
 }
