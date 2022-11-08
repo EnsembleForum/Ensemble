@@ -13,6 +13,7 @@ from backend.types.queue import IQueueFullInfo, IQueueList
 from backend.util.tokens import uses_token
 from backend.util.validators import assert_valid_str_field
 from backend.types.queue import IQueueId
+from backend.util import http_errors
 from backend.models.permissions import Permission
 
 
@@ -85,6 +86,11 @@ def queue_post_add(user: User, *_) -> dict:
 
     post = Post(post_id)
     queue = Queue(queue_id)
+
+    if queue.view_only:
+        raise http_errors.BadRequest(
+            "Cannot move post to and from view only queues"
+        )
 
     post.queue = queue
 
