@@ -87,7 +87,7 @@ def queue_post_add(user: User, *_) -> dict:
     post = Post(post_id)
     queue = Queue(queue_id)
 
-    if queue.view_only:
+    if queue.view_only or post.queue.view_only:
         raise http_errors.BadRequest(
             "Cannot move post to and from view only queues"
         )
