@@ -101,6 +101,14 @@ const Anonymous = styled(Private)`
   max-width: 130px;
 `
 
+const StyledAnonymous = styled.a`
+  text-decoration: underline;
+  &:hover {
+    cursor: pointer;
+    font-weight: 700;
+  }
+`
+
 // Exporting our example component
 const TextView = (props: Props) => {
   const [inputText, setInputText] = React.useState<string>();
@@ -121,9 +129,17 @@ const TextView = (props: Props) => {
   if (props.heading) {
     heading = <h1>{props.heading}</h1>
   }
-  if (props.author && getPermission(2, userPermissions)) {
-    author = <AuthorView userId={props.author}/>;
+  console.log(props.author, getPermission(2, userPermissions))
+  console.log(userPermissions)
+  if (props.author) {
+    if (props.anonymous && !getPermission(2, userPermissions)) {
+      author = <StyledAnonymous>Anonymous</StyledAnonymous>
+    } else {
+      author = <AuthorView userId={props.author}/>;
+    }
   } 
+
+
   let tags = <></>;
   if (props.tags) {
     console.log(tags);
