@@ -72,6 +72,7 @@ class Post:
                     TPost.queue: Queue.get_main_queue().id,
                     TPost.private: private,
                     TPost.anonymous: anonymous,
+                    TPost.closed: False,
                 }
             )
             .save()
@@ -339,6 +340,22 @@ class Post:
         row.anonymous = new_anonymous
         row.save().run_sync()
 
+    @property
+    def closed(self) -> bool:
+        """
+        Returns true if this post was closed by a mod/admin
+
+        ### Returns:
+        * bool: closed
+        """
+        return self._get().closed
+
+    @closed.setter
+    def closed(self, new_status: bool):
+        row = self._get()
+        row.closed = new_status
+        row.save().run_sync()
+
     def basic_info(self) -> IPostBasicInfo:
         """
         Returns the basic info of a post
@@ -353,6 +370,7 @@ class Post:
             "tags": self.tags,
             "me_too": self.me_too,
             "private": self.private,
+            "closed": self.closed,
             "anonymous": self.anonymous,
             "answered": self.answered is not None,
         }
@@ -375,6 +393,7 @@ class Post:
             "comments": [c.id for c in self.comments],
             "private": self.private,
             "anonymous": self.anonymous,
+            "closed": self.closed,
             "user_reacted": self.has_reacted(user),
             "answered": self.answered.id if self.answered else None,
             "queue": self.queue.name
