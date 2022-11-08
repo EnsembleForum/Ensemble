@@ -98,14 +98,14 @@ class Queue:
         row = self._get()
         row.name = new_name
         row.save().run_sync()
-        
+
     @property
     def view_only(self) -> bool:
         """
         Whether we can move posts to and from this queue in the taskboard page
         """
         return self._get().view_only
-    
+
     @classmethod
     def all(cls) -> list["Queue"]:
         """
