@@ -11,6 +11,7 @@ from backend.models.auth_config import AuthConfig
 from backend.models.permissions import PermissionGroup, Permission
 from backend.models.token import Token
 from backend.models.queue import Queue
+from backend.models.exam_mode import ExamMode
 from backend.models.user import User
 from backend.types.auth import IAuthInfo
 from backend.types.admin import IIsFirstRun
@@ -185,6 +186,9 @@ def init() -> IAuthInfo:
         },
         immutable=False,
     )
+
+    # Initialise exam mode table and set exam mode to False
+    ExamMode.initialise()
 
     # Create the main queue
     Queue.create(
