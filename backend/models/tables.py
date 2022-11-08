@@ -69,6 +69,7 @@ class TUser(_BaseTable):
 
 class TQueue(_BaseTable):
     immutable = Boolean()
+    view_only = Boolean()
     name = Text()
 
 
