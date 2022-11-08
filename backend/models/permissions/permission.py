@@ -79,3 +79,7 @@ class Permission(Enum):
     """User can manage permissions groups, including creation, deletion and
     modification
     """
+    
+    # Exam mode
+    SetExamMode = 52
+    """User can turn on or off exam mode"""

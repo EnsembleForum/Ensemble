@@ -22,35 +22,38 @@ class ExamMode:
                 }
             ).save().run_sync()
 
-    def _get(self) -> TExamMode:
+    @classmethod
+    def _get(cls) -> TExamMode:
         """
         Return a reference to the underlying database row
         """
         return get_by_id(TExamMode, 1)
 
-    def turn_on(self):
+    @classmethod
+    def turn_on(cls):
         """
         Turn on exam mode
         """
-        row = self._get()
+        row = cls._get()
         row.exam_mode = True
         row.save().run_sync()
 
-    def turn_off(self):
+    @classmethod
+    def turn_off(cls):
         """
         Turn off exam mode
         """
-        row = self._get()
+        row = cls._get()
         row.exam_mode = False
         row.save().run_sync()
 
-    @property
-    def is_on(self) -> bool:
-        return self._get().exam_mode
+    @classmethod
+    def is_on(cls) -> bool:
+        return cls._get().exam_mode
 
     @classmethod
-    def exam_mode_toggle(cls, self):
-        if self.is_on:
-            self.turn_off()
+    def exam_mode_toggle(cls):
+        if cls.is_on():
+            cls.turn_off()
         else:
-            self.turn_on()
+            cls.turn_on()
