@@ -25,9 +25,10 @@ from tests.integration.conftest import (
 
 def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     queues = queue_list(basic_server_setup['token'])['queues']
-    assert len(queues) == 2
+    assert len(queues) == 3
     queue_names = sorted([q['queue_name'] for q in queues])
-    assert queue_names == sorted(["Main queue", "Answered queue"])
+    assert queue_names == sorted(
+        ["Main queue", "Answered queue", "Closed queue"])
 
 
 def test_default_queue_cannot_delete(basic_server_setup: IBasicServerSetup):
