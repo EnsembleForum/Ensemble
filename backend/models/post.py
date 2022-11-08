@@ -61,7 +61,6 @@ class Post:
         """
         assert_valid_str_field(heading, "heading")
         assert_valid_str_field(text, "post")
-        from .queue import Queue
         val = (
             TPost(
                 {
@@ -226,7 +225,6 @@ class Post:
         ### Returns:
         * `Queue`: Queue that has the post
         """
-        from .queue import Queue
         return Queue(self._get().queue)
 
     @queue.setter
