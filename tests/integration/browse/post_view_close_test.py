@@ -3,6 +3,14 @@
 
 Tests for post_view/close
 
+* Fails when no permission to close post
+* Fails when no permission to view closed post
+* Post_list correctly shows that a post is closed
+* Post_view correctly shows that a post is closed
+* OP can view his own closed post
+* Mods and admins can view closed posts
+* Closing a post sends it to the closed queue,
+    un-closing sends it back to main queue
 """
 import pytest
 from backend.util import http_errors
@@ -38,6 +46,9 @@ def test_no_permission_to_view(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,
 ):
+    """
+    Fails when user with no permission tries to view a closed post
+    """
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
