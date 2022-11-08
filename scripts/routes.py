@@ -27,7 +27,7 @@ render.configure(
 )
 
 if len(sys.argv) == 1:
-    server = DocServer(('localhost', 8080), ['ensemble_request'])
+    server = DocServer(('localhost', 8081), ['ensemble_request'])
     with server:
         url = f'http://localhost:{server.server_port}'
         print(f'pdoc server ready at {url}')
