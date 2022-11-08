@@ -171,7 +171,8 @@ def init() -> IAuthInfo:
                 Permission.DeletePosts,
                 Permission.ViewReports,
                 Permission.ViewAllUsers,
-                Permission.CommentAccept
+                Permission.CommentAccept,
+                Permission.PublicPostExamMode,
             ]
         },
         immutable=False,

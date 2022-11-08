@@ -356,7 +356,7 @@ def post_react(token: JWT, post_id: PostId) -> IUserReacted:
 
     ## Body
     * `post_id` (`int`): identifier of the post
-    
+
     ## Returns
     * `user_reacted` (`bool`): Whether the user reacted to the post
     """
@@ -385,7 +385,7 @@ def comment_react(token: JWT, comment_id: CommentId) -> IUserReacted:
 
     ## Body
     * `comment_id` (`int`): identifier of the comment
-    
+
     ## Returns
     * `user_reacted` (`bool`): Whether the user reacted to the comment
     """
@@ -414,7 +414,7 @@ def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
 
     ## Body
     * `reply_id` (`int`): identifier of the reply
-    
+
     ## Returns
     * `user_reacted` (`bool`): Whether the user reacted to the reply
     """
