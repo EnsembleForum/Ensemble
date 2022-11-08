@@ -31,9 +31,11 @@ def test_default_queue_create(basic_server_setup: IBasicServerSetup):
 
 
 def test_default_queue_cannot_delete(basic_server_setup: IBasicServerSetup):
-    default_queue = queue_list(basic_server_setup['token'])['queues'][0]
-    with pytest.raises(BadRequest):
-        queue_delete(basic_server_setup['token'], default_queue['queue_id'])
+    default_queues = queue_list(basic_server_setup['token'])['queues']
+    # All queues created during forum initialisation are immutable
+    for queue in default_queues:
+        with pytest.raises(BadRequest):
+            queue_delete(basic_server_setup['token'], queue['queue_id'])
 
 
 def test_new_post_default(basic_server_setup: IBasicServerSetup):

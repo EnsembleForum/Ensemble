@@ -198,6 +198,12 @@ def init() -> IAuthInfo:
         immutable=True
     )
 
+    Queue.create(
+        "Closed queue",
+        immutable=True,
+        view_only=True
+    )
+
     # Register first user
     user = User.create(
         username,
