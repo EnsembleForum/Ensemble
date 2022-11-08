@@ -6,6 +6,7 @@ Tests for editing queues
 * No permission
 * Invalid ID
 * Empty name
+* Rename with existing name
 * Success
 """
 import pytest
@@ -69,3 +70,18 @@ def test_success(
         basic_server_setup['token'],
         make_queues['queue1_id'],
     )['queue_name'] == "My new queue name"
+
+
+def test_rename_alr_exists(
+    simple_users: ISimpleUsers,
+    make_queues: IMakeQueues
+):
+    """
+    Do we get a bad request if we rename using a name that already exists?
+    """
+    token = simple_users["admin"]["token"]
+    queue_id = make_queues["queue1_id"]
+    new_name = make_queues["queue_name2"]
+
+    with pytest.raises(BadRequest):
+        queue_edit(token, queue_id, new_name)
