@@ -144,7 +144,19 @@ class Queue:
         # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Answered queue")
 
+    @classmethod
+    def get_closed_queue(cls) -> "Queue":
+        """
+        Gets the closed queue
+
+        ### Returns:
+        * `queue`: closed queue
+        """
+        # TODO: Remember not to use duplicate queue names otherwise this breaks
+        return cls.get_queue("Closed queue")
+
     # TODO: Revisit in sprint 2 to think of a way to organise
+
     def posts(self) -> list["Post"]:
         """
         List of all posts in the given queue

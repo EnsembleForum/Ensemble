@@ -1,0 +1,164 @@
+"""
+# Tests / Integration / Browse / Post View / Close
+
+Tests for post_view/close
+
+"""
+import pytest
+from backend.util import http_errors
+from tests.integration.conftest import (
+    ISimpleUsers,
+    IMakePosts,
+    IAllUsers,
+)
+from ensemble_request.browse import (
+    post_list,
+    post_view,
+    post_create,
+    close_post
+)
+from ensemble_request.taskboard import queue_post_list, queue_list
+from tests.integration.helpers import get_queue
+
+
+def test_no_permission_to_close(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
+    """
+    Fails when user with no permission tries to close post
+    """
+    user_token = simple_users["user"]["token"]
+    post_id = make_posts["post1_id"]
+    with pytest.raises(http_errors.Forbidden):
+        close_post(user_token, post_id)
+
+
+def test_no_permission_to_view(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
+    user_token = simple_users["user"]["token"]
+    mod_token = simple_users["mod"]["token"]
+    post_id = make_posts["post1_id"]
+    close_post(mod_token, post_id)
+    with pytest.raises(http_errors.Forbidden):
+        post_view(user_token, post_id)
+
+
+def test_closed_post_view(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts
+):
+    """
+    Does post_view correctly show whether the post is closed or not?
+    """
+    mod_token = simple_users["mod"]["token"]
+    post_id = make_posts["post1_id"]
+
+    post = post_view(mod_token, post_id)
+    assert not post["closed"]
+
+    close_post(mod_token, post_id)
+    post = post_view(mod_token, post_id)
+    assert post["closed"]
+
+
+def test_closed_post_list(
+    simple_users: ISimpleUsers,
+):
+    """
+    Does post_list correctly show whether the post is closed or not?
+    """
+    mod_token = simple_users["mod"]["token"]
+    post_id = post_create(mod_token, "head", "text", [])["post_id"]
+
+    post = post_list(mod_token)["posts"][0]
+    assert not post["closed"]
+
+    close_post(mod_token, post_id)
+    post = post_list(mod_token)["posts"][0]
+    assert post["closed"]
+
+
+def test_diff_users_closed_post_list(all_users: IAllUsers):
+    """
+    Can users with permissions to view private posts
+    view private posts in post_list?
+    """
+    user_token1 = all_users["users"][0]["token"]
+    user_token2 = all_users["users"][1]["token"]
+    mod_token = all_users["mods"][0]["token"]
+    admin_token = all_users["admins"][0]["token"]
+
+    # User 1 creates a public post
+    heading = "First heading"
+    text = "First text"
+    tags: list[int] = []
+    post_id1 = post_create(user_token1, heading, text, tags)["post_id"]
+
+    # User 2 creates a public post
+    heading = "Second heading"
+    text = "Second text"
+    post_id2 = post_create(user_token2, heading, text, tags)["post_id"]
+
+    # User 1's post is closed
+    close_post(mod_token, post_id1)
+
+    # User 1 can view both posts
+    posts = post_list(user_token1)["posts"]
+    assert len(posts) == 2
+    post_ids = sorted([p["post_id"] for p in posts])
+    assert post_ids == sorted([post_id1, post_id2])
+
+    # User 2 cannot view User 1's post
+    posts = post_list(user_token2)["posts"]
+    assert len(posts) == 1
+    post_ids = sorted([p["post_id"] for p in posts])
+    assert post_ids == sorted([post_id2])
+
+    # Admin can view both posts
+    posts = post_list(admin_token)["posts"]
+    assert len(posts) == 2
+    post_ids = sorted([p["post_id"] for p in posts])
+    assert post_ids == sorted([post_id1, post_id2])
+
+    # Mod can view both posts
+    posts = post_list(mod_token)["posts"]
+    assert len(posts) == 2
+    post_ids = sorted([p["post_id"] for p in posts])
+    assert post_ids == sorted([post_id1, post_id2])
+
+
+def test_closed_queue(
+    simple_users: ISimpleUsers
+):
+    """
+    Does marking a comment as accepted send the post to the answered queue?
+    Does marking the accepted comment as unaccepted send the post back
+    to the main queue?
+    """
+    user_token = simple_users["user"]["token"]
+    mod_token = simple_users["mod"]["token"]
+
+    post_id = post_create(user_token, "head", "text", [])["post_id"]
+
+    # Closing a post sends it to the closed queue
+    close_post(mod_token, post_id)
+    post_queue_name = post_view(user_token, post_id)["queue"]
+    assert post_queue_name == "Closed queue"
+
+    queue_id = get_queue(queue_list(mod_token)['queues'],
+                         "Closed queue")["queue_id"]
+    queue = queue_post_list(mod_token, queue_id)
+    assert post_id in queue["posts"]
+
+    # Un-closing a post sends it back to the main queue
+    close_post(mod_token, post_id)
+    post_queue_name = post_view(user_token, post_id)["queue"]
+    assert post_queue_name == "Main queue"
+
+    queue_id = get_queue(queue_list(mod_token)['queues'],
+                         "Main queue")["queue_id"]
+    queue = queue_post_list(mod_token, queue_id)
+    assert post_id in queue["posts"]

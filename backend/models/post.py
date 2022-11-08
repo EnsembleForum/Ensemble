@@ -4,15 +4,16 @@
 from .tables import TComment, TPost, TPostReacts
 from .user import User
 from .comment import Comment
+from .queue import Queue
 from .permissions import Permission
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId, CommentId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
-from typing import cast, TYPE_CHECKING
+from typing import cast  # , TYPE_CHECKING
 from datetime import datetime
-if TYPE_CHECKING:
-    from backend.models.queue import Queue
+# if TYPE_CHECKING:
+#     from backend.models.queue import Queue
 
 
 class Post:
@@ -361,7 +362,12 @@ class Post:
         Close post if it was not
         Un-close post if it was
         """
-        self.closed = not self.closed
+        if self.closed:
+            self.closed = False
+            self.queue = Queue.get_main_queue()
+        else:
+            self.closed = True
+            self.queue = Queue.get_closed_queue()
 
     def basic_info(self) -> IPostBasicInfo:
         """
