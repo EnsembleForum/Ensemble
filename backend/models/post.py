@@ -100,7 +100,7 @@ class Post:
         ### Returns:
         * `bool`: whether the user can view the post
         """
-        if self.private and self.author != user:
+        if (self.private or self.closed) and self.author != user:
             return user.permissions.can(Permission.ViewPrivate)
         return True
 
@@ -355,6 +355,13 @@ class Post:
         row = self._get()
         row.closed = new_status
         row.save().run_sync()
+
+    def closed_toggle(self):
+        """
+        Close post if it was not
+        Un-close post if it was
+        """
+        self.closed = not self.closed
 
     def basic_info(self) -> IPostBasicInfo:
         """

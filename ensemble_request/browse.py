@@ -11,9 +11,13 @@ from backend.types.comment import (
 )
 from backend.types.reply import IReplyId
 from backend.types.identifiers import CommentId, PostId, ReplyId
-from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
+from backend.types.post import (
+    IPostBasicInfoList,
+    IPostFullInfo,
+    IPostId,
+    IPostClosed
+)
 from backend.types.react import IUserReacted
-
 from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
 from .consts import URL
@@ -497,4 +501,34 @@ def reply_edit(
             "reply_id": reply_id,
             "text": text,
         },
+    )
+
+
+def close_post(
+    token: JWT,
+    post_id: PostId,
+) -> IPostClosed:
+    """
+    # PUT `/browse/post_view/close`
+
+    Close or un-close a post
+
+    ## Permissions
+    * `ClosePosts`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `post_id` (`int`): identifier of the post
+    """
+    return cast(
+        IPostClosed,
+        put(
+            token,
+            f"{URL}/post_view/close",
+            {
+                "post_id": post_id,
+            },
+        )
     )

@@ -96,3 +96,12 @@ class IPostFullInfo(TypedDict):
     closed: bool
     answered: Optional[CommentId]
     queue: str
+
+
+class IPostClosed(TypedDict):
+    """
+    Whether a post is closed
+
+    * `closed`: `bool`
+    """
+    closed: bool
