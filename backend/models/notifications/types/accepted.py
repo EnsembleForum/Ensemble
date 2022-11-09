@@ -71,7 +71,7 @@ class NotificationAccepted(Notification):
             "seen": self.seen,
             "heading": (
                 f"{self.user_from.name_first} accepted your answer for "
-                f"{self.post.text}"
+                f"{self.post.heading}"
             ),
             "body": "",
             "post": self.post.id,
