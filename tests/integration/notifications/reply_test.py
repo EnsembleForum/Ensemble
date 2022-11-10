@@ -11,6 +11,7 @@ Tests for users getting notifications for replies to posts
 * OP doesn't get notification if they reply to a comment on their own post
 """
 import pytest
+import jestspectation as expect
 from backend.types.identifiers import NotificationId
 from backend.util import http_errors
 from ..conftest import IBasicServerSetup, ISimpleUsers, IMakePosts
@@ -30,15 +31,16 @@ def test_notification_on_comment(
     # Admin should have gotten a notification
     notifs = notifications.list(
         simple_users['admin']['token'])['notifications']
-    assert len(notifs) == 1
-    assert notifs[0]['seen'] is False
-    assert notifs[0]['heading'] \
-        == f"Mod commented on your post {make_posts['head1']}"
-    assert notifs[0]['body'] == "This is a comment"
-    assert notifs[0]['post'] == make_posts['post1_id']
-    assert notifs[0]['comment'] == comment
-    assert notifs[0]['reply'] is None
-    assert notifs[0]['queue'] is None
+    assert notifs == [{
+        "notification_id": expect.Any(int),
+        "seen": False,
+        "heading": f"User commented on your post {make_posts['head1']}",
+        "body": "This is a comment",
+        'post': make_posts['post1_id'],
+        'comment': comment,
+        'reply': None,
+        'queue': None,
+    }]
 
 
 def test_notifications_on_reply(
@@ -61,13 +63,13 @@ def test_notifications_on_reply(
     )['reply_id']
     # Mod should have gotten a notification
     notifs = notifications.list(simple_users['mod']['token'])['notifications']
-    assert len(notifs) == 1
-    assert isinstance(notifs[0]['notification_id'], int)
-    assert notifs[0]['seen'] is False
-    assert notifs[0]['heading'] \
-        == f"User replied to your comment on {make_posts['head1']}"
-    assert notifs[0]['body'] == "This is a reply"
-    assert notifs[0]['post'] == make_posts['post1_id']
-    assert notifs[0]['comment'] == comment
-    assert notifs[0]['reply'] is reply
-    assert notifs[0]['queue'] is None
+    assert notifs == [{
+        "notification_id": expect.Any(int),
+        "seen": False,
+        "heading": f"User replied to your comment on {make_posts['head1']}",
+        "body": "This is a reply",
+        'post': make_posts['post1_id'],
+        'comment': comment,
+        'reply': reply,
+        'queue': None,
+    }]
