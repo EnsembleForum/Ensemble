@@ -138,6 +138,7 @@ class Notification:
         """
         notifs = TNotification.objects()\
             .where(TNotification.user_to == user.id)\
+            .order_by(ascending=False)\
             .run_sync()
         return [Notification(n.id) for n in notifs]
 
