@@ -26,19 +26,19 @@ def test_see_notification(simple_users: ISimpleUsers, make_posts: IMakePosts):
     """Can we mark a notification as seen?"""
     # Comment on the post
     browse.add_comment(
-        simple_users['admin']['token'],
+        simple_users['user']['token'],
         make_posts['post1_id'],
         "My reply",
     )
     # OP should get a notification
-    n = notifications.list(simple_users['user']['token'])['notifications'][0]
+    n = notifications.list(simple_users['admin']['token'])['notifications'][0]
     # Mark it as seen
     notifications.seen(
-        simple_users['user']['token'],
+        simple_users['admin']['token'],
         n['notification_id'],
         True,
     )
-    n = notifications.list(simple_users['user']['token'])['notifications'][0]
+    n = notifications.list(simple_users['admin']['token'])['notifications'][0]
     assert n['seen']
 
 
@@ -49,24 +49,24 @@ def test_unseen_notification(
     """Can we mark a notification as seen?"""
     # Comment on the post
     browse.add_comment(
-        simple_users['admin']['token'],
+        simple_users['user']['token'],
         make_posts['post1_id'],
         "My reply",
     )
     # OP should get a notification
-    n = notifications.list(simple_users['user']['token'])['notifications'][0]
+    n = notifications.list(simple_users['admin']['token'])['notifications'][0]
     # Mark it as seen the unseen
     notifications.seen(
-        simple_users['user']['token'],
+        simple_users['admin']['token'],
         n['notification_id'],
         True,
     )
     notifications.seen(
-        simple_users['user']['token'],
+        simple_users['admin']['token'],
         n['notification_id'],
         False,
     )
-    n = notifications.list(simple_users['user']['token'])['notifications'][0]
+    n = notifications.list(simple_users['admin']['token'])['notifications'][0]
     assert not n['seen']
 
 
@@ -78,16 +78,16 @@ def test_see_notification_wrong_user(
     """
     # Comment on the post
     browse.add_comment(
-        simple_users['admin']['token'],
+        simple_users['user']['token'],
         make_posts['post1_id'],
         "My reply",
     )
     # OP should get a notification
-    n = notifications.list(simple_users['user']['token'])['notifications'][0]
+    n = notifications.list(simple_users['admin']['token'])['notifications'][0]
     # Mark it as seen with the wrong user
     with pytest.raises(http_errors.Forbidden):
         notifications.seen(
-            simple_users['admin']['token'],
+            simple_users['user']['token'],
             n['notification_id'],
             True,
         )

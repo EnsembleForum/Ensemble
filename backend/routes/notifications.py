@@ -32,9 +32,9 @@ def list_notifs(user: User, *_) -> INotificationList:
 def seen(user: User, *_) -> dict:
     data = json.loads(request.data)
     notif = Notification(NotificationId(data["notification_id"]))
-    seen: bool = data["seen"]
+    value: bool = data["value"]
     if notif.user_to != user:
         raise http_errors.Forbidden("Cannot see notifications not belonging "
                                     "to user")
-    notif.seen = seen
+    notif.seen = value
     return {}
