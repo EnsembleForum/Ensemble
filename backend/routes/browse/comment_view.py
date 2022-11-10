@@ -5,6 +5,7 @@ Comment View routes
 """
 import json
 from flask import Blueprint, request
+from backend.models.notifications import NotificationCommented
 from backend.models.permissions import Permission
 from backend.models.reply import Reply
 from backend.models.comment import Comment
@@ -35,9 +36,15 @@ def reply(user: User, *_) -> IReplyId:
     text: str = data["text"]
     comment = Comment(data["comment_id"])
 
-    reply_id = Reply.create(user, comment, text).id
+    reply = Reply.create(user, comment, text)
 
-    return {"reply_id": reply_id}
+    NotificationCommented.create(
+        comment.author,
+        user,
+        reply,
+    )
+
+    return {"reply_id": reply.id}
 
 
 @comment_view.put("/react")

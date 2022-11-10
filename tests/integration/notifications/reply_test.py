@@ -5,16 +5,13 @@ Tests for users getting notifications for replies to posts
 
 * User gets notification when someone comments on their post
 * Commenter gets notification if someone replies to their comment
-* OP gets notification if someone replies to a comment on their post
-* OP doesn't get notification if they comment on their own post
-* User doesn't get notification if they reply to their own comment
-* OP doesn't get notification if they reply to a comment on their own post
+* OP gets notification if someone replies to a comment on their post TODO
+* OP doesn't get notification if they comment on their own post TODO
+* User doesn't get notification if they reply to their own comment TODO
+* OP doesn't get notification if they reply to a comment on their own post TODO
 """
-import pytest
 import jestspectation as expect
-from backend.types.identifiers import NotificationId
-from backend.util import http_errors
-from ..conftest import IBasicServerSetup, ISimpleUsers, IMakePosts
+from ..conftest import ISimpleUsers, IMakePosts
 from ensemble_request import notifications, browse
 
 
