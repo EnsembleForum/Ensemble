@@ -47,7 +47,7 @@ class Analytics:
             cast(list[IAnalyticsValue], result),
             key=lambda x: x["count"]
         )
-    
+
     @classmethod
     def all_stats(cls, user: User) -> IAllStats:
         return {
@@ -56,4 +56,3 @@ class Analytics:
             "total_replies": cls.num_replies(),
             "top_posters": cls.top_posters()
         }
-        
