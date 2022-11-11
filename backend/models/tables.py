@@ -86,13 +86,6 @@ class TPost(_BaseTable):
     queue = ForeignKey(TQueue)
     private = Boolean()
     anonymous = Boolean()
-    isClosed = Boolean()
-    feedback = Text()
-
-
-class TFeedbackOptions(_BaseTable):
-    title = Text()
-    message = Text()
 
 
 class TComment(_BaseTable):
