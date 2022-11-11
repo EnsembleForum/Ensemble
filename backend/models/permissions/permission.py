@@ -11,6 +11,10 @@ from backend.types.identifiers import PermissionId
 class Permission(Enum):
     """
     Enum containing definitions for all the permission types of users.
+
+    FIXME: Currently the docstrings for each permission cannot be accessed by
+    the script generate_permissions script. If we want to give descriptions for
+    each permission to our users, we need a better way to store this.
     """
     @property
     def value(self) -> PermissionId:
@@ -31,6 +35,10 @@ class Permission(Enum):
     """User can create answers to posts"""
     PostOverrideExam = 12
     """User can create public posts, even when exam mode is enabled"""
+
+    # Comments
+    CommentAccept = 13
+    """Non-OP user can mark a comment as accepted"""
 
     # Taskboard and queues
     ViewTaskboard = 20

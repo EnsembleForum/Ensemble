@@ -19,7 +19,8 @@ from tests.integration.conftest import (
 from ensemble_request.browse import (
     comment_react,
     get_comment,
-    add_comment
+    add_comment,
+    post_view
 )
 
 
@@ -107,6 +108,38 @@ def test_one_user_multiple_comments(
 
     comment = get_comment(token2, comment_id2)
     assert comment["thanks"] == 1
+
+
+def test_post_view_comments_thanks_order(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts
+):
+    """
+    Are comments of a post sorted correctly by
+    accepted -> thanks -> newest to oldest?
+    """
+    token1 = simple_users["user"]["token"]
+    token2 = simple_users["mod"]["token"]
+    token3 = simple_users["admin"]["token"]
+    post_id = make_posts["post1_id"]
+
+    comment_ids = [add_comment(token1, post_id, "comment")["comment_id"]
+                   for i in range(4)]
+
+    # Comment 2 has 3 thanks
+    comment_react(token1, comment_ids[1])
+    comment_react(token2, comment_ids[1])
+    comment_react(token3, comment_ids[1])
+
+    # Comment 4 has 2 thanks
+    comment_react(token1, comment_ids[3])
+    comment_react(token2, comment_ids[3])
+
+    comments = post_view(token1, post_id)["comments"]
+    correct_order = [comment_ids[1], comment_ids[3],
+                     comment_ids[2], comment_ids[0]]
+
+    assert comments == correct_order
 
 
 def test_invalid_comment_id(simple_users: ISimpleUsers):

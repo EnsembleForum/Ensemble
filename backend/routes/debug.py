@@ -9,11 +9,16 @@ from colorama import Fore
 from flask import Blueprint, request
 from backend.util import http_errors, db_status
 from backend.util.debug import debug_active
-from backend.types.debug import IEcho
+from backend.types.debug import IEcho, IEnabled
 from backend.types.errors import IErrorInfo
 from typing import NoReturn
 
 debug = Blueprint('debug', 'debug')
+
+
+@debug.get('/enabled')
+def enabled() -> IEnabled:
+    return {"value": True}
 
 
 @debug.get('/echo')
@@ -52,6 +57,11 @@ def fail() -> NoReturn:
 
 # Dummy debug containing no routes
 dummy_debug = Blueprint('dummy_debug', 'debug')
+
+
+@dummy_debug.get('/enabled')
+def not_enabled() -> IEnabled:
+    return {"value": False}
 
 
 @dummy_debug.route('/<path:path>')

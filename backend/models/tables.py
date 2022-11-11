@@ -86,6 +86,12 @@ class TPost(_BaseTable):
     queue = ForeignKey(TQueue)
     private = Boolean()
     anonymous = Boolean()
+    answered = Integer(null=True)
+    # FIXME
+    # answered = ForeignKey("TComment", null=True)
+    # For some reason this causes an error:
+    # ValueError: Can't find a Table subclass called
+    # TComment in backend.models.tables
 
 
 class TComment(_BaseTable):

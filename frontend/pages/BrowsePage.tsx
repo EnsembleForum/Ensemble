@@ -50,7 +50,6 @@ const BrowsePage = (props: Props) => {
           <PostView />
         </StyledLayout>
         <CreatePostView />
-
       </Layout>
     </PostContext.Provider>
   );

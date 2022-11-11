@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Checkbox, IconButton, Input, Text, Textarea } from "theme-ui";
 import { TypeFlags } from "typescript";
 import { ApiFetch } from "../../App";
@@ -59,6 +60,7 @@ const CreatePostView = (props: Props) => {
     anonymous: false,
   });
   const { postId, setPostId } = React.useContext(PostContext);
+  const navigate = useNavigate();
   if (toggle) {
     return (
       <StyledPost>
@@ -82,6 +84,14 @@ const CreatePostView = (props: Props) => {
             const privateChecked = !post.private;
             setPost(post => ({ ...post, private: privateChecked }));}}
           />
+        Anonymous:
+        <input
+          type="checkbox"
+          checked={post.anonymous}
+          onChange={() => {
+            const anonymousChecked = !post.anonymous;
+            setPost(post => ({ ...post, anonymous: anonymousChecked }));}}
+          />
         <SpreadButtons>
           <StyledButton onClick={(e) => {
             const api: APIcall = {
@@ -92,6 +102,7 @@ const CreatePostView = (props: Props) => {
             ApiFetch(api).then((data) => {
               const d = data as { post_id: number };
               setPostId(d.post_id);
+              console.log(postId, d.post_id);
             }
             );
           }}>New Post</StyledButton>
