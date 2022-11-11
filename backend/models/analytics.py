@@ -46,7 +46,7 @@ class Analytics:
         return sorted(
             cast(list[IAnalyticsValue], result),
             key=lambda x: x["count"]
-        )
+        )[:num]
 
     @classmethod
     def all_stats(cls, user: User) -> IAllStats:

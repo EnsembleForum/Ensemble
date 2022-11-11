@@ -7,6 +7,7 @@ import json
 from flask import Blueprint, request
 from .permissions import permissions
 from .users import users
+from .analytics import analytics
 from backend.models.auth_config import AuthConfig
 from backend.models.permissions import PermissionGroup, Permission
 from backend.models.token import Token
@@ -24,6 +25,7 @@ admin = Blueprint('admin', 'admin')
 
 admin.register_blueprint(permissions, url_prefix='/permissions')
 admin.register_blueprint(users, url_prefix='/users')
+admin.register_blueprint(analytics, url_prefix='/analytics')
 
 
 @admin.get('/is_first_run')
