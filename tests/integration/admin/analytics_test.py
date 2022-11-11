@@ -11,8 +11,10 @@ def test_mod_mark_accepted(
 
     data = get_analytics(admin_token)
 
-    assert len(data["top_posters"]) == 1
-    assert data["top_posters"][0] == {
+    assert len(data["staff"]["top_posters"]) == 1
+    assert data["staff"]["top_posters"][0] == {
         "user_id": admin_id,
         "count": 2
     }
+    assert data["total_posts"] == 2
+    assert data["total_comments"] == 0

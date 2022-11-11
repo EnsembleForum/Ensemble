@@ -7,8 +7,15 @@ class IAnalyticsValue(TypedDict):
     count: int
 
 
+class IGroupStats(TypedDict):
+    top_posters: list[IAnalyticsValue]
+    top_commenters: list[IAnalyticsValue]
+    top_repliers: list[IAnalyticsValue]
+
+
 class IAllStats(TypedDict):
     total_posts: int
     total_comments: int
     total_replies: int
-    top_posters: list[IAnalyticsValue]
+    students: IGroupStats
+    staff: IGroupStats

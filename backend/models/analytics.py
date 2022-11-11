@@ -2,7 +2,7 @@
 # Backend / Models / Analytics
 """
 from piccolo.query.methods.select import Count
-from typing import cast
+from typing import cast, Literal, Union
 
 # from backend.util import http_errors
 from backend.types.analytics import IAllStats, IAnalyticsValue
@@ -25,22 +25,28 @@ class Analytics:
         return cast(int, TReply.count().run_sync())
 
     @classmethod
-    def top_posters(cls, num=10, group=None) -> list["IAnalyticsValue"]:
+    def top_creators(
+        cls,
+        table: type[Union[TPost, TComment, TReply]],
+        group: list[Literal["Administrator", "Moderator", "Student"]] = None,
+        num: int = 10
+    ) -> list["IAnalyticsValue"]:
         if group:
-            result = TPost.select(
-                TPost.author.as_alias("user_id"),
-                Count(TPost.author).as_alias("count")
+            result = table.select(
+                table.author.as_alias("user_id"),
+                Count(table.author).as_alias("count")
             ).where(
-                TPost.author.permissions.parent.name == group  # type: ignore
+                table.author.permissions.
+                parent.name.is_in(group)  # type: ignore
             ).group_by(
-                TPost.author
+                table.author
             ).run_sync()
         else:
-            result = TPost.select(
-                TPost.author.as_alias("user_id"),
-                Count(TPost.author).as_alias("count")
+            result = table.select(
+                table.author.as_alias("user_id"),
+                Count(table.author).as_alias("count")
             ).group_by(
-                TPost.author
+                table.author
             ).run_sync()
 
         return sorted(
@@ -54,5 +60,23 @@ class Analytics:
             "total_posts": cls.num_posts(),
             "total_comments": cls.num_comments(),
             "total_replies": cls.num_replies(),
-            "top_posters": cls.top_posters()
+            "students": {
+                "top_posters": cls.top_creators(TPost, ["Student"]),
+                "top_commenters": cls.top_creators(TComment, ["Student"]),
+                "top_repliers": cls.top_creators(TReply, ["Student"])
+            },
+            "staff": {
+                "top_posters": cls.top_creators(
+                    TPost,
+                    ["Administrator", "Moderator"]
+                ),
+                "top_commenters": cls.top_creators(
+                    TComment,
+                    ["Administrator", "Moderator"]
+                ),
+                "top_repliers": cls.top_creators(
+                    TReply,
+                    ["Administrator", "Moderator"]
+                )
+            }
         }

@@ -81,35 +81,3 @@ class IPostFullInfo(TypedDict):
     anonymous: bool
     answered: Optional[CommentId]
     queue: str
-
-
-# {
-#     'total_posts': int,
-#     'total_comments': int,
-#     'total_replies': int,
-#     'top_posters': [{'user_id':int, 'num_posts':int}],       # top 10 posters
-#     'top_commenters': [{'user_id':int, 'num_comments':int}], # top 10
-#     'top_repliers': [{'user_id':int, 'num_replies':int}],    # top 10
-# }
-
-
-# {
-#     'total_posts': int,
-#     'total_comments': int,
-#     'total_replies': int,
-#     'students': {
-#         'top_posters': [{'user_id':int, 'num_posts':int}],
-#         'top_commenters': [{'user_id':int, 'num_comments':int}],
-#         'top_repliers': [{'user_id':int, 'num_replies':int}],
-#     },
-#     'staff': {
-#         'top_posters': [{'user_id':int, 'num_posts':int}],
-#         'top_commenters': [{'user_id':int, 'num_comments':int}],
-#         'top_repliers': [{'user_id':int, 'num_replies':int}],
-#     },
-#     'all': {
-#         'top_posters': [{'user_id':int, 'num_posts':int}],
-#         'top_commenters': [{'user_id':int, 'num_comments':int}],
-#         'top_repliers': [{'user_id':int, 'num_replies':int}],
-#     }
-# }
