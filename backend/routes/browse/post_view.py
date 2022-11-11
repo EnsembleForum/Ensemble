@@ -10,7 +10,7 @@ from backend.models.post import Post
 from backend.models.user import User
 from backend.models.comment import Comment
 from backend.types.identifiers import PostId
-from backend.types.post import IPostFullInfo, IPostId
+from backend.types.post import IPostFullInfo
 from backend.types.comment import ICommentId
 from backend.types.react import IUserReacted
 from backend.util import http_errors
@@ -77,22 +77,6 @@ def comment(user: User, *_) -> ICommentId:
     comment_id = Comment.create(user, post, text).id
 
     return {"comment_id": comment_id}
-
-
-@post_view.put("/close")
-@uses_token
-def close(*_) -> IPostId:
-    data = json.loads(request.data)
-    # TODO: Implement closed
-    # newClosed: bool = data["isClosed"]
-
-    # Removed implementation
-    # newFeedback: str = data["feedback"]
-
-    post_id: PostId = data["post_id"]
-    # post = Post(data[post_id])
-
-    return {"post_id": post_id}
 
 
 @post_view.put("/react")

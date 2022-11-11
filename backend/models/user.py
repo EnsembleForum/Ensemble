@@ -2,7 +2,7 @@
 # Backend / Models / User
 """
 from .tables import TUser
-from .permissions import PermissionGroup, PermissionUser
+from .permissions import PermissionGroup, PermissionUser, Permission
 from backend.util.exceptions import MatchNotFound
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_email_valid, assert_valid_str_field
@@ -35,7 +35,6 @@ class User:
         name_first: str,
         name_last: str,
         email: str,
-        pronoun: str,
         permissions_base: PermissionGroup
     ) -> 'User':
         """
@@ -67,7 +66,7 @@ class User:
                 TUser.name_first: name_first,
                 TUser.name_last: name_last,
                 TUser.email: email,
-                TUser.pronoun: pronoun,
+                TUser.pronoun: "",
                 TUser.permissions: PermissionUser.create(permissions_base).id,
             }
         ).save().run_sync()[0]
@@ -201,12 +200,16 @@ class User:
     def pronoun(self, new_pronoun: str):
         assert_valid_str_field(new_pronoun, "Pronoun")
         row = self._get()
-        row.email = new_pronoun
+        row.pronoun = new_pronoun
         row.save().run_sync()
 
     @property
     def permissions(self) -> PermissionUser:
         return PermissionUser(self._get().permissions)
+
+    def can_edit_name(self) -> bool:
+        # return user.permissions.can(Permission.EditName)
+        return self.permissions.can(Permission.EditName)
 
     def basic_info(self) -> IUserBasicInfo:
         """
@@ -219,7 +222,6 @@ class User:
         return {
             "name_first": row.name_first,
             "name_last": row.name_last,
-            "pronoun": row.pronoun,
             "username": row.username,
             "user_id": UserId(row.id),
         }

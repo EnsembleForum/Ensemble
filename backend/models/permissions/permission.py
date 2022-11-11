@@ -27,6 +27,7 @@ class Permission(Enum):
     """User can view private posts"""
     ViewAnonymousOP = 2
     """User can view who made an anonymous post"""
+    EditName = 3
 
     # Posting
     PostCreate = 10

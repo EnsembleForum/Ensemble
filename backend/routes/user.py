@@ -5,10 +5,12 @@ Functions relating to users.
 """
 import json
 from flask import Blueprint, request
+from backend.models.permissions import Permission
 from backend.types.user import IUserProfile
 from backend.types.identifiers import UserId
 from backend.util.tokens import uses_token
 from backend.models.user import User
+from backend.util import http_errors
 
 
 user = Blueprint('user', 'user')
@@ -39,6 +41,11 @@ def edit_name_first(user: User, *_) -> IUserProfile:
     * `user_id`: `int`
 
     """
+    user.permissions.assert_can(Permission.EditName)
+    if not user.can_edit_name():
+        raise http_errors.Forbidden(
+            "Do not have permissions to edit others names"
+            )
     data = json.loads(request.data)
     new_name: str = data['new_name']
     user_id: UserId = data['user_id']
@@ -64,6 +71,12 @@ def edit_name_last(user: User, *_) -> IUserProfile:
     * `user_id`: `int`
 
     """
+    user.permissions.assert_can(Permission.EditName)
+    if not user.can_edit_name():
+        raise http_errors.Forbidden(
+            "Do not have permissions to edit others names"
+            )
+
     data = json.loads(request.data)
     new_name: str = data['new_name']
 

@@ -71,7 +71,6 @@ def register(user: User, *_) -> IUserIdList:
             u['name_first'],
             u['name_last'],
             u['email'],
-            u['pronoun'],
             PermissionGroup(group),
         ).id
     return {

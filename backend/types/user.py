@@ -44,7 +44,6 @@ class IUserBasicInfo(TypedDict):
     name_last: str
     username: str
     user_id: UserId
-    pronoun: str
 
 
 class IUserBasicInfoList(TypedDict):

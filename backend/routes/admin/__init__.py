@@ -78,7 +78,6 @@ def init() -> IAuthInfo:
     username: str = data["username"]
     password: str = data["password"]
     email: str = data["email"]
-    pronoun: str = data["pronoun"]
     name_first: str = data["name_first"]
     name_last: str = data["name_last"]
 
@@ -205,7 +204,6 @@ def init() -> IAuthInfo:
         name_first,
         name_last,
         email,
-        pronoun,
         admin,
     )
 
