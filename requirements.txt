@@ -17,7 +17,7 @@ idna==3.4
 inflection==0.5.1
 iniconfig==1.1.1
 itsdangerous==2.1.2
-Jestspectation==0.1.0
+Jestspectation==0.2.0
 Jinja2==3.1.2
 MarkupSafe==2.1.1
 mccabe==0.7.0
