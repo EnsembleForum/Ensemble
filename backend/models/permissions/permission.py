@@ -79,3 +79,7 @@ class Permission(Enum):
     """User can manage permissions groups, including creation, deletion and
     modification
     """
+
+    # Analytics
+    ViewAnalytics = 60
+    """User can view forum analytics"""

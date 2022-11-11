@@ -61,5 +61,8 @@
   },
   "51": {
     "name": "ManagePermissionGroups"
+  },
+  "60": {
+    "name": "ViewAnalytics"
   }
 }
