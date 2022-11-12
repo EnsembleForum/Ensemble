@@ -31,6 +31,8 @@ const Post = styled.div`
   }
   * {
     text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 `
 const ActivePost = styled(Post)`
@@ -65,7 +67,9 @@ const PostListView = (props: Props) => {
                 <ActivePost onClick={() => {
                   setSearchParams({postId: each.post_id.toString()});
                 }}>
-                  {each.heading} <br /> <AuthorView userId={each.author}/><br />Tags: {each.tags}
+                  <div>{each.heading}</div>
+                <AuthorView userId={each.author}/>
+                <div>Tags: {each.tags}</div>
                 </ActivePost>
               );
             }
@@ -73,7 +77,9 @@ const PostListView = (props: Props) => {
               <Post onClick={() => {
                 setSearchParams({postId: each.post_id.toString()})
               }}>
-                {each.heading} <br /> <AuthorView userId={each.author}/><br />Tags: {each.tags}
+                <div>{each.heading}</div>
+                <AuthorView userId={each.author}/>
+                <div>Tags: {each.tags}</div>
               </Post>
             );
           })}
