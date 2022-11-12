@@ -9,12 +9,12 @@ from backend.models.permissions import Permission
 exam_mode = Blueprint('exam_mode', 'exam_mode')
 
 
-@exam_mode.get('/is_on')
+@exam_mode.get('/is_enabled')
 @uses_token
 def is_on(user: User, *_) -> IExamModeInfo:
     user.permissions.assert_can(Permission.PostView)
     return {
-        'is_on': ExamMode.is_on()
+        'is_enabled': ExamMode.is_enabled()
     }
 
 
@@ -24,5 +24,5 @@ def exam_mode_toggle(user: User, *_) -> IExamModeInfo:
     user.permissions.assert_can(Permission.SetExamMode)
     ExamMode.exam_mode_toggle()
     return {
-        'is_on': ExamMode.is_on()
+        'is_enabled': ExamMode.is_enabled()
     }

@@ -83,5 +83,3 @@ class Permission(Enum):
     # Exam mode
     SetExamMode = 52
     """User can turn on or off exam mode"""
-    PublicPostExamMode = 53
-    """User can post publicly when exam mode is on"""

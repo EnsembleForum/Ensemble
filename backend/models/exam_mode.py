@@ -30,7 +30,7 @@ class ExamMode:
         return get_by_id(TExamMode, 1)
 
     @classmethod
-    def turn_on(cls):
+    def enable(cls):
         """
         Turn on exam mode
         """
@@ -39,7 +39,7 @@ class ExamMode:
         row.save().run_sync()
 
     @classmethod
-    def turn_off(cls):
+    def disable(cls):
         """
         Turn off exam mode
         """
@@ -48,12 +48,12 @@ class ExamMode:
         row.save().run_sync()
 
     @classmethod
-    def is_on(cls) -> bool:
+    def is_enabled(cls) -> bool:
         return cls._get().exam_mode
 
     @classmethod
     def exam_mode_toggle(cls):
-        if cls.is_on():
-            cls.turn_off()
+        if cls.is_enabled():
+            cls.disable()
         else:
-            cls.turn_on()
+            cls.enable()

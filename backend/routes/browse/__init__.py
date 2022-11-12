@@ -44,7 +44,7 @@ def create(user: User, *_) -> IPostId:
     anonymous: bool = data["anonymous"]
 
     if ExamMode.is_on() and not private:
-        user.permissions.assert_can(Permission.PublicPostExamMode)
+        user.permissions.assert_can(Permission.PostOverrideExam)
 
     post_id = Post.create(user, heading, text, tags, private, anonymous).id
 

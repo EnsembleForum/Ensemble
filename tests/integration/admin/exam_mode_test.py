@@ -80,7 +80,7 @@ def test_user_post_during_exam_mode(simple_users: ISimpleUsers):
 
 def test_mod_post_during_exam_mode(simple_users: ISimpleUsers):
     """
-    Mod can post privately or publicly during exam mode
+    Mod can post publicly during exam mode
     """
     mod_token = simple_users["mod"]["token"]
     admin_token = simple_users["admin"]["token"]
@@ -88,5 +88,4 @@ def test_mod_post_during_exam_mode(simple_users: ISimpleUsers):
     toggle_exam_mode(admin_token)
 
     post_create(mod_token, 'heading', 'text', [], private=False)
-    post_create(mod_token, "First head", "First text", [], private=True)
-    assert len(post_list(mod_token)["posts"]) == 2
+    assert len(post_list(mod_token)["posts"]) == 1

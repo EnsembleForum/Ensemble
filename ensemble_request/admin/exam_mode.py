@@ -9,7 +9,7 @@ URL = f"{URL}/admin/exam_mode"
 
 def exam_is_on(token: JWT) -> IExamModeInfo:
     """
-    # GET `/admin/exam_mode/is_on`
+    # GET `/admin/exam_mode/is_enabled`
 
     Get whether exam mode is on
 
@@ -20,13 +20,14 @@ def exam_is_on(token: JWT) -> IExamModeInfo:
     * `Authorization` (`str`): JWT of the user
 
     ## Returns
-    * `is_on` (`bool`): Whether exam mode is on
+    Object containing
+    * `is_enabled` (`bool`): Whether exam mode is enabled
     """
     return cast(
         IExamModeInfo,
         get(
             token,
-            f"{URL}/is_on",
+            f"{URL}/is_enabled",
             {}
         ),
     )
@@ -45,6 +46,7 @@ def toggle_exam_mode(token: JWT) -> IExamModeInfo:
     * `Authorization` (`str`): JWT of the user
 
     ## Returns
+    Object containing
     * `is_on` (`bool`): Whether exam mode is on
     """
     return cast(
