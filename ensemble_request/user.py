@@ -42,10 +42,13 @@ def profile(token: JWT, user_id: UserId) -> IUserProfile:
     ))
 
 
-def profile_edit_first(token: JWT, user_id: UserId, new_name: str) \
-        -> IUserProfile:
+def profile_edit_name_first(
+    token: JWT,
+    user_id: UserId,
+    name_first: str,
+) -> None:
     """
-    ## PUT `/user/profile`
+    ## PUT `/user/profile/edit_name_first`
 
     Edits first name of a user.
 
@@ -53,31 +56,26 @@ def profile_edit_first(token: JWT, user_id: UserId, new_name: str) \
     * `Authorization` (`JWT`): JWT of the user
 
     ### Params
-    * `user_id` (`int`): user ID for user we're viewing the profile of
-    * `new_name` (`str`): user's new first name
-
-    ### Returns
-    * `name_first` (`str`): the user's first name
-    * `name_last` (`str`): the user's last name
-    * `username` (`str`): the user's username
-    * `email` (`str`): the user's email address
-    * `user_id` (`int`): the user's ID
-
+    * `user_id` (`int`): user ID for user we're editing the profile of
+    * `name_first` (`str`): user's new first name
     """
-    return cast(IUserProfile, put(
+    put(
         token,
         f'{URL}/profile/edit_name_first',
         {
             "user_id": user_id,
-            "new_name": new_name,
+            "name_first": name_first,
         },
-    ))
+    )
 
 
-def profile_edit_last(token: JWT, user_id: UserId, new_name: str) \
-        -> IUserProfile:
+def profile_edit_name_last(
+    token: JWT,
+    user_id: UserId,
+    name_last: str,
+) -> None:
     """
-    ## PUT `/user/profile`
+    ## PUT `/user/profile/edit_name_last`
 
     Edits last name of a user.
 
@@ -85,22 +83,68 @@ def profile_edit_last(token: JWT, user_id: UserId, new_name: str) \
     * `Authorization` (`JWT`): JWT of the user
 
     ### Params
-    * `user_id` (`int`): user ID for user we're viewing the profile of
-    * `new_name` (`str`): user's new last name
-
-    ### Returns
-    * `name_first` (`str`): the user's first name
-    * `name_last` (`str`): the user's last name
-    * `username` (`str`): the user's username
-    * `email` (`str`): the user's email address
-    * `user_id` (`int`): the user's ID
-
+    * `user_id` (`int`): user ID for user we're editing the profile of
+    * `name_last` (`str`): user's new last name
     """
-    return cast(IUserProfile, put(
+    put(
         token,
         f'{URL}/profile/edit_name_last',
         {
             "user_id": user_id,
-            "new_name": new_name,
+            "name_last": name_last,
         },
-    ))
+    )
+
+
+def profile_edit_email(
+    token: JWT,
+    user_id: UserId,
+    email: str,
+) -> None:
+    """
+    ## PUT `/user/profile/edit_email`
+
+    Edits email of a user.
+
+    ## Header
+    * `Authorization` (`JWT`): JWT of the user
+
+    ### Params
+    * `user_id` (`int`): user ID for user we're editing the profile of
+    * `email` (`str`): user's new email
+    """
+    put(
+        token,
+        f'{URL}/profile/edit_email',
+        {
+            "user_id": user_id,
+            "email": email,
+        },
+    )
+
+
+def profile_edit_pronouns(
+    token: JWT,
+    user_id: UserId,
+    pronouns: str,
+) -> None:
+    """
+    ## PUT `/user/profile/edit_pronouns`
+
+    Edits pronouns of a user.
+
+    ## Header
+    * `Authorization` (`JWT`): JWT of the user
+
+    ### Params
+    * `user_id` (`int`): user ID for user we're editing the profile of
+    * `pronouns` (`str`): user's new pronouns
+    """
+    put(
+        token,
+        f'{URL}/profile/edit_pronouns',
+        {
+            "user_id": user_id,
+            "pronouns": pronouns,
+        },
+    )

@@ -8,7 +8,7 @@ Tests for editing a user profile
 
 import pytest
 from backend.util import http_errors
-from ensemble_request.user import profile_edit_first, profile_edit_last
+from ensemble_request.user import profile_edit_name_first, profile_edit_name_last
 from ..conftest import (
     IAllUsers,
 )
@@ -20,7 +20,7 @@ def test_edit_own_profile_first(all_users: IAllUsers):
     user_id = user['user_id']
     token = user['token']
     new_first_name = 'newFirstname'
-    assert profile_edit_first(
+    assert profile_edit_name_first(
         token,
         user_id,
         new_first_name
@@ -40,7 +40,7 @@ def test_edit_own_profile_last(all_users: IAllUsers):
     user_id = user['user_id']
     token = user['token']
     new_last_name = 'newLastname'
-    assert profile_edit_last(
+    assert profile_edit_name_last(
         token,
         user_id,
         new_last_name
@@ -61,7 +61,7 @@ def test_edit_other_first_name(all_users: IAllUsers):
 
     new_first_name = "hello world"
     with pytest.raises(http_errors.Forbidden):
-        profile_edit_first(
+        profile_edit_name_first(
             token1,
             user2_id,
             new_first_name,
