@@ -27,7 +27,6 @@ class Permission(Enum):
     """User can view private posts"""
     ViewAnonymousOP = 2
     """User can view who made an anonymous post"""
-    EditName = 3
 
     # Posting
     PostCreate = 10
@@ -80,7 +79,8 @@ class Permission(Enum):
     """User can manage permissions groups, including creation, deletion and
     modification
     """
-
-    # Exam mode
     SetExamMode = 52
     """User can turn on or off exam mode"""
+
+    # Profile management
+    EditName = 60

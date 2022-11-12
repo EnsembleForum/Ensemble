@@ -8,9 +8,6 @@
   "2": {
     "name": "ViewAnonymousOP"
   },
-  "3": {
-    "name": "EditName"
-  },
   "10": {
     "name": "PostCreate"
   },
@@ -67,5 +64,8 @@
   },
   "52": {
     "name": "SetExamMode"
+  },
+  "60": {
+    "name": "EditName"
   }
 }
