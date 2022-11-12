@@ -42,7 +42,6 @@ def init(
     username: str,
     password: str,
     email: str,
-    pronoun: str,
     name_first: str,
     name_last: str,
 ) -> IAuthInfo:

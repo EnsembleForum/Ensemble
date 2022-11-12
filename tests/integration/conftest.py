@@ -45,7 +45,6 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
         username=username,
         password=password,
         email=email,
-        pronoun=pronoun,
         name_first="Dee",
         name_last="Snuts",
     )

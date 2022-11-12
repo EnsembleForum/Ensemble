@@ -33,7 +33,6 @@ def test_clear():
         email='someone@example.com',
         name_first="Whos",
         name_last="Joe",
-        pronoun="he/him",
     )
     code = subprocess.Popen(
         [sys.executable, 'scripts/clear.py'],

@@ -50,7 +50,6 @@ def test_not_first_run_not_empty():
         email="admin@example.com",
         name_first="Dee",
         name_last="Snuts",
-        pronoun="he/him",
     )
     assert not is_first_run()["value"]
 
@@ -70,7 +69,6 @@ def test_init_server_already_set_up():
         email="admin@example.com",
         name_first="Dee",
         name_last="Snuts",
-        pronoun="he/him",
     )
     with pytest.raises(http_errors.Forbidden):
         init(
@@ -84,7 +82,6 @@ def test_init_server_already_set_up():
             email="admin@example.com",
             name_first="Dee",
             name_last="Snuts",
-            pronoun="he/him",
         )
 
 
@@ -104,7 +101,6 @@ def test_cant_connect_to_auth_server():
             email="admin@example.com",
             name_first="Dee",
             name_last="Snuts",
-            pronoun="he/him",
         )
 
 
@@ -124,7 +120,6 @@ def test_username_password_failed_to_authenticate_username():
             email="admin@example.com",
             name_first="Dee",
             name_last="Snuts",
-            pronoun="he/him",
         )
     with pytest.raises(http_errors.BadRequest):
         init(
@@ -138,7 +133,6 @@ def test_username_password_failed_to_authenticate_username():
             email="admin@example.com",
             name_first="Dee",
             name_last="Snuts",
-            pronoun="he/him",
         )
 
 
@@ -158,7 +152,6 @@ def test_incorrect_username_or_password_doesnt_authenticate():
             email="admin@example.com",
             name_first="Dee",
             name_last="Snuts",
-            pronoun="he/him",
         )
 
 
@@ -178,7 +171,6 @@ def test_init_email_not_valid():
             email="admin_example.com",  # Invalid email
             name_first="Dee",
             name_last="Snuts",
-            pronoun="he/him",
         )
 
 
@@ -198,7 +190,6 @@ def test_first_name_empty():
             email="admin@example.com",
             name_first="",  # Empty
             name_last="Snuts",
-            pronoun="he/him",
         )
 
 
@@ -218,7 +209,6 @@ def test_last_name_empty():
             email="admin@example.com",
             name_first="Dee",
             name_last="",  # Empty
-            pronoun="he/him",
         )
 
 
@@ -237,7 +227,6 @@ def test_init_user_created():
         email="admin@example.com",
         name_first="Dee",
         name_last="Snuts",
-        pronoun="he/him",
     )
     # Test we can log in with their account
     login("admin1", "admin1")
