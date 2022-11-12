@@ -129,8 +129,6 @@ const TextView = (props: Props) => {
   if (props.heading) {
     heading = <h1>{props.heading}</h1>
   }
-  console.log(props.author, getPermission(2, userPermissions))
-  console.log(userPermissions)
   if (props.author) {
     if (props.anonymous && !getPermission(2, userPermissions)) {
       author = <StyledAnonymous>Anonymous</StyledAnonymous>
@@ -142,7 +140,6 @@ const TextView = (props: Props) => {
 
   let tags = <></>;
   if (props.tags) {
-    console.log(tags);
     tags = <>Tags: {props.tags.map((each) => {return <>{each} </>})}</>
   }
 
@@ -175,7 +172,6 @@ const TextView = (props: Props) => {
         } else {
           call.body[routes[props.type][3]] = props.id;
         }
-        console.log("ID:", props.id, call);
         ApiFetch(call).then(()=>{
           setCommentCount(commentCount + 1);
           setToggleReply(false);
@@ -205,7 +201,6 @@ const TextView = (props: Props) => {
           call.body.tags = (props.tags ? props.tags : []);
           call.body.heading = editHeading;
         }
-        console.log(call);
         ApiFetch(call).then(
           () => {
             setToggleEdit(false);

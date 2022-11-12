@@ -1,12 +1,11 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, Checkbox, IconButton, Input, Text, Textarea } from "theme-ui";
 import { TypeFlags } from "typescript";
 import { ApiFetch } from "../../App";
 import { APIcall, createPost, postView } from "../../interfaces";
 import { StyledButton } from "../GlobalProps";
-import PostContext from "../postContext";
 import TaskboardPage from "../TaskboardPage";
 import TextView from "./TextView";
 
@@ -52,6 +51,7 @@ const SpreadButtons = styled.div`
 // Exporting our example component
 const CreatePostView = (props: Props) => {
   let [toggle, setToggle] = React.useState<boolean>(false);
+  let [searchParams, setSearchParams] = useSearchParams();
   let [post, setPost] = React.useState<createPost>({
     heading: '',
     tags: [],
@@ -59,8 +59,6 @@ const CreatePostView = (props: Props) => {
     private: false,
     anonymous: false,
   });
-  const { postId, setPostId } = React.useContext(PostContext);
-  const navigate = useNavigate();
   if (toggle) {
     return (
       <StyledPost>
@@ -101,8 +99,8 @@ const CreatePostView = (props: Props) => {
             }
             ApiFetch(api).then((data) => {
               const d = data as { post_id: number };
-              setPostId(d.post_id);
-              console.log(postId, d.post_id);
+              setSearchParams({postId: d.post_id.toString()})
+              console.log(searchParams.get('postId'));
             }
             );
           }}>New Post</StyledButton>

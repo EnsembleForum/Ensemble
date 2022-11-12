@@ -3,11 +3,10 @@ import React, { JSXElementConstructor, useEffect } from "react";
 import { Box, IconButton, Text } from "theme-ui";
 import { ApiFetch } from "../../App";
 import { APIcall, commentView, postView, replyView } from "../../interfaces";
-import CommentView from "./CommentView";
 import TextView from "./TextView";
-import PostContext from "../postContext";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
+import { useSearchParams } from "react-router-dom";
 
 
 // Declaring and typing our props
@@ -25,15 +24,15 @@ const StyledPostListView = styled.div`
 const PostView = (props: Props) => {
   const [commentCount, setCommentCount] = React.useState(0);
   const value = { commentCount, setCommentCount};
-  const { postId, setPostId } = React.useContext(PostContext);
   const [comments, setComments] = React.useState<commentView[]>();
   const [currentPost, setCurrentPost] = React.useState<postView>();
+  let [searchParams, setSearchParams] = useSearchParams();
 
   async function getPost() {
     const call: APIcall = {
       method: "GET",
       path: "browse/post_view",
-      params: { "post_id": postId.toString() }
+      params: { "post_id": searchParams.get("postId") as string }
     }
     const postToShow = await ApiFetch(call) as postView;
     let commentArray : commentView[] = [];
@@ -46,7 +45,6 @@ const PostView = (props: Props) => {
       const comment = await(ApiFetch(call)) as commentView;
       commentArray.push(comment);
     }
-    console.log("Fetched comments", commentArray);
     for (const comment of commentArray) {
       let replyArray : replyView[] = [];
       for (const replyId of comment.replies) {
@@ -65,17 +63,17 @@ const PostView = (props: Props) => {
   }
 
   useEffect(() => {
-    if (postId !== 0) {
+    if (searchParams.get("postId")) {
       getPost();
     }
   },[commentCount])
 
   // This is the data we would be APIfetching on props change
-  if (currentPost && currentPost?.post_id === postId && comments) {
+  if (currentPost && currentPost?.post_id === parseInt(searchParams.get("postId") as string) && comments) {
     return (
       <CommentContext.Provider value={value}>
        <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={postId} userReacted={currentPost.user_reacted} type="post" private={currentPost.private} anonymous={currentPost.anonymous}></TextView>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={parseInt(searchParams.get("postId") as string)} userReacted={currentPost.user_reacted} type="post" private={currentPost.private} anonymous={currentPost.anonymous}></TextView>
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
@@ -95,7 +93,7 @@ const PostView = (props: Props) => {
         </StyledPostListView>
       </CommentContext.Provider>
     )
-  } else if (postId !== 0) {
+  } else if (searchParams.get("postId")) {
     getPost();
     return <StyledPostListView> Loading... </StyledPostListView>
   }
