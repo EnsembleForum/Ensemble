@@ -21,7 +21,6 @@ def test_single_user(basic_server_setup: IBasicServerSetup):
             "name_first": "Dee",
             "name_last": "Snuts",
             "username": "admin1",
-            "pronoun": "he/him",
             "user_id": basic_server_setup["user_id"],
         }]
     }

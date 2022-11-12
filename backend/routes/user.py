@@ -76,7 +76,6 @@ def edit_name_last(user: User, *_) -> IUserProfile:
         raise http_errors.Forbidden(
             "Do not have permissions to edit others names"
             )
-
     data = json.loads(request.data)
     new_name: str = data['new_name']
 

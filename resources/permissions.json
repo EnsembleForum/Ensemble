@@ -8,6 +8,9 @@
   "2": {
     "name": "ViewAnonymousOP"
   },
+  "3": {
+    "name": "EditName"
+  },
   "10": {
     "name": "PostCreate"
   },
