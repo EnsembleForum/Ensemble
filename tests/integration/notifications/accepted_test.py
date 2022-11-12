@@ -35,7 +35,7 @@ def test_commenter_notified_when_accepted(
         {
             "notification_id": expect.Any(int),
             "seen": False,
-            "heading": f"Admin accepted your answer for {make_posts['head1']}",
+            "heading": f"Dee accepted your answer for {make_posts['head1']}",
             "body": "This is a comment",
             'post': make_posts['post1_id'],
             'comment': comment,

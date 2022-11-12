@@ -66,14 +66,23 @@ class NotificationAccepted(Notification):
         return c
 
     def get_info(self) -> INotificationInfo:
+        # If they wrote the comment
+        if self.comment.author == self.user_to:
+            head = (
+                f"{self.user_from.name_first} accepted your answer for "
+                f"{self.post.heading}"
+            )
+        # If they wrote the original post
+        else:
+            head = (
+                f"{self.user_from.name_first} accepted an answer on your post "
+                f"{self.post.heading}"
+            )
         return {
             "notification_id": self.id,
             "seen": self.seen,
-            "heading": (
-                f"{self.user_from.name_first} accepted your answer for "
-                f"{self.post.heading}"
-            ),
-            "body": "",
+            "heading": head,
+            "body": self.comment.text,
             "post": self.post.id,
             "comment": self.comment.id,
             "reply": None,

@@ -5,7 +5,10 @@ Comment View routes
 """
 import json
 from flask import Blueprint, request
-from backend.models.notifications import NotificationCommented
+from backend.models.notifications import (
+    NotificationCommented,
+    NotificationAccepted,
+)
 from backend.models.permissions import Permission
 from backend.models.reply import Reply
 from backend.models.comment import Comment
@@ -77,6 +80,18 @@ def accept(user: User, *_) -> ICommentAccepted:
 
     comment.accepted_toggle(user)
 
+    if comment.author != user:
+        NotificationAccepted.create(
+            comment.author,
+            user,
+            comment,
+        )
+    if comment.parent.author != user:
+        NotificationAccepted.create(
+            comment.parent.author,
+            user,
+            comment,
+        )
     return {"accepted": comment.accepted}
 
 
