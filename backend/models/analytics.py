@@ -12,6 +12,17 @@ from .tables import (TPost, TComment, TReply, TPostReacts,
 class Analytics:
 
     @classmethod
+    def get_sorted_result(
+        cls,
+        unsorted: list[IAnalyticsValue],
+        num: int
+    ) -> list[IAnalyticsValue]:
+        return sorted(
+            unsorted,
+            key=lambda x: (-x["count"], User(x["user_id"]).name_first)
+        )[:num]
+
+    @classmethod
     def num_posts(cls) -> int:
         """
         Returns the number of posts in the forum
@@ -85,10 +96,10 @@ class Analytics:
                 table.author
             ).run_sync()
 
-        return sorted(
+        return cls.get_sorted_result(
             cast(list[IAnalyticsValue], result),
-            key=lambda x: (-x["count"], User(x["user_id"]).name_first)
-        )[:num]
+            num
+        )
 
     @classmethod
     def top_me_too(
@@ -129,10 +140,10 @@ class Analytics:
                 TPostReacts.post.author
             ).run_sync()
 
-        return sorted(
+        return cls.get_sorted_result(
             cast(list[IAnalyticsValue], result),
-            key=lambda x: (-x["count"], User(x["user_id"]).name_first)
-        )[:num]
+            num
+        )
 
     @classmethod
     def top_thanks(
@@ -218,10 +229,10 @@ class Analytics:
         if len(replies) > 0:
             result += replies
 
-        return sorted(
+        return cls.get_sorted_result(
             cast(list[IAnalyticsValue], result),
-            key=lambda x: (-x["count"], User(x["user_id"]).name_first)
-        )[:num]
+            num
+        )
 
     @classmethod
     def get_group_stats(
