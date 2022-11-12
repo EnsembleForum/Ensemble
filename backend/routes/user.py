@@ -4,13 +4,13 @@
 Functions relating to users.
 """
 import json
+from typing import Optional
 from flask import Blueprint, request
 from backend.models.permissions import Permission
 from backend.types.user import IUserProfile
 from backend.types.identifiers import UserId
 from backend.util.tokens import uses_token
 from backend.models.user import User
-from backend.util import http_errors
 
 
 user = Blueprint('user', 'user')
@@ -25,7 +25,7 @@ def profile(*_) -> IUserProfile:
 
 @user.put('/profile/edit_name_first')
 @uses_token
-def edit_name_first(user: User, *_) -> IUserProfile:
+def edit_name_first(user: User, *_) -> dict:
     """
     Edits username's profile
 
@@ -39,29 +39,23 @@ def edit_name_first(user: User, *_) -> IUserProfile:
     * `username`: `str`
     * `email`: `str`
     * `user_id`: `int`
-
     """
-
-    user.permissions.assert_can(Permission.EditName)
-
-    changer = user.id
     data = json.loads(request.data)
-    receive_user_id: UserId = data['user_id']
-    new_name: str = data['new_name']
+    subject = User(UserId(data['user_id']))
+    name_first: str = data['name_first']
 
-    if changer != receive_user_id:
-        raise http_errors.Forbidden(
-            "Do not have permission to change other's names"
-        )
+    if user == subject:
+        user.permissions.assert_can(Permission.EditProfile)
+    else:
+        user.permissions.assert_can(Permission.ManageUserProfiles)
 
-    user.name_first = new_name
-
-    return User(receive_user_id).profile()
+    subject.name_first = name_first
+    return {}
 
 
 @user.put('/profile/edit_name_last')
 @uses_token
-def edit_name_last(user: User, *_) -> IUserProfile:
+def edit_name_last(user: User, *_) -> dict:
     """
     Edits username's profile
 
@@ -75,19 +69,75 @@ def edit_name_last(user: User, *_) -> IUserProfile:
     * `username`: `str`
     * `email`: `str`
     * `user_id`: `int`
-
     """
-    user.permissions.assert_can(Permission.EditName)
-
-    changer = user.id
     data = json.loads(request.data)
-    new_name: str = data['new_name']
-    receive_user_id: UserId = data['user_id']
+    name_last: str = data['name_last']
+    subject = User(UserId(data['user_id']))
 
-    if changer != receive_user_id:
-        raise http_errors.Forbidden(
-            "Do not have permission to change other's names"
-        )
+    if user == subject:
+        user.permissions.assert_can(Permission.EditProfile)
+    else:
+        user.permissions.assert_can(Permission.ManageUserProfiles)
 
-    user.name_last = new_name
-    return User(receive_user_id).profile()
+    subject.name_last = name_last
+    return {}
+
+
+@user.put('/profile/edit_email')
+@uses_token
+def edit_email(user: User, *_) -> dict:
+    """
+    Edits username's profile
+
+    ### Args:
+    * `token` (`JWT`): token
+    * `user_id` (`UserId`): user ID for user we're viewing the profile of
+
+    ### Returns:
+    * `name_first`: `str`
+    * `name_last`: `str`
+    * `username`: `str`
+    * `email`: `str`
+    * `user_id`: `int`
+    """
+    data = json.loads(request.data)
+    email: str = data['email']
+    subject = User(UserId(data['user_id']))
+
+    if user == subject:
+        user.permissions.assert_can(Permission.EditProfile)
+    else:
+        user.permissions.assert_can(Permission.ManageUserProfiles)
+
+    subject.email = email
+    return {}
+
+
+@user.put('/profile/edit_pronouns')
+@uses_token
+def edit_pronouns(user: User, *_) -> dict:
+    """
+    Edits username's profile
+
+    ### Args:
+    * `token` (`JWT`): token
+    * `user_id` (`UserId`): user ID for user we're viewing the profile of
+
+    ### Returns:
+    * `name_first`: `str`
+    * `name_last`: `str`
+    * `username`: `str`
+    * `email`: `str`
+    * `user_id`: `int`
+    """
+    data = json.loads(request.data)
+    pronouns: Optional[str] = data['pronouns']
+    subject = User(UserId(data['user_id']))
+
+    if user == subject:
+        user.permissions.assert_can(Permission.EditProfile)
+    else:
+        user.permissions.assert_can(Permission.ManageUserProfiles)
+
+    subject.pronouns = pronouns
+    return {}

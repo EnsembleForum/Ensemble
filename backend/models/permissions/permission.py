@@ -71,6 +71,8 @@ class Permission(Enum):
     """User can remove other user accounts"""
     ViewAllUsers = 43
     """User can view the list of users"""
+    ManageUserProfiles = 55
+    """User can edit the profiles of other users"""
 
     # Administration
     ManageAuthConfig = 50
@@ -83,4 +85,5 @@ class Permission(Enum):
     """User can turn on or off exam mode"""
 
     # Profile management
-    EditName = 60
+    EditProfile = 60
+    """User can edit their own profile"""

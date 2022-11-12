@@ -8,7 +8,7 @@ from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_email_valid, assert_valid_str_field
 from backend.types.identifiers import UserId
 from backend.types.user import IUserProfile, IUserBasicInfo
-from typing import cast
+from typing import Optional, cast
 
 
 class User:
@@ -193,15 +193,16 @@ class User:
         row.save().run_sync()
 
     @property
-    def pronouns(self) -> str:
+    def pronouns(self) -> Optional[str]:
         """
         Preferred pronouns of the user
         """
         return self._get().pronouns
 
     @pronouns.setter
-    def pronouns(self, new_pronouns: str):
-        assert_valid_str_field(new_pronouns, "Pronoun")
+    def pronouns(self, new_pronouns: Optional[str]):
+        if new_pronouns is not None:
+            assert_valid_str_field(new_pronouns, "pronouns")
         row = self._get()
         row.pronouns = new_pronouns
         row.save().run_sync()

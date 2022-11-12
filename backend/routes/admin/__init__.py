@@ -159,7 +159,7 @@ def init() -> IAuthInfo:
             k: True for k in [
                 Permission.PostView,
                 Permission.ViewPrivate,
-                Permission.EditName,
+                Permission.EditProfile,
                 Permission.ViewAnonymousOP,
                 Permission.PostCreate,
                 Permission.PostComment,
@@ -184,7 +184,7 @@ def init() -> IAuthInfo:
                 Permission.PostView,
                 Permission.PostCreate,
                 Permission.PostComment,
-                Permission.EditName,
+                Permission.EditProfile,
                 Permission.ReportPosts,
             ]
         },
