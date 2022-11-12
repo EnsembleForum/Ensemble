@@ -11,6 +11,8 @@ class IGroupStats(TypedDict):
     top_posters: list[IAnalyticsValue]
     top_commenters: list[IAnalyticsValue]
     top_repliers: list[IAnalyticsValue]
+    top_me_too: list[IAnalyticsValue]
+    top_thanks: list[IAnalyticsValue]
 
 
 class IAllStats(TypedDict):
