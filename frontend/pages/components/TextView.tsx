@@ -84,6 +84,7 @@ const ActiveReactButton = styled(InactiveReactButton)`
 
 const OptionsBar = styled.div`
   display: flex;
+  justify-content: space-between;
   margin: 0;
 `
 
@@ -98,8 +99,7 @@ const Private = styled.div`
   align-items: center;
   text-align: center;
   max-width: 100px;
-  max-height: 30px;
-
+  height: 30px;
 `
 const Anonymous = styled(Private)`
   max-width: 130px;
@@ -112,7 +112,9 @@ const StyledAnonymous = styled.a`
     font-weight: 700;
   }
 `
-
+const Status = styled.span`
+  display:flex
+`
 // Exporting our example component
 const TextView = (props: Props) => {
   const [inputText, setInputText] = React.useState<string>();
@@ -234,8 +236,10 @@ const TextView = (props: Props) => {
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
         <OptionsBar>
           {heading}
+          <Status>
           {props.private ? <Private>PRIVATE</Private>: <></>}
           {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
+          </Status>
         </OptionsBar>
         {author}
         {toggleEdit ? <></> : tags}
