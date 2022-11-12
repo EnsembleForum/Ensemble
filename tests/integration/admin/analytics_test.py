@@ -217,6 +217,9 @@ def test_all_top_repliers(
 
 
 def test_all_top_me_too(simple_users: ISimpleUsers):
+    """
+    Are the stats for the top me_too's among everyone on the forum correct?
+    """
     admin_token = simple_users["admin"]["token"]
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
@@ -259,7 +262,7 @@ def test_all_top_thanks(
     make_posts: IMakePosts
 ):
     """
-    Are the stats for the top repliers among everyone on the forum correct?
+    Are the stats for the top thanks among everyone on the forum correct?
     """
     admin_token = simple_users["admin"]["token"]
     user_token = simple_users["user"]["token"]

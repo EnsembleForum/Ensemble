@@ -9,20 +9,37 @@ URL = f"{URL}/admin/analytics"
 
 def get_analytics(token: JWT) -> IAllStats:
     """
-    Returns a list of basic info about all forum users
+    Returns the analytics about the activity on the forum
 
     ## Permissions
-    * `ViewAllUsers`
+    * `ViewAnalytics`
 
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ### Returns
-    * `users`: list of users, containing objects of
-            * `name_first` (`str`): First name
-            * `name_last` (`str`): Last name
-            * `username` (`str`): Username
-            * `user_id` (`int`): ID of the user
+    Object containing
+    * `total_posts` (`int`)
+    * `total_comments` (`int`)
+    * `total_replies` (`int`)
+    * `all_users`: dictionary containing
+        * top_posters: list[{"user_id": int, "count": int}]
+        * top_commenters:  list[{"user_id": int, "count": int}]
+        * top_repliers: list[{"user_id": int, "count": int}]
+        * top_me_too:  list[{"user_id": int, "count": int}]
+        * top_thanks:  list[{"user_id": int, "count": int}]
+    * `staff`: dictionary containing
+        * top_posters: list[{"user_id": int, "count": int}]
+        * top_commenters:  list[{"user_id": int, "count": int}]
+        * top_repliers: list[{"user_id": int, "count": int}]
+        * top_me_too:  list[{"user_id": int, "count": int}]
+        * top_thanks:  list[{"user_id": int, "count": int}]
+    * `students`: dictionary containing
+        * top_posters: list[{"user_id": int, "count": int}]
+        * top_commenters:  list[{"user_id": int, "count": int}]
+        * top_repliers: list[{"user_id": int, "count": int}]
+        * top_me_too:  list[{"user_id": int, "count": int}]
+        * top_thanks:  list[{"user_id": int, "count": int}]
     """
     return cast(IAllStats, get(
         token,
