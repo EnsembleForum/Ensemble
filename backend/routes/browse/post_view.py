@@ -5,7 +5,10 @@ Post View routes
 """
 import json
 from flask import Blueprint, request
-from backend.models.notifications.types.commented import NotificationCommented
+from backend.models.notifications import (
+    NotificationClosed,
+    NotificationCommented,
+)
 from backend.models.permissions import Permission
 from backend.models.post import Post
 from backend.models.user import User
@@ -105,5 +108,11 @@ def close_post(user: User, *_) -> IPostClosed:
     data = json.loads(request.data)
     post = Post(data["post_id"])
     post.closed_toggle()
+
+    if user != post.author and post.closed:
+        NotificationClosed.create(
+            post.author,
+            post,
+        )
 
     return {"closed": post.closed}
