@@ -3,66 +3,156 @@
 
 Tests for editing a user profile
 
-* Edit a user's name
+* Edit own profile (for all profile edit routes)
+* Mod can't edit profile (for all profile edit routes)
+* Admin can edit profile (for all profile edit routes)
+* Can't edit invalid profile (for all profile edit routes)
+* Can set pronouns to None
 """
 
+from typing import Any, Callable, cast
 import pytest
 from backend.util import http_errors
-from ensemble_request.user import profile_edit_name_first, profile_edit_name_last
+from backend.types.auth import JWT
+from backend.types.identifiers import UserId
+from ensemble_request.user import (
+    profile,
+    profile_edit_name_first,
+    profile_edit_name_last,
+    profile_edit_email,
+    profile_edit_pronouns,
+)
 from ..conftest import (
-    IAllUsers,
+    ISimpleUsers,
+    IBasicServerSetup,
 )
 
 
-def test_edit_own_profile_first(all_users: IAllUsers):
-    """Can we edit our own profile?"""
-    user = all_users['users'][0]
-    user_id = user['user_id']
-    token = user['token']
-    new_first_name = 'newFirstname'
-    assert profile_edit_name_first(
+ProfileEditCallback = Callable[[JWT, UserId, str], None]
+"""Type annotation for profile edit functions"""
+
+
+@pytest.mark.parametrize(
+    ('callback', 'new_key', 'new_value'),
+    [
+        (profile_edit_name_first, 'name_first', 'Robin'),
+        (profile_edit_name_last, 'name_last', 'Banks'),
+        (profile_edit_email, 'email', 'robin.banks@bigpond.com.au'),
+        (profile_edit_pronouns, 'pronouns', 'He/him'),
+    ]
+)
+def test_user_can_edit_own(
+    callback: ProfileEditCallback,
+    new_key: str,
+    new_value: str,
+    simple_users: ISimpleUsers,
+):
+    """Users can edit their own profiles"""
+    user_id = simple_users['user']['user_id']
+    token = simple_users['user']['token']
+    # Get profile before edit
+    p = cast(dict[str, Any], profile(token, user_id))
+    # Perform the edit
+    callback(
         token,
         user_id,
-        new_first_name
-    ) == {
-        "name_first": "newFirstname",
-        "name_last": "Ator",
-        "username": "user1",
-        "pronoun": "",
-        "email": "user1@example.com",
-        "user_id": all_users['users'][0]['user_id'],
-    }
+        new_value,
+    )
+    p[new_key] = new_value
+    assert p == profile(token, user_id)
 
 
-def test_edit_own_profile_last(all_users: IAllUsers):
-    """Can we edit our own profile?"""
-    user = all_users['users'][0]
-    user_id = user['user_id']
-    token = user['token']
-    new_last_name = 'newLastname'
-    assert profile_edit_name_last(
-        token,
-        user_id,
-        new_last_name
-    ) == {
-        "name_first": "User",
-        "name_last": "newLastname",
-        "username": "user1",
-        "email": "user1@example.com",
-        "pronoun": "",
-        "user_id": all_users['users'][0]['user_id'],
-    }
-
-
-def test_edit_other_first_name(all_users: IAllUsers):
-    token1 = all_users["users"][0]["token"]
-    user2 = all_users["users"][1]
-    user2_id = user2['user_id']
-
-    new_first_name = "hello world"
+@pytest.mark.parametrize(
+    'callback',
+    [
+        profile_edit_name_first,
+        profile_edit_name_last,
+        profile_edit_email,
+        profile_edit_pronouns,
+    ]
+)
+def test_user_cant_edit_others(
+    callback: ProfileEditCallback,
+    simple_users: ISimpleUsers,
+):
+    """
+    Standard users and mods shouldn't be able to edit other people's profiles
+    """
     with pytest.raises(http_errors.Forbidden):
-        profile_edit_name_first(
-            token1,
-            user2_id,
-            new_first_name,
+        callback(
+            simple_users["mod"]["token"],
+            simple_users["user"]["user_id"],
+            "not allowed",
         )
+
+
+@pytest.mark.parametrize(
+    ('callback', 'new_key', 'new_value'),
+    [
+        (profile_edit_name_first, 'name_first', 'Robin'),
+        (profile_edit_name_last, 'name_last', 'Banks'),
+        (profile_edit_email, 'email', 'robin.banks@bigpond.com.au'),
+        (profile_edit_pronouns, 'pronouns', 'He/him'),
+    ]
+)
+def test_admin_can_edit_others(
+    callback: ProfileEditCallback,
+    new_key: str,
+    new_value: str,
+    simple_users: ISimpleUsers,
+):
+    """Admins can edit other people's profiles"""
+    user_id = simple_users['user']['user_id']
+    token = simple_users['admin']['token']
+    # Get profile before edit
+    p = cast(dict[str, Any], profile(token, user_id))
+    # Perform the edit
+    callback(
+        token,
+        user_id,
+        new_value,
+    )
+    p[new_key] = new_value
+    assert p == profile(token, user_id)
+
+
+@pytest.mark.parametrize(
+    'callback',
+    [
+        profile_edit_name_first,
+        profile_edit_name_last,
+        profile_edit_email,
+        profile_edit_pronouns,
+    ]
+)
+def test_cant_edit_invalid_profile(
+    callback: ProfileEditCallback,
+    basic_server_setup: IBasicServerSetup,
+):
+    """
+    We should get an error if we try to edit a profile that doesn't exist
+    """
+    with pytest.raises(http_errors.BadRequest):
+        callback(
+            basic_server_setup["token"],
+            UserId(-1),
+            "bad id",
+        )
+
+
+def test_set_null_pronouns(basic_server_setup: IBasicServerSetup):
+    """We should be able to set a user's pronouns to None"""
+    profile_edit_pronouns(
+        basic_server_setup['token'],
+        basic_server_setup['user_id'],
+        "They/them",
+    )
+    profile_edit_pronouns(
+        basic_server_setup['token'],
+        basic_server_setup['user_id'],
+        None,
+    )
+    assert profile(
+        basic_server_setup['token'],
+        basic_server_setup['user_id'],
+    )['pronouns'] is None

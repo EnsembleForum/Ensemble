@@ -3,7 +3,7 @@
 
 Functions to request user-related routes
 """
-from typing import cast
+from typing import cast, Optional
 from .consts import URL
 from .helpers import get, put
 from backend.types.auth import JWT
@@ -126,7 +126,7 @@ def profile_edit_email(
 def profile_edit_pronouns(
     token: JWT,
     user_id: UserId,
-    pronouns: str,
+    pronouns: Optional[str],
 ) -> None:
     """
     ## PUT `/user/profile/edit_pronouns`
@@ -138,7 +138,7 @@ def profile_edit_pronouns(
 
     ### Params
     * `user_id` (`int`): user ID for user we're editing the profile of
-    * `pronouns` (`str`): user's new pronouns
+    * `pronouns` (`Optional[str]`): user's new pronouns
     """
     put(
         token,
