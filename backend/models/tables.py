@@ -150,3 +150,11 @@ class TToken(_BaseTable):
     """
 
     user = ForeignKey(TUser)
+
+
+class TExamMode(_BaseTable):
+    """
+    Table storing whether exam mode is on or off
+    """
+
+    exam_mode = Boolean()
