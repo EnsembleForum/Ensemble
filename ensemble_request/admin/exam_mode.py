@@ -7,7 +7,7 @@ from backend.types.exam_mode import IExamModeInfo
 URL = f"{URL}/admin/exam_mode"
 
 
-def exam_is_on(token: JWT) -> IExamModeInfo:
+def exam_is_enabled(token: JWT) -> IExamModeInfo:
     """
     # GET `/admin/exam_mode/is_enabled`
 
@@ -47,7 +47,7 @@ def toggle_exam_mode(token: JWT) -> IExamModeInfo:
 
     ## Returns
     Object containing
-    * `is_on` (`bool`): Whether exam mode is on
+    * `is_enabled` (`bool`): Whether exam mode is on
     """
     return cast(
         IExamModeInfo,

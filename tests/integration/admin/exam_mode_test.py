@@ -19,7 +19,7 @@ from ensemble_request.browse import (
     post_list
 )
 from backend.util import http_errors
-from ensemble_request.admin.exam_mode import exam_is_on, toggle_exam_mode
+from ensemble_request.admin.exam_mode import exam_is_enabled, toggle_exam_mode
 
 
 def test_exam_mode_forum_initialisation(basic_server_setup: IBasicServerSetup):
@@ -27,7 +27,7 @@ def test_exam_mode_forum_initialisation(basic_server_setup: IBasicServerSetup):
     Is exam mode off when the forum is initialised?
     """
     token = basic_server_setup['token']
-    assert not exam_is_on(token)["is_on"]
+    assert not exam_is_enabled(token)["is_enabled"]
 
 
 def test_user_no_permission(simple_users: ISimpleUsers):
@@ -55,10 +55,10 @@ def test_admin_toggle_success(simple_users: ISimpleUsers):
     admin_token = simple_users["admin"]["token"]
 
     toggle_exam_mode(admin_token)
-    assert exam_is_on(admin_token)["is_on"]
+    assert exam_is_enabled(admin_token)["is_enabled"]
 
     toggle_exam_mode(admin_token)
-    assert not exam_is_on(admin_token)["is_on"]
+    assert not exam_is_enabled(admin_token)["is_enabled"]
 
 
 def test_user_post_during_exam_mode(simple_users: ISimpleUsers):
