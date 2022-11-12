@@ -51,6 +51,7 @@ def post_list(token: JWT) -> IPostBasicInfoList:
             * `private` (`bool`): whether this is a private post
             * `anonymous` (`bool`): whether this is an anonymous post
             * `answered`: (`bool`): whether this post is answered
+            * `closed`: (`bool`): whether this post is closed
     """
     return cast(
         IPostBasicInfoList,
@@ -91,6 +92,7 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
     * `user_reacted` (`bool`): whether the user has reacted to this post
     * `answered` (`Optional[int]`): CommentId of the accepted comment,
                                     None if no comment is accepted
+    * `closed`: (`bool`): whether this post is closed
     * `queue` (`QueueId`): queue that this post belongs to
     """
     return cast(
