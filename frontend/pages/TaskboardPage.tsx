@@ -18,7 +18,6 @@ const StyledLayout = styled.div`
     font-weight: 300;
   }
 `
-
 const StyledQueues = styled.div`
   width: 60vw;
   height: 90vh;
@@ -26,17 +25,15 @@ const StyledQueues = styled.div`
   display: flex;
   flex-direction: column;
 `
-const StyledViewOnlyQueues = styled.div`
+const StyledViewOnlyQueues = styled(StyledQueues)`
   width: 40vw;
-  height: 90vh;
-  background-color: lightgrey;
-  padding: 30px;
+  background-color: #a7a5ec;
+  overflow-x: scroll:
+`
+const QueueCols = styled.div`
   display: flex;
-  flex-direction: column;
-  div {
-    display: flex;
-    flex-direction: row;
-  }
+  background-color: white;
+  flex-direction: row;
 `
 
 const TaskboardPage = (props: Props) => {
@@ -86,21 +83,23 @@ const TaskboardPage = (props: Props) => {
         <StyledLayout>
           <StyledQueues>
             <h2>Queues</h2>
-            <div>
+            <QueueCols>
               { queueList.filter(queue => !queue.view_only).map((queue) => {
                 return (
                   <QueueView queue={queue}></QueueView>
                 )
               })}
-            </div>
+            </QueueCols>
           </StyledQueues>
           <StyledViewOnlyQueues>
             <h2>Closed and Answered</h2>
+            <QueueCols>
             { queueList.filter(queue => queue.view_only).map((queue) => {
-          return (
-            <>{queue.queue_name} {queue.queue_id}</>
-          )
-        })}
+              return (
+                <QueueView queue={queue}></QueueView>
+              )
+            })}
+            </QueueCols>
           </StyledViewOnlyQueues>
         </StyledLayout>
         

@@ -1,8 +1,10 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, IconButton, Text } from "theme-ui";
 import { postView, queueListPosts } from "../../interfaces";
 import { theme } from "../../theme";
+import AuthorView from "./AuthorView";
 
 // Declaring and typing our props
 interface Props {
@@ -15,18 +17,19 @@ const StyledQueue = styled.div`
   border-radius: 10px;
   background-color: lightgrey;
   width: 300px;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
+  margin-right: 300px;
 `;
 const QueueHeader = styled.div`
   display: flex;
   justify-content: space-between;
   h3, h4 {
-    padding: 10px;
+    padding: 6px 10px 6px 10px;
     margin: 0;
   }
   h4 {
-    color: white;
     border-radius: 10px;
     background-color: ${theme.colors?.primary};
   }
@@ -34,7 +37,7 @@ const QueueHeader = styled.div`
 `
 const QueueItem = styled.div`
   padding: 10px;
-  border-bottom: 10px;
+  margin-bottom: 10px;
   background-color: white;
   border-radius: 10px;
   &:hover {
@@ -46,6 +49,7 @@ const QueueItem = styled.div`
 // Exporting our example component
 const QueueView = (props: Props) => {
   const { queue } = props;
+  const navigate = useNavigate();
   return (
     <StyledQueue>
       <QueueHeader>
@@ -55,9 +59,17 @@ const QueueView = (props: Props) => {
       { queue.posts.map((post) => {
         const postShow = post as postView;
         return (
-          <QueueItem>
+          <QueueItem onClick={() => {
+            navigate({
+              pathname: '/browse',
+              search: `?postId=${postShow.post_id}`,
+            });
+    
+          }}>
             {postShow.heading}
-            {postShow.tags}
+            <div></div>
+            <AuthorView userId={postShow.author}></AuthorView>
+            <div></div>
           </QueueItem>
         )
       })}
