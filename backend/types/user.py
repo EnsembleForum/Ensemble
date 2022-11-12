@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 from .identifiers import UserId
 
 
@@ -69,6 +69,7 @@ class IUserProfile(TypedDict):
     * `username`: `str`
     * `email`: `str`
     * `user_id`: `int`
+    * `pronouns`: `Optional[str]`
 
     Note that this will eventually contain more properties such as pronouns and
     the like
@@ -78,5 +79,5 @@ class IUserProfile(TypedDict):
     name_last: str
     username: str
     email: str
-    pronoun: str
+    pronouns: Optional[str]
     user_id: UserId

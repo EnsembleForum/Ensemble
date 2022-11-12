@@ -66,7 +66,7 @@ class User:
                 TUser.name_first: name_first,
                 TUser.name_last: name_last,
                 TUser.email: email,
-                TUser.pronoun: "",
+                TUser.pronouns: None,
                 TUser.permissions: PermissionUser.create(permissions_base).id,
             }
         ).save().run_sync()[0]
@@ -193,14 +193,17 @@ class User:
         row.save().run_sync()
 
     @property
-    def pronoun(self) -> str:
-        return self._get().pronoun
+    def pronouns(self) -> str:
+        """
+        Preferred pronouns of the user
+        """
+        return self._get().pronouns
 
-    @pronoun.setter
-    def pronoun(self, new_pronoun: str):
-        assert_valid_str_field(new_pronoun, "Pronoun")
+    @pronouns.setter
+    def pronouns(self, new_pronouns: str):
+        assert_valid_str_field(new_pronouns, "Pronoun")
         row = self._get()
-        row.pronoun = new_pronoun
+        row.pronouns = new_pronouns
         row.save().run_sync()
 
     @property
@@ -214,12 +217,11 @@ class User:
         ### Returns:
         * `IUserBasicInfo`: basic info
         """
-        row = self._get()
         return {
-            "name_first": row.name_first,
-            "name_last": row.name_last,
-            "username": row.username,
-            "user_id": UserId(row.id),
+            "name_first": self.name_first,
+            "name_last": self.name_last,
+            "username": self.username,
+            "user_id": self.id,
         }
 
     def profile(self) -> IUserProfile:
@@ -229,12 +231,11 @@ class User:
         ### Returns:
         * `IUserProfile`: full profile info
         """
-        row = self._get()
         return {
-            "name_first": row.name_first,
-            "name_last": row.name_last,
-            "username": row.username,
-            "pronoun": row.pronoun,
-            "user_id": UserId(row.id),
-            "email": row.email,
+            "name_first": self.name_first,
+            "name_last": self.name_last,
+            "username": self.username,
+            "pronouns": self.pronouns,
+            "user_id": self.id,
+            "email": self.email,
         }
