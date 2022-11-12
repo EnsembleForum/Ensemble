@@ -41,16 +41,22 @@ def edit_name_first(user: User, *_) -> IUserProfile:
     * `user_id`: `int`
 
     """
+
     user.permissions.assert_can(Permission.EditName)
-    if not user.can_edit_name():
-        raise http_errors.Forbidden(
-            "Do not have permissions to edit others names"
-            )
+
+    changer = user.id
     data = json.loads(request.data)
+    receive_user_id: UserId = data['user_id']
     new_name: str = data['new_name']
-    user_id: UserId = data['user_id']
+
+    if changer != receive_user_id:
+        raise http_errors.Forbidden(
+            "Do not have permission to change other's names"
+        )
+
     user.name_first = new_name
-    return User(user_id).profile()
+
+    return User(receive_user_id).profile()
 
 
 @user.put('/profile/edit_name_last')
@@ -72,13 +78,16 @@ def edit_name_last(user: User, *_) -> IUserProfile:
 
     """
     user.permissions.assert_can(Permission.EditName)
-    if not user.can_edit_name():
-        raise http_errors.Forbidden(
-            "Do not have permissions to edit others names"
-            )
+
+    changer = user.id
     data = json.loads(request.data)
     new_name: str = data['new_name']
+    receive_user_id: UserId = data['user_id']
 
-    user_id: UserId = data['user_id']
+    if changer != receive_user_id:
+        raise http_errors.Forbidden(
+            "Do not have permission to change other's names"
+        )
+
     user.name_last = new_name
-    return User(user_id).profile()
+    return User(receive_user_id).profile()

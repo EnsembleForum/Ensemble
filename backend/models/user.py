@@ -207,9 +207,6 @@ class User:
     def permissions(self) -> PermissionUser:
         return PermissionUser(self._get().permissions)
 
-    def can_edit_name(self) -> bool:
-        # return user.permissions.can(Permission.EditName)
-        return self.permissions.can(Permission.EditName)
 
     def basic_info(self) -> IUserBasicInfo:
         """
