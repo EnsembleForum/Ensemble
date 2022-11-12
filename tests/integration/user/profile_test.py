@@ -24,7 +24,7 @@ def test_view_own_profile(simple_users: ISimpleUsers):
         "name_last": "Ator",
         "username": "user1",
         "email": "user1@example.com",
-        "pronoun": None,
+        "pronouns": None,
         "user_id": simple_users['user']['user_id'],
     }
 
@@ -39,7 +39,7 @@ def test_view_other_profile(simple_users: ISimpleUsers):
         "name_last": "Erator",
         "username": "mod1",
         "email": "mod1@example.com",
-        "pronoun": None,
+        "pronouns": None,
         "user_id": simple_users['mod']['user_id'],
     }
 
