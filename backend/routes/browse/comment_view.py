@@ -82,19 +82,28 @@ def accept(user: User, *_) -> ICommentAccepted:
     comment.accepted_toggle(user)
 
     if comment.accepted:
+        # Give notification to comment author if they didn't accept it
+        # themselves
         if comment.author != user:
             NotificationAccepted.create(
                 comment.author,
                 user,
                 comment,
             )
-        elif comment.parent.author != user:
+        # Give notification to post author if they didn't write comment and
+        # if they didn't accept it themselves
+        if (
+            comment.parent.author != user
+            and comment.parent.author != comment.author
+        ):
             NotificationAccepted.create(
                 comment.parent.author,
                 user,
                 comment,
             )
     else:
+        # Comment unaccepted
+        # Notify author unless they did it themselves
         if comment.author != user:
             NotificationUnaccepted.create(
                 comment.author,

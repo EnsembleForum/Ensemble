@@ -6,6 +6,8 @@ Tests for notifications when answers get accepted
 * Commenter gets notification if their comment is accepted by OP
 * OP and commenter get notification if a comment on their post is accepted by
   a mod
+* OP only gets one notification if their own comment on their post is accepted
+  by a mod
 * OP doesn't get notification if they accept their own comment
 """
 import jestspectation as expect
@@ -109,7 +111,7 @@ def test_op_and_commenter_notified_when_accepted_by_mod(
     ]
 
 
-def test_op_commenter_notified_when_accepted_by_mod(
+def test_op_who_is_commenter_notified_when_accepted_by_mod(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,
 ):
@@ -131,23 +133,6 @@ def test_op_commenter_notified_when_accepted_by_mod(
     admin_notifs = notifications.list(simple_users['admin']['token'])
 
     assert admin_notifs['notifications'] == [
-        {
-            "notification_id": expect.Any(int),
-            "seen": False,
-            "heading": (
-                f"Mod accepted your answer for {make_posts['head1']}"
-            ),
-            "body": "This is a comment",
-            'post': make_posts['post1_id'],
-            'comment': comment,
-            'reply': None,
-            'queue': None,
-        },
-    ]
-
-    user = notifications.list(simple_users['user']['token'])
-
-    assert user['notifications'] == [
         {
             "notification_id": expect.Any(int),
             "seen": False,
