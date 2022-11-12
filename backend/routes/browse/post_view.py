@@ -77,11 +77,12 @@ def comment(user: User, *_) -> ICommentId:
 
     comment = Comment.create(user, post, text)
 
-    NotificationCommented.create(
-        post.author,
-        user,
-        comment,
-    )
+    if post.author != user:
+        NotificationCommented.create(
+            post.author,
+            user,
+            comment,
+        )
 
     return {"comment_id": comment.id}
 

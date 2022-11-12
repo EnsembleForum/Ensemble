@@ -38,11 +38,21 @@ def reply(user: User, *_) -> IReplyId:
 
     reply = Reply.create(user, comment, text)
 
-    NotificationCommented.create(
-        comment.author,
-        user,
-        reply,
-    )
+    if comment.author != user:
+        NotificationCommented.create(
+            comment.author,
+            user,
+            reply,
+        )
+    if (
+        comment.parent.author != user
+        and comment.author != comment.parent.author
+    ):
+        NotificationCommented.create(
+            comment.parent.author,
+            user,
+            reply,
+        )
 
     return {"reply_id": reply.id}
 

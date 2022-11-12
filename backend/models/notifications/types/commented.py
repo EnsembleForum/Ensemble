@@ -76,7 +76,10 @@ class NotificationCommented(Notification):
 
     def get_info(self) -> INotificationInfo:
         if self._reply is not None:
-            action = "replied to your comment on"
+            if self.comment.author == self.user_to:
+                action = "replied to your comment on"
+            else:
+                action = "replied to a comment on your post"
             title = self.post.heading
             body = self._reply.text
             reply_id = self._reply.id
