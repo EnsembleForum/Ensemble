@@ -4,15 +4,16 @@
 from .tables import TComment, TPost, TPostReacts
 from .user import User
 from .comment import Comment
+from .queue import Queue
 from .permissions import Permission
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId, CommentId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
-from typing import cast, TYPE_CHECKING
+from typing import cast  # , TYPE_CHECKING
 from datetime import datetime
-if TYPE_CHECKING:
-    from backend.models.queue import Queue
+# if TYPE_CHECKING:
+#     from backend.models.queue import Queue
 
 
 class Post:
@@ -60,7 +61,6 @@ class Post:
         """
         assert_valid_str_field(heading, "heading")
         assert_valid_str_field(text, "post")
-        from .queue import Queue
         val = (
             TPost(
                 {
@@ -99,7 +99,7 @@ class Post:
         ### Returns:
         * `bool`: whether the user can view the post
         """
-        if self.private and self.author != user:
+        if (self.private or self.closed) and self.author != user:
             return user.permissions.can(Permission.ViewPrivate)
         return True
 
@@ -224,7 +224,6 @@ class Post:
         ### Returns:
         * `Queue`: Queue that has the post
         """
-        from .queue import Queue
         return Queue(self._get().queue)
 
     @queue.setter
@@ -339,6 +338,26 @@ class Post:
         row.anonymous = new_anonymous
         row.save().run_sync()
 
+    @property
+    def closed(self) -> bool:
+        """
+        Returns true if this post was closed by a mod/admin
+
+        ### Returns:
+        * bool: closed
+        """
+        return self.queue == Queue.get_closed_queue()
+
+    def closed_toggle(self):
+        """
+        Close post if it was not
+        Un-close post if it was
+        """
+        if self.closed:
+            self.queue = Queue.get_main_queue()
+        else:
+            self.queue = Queue.get_closed_queue()
+
     def basic_info(self) -> IPostBasicInfo:
         """
         Returns the basic info of a post
@@ -353,6 +372,7 @@ class Post:
             "tags": self.tags,
             "me_too": self.me_too,
             "private": self.private,
+            "closed": self.closed,
             "anonymous": self.anonymous,
             "answered": self.answered is not None,
         }
@@ -375,6 +395,7 @@ class Post:
             "comments": [c.id for c in self.comments],
             "private": self.private,
             "anonymous": self.anonymous,
+            "closed": self.closed,
             "user_reacted": self.has_reacted(user),
             "answered": self.answered.id if self.answered else None,
             "queue": self.queue.name

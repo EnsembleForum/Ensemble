@@ -49,6 +49,7 @@ class Queue:
         cls,
         name: str,
         immutable: bool = False,
+        view_only: bool = False,
     ) -> "Queue":
         """
         Create a new queue and save it to the database
@@ -71,7 +72,8 @@ class Queue:
             TQueue(
                 {
                     TQueue.name: name,
-                    TQueue.immutable: immutable
+                    TQueue.immutable: immutable,
+                    TQueue.view_only: view_only
                 }
             )
             .save()
@@ -79,6 +81,12 @@ class Queue:
         )
         id = cast(QueueId, val["id"])
         return Queue(id)
+
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, Queue):
+            return self.id == __o.id
+        else:
+            return False
 
     @property
     def name(self) -> str:
@@ -96,6 +104,13 @@ class Queue:
         row = self._get()
         row.name = new_name
         row.save().run_sync()
+
+    @property
+    def view_only(self) -> bool:
+        """
+        Whether we can move posts to and from this queue in the taskboard page
+        """
+        return self._get().view_only
 
     @classmethod
     def all(cls) -> list["Queue"]:
@@ -135,10 +150,21 @@ class Queue:
         # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Answered queue")
 
-    # TODO: Revisit in sprint 2 to think of a way to organise
+    @classmethod
+    def get_closed_queue(cls) -> "Queue":
+        """
+        Gets the closed queue
+
+        ### Returns:
+        * `queue`: closed queue
+        """
+        # TODO: Remember not to use duplicate queue names otherwise this breaks
+        return cls.get_queue("Closed queue")
+
     def posts(self) -> list["Post"]:
         """
         List of all posts in the given queue
+        Posts are sorted from oldest to newest
 
         ### Returns:
         * `list[Post]`: posts
@@ -148,7 +174,7 @@ class Queue:
             Post(c["id"])
             for c in TPost.select()
             .where(TPost.queue == self.id)
-            .order_by(TPost.id, ascending=False)
+            .order_by(TPost.id, ascending=True)
             .run_sync()
         ]
 
@@ -179,6 +205,7 @@ class Queue:
             "queue_id": self.id,
             "queue_name": self.name,
             "posts": [c.id for c in self.posts()],
+            "view_only": self.view_only,
         }
 
     def basic_info(self) -> IQueueBasicInfo:
@@ -191,4 +218,5 @@ class Queue:
         return {
             "queue_id": self.id,
             "queue_name": self.name,
+            "view_only": self.view_only,
         }

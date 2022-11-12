@@ -9,10 +9,12 @@ Tests for taskboard/queue/post_add
 
 import pytest
 from backend.util import http_errors
-from ensemble_request.browse import post_view
+from ensemble_request.browse import post_view, close_post
+from tests.integration.helpers import get_queue
 from ensemble_request.taskboard import (
     queue_post_list,
     queue_post_add,
+    queue_list,
 )
 from tests.integration.conftest import (
     ISimpleUsers,
@@ -74,3 +76,38 @@ def test_success(
     # Post no longer in "First Queue" specialised queue
     queue = queue_post_list(token, queue_id1)
     assert post_id not in queue["posts"]
+
+
+def test_add_post_to_view_only_queue(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts
+):
+    """
+    Is an error raised when we try to move a post to a view_only queue
+    using the taskboard/queue/post_add route?
+    """
+    token = simple_users["mod"]["token"]
+    post_id = make_posts["post1_id"]
+    queues = queue_list(token)['queues']
+    closed_queue_id = get_queue(queues, "Closed queue")["queue_id"]
+    with pytest.raises(http_errors.BadRequest):
+        queue_post_add(token, closed_queue_id, post_id)
+
+
+def test_add_post_from_view_only_queue(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts
+):
+    """
+    Is an error raised when we try to move a post from a view_only queue
+    using the taskboard/queue/post_add route?
+    """
+    token = simple_users["mod"]["token"]
+    post_id = make_posts["post1_id"]
+    queues = queue_list(token)['queues']
+    main_queue_id = get_queue(queues, "Main queue")["queue_id"]
+
+    close_post(token, post_id)
+
+    with pytest.raises(http_errors.BadRequest):
+        queue_post_add(token, main_queue_id, post_id)

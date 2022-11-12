@@ -70,6 +70,7 @@ class TUser(_BaseTable):
 
 class TQueue(_BaseTable):
     immutable = Boolean()
+    view_only = Boolean()
     name = Text()
 
 
@@ -149,3 +150,11 @@ class TToken(_BaseTable):
     """
 
     user = ForeignKey(TUser)
+
+
+class TExamMode(_BaseTable):
+    """
+    Table storing whether exam mode is on or off
+    """
+
+    exam_mode = Boolean()
