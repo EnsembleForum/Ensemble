@@ -35,7 +35,6 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
     username = "admin1"
     password = "admin1"
     email = "admin@example.com"
-    pronoun = "he/him"
     return init(
         address=f"{AUTH_URL}/login",
         request_type="get",
