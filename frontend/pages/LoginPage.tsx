@@ -42,7 +42,6 @@ const LoginPage = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         const check = data as initReturn;
-        console.log(check);
         setToken(check.token);
         setUserPermissions(check.permissions)
         navigate("/browse");
