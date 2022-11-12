@@ -31,6 +31,7 @@ def queue_list(token: JWT) -> IQueueList:
     * `queues`: list of objects containing:
             * `queue_name` (`str`): the name of the queue
             * `queue_id` (`int`): ID of the queue
+            * `view_only` (`bool`): whether this queue is view only
     """
     return cast(
         IQueueList,
@@ -142,6 +143,7 @@ def queue_post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     * `queue_id` (`int`): ID of the queue
     * `queue_name` (`str`): name of the queue
     * `posts`: (`list[int]`): list of post IDs in this queue
+    * `view_only` (`bool`): whether this queue is view only
     """
     return cast(
         IQueueFullInfo,

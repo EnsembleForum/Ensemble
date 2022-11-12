@@ -10,7 +10,7 @@ from backend.models.post import Post
 from backend.models.user import User
 from backend.models.comment import Comment
 from backend.types.identifiers import PostId
-from backend.types.post import IPostFullInfo
+from backend.types.post import IPostFullInfo, IPostClosed
 from backend.types.comment import ICommentId
 from backend.types.react import IUserReacted
 from backend.util import http_errors
@@ -88,3 +88,14 @@ def react(user: User, *_) -> IUserReacted:
     post.react(user)
 
     return {"user_reacted": post.has_reacted(user)}
+
+
+@post_view.put("/close")
+@uses_token
+def close_post(user: User, *_) -> IPostClosed:
+    user.permissions.assert_can(Permission.ClosePosts)
+    data = json.loads(request.data)
+    post = Post(data["post_id"])
+    post.closed_toggle()
+
+    return {"closed": post.closed}

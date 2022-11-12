@@ -17,9 +17,11 @@ class IQueueBasicInfo(TypedDict):
 
     * `queue_name`: `str`
     * `queue_id`: `QueueId`
+    * `view_only`: `bool`
     """
     queue_id: QueueId
     queue_name: str
+    view_only: bool
 
 
 class IQueueFullInfo(TypedDict):
@@ -29,10 +31,12 @@ class IQueueFullInfo(TypedDict):
     * `queue_id`: `QueueId`
     * `queue_name`: `str`
     * `posts`: `list[PostId]`
+    * `view_only`: `bool`
     """
     queue_id: QueueId
     queue_name: str
     posts: list[PostId]
+    view_only: bool
 
 
 class IQueueList(TypedDict):
