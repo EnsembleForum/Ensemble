@@ -53,13 +53,12 @@ def test_edit_own_profile_last(all_users: IAllUsers):
         "user_id": all_users['users'][0]['user_id'],
     }
 
+
 def test_edit_other_first_name(all_users: IAllUsers):
-    user1 = all_users["users"][0]
-    user1_id = user1['user_id']
     token1 = all_users["users"][0]["token"]
     user2 = all_users["users"][1]
     user2_id = user2['user_id']
-    token2 = all_users["users"][1]["token"]
+
     new_first_name = "hello world"
     with pytest.raises(http_errors.Forbidden):
         profile_edit_first(

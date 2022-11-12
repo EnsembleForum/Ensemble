@@ -2,7 +2,7 @@
 # Backend / Models / User
 """
 from .tables import TUser
-from .permissions import PermissionGroup, PermissionUser, Permission
+from .permissions import PermissionGroup, PermissionUser
 from backend.util.exceptions import MatchNotFound
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_email_valid, assert_valid_str_field
@@ -206,7 +206,6 @@ class User:
     @property
     def permissions(self) -> PermissionUser:
         return PermissionUser(self._get().permissions)
-
 
     def basic_info(self) -> IUserBasicInfo:
         """
