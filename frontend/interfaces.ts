@@ -19,8 +19,7 @@ export interface usersRegister {
 }
 
 export interface initReturn {
-  [key: string]: any,
-  userId: number, token: string, permissions: userPermission[];
+  user_id: number, token: string, permissions: userPermission[];
 }
 // you would think you would be able to write data instanceof initReturn 
 // but no :((( you have to check individual properties e.g.
@@ -117,6 +116,11 @@ export interface createPost {
 export interface userPermission {
   permission_id: number,
   value: boolean
+}
+
+export interface currentUser {
+  user_id: number,
+  permissions: userPermission[]
 }
 
 export interface queueList {
