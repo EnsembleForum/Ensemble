@@ -56,7 +56,7 @@ const AuthorView = (props: Props) => {
     if (toggle) {
       return (
         <div onMouseLeave={(e) => setToggle(false)}>
-          <ActiveAuthor> Author: {author.username} </ActiveAuthor>
+          <ActiveAuthor>{author.username} </ActiveAuthor>
           <StyledText >
           Email: {author.email} <br/>
           Username: {author.username} <br/>
