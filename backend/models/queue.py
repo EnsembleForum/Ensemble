@@ -82,6 +82,12 @@ class Queue:
         id = cast(QueueId, val["id"])
         return Queue(id)
 
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, Queue):
+            return self.id == __o.id
+        else:
+            return False
+
     @property
     def name(self) -> str:
         """
@@ -155,11 +161,10 @@ class Queue:
         # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Closed queue")
 
-    # TODO: Revisit in sprint 2 to think of a way to organise
-
     def posts(self) -> list["Post"]:
         """
         List of all posts in the given queue
+        Posts are sorted from oldest to newest
 
         ### Returns:
         * `list[Post]`: posts
@@ -169,7 +174,7 @@ class Queue:
             Post(c["id"])
             for c in TPost.select()
             .where(TPost.queue == self.id)
-            .order_by(TPost.id, ascending=False)
+            .order_by(TPost.id, ascending=True)
             .run_sync()
         ]
 
