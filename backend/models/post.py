@@ -72,7 +72,6 @@ class Post:
                     TPost.queue: Queue.get_main_queue().id,
                     TPost.private: private,
                     TPost.anonymous: anonymous,
-                    TPost.closed: False,
                 }
             )
             .save()
@@ -347,13 +346,7 @@ class Post:
         ### Returns:
         * bool: closed
         """
-        return self._get().closed
-
-    @closed.setter
-    def closed(self, new_status: bool):
-        row = self._get()
-        row.closed = new_status
-        row.save().run_sync()
+        return self.queue == Queue.get_closed_queue()
 
     def closed_toggle(self):
         """
@@ -361,10 +354,8 @@ class Post:
         Un-close post if it was
         """
         if self.closed:
-            self.closed = False
             self.queue = Queue.get_main_queue()
         else:
-            self.closed = True
             self.queue = Queue.get_closed_queue()
 
     def basic_info(self) -> IPostBasicInfo:
