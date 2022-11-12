@@ -120,5 +120,10 @@ export interface userPermission {
 }
 
 export interface queueList {
-  queues: {queue_name: string, queue_id: number}[]
+  queues: {queue_name: string, queue_id: number, view_only: boolean}[]
+}
+
+
+export interface queueListPosts {
+  queue_name: string, queue_id: number, view_only: boolean, posts: number[] | postView[]
 }
