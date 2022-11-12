@@ -197,7 +197,14 @@ def init() -> IAuthInfo:
     # Create the answered queue
     Queue.create(
         "Answered queue",
-        immutable=True
+        immutable=True,
+        view_only=True
+    )
+
+    Queue.create(
+        "Closed queue",
+        immutable=True,
+        view_only=True
     )
 
     # Register first user

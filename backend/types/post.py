@@ -13,6 +13,7 @@ class IPostBasicInfo(TypedDict):
     * `me_too`: `int`
     * `private`: `bool`
     * `anonymous`: `bool`
+    * `closed`: `bool`
     * `answered`: `bool`
     """
     post_id: PostId
@@ -23,6 +24,7 @@ class IPostBasicInfo(TypedDict):
     private: bool
     anonymous: bool
     answered: bool
+    closed: bool
 
 
 class IPostBasicInfoList(TypedDict):
@@ -64,6 +66,7 @@ class IPostFullInfo(TypedDict):
     * `timestamp`: `int`
     * `private`: `bool`
     * `anonymous`: `bool`
+    * `closed`: `bool`
     * `user_reacted`: `bool`
     * `answered`: `Optional[CommentId]`
     * `queue`: `str`
@@ -79,5 +82,15 @@ class IPostFullInfo(TypedDict):
     timestamp: int
     private: bool
     anonymous: bool
+    closed: bool
     answered: Optional[CommentId]
     queue: str
+
+
+class IPostClosed(TypedDict):
+    """
+    Whether a post is closed
+
+    * `closed`: `bool`
+    """
+    closed: bool
