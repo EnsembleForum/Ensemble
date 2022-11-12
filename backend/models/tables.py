@@ -69,6 +69,7 @@ class TUser(_BaseTable):
 
 class TQueue(_BaseTable):
     immutable = Boolean()
+    view_only = Boolean()
     name = Text()
 
 
@@ -85,6 +86,7 @@ class TPost(_BaseTable):
     queue = ForeignKey(TQueue)
     private = Boolean()
     anonymous = Boolean()
+    closed = Boolean()
     answered = Integer(null=True)
     # FIXME
     # answered = ForeignKey("TComment", null=True)
