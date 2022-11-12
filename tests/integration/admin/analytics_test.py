@@ -7,6 +7,8 @@ from ensemble_request.browse import (
     post_create,
     add_comment,
     add_reply,
+    comment_react,
+    reply_react
 )
 
 
@@ -111,10 +113,22 @@ def test_all_top_posters(
     post_create(mod_token, "heading", "text", [])
     post_create(admin_token, "heading", "text", [])
 
-    data = get_analytics(admin_token)["all_users"]["top_posters"]
+    data = get_analytics(admin_token)
+
+    all_data = data["all_users"]["top_posters"]
     # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in data] == [user_id, admin_id, mod_id]
-    assert [i["count"] for i in data] == [2, 1, 1]
+    assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
+    assert [i["count"] for i in all_data] == [2, 1, 1]
+
+    staff_data = data["staff"]["top_posters"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
+    assert [i["count"] for i in staff_data] == [1, 1]
+
+    student_data = data["students"]["top_posters"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in student_data] == [user_id]
+    assert [i["count"] for i in student_data] == [2]
 
 
 def test_all_top_commenters(
@@ -141,10 +155,22 @@ def test_all_top_commenters(
     add_comment(admin_token, post_id, "text")
     add_comment(mod_token, post_id, "text")
 
-    data = get_analytics(admin_token)["all_users"]["top_commenters"]
+    data = get_analytics(admin_token)
+
+    all_data = data["all_users"]["top_commenters"]
     # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in data] == [user_id, admin_id, mod_id]
-    assert [i["count"] for i in data] == [2, 1, 1]
+    assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
+    assert [i["count"] for i in all_data] == [2, 1, 1]
+
+    staff_data = data["staff"]["top_commenters"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
+    assert [i["count"] for i in staff_data] == [1, 1]
+
+    student_data = data["students"]["top_commenters"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in student_data] == [user_id]
+    assert [i["count"] for i in student_data] == [2]
 
 
 def test_all_top_repliers(
@@ -172,10 +198,22 @@ def test_all_top_repliers(
     add_reply(admin_token, comment_id, "text")
     add_reply(mod_token, comment_id, "text")
 
-    data = get_analytics(admin_token)["all_users"]["top_repliers"]
+    data = get_analytics(admin_token)
+
+    all_data = data["all_users"]["top_repliers"]
     # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in data] == [user_id, admin_id, mod_id]
-    assert [i["count"] for i in data] == [2, 1, 1]
+    assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
+    assert [i["count"] for i in all_data] == [2, 1, 1]
+
+    staff_data = data["staff"]["top_repliers"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
+    assert [i["count"] for i in staff_data] == [1, 1]
+
+    student_data = data["students"]["top_repliers"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in student_data] == [user_id]
+    assert [i["count"] for i in student_data] == [2]
 
 
 def test_all_top_me_too(simple_users: ISimpleUsers):
@@ -198,10 +236,22 @@ def test_all_top_me_too(simple_users: ISimpleUsers):
     post_react(user_token, mod_post)
     post_react(user_token, admin_post)
 
-    data = get_analytics(admin_token)["all_users"]["top_me_too"]
+    data = get_analytics(admin_token)
+
+    all_data = data["all_users"]["top_me_too"]
     # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in data] == [user_id, admin_id, mod_id]
-    assert [i["count"] for i in data] == [2, 1, 1]
+    assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
+    assert [i["count"] for i in all_data] == [2, 1, 1]
+
+    staff_data = data["staff"]["top_me_too"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
+    assert [i["count"] for i in staff_data] == [1, 1]
+
+    student_data = data["students"]["top_me_too"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in student_data] == [user_id]
+    assert [i["count"] for i in student_data] == [2]
 
 
 def test_all_top_thanks(
@@ -220,105 +270,29 @@ def test_all_top_thanks(
 
     post_id = make_posts["post1_id"]
     comment_id = add_comment(user_token, post_id, "text")["comment_id"]
+    user_reply = add_reply(user_token, comment_id, "text")["reply_id"]
+    mod_reply = add_reply(mod_token, comment_id, "text")["reply_id"]
+    admin_reply = add_reply(admin_token, comment_id, "text")["reply_id"]
 
-    # User has 2 comments
-    for _ in range(2):
-        add_reply(user_token, comment_id, "text")
+    reply_react(user_token, mod_reply)
+    reply_react(user_token, admin_reply)
+    comment_react(mod_token, comment_id)
+    reply_react(mod_token, user_reply)
+    reply_react(admin_token, user_reply)
 
-    # Mod and admin each have 1 post
-    add_reply(admin_token, comment_id, "text")
-    add_reply(mod_token, comment_id, "text")
+    data = get_analytics(admin_token)
 
-    data = get_analytics(admin_token)["all_users"]["top_repliers"]
+    all_data = data["all_users"]["top_thanks"]
     # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in data] == [user_id, admin_id, mod_id]
-    assert [i["count"] for i in data] == [2, 1, 1]
+    assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
+    assert [i["count"] for i in all_data] == [3, 1, 1]
 
-# def test_mod_mark_accepted(
-#     simple_users: ISimpleUsers,
-#     make_posts: IMakePosts
-# ):
-#     admin_token = simple_users["admin"]["token"]
-#     admin_id = simple_users["admin"]["user_id"]
+    staff_data = data["staff"]["top_thanks"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
+    assert [i["count"] for i in staff_data] == [1, 1]
 
-#     data = get_analytics(admin_token)
-
-#     assert len(data["staff"]["top_posters"]) == 1
-#     assert data["staff"]["top_posters"][0] == {
-#         "user_id": admin_id,
-#         "count": 2
-#     }
-#     assert data["total_posts"] == 2
-#     assert data["total_comments"] == 0
-
-
-# def test_react_multiple_users1(
-#     simple_users: ISimpleUsers,
-#     make_posts: IMakePosts,
-# ):
-#     """
-#     Successful reacts and un-reacts by multiple users
-#     """
-#     token1 = simple_users["user"]["token"]
-#     token2 = simple_users["mod"]["token"]
-#     post_id = make_posts["post1_id"]
-
-#     post_id1 = make_posts["post2_id"]
-
-#     post_react(token1, post_id)["user_reacted"]
-
-#     post_react(token2, post_id)
-
-#     post_react(token2, post_id1)
-
-#     post_create(token2, "heading", "text", [])
-#     post_create(token1, "heading", "text", [])
-
-
-#     admin_token = simple_users["admin"]["token"]
-#     admin_id = simple_users["admin"]["user_id"]
-
-#     data = get_analytics(admin_token)
-#     staff_data = data["staff"]
-#     student_data = data["students"]
-
-#     assert len(staff_data["top_posters"]) == 2
-
-#     assert staff_data["top_me_too"][0]["user_id"] == admin_id
-#     assert staff_data["top_me_too"][0]["count"] == 3
-#     assert len(staff_data["top_me_too"]) == 1
-
-#     assert len(student_data["top_posters"]) == 1
-
-#     assert len(data["all_users"]["top_posters"]) == 3
-
-
-# def test_react_multiple_users(
-#     simple_users: ISimpleUsers,
-#     make_posts: IMakePosts,
-# ):
-#     """
-#     Successful reacts and un-reacts by multiple users
-#     """
-#     token1 = simple_users["user"]["token"]
-#     token2 = simple_users["mod"]["token"]
-#     post_id = make_posts["post1_id"]
-#     comment_id = add_comment(token2, post_id, "first")["comment_id"]
-#     reply_id = add_reply(token1, comment_id, "helo")["reply_id"]
-
-#     reply_react(token1, reply_id)
-
-#     reply_react(token2, reply_id)
-
-#     comment_react(token1, comment_id)
-
-#     admin_token = simple_users["admin"]["token"]
-#     admin_id = simple_users["admin"]["user_id"]
-
-#     data = get_analytics(admin_token)
-#     staff_data = data["staff"]
-#     student_data = data["students"]
-
-#     assert student_data["top_thanks"][0]["user_id"]
-# == simple_users["user"]["user_id"]
-#     assert student_data["top_thanks"][0]["count"] == 2
+    student_data = data["students"]["top_thanks"]
+    # Sorted from most to least number of posts, then by first name
+    assert [i["user_id"] for i in student_data] == [user_id]
+    assert [i["count"] for i in student_data] == [3]

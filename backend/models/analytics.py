@@ -202,16 +202,21 @@ class Analytics:
 
         result = []
 
-        for c in comments:
-            if len(replies) == 0:
-                break
-            r = replies.pop(0)
-            if c["user_id"] == r["user_id"]:
+        while len(comments) > 0 and len(replies) > 0:
+            if comments[0]["user_id"] < replies[0]["user_id"]:
+                result.append(comments.pop(0))
+            elif comments[0]["user_id"] > replies[0]["user_id"]:
+                result.append(replies.pop(0))
+            elif comments[0]["user_id"] == replies[0]["user_id"]:
+                r = replies.pop(0)
+                c = comments.pop(0)
                 c["count"] += r["count"]
-            else:
-                result.append(r)
+                result.append(c)
 
-        result += comments
+        if len(comments) > 0:
+            result += comments
+        if len(replies) > 0:
+            result += replies
 
         return sorted(
             cast(list[IAnalyticsValue], result),
@@ -241,7 +246,7 @@ class Analytics:
                 "top_commenters": cls.top_creators(TComment, group),
                 "top_repliers": cls.top_creators(TReply, group),
                 "top_me_too": cls.top_me_too(group),
-                "top_thanks": cls.top_thanks(),
+                "top_thanks": cls.top_thanks(group),
             }
         else:
             return {
