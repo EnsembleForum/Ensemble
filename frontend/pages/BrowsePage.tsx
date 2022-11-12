@@ -33,7 +33,7 @@ const BrowsePage = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         const test = data as { posts: postListItem[] };
-        if (test.posts.length && searchParams.get('postId') === null) {
+        if (test.posts.length && (searchParams.get('postId') === null || searchParams.get('postId') === '0')) {
           setSearchParams({postId: test.posts[0].post_id.toString()})
         }
       })

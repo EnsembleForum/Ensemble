@@ -7,6 +7,7 @@ import { ApiFetch } from "../../App";
 import { APIcall, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
 import AuthorView from "./AuthorView";
+import ReactTooltip from 'react-tooltip';
 
 // Declaring and typing our props
 interface Props { }
@@ -36,8 +37,10 @@ const Post = styled.div`
   }
 `
 const ActivePost = styled(Post)`
-  background-color: ${theme.colors?.highlight};
   filter: brightness(95%);
+`
+const ClosedPost = styled(Post)`
+  background-color:#FF7F7F;
 `
 
 const Heading = styled.div`
@@ -68,17 +71,15 @@ const PostListView = (props: Props) => {
           posts.map((each) => {
             if (each.post_id === parseInt(searchParams.get("postId") as string)) {
               return (
-                <ActivePost onClick={() => {
-                  setSearchParams({postId: each.post_id.toString()});
-                }}>
-                  <Heading>{each.heading}</Heading>
-                <AuthorView userId={each.author}/>
-                <div>Tags: {each.tags}</div>
+                <ActivePost style={each.closed ? {backgroundColor: "#ffa3a3"} : {}}  onClick={() => setSearchParams({postId: each.post_id.toString()})}>
+                  <Heading>{each.closed ? <>❌</> : <></>}{each.heading}</Heading>
+                  <AuthorView userId={each.author}/>
+                  <div>Tags: {each.tags}</div>
                 </ActivePost>
               );
             }
             return (
-              <Post onClick={() => {
+              <Post style={each.closed ? {backgroundColor: "#ffa3a3"} : {}} onClick={() => {
                 setSearchParams({postId: each.post_id.toString()})
               }}>
                 <Heading>{each.heading}</Heading>

@@ -68,7 +68,9 @@ export interface postListItem {
   heading: string,
   tags: number[],
   author: number,
-  reacts: reacts
+  me_too: number,
+  answered: boolean,
+  closed: boolean
 }
 
 export interface postView {
@@ -82,7 +84,9 @@ export interface postView {
   timestamp: number,
   anonymous:boolean,
   private:boolean, 
-  user_reacted:boolean
+  user_reacted:boolean,
+  answered?: number,
+  closed: boolean
 }
 
 export interface commentView {

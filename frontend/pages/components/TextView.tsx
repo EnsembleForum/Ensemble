@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, Button, IconButton, Input, Text, Textarea } from "theme-ui";
 import { isPropertySignature, JsxElement } from "typescript";
 import { ApiFetch, getPermission } from "../../App";
@@ -27,6 +27,7 @@ interface Props {
   type: "post" | "comment" | "reply",
   tags?: number[],
   answer?: boolean,
+  closed?: boolean
 }
 
 const StyledText = styled.div`
@@ -75,11 +76,13 @@ const InactiveReactButton = styled(StyledButton)`
   margin-right: 5px;
   background-color: darkgrey;
   color: white;
-
 `
 const ActiveReactButton = styled(InactiveReactButton)`
   background-color: ${theme.colors?.primary};
   font-weight: 900;
+`
+const ActiveCloseButton = styled(InactiveReactButton)`
+  background-color: black;
 `
 
 const OptionsBar = styled.div`
@@ -124,7 +127,8 @@ const TextView = (props: Props) => {
   const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
   const { currentUser, setCurrentUser } = React.useContext(UserContext);
-
+  let [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const routes = {
     "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id", "browse/post_view/edit"],
     "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "comment_id", "browse/comment_view/edit"],
@@ -132,8 +136,16 @@ const TextView = (props: Props) => {
   }
   let heading = <></>;
   let author = <></>;
+  let closed = <></>
+  if (props.closed) {
+    closed = <>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <span data-tip="Post has been closed by a moderator. Edit post based on comment feedback">❌  </span>
+    </>
+  }
+
   if (props.heading) {
-    heading = <h1>{props.heading}</h1>
+    heading = <h1>{closed}{props.heading}</h1>
   }
   if (props.author) {
     if (props.anonymous && !getPermission(2, currentUser.permissions)) {
@@ -163,7 +175,16 @@ const TextView = (props: Props) => {
       }
     );
   }
-  console.log("user:", currentUser);
+  async function close_post() {
+    const call : APIcall = {
+      method: "PUT",
+      path: "browse/post_view/close",
+      body: {post_id: props.id}
+    }
+    await ApiFetch(call);
+    setCommentCount(commentCount + 1);
+    setSearchParams({postId: props.id.toString()})
+  }
   const reply = (
   <StyledReply>
     <Input placeholder="Reply" value={inputText} onChange={(e)=>setInputText(e.target.value)} ></Input>
@@ -231,6 +252,14 @@ const TextView = (props: Props) => {
     <ActiveReactButton data-tip="Unreact" onClick={() => react()}>{routes[props.type][1]} <>{
             props.reacts }</></ActiveReactButton>
   </>);
+  const closeButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <InactiveReactButton data-tip="Close Post" onClick={() => close_post()}>❌</InactiveReactButton>
+  </>)
+  const activeCloseButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <ActiveCloseButton data-tip="Unclose Post" onClick={() => close_post()}>❌</ActiveCloseButton>
+  </>)
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
@@ -244,11 +273,13 @@ const TextView = (props: Props) => {
         {author}
         {toggleEdit ? <></> : tags}
         <br/>
-        {toggleEdit ? editBox : <p>{props.text}</p>}
+        { toggleEdit ? editBox : <p>{props.text}</p> }
         { props.userReacted ? activeReactButton : reactButton}
         { currentUser.user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
         { toggleReply ? activeReplyButton : replyButton }
         { toggleReply ? reply : <></>}
+        { props.type === "post" && getPermission(31, currentUser.permissions) ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
+
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}
     </StyledText>

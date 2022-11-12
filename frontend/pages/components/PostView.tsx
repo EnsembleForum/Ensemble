@@ -63,7 +63,7 @@ const PostView = (props: Props) => {
   }
 
   useEffect(() => {
-    if (searchParams.get("postId")) {
+    if (searchParams.get("postId") !== null && searchParams.get('postId') !== '0') {
       getPost();
     }
   },[commentCount])
@@ -73,7 +73,7 @@ const PostView = (props: Props) => {
     return (
       <CommentContext.Provider value={value}>
        <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={parseInt(searchParams.get("postId") as string)} userReacted={currentPost.user_reacted} type="post" private={currentPost.private} anonymous={currentPost.anonymous}></TextView>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={parseInt(searchParams.get("postId") as string)} userReacted={currentPost.user_reacted} type="post" private={currentPost.private} anonymous={currentPost.anonymous} closed={currentPost.closed}></TextView>
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
@@ -93,7 +93,7 @@ const PostView = (props: Props) => {
         </StyledPostListView>
       </CommentContext.Provider>
     )
-  } else if (searchParams.get("postId")) {
+  } else if (searchParams.get("postId") && searchParams.get('postId') !== '0') {
     getPost();
     return <StyledPostListView> Loading... </StyledPostListView>
   }
