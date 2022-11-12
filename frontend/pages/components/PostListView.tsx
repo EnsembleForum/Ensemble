@@ -40,6 +40,10 @@ const ActivePost = styled(Post)`
   filter: brightness(95%);
 `
 
+const Heading = styled.div`
+  font-weight: 700;
+`
+
 // Exporting our example component
 const PostListView = (props: Props) => {
   const [posts, setPosts] = React.useState<postListItem[]>();
@@ -67,7 +71,7 @@ const PostListView = (props: Props) => {
                 <ActivePost onClick={() => {
                   setSearchParams({postId: each.post_id.toString()});
                 }}>
-                  <div>{each.heading}</div>
+                  <Heading>{each.heading}</Heading>
                 <AuthorView userId={each.author}/>
                 <div>Tags: {each.tags}</div>
                 </ActivePost>
@@ -77,7 +81,7 @@ const PostListView = (props: Props) => {
               <Post onClick={() => {
                 setSearchParams({postId: each.post_id.toString()})
               }}>
-                <div>{each.heading}</div>
+                <Heading>{each.heading}</Heading>
                 <AuthorView userId={each.author}/>
                 <div>Tags: {each.tags}</div>
               </Post>

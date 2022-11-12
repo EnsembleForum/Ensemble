@@ -46,6 +46,9 @@ export const StyledNavbar = styled.div`
   button {
     margin-right: 10px;
   }
+  span {
+    flex-grow: 1;
+  }
   background-color: ${theme.colors?.muted};
 `;
 
@@ -84,6 +87,7 @@ const Navbar = (props: Props) => {
           navigate("/" + page)
         }}>{Prettify(page)}</a>)
       })}
+      <span></span>
       {login} {logout}
     </StyledNavbar>
   );
