@@ -128,6 +128,24 @@ def test_cant_edit_invalid_profile(
 
 
 @pytest.mark.parametrize(*test_params)
+def test_cant_edit_invalid_new_value(
+    callback: ProfileEditCallback,
+    new_key: str,
+    new_value: str,
+    basic_server_setup: IBasicServerSetup,
+):
+    """
+    We should get an error if we try to edit a profile to use an empty string
+    """
+    with pytest.raises(http_errors.BadRequest):
+        callback(
+            basic_server_setup["token"],
+            basic_server_setup["user_id"],
+            "",
+        )
+
+
+@pytest.mark.parametrize(*test_params)
 def test_cant_edit_own_profile_without_permission(
     callback: ProfileEditCallback,
     new_key: str,
