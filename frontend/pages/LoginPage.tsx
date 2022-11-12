@@ -7,7 +7,8 @@ import { ApiFetch, setToken } from "../App";
 import { APIcall, initReturn, loginForm } from "../interfaces";
 import Navbar from "./components/Navbar";
 import { StyledButton } from "./GlobalProps";
-import PermissionsContext from "./permissionsContext";
+import UserContext from "./userContext";
+import PermissionsContext from "./userContext";
 
 
 interface Props { }
@@ -25,7 +26,7 @@ const StyledForm = styled(Box)`
   border-radius: 2%;
 `;
 const LoginPage = (props: Props) => {
-  const { userPermissions, setUserPermissions } = React.useContext(PermissionsContext);
+  const { currentUser, setCurrentUser } = React.useContext(UserContext);
   const navigate = useNavigate();
   const [loginDetails, setLoginDetails] = React.useState<loginForm>({
     username: '',
@@ -42,9 +43,8 @@ const LoginPage = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         const check = data as initReturn;
-        console.log(check);
         setToken(check.token);
-        setUserPermissions(check.permissions)
+        setCurrentUser({user_id: check.user_id, permissions: check.permissions})
         navigate("/browse");
       })
   }

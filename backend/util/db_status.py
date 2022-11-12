@@ -21,6 +21,7 @@ ALL_TABLES: list[type[tables._BaseTable]] = [
     tables.TReplyReacts,
     tables.TCommentReacts,
     tables.TNotification,
+    tables.TExamMode,
 ]
 
 

@@ -7,10 +7,12 @@ import json
 from flask import Blueprint, request
 from .permissions import permissions
 from .users import users
+from .exam_mode import exam_mode
 from backend.models.auth_config import AuthConfig
 from backend.models.permissions import PermissionGroup, Permission
 from backend.models.token import Token
 from backend.models.queue import Queue
+from backend.models.exam_mode import ExamMode
 from backend.models.user import User
 from backend.types.auth import IAuthInfo
 from backend.types.admin import IIsFirstRun
@@ -24,6 +26,7 @@ admin = Blueprint('admin', 'admin')
 
 admin.register_blueprint(permissions, url_prefix='/permissions')
 admin.register_blueprint(users, url_prefix='/users')
+admin.register_blueprint(exam_mode, url_prefix='/exam_mode')
 
 
 @admin.get('/is_first_run')
@@ -168,7 +171,7 @@ def init() -> IAuthInfo:
                 Permission.DeletePosts,
                 Permission.ViewReports,
                 Permission.ViewAllUsers,
-                Permission.CommentAccept
+                Permission.CommentAccept,
             ]
         },
         immutable=False,
@@ -186,6 +189,9 @@ def init() -> IAuthInfo:
         immutable=False,
     )
 
+    # Initialise exam mode table and set exam mode to False
+    ExamMode.initialise()
+
     # Create the main queue
     Queue.create(
         "Main queue",
@@ -195,7 +201,14 @@ def init() -> IAuthInfo:
     # Create the answered queue
     Queue.create(
         "Answered queue",
-        immutable=True
+        immutable=True,
+        view_only=True
+    )
+
+    Queue.create(
+        "Closed queue",
+        immutable=True,
+        view_only=True
     )
 
     # Register first user
