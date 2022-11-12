@@ -118,3 +118,7 @@ export interface userPermission {
   permission_id: number,
   value: boolean
 }
+
+export interface queueList {
+  queues: {queue_name: string, queue_id: number}[]
+}
