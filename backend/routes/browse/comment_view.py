@@ -8,6 +8,7 @@ from flask import Blueprint, request
 from backend.models.notifications import (
     NotificationCommented,
     NotificationAccepted,
+    NotificationUnaccepted,
 )
 from backend.models.permissions import Permission
 from backend.models.reply import Reply
@@ -80,18 +81,26 @@ def accept(user: User, *_) -> ICommentAccepted:
 
     comment.accepted_toggle(user)
 
-    if comment.author != user:
-        NotificationAccepted.create(
-            comment.author,
-            user,
-            comment,
-        )
-    if comment.parent.author != user:
-        NotificationAccepted.create(
-            comment.parent.author,
-            user,
-            comment,
-        )
+    if comment.accepted:
+        if comment.author != user:
+            NotificationAccepted.create(
+                comment.author,
+                user,
+                comment,
+            )
+        elif comment.parent.author != user:
+            NotificationAccepted.create(
+                comment.parent.author,
+                user,
+                comment,
+            )
+    else:
+        if comment.author != user:
+            NotificationUnaccepted.create(
+                comment.author,
+                user,
+                comment,
+            )
     return {"accepted": comment.accepted}
 
 
