@@ -67,6 +67,7 @@
     "doesnt",
     "dotenv",
     "flaskenv",
+    "Jestspectation",
     "Khor",
     "Neel",
     "notif",
