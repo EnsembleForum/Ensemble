@@ -8,6 +8,7 @@ from flask import Blueprint, request
 from backend.models.notifications import (
     NotificationClosed,
     NotificationCommented,
+    NotificationReacted,
 )
 from backend.models.permissions import Permission
 from backend.models.post import Post
@@ -97,6 +98,12 @@ def react(user: User, *_) -> IUserReacted:
     data = json.loads(request.data)
     post = Post(data["post_id"])
     post.react(user)
+
+    if user != post.author:
+        NotificationReacted.create(
+            post.author,
+            post,
+        )
 
     return {"user_reacted": post.has_reacted(user)}
 

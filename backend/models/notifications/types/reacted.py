@@ -78,8 +78,8 @@ class NotificationReacted(Notification):
         return {
             "notification_id": self.id,
             "seen": self.seen,
-            "heading": f"Someone {action} {title}",
-            "body": "",
+            "heading": f"Someone {action}",
+            "body": title,
             "post": post_id,
             "comment": comment_id,
             "reply": reply_id,

@@ -9,6 +9,7 @@ from backend.models.notifications import (
     NotificationCommented,
     NotificationAccepted,
     NotificationUnaccepted,
+    NotificationReacted,
 )
 from backend.models.permissions import Permission
 from backend.models.reply import Reply
@@ -68,6 +69,12 @@ def react(user: User, *_) -> IUserReacted:
     data = json.loads(request.data)
     comment = Comment(data["comment_id"])
     comment.react(user)
+
+    if user != comment.author:
+        NotificationReacted.create(
+            comment.author,
+            comment,
+        )
 
     return {"user_reacted": comment.has_reacted(user)}
 
