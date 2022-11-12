@@ -71,9 +71,9 @@ class NotificationUnaccepted(Notification):
             "seen": self.seen,
             "heading": (
                 f"{self.user_from.name_first} unaccepted your answer for "
-                f"{self.post.text}"
+                f"{self.post.heading}"
             ),
-            "body": "",
+            "body": self.comment.text,
             "post": self.post.id,
             "comment": self.comment.id,
             "reply": None,
