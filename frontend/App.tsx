@@ -2,14 +2,14 @@ import styled from '@emotion/styled';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { SERVER_PATH } from './constants';
-import { APIcall, requestOptions, userPermission } from './interfaces';
+import { APIcall, currentUser, requestOptions, userPermission } from './interfaces';
 import AdminPage from './pages/AdminPage';
 import BrowsePage from './pages/BrowsePage';
 import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
 import PasswordResetPage from './pages/PasswordResetPage';
-import PermissionsContext from './pages/permissionsContext';
+import UserContext from './pages/userContext';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
@@ -72,8 +72,8 @@ export function getPermission(id : number, userPermissions : userPermission[]) {
 }
 
 function PassThrough() {
-  const [userPermissions, setUserPermissions] = React.useState<userPermission[]>([]);
-  const value = {userPermissions, setUserPermissions};
+  const [currentUser, setCurrentUser] = React.useState<currentUser>({user_id: 0, permissions: []});
+  const value = {currentUser, setCurrentUser};
   const [firstRun, setFirstRun] = React.useState<boolean>(true);
   const api: APIcall = {
     method: "GET",
@@ -84,7 +84,7 @@ function PassThrough() {
     setFirstRun(first.value);
   })
   return (
-    <PermissionsContext.Provider value={value}>
+    <UserContext.Provider value={value}>
       <Router>
         <Routes>
           {firstRun ? (
@@ -99,15 +99,13 @@ function PassThrough() {
             <Route path='/password_reset' element={<PasswordResetPage />} />
             <Route path='/profile' element={<UserProfilePage userId={0} />} />
             <Route path='/browse' element={<BrowsePage />}/>
-            {console.log(userPermissions)}
-            {console.log(getPermission(20, userPermissions))}
-            {getPermission(20, userPermissions) ? <Route path='/taskboard' element={<TaskboardPage />} /> : <></>}
-            {getPermission(40, userPermissions)  ? <Route path='/admin' element={<AdminPage page={"register_users"} />} /> : <></>}
+            {getPermission(20, currentUser.permissions) ? <Route path='/taskboard' element={<TaskboardPage />} /> : <></>}
+            {getPermission(40, currentUser.permissions)  ? <Route path='/admin' element={<AdminPage page={"register_users"} />} /> : <></>}
             </>
           )}
         </Routes>
       </Router>
-    </PermissionsContext.Provider>
+    </UserContext.Provider>
   )  
 }
 export default PassThrough;

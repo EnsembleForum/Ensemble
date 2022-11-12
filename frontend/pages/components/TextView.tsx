@@ -8,8 +8,10 @@ import { APIcall, postView } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
 import { StyledButton } from "../GlobalProps";
-import PermissionsContext from "../permissionsContext";
+import UserContext from "../userContext";
+import PermissionsContext from "../userContext";
 import AuthorView from "./AuthorView";
+import ReactTooltip from 'react-tooltip';
 
 // Declaring and typing our props
 interface Props {
@@ -82,6 +84,7 @@ const ActiveReactButton = styled(InactiveReactButton)`
 
 const OptionsBar = styled.div`
   display: flex;
+  justify-content: space-between;
   margin: 0;
 `
 
@@ -96,6 +99,7 @@ const Private = styled.div`
   align-items: center;
   text-align: center;
   max-width: 100px;
+  height: 30px;
 `
 const Anonymous = styled(Private)`
   max-width: 130px;
@@ -108,7 +112,9 @@ const StyledAnonymous = styled.a`
     font-weight: 700;
   }
 `
-
+const Status = styled.span`
+  display:flex
+`
 // Exporting our example component
 const TextView = (props: Props) => {
   const [inputText, setInputText] = React.useState<string>();
@@ -117,7 +123,7 @@ const TextView = (props: Props) => {
   const [editText, setEditText] = React.useState<string>(props.text as string);
   const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
-  const { userPermissions, setUserPermissions } = React.useContext(PermissionsContext);
+  const { currentUser, setCurrentUser } = React.useContext(UserContext);
 
   const routes = {
     "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id", "browse/post_view/edit"],
@@ -130,7 +136,7 @@ const TextView = (props: Props) => {
     heading = <h1>{props.heading}</h1>
   }
   if (props.author) {
-    if (props.anonymous && !getPermission(2, userPermissions)) {
+    if (props.anonymous && !getPermission(2, currentUser.permissions)) {
       author = <StyledAnonymous>Anonymous</StyledAnonymous>
     } else {
       author = <AuthorView userId={props.author}/>;
@@ -157,7 +163,7 @@ const TextView = (props: Props) => {
       }
     );
   }
-  
+  console.log("user:", currentUser);
   const reply = (
   <StyledReply>
     <Input placeholder="Reply" value={inputText} onChange={(e)=>setInputText(e.target.value)} ></Input>
@@ -178,7 +184,7 @@ const TextView = (props: Props) => {
         });
     }}>Post</ActiveReactButton>
   </StyledReply>)
-  const replyButton = (<InactiveReactButton onClick={() => setToggleReply(true)}>↩️</InactiveReactButton>);
+  const replyButton = (<><ReactTooltip place="top" type="dark" effect="solid"/><InactiveReactButton data-tip="Reply" onClick={() => setToggleReply(true)}>↩️</InactiveReactButton></>);
   const activeReplyButton = (<ActiveReactButton onClick={() => setToggleReply(false)}>↩️</ActiveReactButton>);
   const editBox = (
     <>
@@ -210,29 +216,38 @@ const TextView = (props: Props) => {
       }}>Post</StyledButton>
     </>
   );
-  const editButton = (<InactiveReactButton onClick={() => setToggleEdit(true)}>✍️</InactiveReactButton>);
-  const activeEditButton = (<ActiveReactButton onClick={() => setToggleEdit(false)}>✍️</ActiveReactButton>);
+  const editButton = (<>
+  <ReactTooltip place="top" type="dark" effect="solid"/>
+  <InactiveReactButton data-tip="Edit" onClick={() => setToggleEdit(true)}>✏️</InactiveReactButton>
+  </>);
+  const activeEditButton = (<ActiveReactButton onClick={() => setToggleEdit(false)}>✏️</ActiveReactButton>);
+  const reactButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <InactiveReactButton data-tip={props.type === "post" ? "Me too!" : "Thanks!"} onClick={() => react()}>{routes[props.type][1]} <>{
+            props.reacts }</></InactiveReactButton>
+  </>);
+  const activeReactButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <ActiveReactButton data-tip="Unreact" onClick={() => react()}>{routes[props.type][1]} <>{
+            props.reacts }</></ActiveReactButton>
+  </>);
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
         <OptionsBar>
           {heading}
+          <Status>
           {props.private ? <Private>PRIVATE</Private>: <></>}
           {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
+          </Status>
         </OptionsBar>
         {author}
         {toggleEdit ? <></> : tags}
         <br/>
         {toggleEdit ? editBox : <p>{props.text}</p>}
-        {props.userReacted ? 
-          <ActiveReactButton onClick={() => react()}>{routes[props.type][1]} <>{
-            props.reacts }</></ActiveReactButton>
-          :
-          <InactiveReactButton onClick={() => react()}>{routes[props.type][1]} <>{
-            props.reacts }</></InactiveReactButton>
-        }
+        { props.userReacted ? activeReactButton : reactButton}
+        { currentUser.user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
         { toggleReply ? activeReplyButton : replyButton }
-        { toggleEdit ? activeEditButton : editButton }
         { toggleReply ? reply : <></>}
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}
