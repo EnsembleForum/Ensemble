@@ -5,7 +5,7 @@ from piccolo.query.methods.select import Count
 from typing import cast, Literal, Union
 
 # from backend.util import http_errors
-from backend.types.analytics import IAllStats, IAnalyticsValue
+from backend.types.analytics import IAllStats, IAnalyticsValue, IGroupStats
 from .user import User
 from .tables import (TPost, TComment, TReply)
 
@@ -55,28 +55,30 @@ class Analytics:
         )[:num]
 
     @classmethod
+    def get_group_stats(
+        cls,
+        group: list[Literal["Administrator", "Moderator", "Student"]] = None
+    ) -> IGroupStats:
+        if group:
+            return {
+                "top_posters": cls.top_creators(TPost, group),
+                "top_commenters": cls.top_creators(TComment, group),
+                "top_repliers": cls.top_creators(TReply, group)
+            }
+        else:
+            return {
+                "top_posters": cls.top_creators(TPost),
+                "top_commenters": cls.top_creators(TComment),
+                "top_repliers": cls.top_creators(TReply)
+            }
+
+    @classmethod
     def all_stats(cls, user: User) -> IAllStats:
         return {
             "total_posts": cls.num_posts(),
             "total_comments": cls.num_comments(),
             "total_replies": cls.num_replies(),
-            "students": {
-                "top_posters": cls.top_creators(TPost, ["Student"]),
-                "top_commenters": cls.top_creators(TComment, ["Student"]),
-                "top_repliers": cls.top_creators(TReply, ["Student"])
-            },
-            "staff": {
-                "top_posters": cls.top_creators(
-                    TPost,
-                    ["Administrator", "Moderator"]
-                ),
-                "top_commenters": cls.top_creators(
-                    TComment,
-                    ["Administrator", "Moderator"]
-                ),
-                "top_repliers": cls.top_creators(
-                    TReply,
-                    ["Administrator", "Moderator"]
-                )
-            }
+            "all_users": cls.get_group_stats(),
+            "students": cls.get_group_stats(["Student"]),
+            "staff": cls.get_group_stats(["Administrator", "Moderator"]),
         }

@@ -1,12 +1,12 @@
 import styled from "@emotion/styled";
 import React, { createContext, JSXElementConstructor, MouseEvent, ReactElement, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ApiFetch } from "../App";
 import { APIcall, postListItem } from "../interfaces";
 import CreatePostView from "./components/CreatePostView";
 import Navbar from "./components/Navbar";
 import PostListView from "./components/PostListView";
 import PostView from "./components/PostView";
-import PostContext from "./postContext";
 
 interface Props { }
 
@@ -24,10 +24,7 @@ const Layout = styled.div`
 
 
 const BrowsePage = (props: Props) => {
-  const [postId, setPostId] = React.useState(0);
-  const [load, setLoad] = React.useState(false);
-  const value = { postId, setPostId };
-
+  let [searchParams, setSearchParams] = useSearchParams();
   React.useEffect(()=>{
     const api: APIcall = {
       method: "GET",
@@ -36,22 +33,20 @@ const BrowsePage = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         const test = data as { posts: postListItem[] };
-        if (test.posts.length) {
-          setPostId(test.posts[0].post_id);
+        if (test.posts.length && searchParams.get('postId') === null) {
+          setSearchParams({postId: test.posts[0].post_id.toString()})
         }
       })
   }, [])
   return (
-    <PostContext.Provider value={value}>
-      <Layout>
-        <Navbar page="browse" />
-        <StyledLayout>
-          <PostListView />
-          <PostView />
-        </StyledLayout>
-        <CreatePostView />
-      </Layout>
-    </PostContext.Provider>
+    <Layout>
+      <Navbar page="browse" />
+      <StyledLayout>
+        <PostListView />
+        <PostView />
+      </StyledLayout>
+      <CreatePostView />
+    </Layout>
   );
 };
 

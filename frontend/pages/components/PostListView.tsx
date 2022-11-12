@@ -1,19 +1,18 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Box, IconButton, Text } from "theme-ui";
 import { forEachChild } from "typescript";
 import { ApiFetch } from "../../App";
 import { APIcall, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
-import PostContext from "../postContext";
 import AuthorView from "./AuthorView";
-import PostListItem from "./PostListItem";
 
 // Declaring and typing our props
 interface Props { }
 const StyledLayout = styled.div`
   background-color: ${theme.colors?.muted};
-  width: 350px;
+  width: 25vw;
   border-right: 1px solid lightgrey; 
   p {
     margin-left: 10px;
@@ -25,7 +24,6 @@ const Post = styled.div`
   max-width: 100%;
   height: 50px;
   padding: 10px 20px 25px 20px;
-
   border-bottom: 1px solid lightgrey;
   &:hover {
     background-color: ${theme.colors?.highlight};
@@ -42,8 +40,8 @@ const ActivePost = styled(Post)`
 
 // Exporting our example component
 const PostListView = (props: Props) => {
-  const { postId, setPostId } = React.useContext(PostContext);
   const [posts, setPosts] = React.useState<postListItem[]>();
+  let [searchParams, setSearchParams] = useSearchParams();
   React.useEffect(()=>{
     const api: APIcall = {
       method: "GET",
@@ -54,7 +52,7 @@ const PostListView = (props: Props) => {
         const test = data as { posts: postListItem[] };
         setPosts(test.posts);
       })
-  }, [postId])
+  }, [searchParams])
 
 
   if (posts && posts.length > 0) {
@@ -62,10 +60,10 @@ const PostListView = (props: Props) => {
       <StyledLayout>
         {
           posts.map((each) => {
-            if (each.post_id === postId) {
+            if (each.post_id === parseInt(searchParams.get("postId") as string)) {
               return (
                 <ActivePost onClick={() => {
-                  setPostId(each.post_id);
+                  setSearchParams({postId: each.post_id.toString()});
                 }}>
                   {each.heading} <br /> <AuthorView userId={each.author}/><br />Tags: {each.tags}
                 </ActivePost>
@@ -73,7 +71,7 @@ const PostListView = (props: Props) => {
             }
             return (
               <Post onClick={() => {
-                setPostId(each.post_id);
+                setSearchParams({postId: each.post_id.toString()})
               }}>
                 {each.heading} <br /> <AuthorView userId={each.author}/><br />Tags: {each.tags}
               </Post>

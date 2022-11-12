@@ -83,3 +83,7 @@ class Permission(Enum):
     # Analytics
     ViewAnalytics = 60
     """User can view forum analytics"""
+
+    # Exam mode
+    SetExamMode = 52
+    """User can turn on or off exam mode"""

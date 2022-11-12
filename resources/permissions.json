@@ -64,5 +64,8 @@
   },
   "60": {
     "name": "ViewAnalytics"
+  },
+  "52": {
+    "name": "SetExamMode"
   }
 }

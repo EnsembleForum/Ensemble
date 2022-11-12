@@ -17,5 +17,6 @@ class IAllStats(TypedDict):
     total_posts: int
     total_comments: int
     total_replies: int
+    all_users: IGroupStats
     students: IGroupStats
     staff: IGroupStats
