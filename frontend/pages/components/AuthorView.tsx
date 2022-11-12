@@ -20,8 +20,6 @@ const StyledAuthor = styled.a`
 `
 const ActiveAuthor = styled(StyledAuthor)`
   margin-top: 0;
-  text-decoration: underline;
-  font-weight: 700;
 `
 
 const StyledText = styled.div`
@@ -55,14 +53,14 @@ const AuthorView = (props: Props) => {
   if (author) {
     if (toggle) {
       return (
-        <div onMouseLeave={(e) => setToggle(false)}>
+        <span onMouseLeave={(e) => setToggle(false)}>
           <ActiveAuthor>{author.username} </ActiveAuthor>
           <StyledText >
           Email: {author.email} <br/>
           Username: {author.username} <br/>
           Name: {author.name_first} {author.name_last}<br/>
           </StyledText>
-        </div>
+        </span>
       )
     } else {
       return (<StyledAuthor onMouseEnter={(e) => setToggle(true)}> {author.username} </StyledAuthor>)
