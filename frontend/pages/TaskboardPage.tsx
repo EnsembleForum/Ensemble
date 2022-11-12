@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { ApiFetch } from "../App";
 import { APIcall, postView, queueList, queueListPosts } from "../interfaces";
+import { theme } from "../theme";
 import Navbar from "./components/Navbar";
 import QueueView from "./components/QueueView";
 
@@ -9,31 +10,30 @@ interface Props { }
 
 const StyledLayout = styled.div`
   width: 100vw;
+  max-width: 100vw;
   height: 90vh;
   display: flex;
   flex-direction: row;
   * > h2 {
-    height: 10vh;
+    height: 7vh;
     margin: 0;
     font-weight: 300;
   }
 `
 const StyledQueues = styled.div`
   width: 60vw;
-  height: 90vh;
+  height: 82vh;
   padding: 30px;
-  display: flex;
-  flex-direction: column;
+  overflow:auto;
 `
 const StyledViewOnlyQueues = styled(StyledQueues)`
   width: 40vw;
-  background-color: #a7a5ec;
-  overflow-x: scroll:
+  background-color: ${theme.colors?.muted};
 `
 const QueueCols = styled.div`
   display: flex;
-  background-color: white;
   flex-direction: row;
+  
 `
 
 const TaskboardPage = (props: Props) => {

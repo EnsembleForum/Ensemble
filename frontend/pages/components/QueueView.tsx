@@ -20,7 +20,7 @@ const StyledQueue = styled.div`
   min-width: 300px;
   display: flex;
   flex-direction: column;
-  margin-right: 300px;
+  margin-right: 30px;
 `;
 const QueueHeader = styled.div`
   display: flex;
@@ -30,14 +30,14 @@ const QueueHeader = styled.div`
     margin: 0;
   }
   h4 {
+    color: white;
     border-radius: 10px;
     background-color: ${theme.colors?.primary};
   }
-  margin-bottom: 10px;
 `
 const QueueItem = styled.div`
   padding: 10px;
-  margin-bottom: 10px;
+  margin-top: 10px;
   background-color: white;
   border-radius: 10px;
   &:hover {
