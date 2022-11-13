@@ -41,6 +41,7 @@ def test_fails_not_registered(basic_server_setup: IBasicServerSetup):
         login('admin2', 'admin2')
 
 
+@pytest.mark.core
 def test_success(basic_server_setup: IBasicServerSetup):
     """Can we login if we give the correct details of a registered user?"""
     res = login(

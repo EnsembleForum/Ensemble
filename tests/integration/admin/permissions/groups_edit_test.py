@@ -87,6 +87,7 @@ def test_no_permission(
         )
 
 
+@pytest.mark.core
 def test_permissions_edited(
     simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,

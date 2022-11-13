@@ -23,6 +23,7 @@ from tests.integration.conftest import (
 )
 
 
+@pytest.mark.core
 def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     """
     Test that the 3 default queues are created on forum initialisation
@@ -45,6 +46,7 @@ def test_default_queue_cannot_delete(basic_server_setup: IBasicServerSetup):
             queue_delete(basic_server_setup['token'], queue['queue_id'])
 
 
+@pytest.mark.core
 def test_new_post_default(basic_server_setup: IBasicServerSetup):
     """
     Test that posts are in the main queue by default when created

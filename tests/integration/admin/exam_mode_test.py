@@ -48,6 +48,7 @@ def test_mod_no_permission(simple_users: ISimpleUsers):
         toggle_exam_mode(mod_token)
 
 
+@pytest.mark.core
 def test_admin_toggle_success(simple_users: ISimpleUsers):
     """
     Admin can successfully toggle exam mode on or off

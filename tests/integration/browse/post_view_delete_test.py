@@ -44,6 +44,7 @@ def test_no_permission(
         post_delete(token, make_posts["post1_id"])
 
 
+@pytest.mark.core
 def test_mod_delete_other_user_post(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,

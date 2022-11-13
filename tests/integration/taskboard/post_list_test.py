@@ -45,6 +45,7 @@ def test_no_permission(
                         ['token'], make_queues["queue1_id"])
 
 
+@pytest.mark.core
 def test_success(
     basic_server_setup: IBasicServerSetup,
     make_queues: IMakeQueues,
