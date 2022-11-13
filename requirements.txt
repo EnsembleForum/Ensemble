@@ -49,3 +49,5 @@ types-urllib3==1.26.25
 typing_extensions==4.4.0
 urllib3==1.26.12
 Werkzeug==2.2.2
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.20.8

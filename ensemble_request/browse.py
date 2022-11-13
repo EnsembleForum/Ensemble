@@ -27,7 +27,7 @@ from .helpers import post, get, put, delete
 URL = f"{URL}/browse"
 
 
-def post_list(token: JWT) -> IPostBasicInfoList:
+def post_list(token: JWT, search_term: str = "") -> IPostBasicInfoList:
     """
     ## GET `/browse/post_list`
 
@@ -38,6 +38,10 @@ def post_list(token: JWT) -> IPostBasicInfoList:
 
     ## Header
     * `Authorization` (`str`): JWT of the user
+
+    ## Params
+    * `search_term` (`str`): search term used for searching
+                             should be empty string if not searching
 
     ## Returns
     Object containing:
@@ -58,7 +62,9 @@ def post_list(token: JWT) -> IPostBasicInfoList:
         get(
             token,
             f"{URL}/post_list",
-            {}
+            {
+                "search_term": search_term,
+            }
         ),
     )
 
