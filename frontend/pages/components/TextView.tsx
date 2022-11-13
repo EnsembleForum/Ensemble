@@ -183,7 +183,11 @@ const TextView = (props: Props) => {
     }
     await ApiFetch(call);
     setCommentCount(commentCount + 1);
-    setSearchParams({postId: props.id.toString()})
+    if (searchParams.get('postId')?.startsWith('0')) {
+      setSearchParams({postId: props.id.toString()})
+    } else {
+      setSearchParams({postId: '0'+props.id.toString()})
+    }
   }
   const reply = (
   <StyledReply>

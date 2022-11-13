@@ -48,7 +48,7 @@ const Heading = styled.div`
 `
 
 // Exporting our example component
-const PostListView = (props: Props) => {
+const PostListItemView = (props: Props) => {
   const [posts, setPosts] = React.useState<postListItem[]>();
   let [searchParams, setSearchParams] = useSearchParams();
   React.useEffect(()=>{
@@ -69,27 +69,25 @@ const PostListView = (props: Props) => {
       <StyledLayout>
         {
           posts.map((each) => {
-              const styles : any = {}
-              if (each.closed) {
-                styles.backgroundColor = "#ffa3a3";
-              }
-              if (each.post_id.toString()===searchParams.get("postId")) {
-                if (each.closed) {
-                  styles.backgroundColor = "#f08d8d";
-                } else {
-                  styles.backgroundColor = theme.colors?.highlight;
-                }
-              }
+            if (each.post_id === parseInt(searchParams.get("postId") as string)) {
               return (
-                <Post style={styles}  onClick={() => setSearchParams({postId: each.post_id.toString()})}>
-                  <Heading>{each.heading}</Heading>
+                <ActivePost style={each.closed ? {backgroundColor: "#ffa3a3"} : {}}  onClick={() => setSearchParams({postId: each.post_id.toString()})}>
+                  <Heading>{each.heading}</Heading>{each.closed ? <>❌</> : <></>}
                   <AuthorView userId={each.author}/>
                   <div>Tags: {each.tags}</div>
-                </Post>
+                </ActivePost>
               );
             }
-          ) 
-        }
+            return (
+              <Post style={each.closed ? {backgroundColor: "#ffa3a3"} : {}} onClick={() => {
+                setSearchParams({postId: each.post_id.toString()})
+              }}>
+                <Heading>{each.heading}{each.closed ? <>❌</> : <></>}</Heading>
+                <AuthorView userId={each.author}/>
+                <div>Tags: {each.tags}</div>
+              </Post>
+            );
+          })}
       </StyledLayout>
     );
   }
@@ -99,4 +97,4 @@ const PostListView = (props: Props) => {
   )
 };
 
-export default PostListView;
+export default PostListItemView;
