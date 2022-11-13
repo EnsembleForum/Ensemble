@@ -2,7 +2,7 @@
 # Backend / Models / Analytics
 """
 from piccolo.query.methods.select import Count
-from typing import cast, Union
+from typing import cast, Union, Optional
 from .permissions import PermissionGroup
 from backend.types.analytics import IAllStats, IAnalyticsValue, IGroupStats
 from backend.types.identifiers import PermissionGroupId
@@ -58,7 +58,7 @@ class Analytics:
     def top_creators(
         cls,
         table: type[Union[TPost, TComment, TReply]],
-        group: PermissionGroupId = None,
+        group: Optional[PermissionGroupId] = None,
         num: int = 10
     ) -> list["IAnalyticsValue"]:
         """
@@ -70,8 +70,10 @@ class Analytics:
         * `table` (`type[Union[TPost, TComment, TReply]]`):
             Table to look for content in
 
-        * `group` (`PermissionGroupId`):
+        * `group` (`Optional[PermissionGroupId]`):
             Search for top creators among the given Permission Groups
+            When group is None, top creators across all Permission Groups
+            is returned
 
         * `num` (`int`): Max no. of users to return
 
@@ -80,7 +82,7 @@ class Analytics:
             list of users and their post/comment/reply count
         """
 
-        if group:
+        if group is not None:
             result = table.select(
                 table.author.as_alias("user_id"),
                 Count(table.author).as_alias("count")
@@ -106,7 +108,7 @@ class Analytics:
     @classmethod
     def top_me_too(
         cls,
-        group: PermissionGroupId = None,
+        group: Optional[PermissionGroupId] = None,
         num: int = 10
     ) -> list["IAnalyticsValue"]:
         """
@@ -115,8 +117,10 @@ class Analytics:
 
         ### Args:
 
-        * `group` (`PermissionGroupId`):
-            Search for top creators among the given Permission Groups
+        * `group` (`Optional[PermissionGroupId]`):
+            Search for top me_too receivers among the given Permission Groups
+            When group is None, top me_too receivers across all Permission
+            Groups is returned
 
         * `num` (`int`): Max no. of users to return
 
@@ -124,7 +128,7 @@ class Analytics:
         * `list[IAnalyticsValue]`:
             list of users and the no. of me_too's they received
         """
-        if group:
+        if group is not None:
             result = TPostReacts.select(
                 TPostReacts.post.author.as_alias("user_id"),
                 Count().as_alias("count")
@@ -150,7 +154,7 @@ class Analytics:
     @classmethod
     def top_thanks(
         cls,
-        group: PermissionGroupId = None,
+        group: Optional[PermissionGroupId] = None,
         num: int = 10
     ) -> list["IAnalyticsValue"]:
         """
@@ -159,8 +163,10 @@ class Analytics:
 
         ### Args:
 
-        * `group` (`PermissionGroupId`):
-            Search for top creators among the given Permission Groups
+        * `group` (`Optional[PermissionGroupId]`):
+            Search for top thanks receivers among the given Permission Groups
+            When group is None, top thanks receivers across all Permission
+            Groups is returned
 
         * `num` (`int`): Max no. of users to return
 
@@ -168,7 +174,7 @@ class Analytics:
         * `list[IAnalyticsValue]`:
             list of users and the no. of thanks they received
         """
-        if group:
+        if group is not None:
             comments = TCommentReacts.select(
                 TCommentReacts.comment.author.as_alias(
                     "user_id"),  # type: ignore
@@ -239,21 +245,21 @@ class Analytics:
     @classmethod
     def get_group_stats(
         cls,
-        group: PermissionGroupId = None
+        group: Optional[PermissionGroupId] = None
     ) -> IGroupStats:
         """
         Returns the forum stats for users among the given Permission Group
 
         ### Args:
-        * `group` (`list[PermissionGroupId]`):
+        * `group` (`Optional[PermissionGroupId]`):
             Search for top creators among the given Permission Groups
-
-        * `num` (`int`): Max no. of users to return
+            When group is None, top creators receivers across all Permission
+            Groups is returned
 
         ### Returns:
         * `IGroupStats`: Dictionary containing forum stats of top users
         """
-        if group:
+        if group is not None:
             return {
                 "top_posters": cls.top_creators(TPost, group),
                 "top_commenters": cls.top_creators(TComment, group),
