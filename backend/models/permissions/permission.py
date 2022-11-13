@@ -89,7 +89,7 @@ class Permission(Enum):
     # Exam mode
     SetExamMode = 52
     """User can turn on or off exam mode"""
-    
+
     # Profile management
     EditProfile = 60
     """User can edit their own profile"""
