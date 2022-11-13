@@ -28,18 +28,15 @@ def get_analytics(token: JWT) -> IAllStats:
         * top_repliers: list[{"user_id": int, "count": int}]
         * top_me_too:  list[{"user_id": int, "count": int}]
         * top_thanks:  list[{"user_id": int, "count": int}]
-    * `staff`: dictionary containing
-        * top_posters: list[{"user_id": int, "count": int}]
-        * top_commenters:  list[{"user_id": int, "count": int}]
-        * top_repliers: list[{"user_id": int, "count": int}]
-        * top_me_too:  list[{"user_id": int, "count": int}]
-        * top_thanks:  list[{"user_id": int, "count": int}]
-    * `students`: dictionary containing
-        * top_posters: list[{"user_id": int, "count": int}]
-        * top_commenters:  list[{"user_id": int, "count": int}]
-        * top_repliers: list[{"user_id": int, "count": int}]
-        * top_me_too:  list[{"user_id": int, "count": int}]
-        * top_thanks:  list[{"user_id": int, "count": int}]
+    * `groups`: list of dictionaries containing
+        * permission_group_id: PermissionGroupId
+        * permission_group_name: str
+        * stats: dictionary containing
+            * top_posters: list[{"user_id": int, "count": int}]
+            * top_commenters:  list[{"user_id": int, "count": int}]
+            * top_repliers: list[{"user_id": int, "count": int}]
+            * top_me_too:  list[{"user_id": int, "count": int}]
+            * top_thanks:  list[{"user_id": int, "count": int}]
     """
     return cast(IAllStats, get(
         token,
