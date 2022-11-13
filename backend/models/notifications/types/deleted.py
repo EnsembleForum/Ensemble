@@ -55,7 +55,7 @@ class NotificationDeleted(Notification):
             reply=reply,
         ))
 
-    def get_info(self) -> INotificationInfo:
+    def _get_info(self) -> INotificationInfo:
         if self._reply is not None:
             type = "reply"
             title = self._reply.text
@@ -78,8 +78,9 @@ class NotificationDeleted(Notification):
         return {
             "notification_id": self.id,
             "seen": self.seen,
-            "heading": f"A moderator deleted your {type} {title}",
-            "body": "",
+            "user_from": None,
+            "heading": f"Your {type} was deleted",
+            "body": title,
             "post": post_id,
             "comment": comment_id,
             "reply": reply_id,

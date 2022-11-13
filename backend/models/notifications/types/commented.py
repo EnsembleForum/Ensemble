@@ -74,24 +74,23 @@ class NotificationCommented(Notification):
         assert c is not None
         return c
 
-    def get_info(self) -> INotificationInfo:
+    def _get_info(self) -> INotificationInfo:
         if self._reply is not None:
             if self.comment.author == self.user_to:
-                action = "replied to your comment on"
+                heading = "New reply"
             else:
-                action = "replied to a comment on your post"
-            title = self.post.heading
+                heading = "New reply on your post"
             body = self._reply.text
             reply_id = self._reply.id
         else:
-            action = "commented on your post"
-            title = self.post.heading
+            heading = "New comment on your post"
             body = self.comment.text
             reply_id = None
         return {
             "notification_id": self.id,
             "seen": self.seen,
-            "heading": f"{self.user_from.name_first} {action} {title}",
+            "user_from": self.user_from.id,
+            "heading": heading,
             "body": body,
             "post": self.post.id,
             "comment": self.comment.id,

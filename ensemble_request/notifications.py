@@ -27,16 +27,19 @@ def list(token: JWT) -> INotificationList:
     * `notifications`: list of objects, each containing:
             * `notification_id` (`int`): ID of notification
             * `seen` (`bool`): whether the post has been seen
+            * `user_from` (`int`, optional): user ID of person who sent the
+              notification, or null if the action was anonymous
             * `heading` (`str`): Heading of notification text
             * `body` (`str`): Body of notification text
-            * `post` (`int`): ID of post related to notification
-            * `comment` (`int`): ID of comment related to notification. If this
-            property is non-null, then `post` will also be defined.
-            * `reply` (`int`): ID of reply related to the notification. If this
-            property is non-null, then `comment` and `post` will also be
-            defined.
+            * `post` (`int`, optional): ID of post related to notification
+            * `comment` (`int`, optional): ID of comment related to
+              notification. If this property is non-null, then `post` will also
+              be defined.
+            * `reply` (`int`, optional): ID of reply related to the
+              notification. If this property is non-null, then `comment` and
+              `post` will also be defined.
             * `queue` (`int`, optional): ID of queue related to the
-              notification
+              notification.
     """
     return cast(
         INotificationList,

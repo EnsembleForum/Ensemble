@@ -45,13 +45,13 @@ class NotificationClosed(Notification):
         assert p is not None
         return p
 
-    def get_info(self) -> INotificationInfo:
+    def _get_info(self) -> INotificationInfo:
         return {
             "notification_id": self.id,
             "seen": self.seen,
-            "heading": f"A moderator closed your post {self.post.heading}",
-            "body": "",  # TODO: If we implement closed post feedback, include
-                         # that here
+            "user_from": None,
+            "heading": "A mod closed your post",
+            "body": self.post.heading,
             "post": self.post.id,
             "comment": None,
             "reply": None,

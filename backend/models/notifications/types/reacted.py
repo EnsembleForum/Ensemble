@@ -55,30 +55,31 @@ class NotificationReacted(Notification):
             reply=reply,
         ))
 
-    def get_info(self) -> INotificationInfo:
+    def _get_info(self) -> INotificationInfo:
         if self._reply is not None:
-            action = "thanked you for your reply"
+            action = "Your reply received thanks"
             title = self._reply.text
             reply_id = self._reply.id
             comment_id = self._reply.parent.id
             post_id = self._reply.parent.parent.id
         elif self._comment is not None:
-            action = "thanked you for your comment"
+            action = "Your comment received thanks"
             title = self._comment.text
             reply_id = None
             comment_id = self._comment.id
             post_id = self._comment.parent.id
         else:
             assert self._post is not None
-            action = "said me too to your post"
+            action = "Your post received a me too"
             title = self._post.heading
             reply_id = None
             comment_id = None
             post_id = self._post.id
         return {
             "notification_id": self.id,
+            "user_from": None,
             "seen": self.seen,
-            "heading": f"Someone {action}",
+            "heading": action,
             "body": title,
             "post": post_id,
             "comment": comment_id,

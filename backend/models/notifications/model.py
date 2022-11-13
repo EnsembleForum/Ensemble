@@ -13,7 +13,16 @@ from . import NotificationType
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import NotificationId
 from backend.types.notifications import INotificationInfo
-from typing import cast, Optional
+from typing import cast, Optional, final
+
+
+NOTIF_BODY_LEN = 50
+
+
+def string_shorten(s: str, max_len: int) -> str:
+    if len(s) > max_len:
+        return s[:max_len-3] + '...'
+    return s
 
 
 class Notification:
@@ -235,8 +244,22 @@ class Notification:
         else:
             return None
 
+    @final
     def get_info(self) -> INotificationInfo:
         """
         Returns information about the notification
+
+        This wrapper is in-place to trim body text to ensure it's readable on
+        the frontend.
+        """
+        info = self._get_info()
+        info['body'] = string_shorten(info['body'], NOTIF_BODY_LEN)
+        return info
+
+    def _get_info(self) -> INotificationInfo:
+        """
+        Returns information about the notification.
+
+        This should be implemented by all subclasses
         """
         raise NotImplementedError("This needs to be implemented by a subclass")

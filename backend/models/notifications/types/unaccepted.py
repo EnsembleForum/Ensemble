@@ -65,14 +65,12 @@ class NotificationUnaccepted(Notification):
         assert c is not None
         return c
 
-    def get_info(self) -> INotificationInfo:
+    def _get_info(self) -> INotificationInfo:
         return {
             "notification_id": self.id,
             "seen": self.seen,
-            "heading": (
-                f"{self.user_from.name_first} unaccepted your answer for "
-                f"{self.post.heading}"
-            ),
+            "user_from": self.user_from.id,
+            "heading": "Answer unaccepted",
             "body": self.comment.text,
             "post": self.post.id,
             "comment": self.comment.id,

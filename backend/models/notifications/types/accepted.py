@@ -65,22 +65,19 @@ class NotificationAccepted(Notification):
         assert c is not None
         return c
 
-    def get_info(self) -> INotificationInfo:
+    def _get_info(self) -> INotificationInfo:
         # If they wrote the comment
         if self.comment.author == self.user_to:
-            head = (
-                f"{self.user_from.name_first} accepted your answer for "
-                f"{self.post.heading}"
-            )
+            head = "Answer accepted on your post"
         # If they wrote the original post
         else:
             head = (
-                f"{self.user_from.name_first} accepted an answer on your post "
-                f"{self.post.heading}"
+                "Answer accepted"
             )
         return {
             "notification_id": self.id,
             "seen": self.seen,
+            "user_from": self.user_from.id,
             "heading": head,
             "body": self.comment.text,
             "post": self.post.id,
