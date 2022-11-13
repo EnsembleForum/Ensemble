@@ -7,6 +7,7 @@ import json
 from flask import Blueprint, request
 from .permissions import permissions
 from .users import users
+from .analytics import analytics
 from .exam_mode import exam_mode
 from backend.models.auth_config import AuthConfig
 from backend.types.auth import IAuthInfo
@@ -18,6 +19,7 @@ admin = Blueprint('admin', 'admin')
 
 admin.register_blueprint(permissions, url_prefix='/permissions')
 admin.register_blueprint(users, url_prefix='/users')
+admin.register_blueprint(analytics, url_prefix='/analytics')
 admin.register_blueprint(exam_mode, url_prefix='/exam_mode')
 
 

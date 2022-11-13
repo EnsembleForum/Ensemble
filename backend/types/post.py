@@ -2,17 +2,6 @@ from typing import TypedDict, Optional
 from .identifiers import CommentId, PostId, UserId
 
 
-class IReacts(TypedDict):
-    """
-    Aggregate of reactions to a post/comment/reply
-
-    * `thanks`: `int`
-    * `me_too`: `int`
-    """
-    thanks: int
-    me_too: int
-
-
 class IPostBasicInfo(TypedDict):
     """
     Basic info about a post

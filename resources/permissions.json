@@ -70,5 +70,8 @@
   },
   "60": {
     "name": "EditProfile"
+  },
+  "65": {
+    "name": "ViewAnalytics"
   }
 }
