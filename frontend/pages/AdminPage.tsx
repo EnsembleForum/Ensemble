@@ -8,6 +8,7 @@ import InitPage from "./InitPage";
 import ManagePermissionsPage from "./ManagePermissionsPage";
 import UsersRegisterPage from "./UsersRegisterPage";
 
+
 interface Props {
   page: "initialise_forum" | "register_users";
 }

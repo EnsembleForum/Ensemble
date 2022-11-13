@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { Flex, Checkbox, Heading, Label } from 'theme-ui'
+import { Flex, Checkbox, Heading, Label, Select } from 'theme-ui'
 import { permissionType, userPermissionsDetails, userView } from "../../interfaces"
 type Props = {
   userPermissionsDetails: userPermissionsDetails,
@@ -18,6 +18,11 @@ const UserPermissionsView = ({ userPermissionsDetails, permissionTypes, onAddUse
     }, new Set<number>());
   return (
     <Flex sx={{ flexDirection: 'column' }}>
+    <Select>
+    <option>Administrator</option>
+    <option> Moderator </option>
+    <option> Student </option>
+    </Select>
       {permissionTypes.map((permissionType: permissionType): ReactElement => {
         return <Flex key={permissionType.permission_id}>
           <Label>
