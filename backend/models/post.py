@@ -139,9 +139,9 @@ class Post:
     def delete(self):
         """
         Deletes this post from the database
-
         """
         self.queue = Queue.get_deleted_queue()
+        self.heading = "[Deleted] " + self.heading
 
     @property
     def deleted(self) -> bool:

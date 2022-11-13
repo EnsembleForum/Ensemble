@@ -66,7 +66,7 @@ def delete(user: User, *_) -> dict:
     post = Post(PostId(request.args["post_id"]))
 
     if user != post.author:
-        raise http_errors.Forbidden("Attempting to delete another user's post")
+        user.permissions.assert_can(Permission.DeletePosts)
 
     post.delete()
     return {}
