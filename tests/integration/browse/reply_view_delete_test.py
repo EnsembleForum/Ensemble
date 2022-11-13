@@ -31,7 +31,7 @@ def test_no_permission(
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
     comment_id = add_comment(mod_token, post_id, "hello")["comment_id"]
-    reply_id = add_reply(mod_token, comment_id, "reply")
+    reply_id = add_reply(mod_token, comment_id, "reply")["reply_id"]
 
     with pytest.raises(http_errors.Forbidden):
         reply_delete(user_token, reply_id)
@@ -48,7 +48,7 @@ def test_mod_delete(
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
     comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
-    reply_id = add_reply(user_token, comment_id, "reply")
+    reply_id = add_reply(user_token, comment_id, "reply")["reply_id"]
 
     reply_delete(mod_token, reply_id)
     assert get_reply(user_token, reply_id)["text"] == "[Deleted]."
@@ -64,7 +64,7 @@ def test_OP_delete(
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
     comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
-    reply_id = add_reply(user_token, comment_id, "reply")
+    reply_id = add_reply(user_token, comment_id, "reply")["reply_id"]
 
     reply_delete(user_token, reply_id)
     assert get_reply(user_token, reply_id)["text"] == "[Deleted]."
@@ -80,7 +80,7 @@ def test_post_comment_list(
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
     comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
-    reply_id = add_reply(user_token, comment_id, "reply")
+    reply_id = add_reply(user_token, comment_id, "reply")["reply_id"]
 
     reply_delete(user_token, reply_id)
 
