@@ -6,6 +6,7 @@ Reply View routes
 import json
 from flask import Blueprint, request
 from backend.models.permissions import Permission
+from backend.models.notifications import NotificationReacted
 from backend.models.user import User
 from backend.models.reply import Reply
 from backend.types.identifiers import ReplyId
@@ -33,6 +34,12 @@ def react(user: User, *_) -> IUserReacted:
     data = json.loads(request.data)
     reply = Reply(data["reply_id"])
     reply.react(user)
+
+    if user != reply.author:
+        NotificationReacted.create(
+            reply.author,
+            reply,
+        )
 
     return {"user_reacted": reply.has_reacted(user)}
 
