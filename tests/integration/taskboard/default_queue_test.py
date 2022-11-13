@@ -68,6 +68,7 @@ def test_view_only_basic_info(basic_server_setup: IBasicServerSetup):
     assert not get_queue(queues, "Main queue")["view_only"]
     assert get_queue(queues, "Answered queue")["view_only"]
     assert get_queue(queues, "Closed queue")["view_only"]
+    assert get_queue(queues, "Deleted queue")["view_only"]
 
 
 def test_view_only_ful_info(basic_server_setup: IBasicServerSetup):
@@ -79,7 +80,9 @@ def test_view_only_ful_info(basic_server_setup: IBasicServerSetup):
     main_id = get_queue(queues, "Main queue")["queue_id"]
     answered_id = get_queue(queues, "Answered queue")["queue_id"]
     closed_id = get_queue(queues, "Closed queue")["queue_id"]
+    deleted_id = get_queue(queues, "Deleted queue")["queue_id"]
 
     assert not queue_post_list(token, main_id)["view_only"]
     assert queue_post_list(token, answered_id)["view_only"]
     assert queue_post_list(token, closed_id)["view_only"]
+    assert queue_post_list(token, deleted_id)["view_only"]

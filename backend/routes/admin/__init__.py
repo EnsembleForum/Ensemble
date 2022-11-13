@@ -213,6 +213,12 @@ def init() -> IAuthInfo:
         view_only=True
     )
 
+    Queue.create(
+        "Deleted queue",
+        immutable=True,
+        view_only=True
+    )
+
     # Register first user
     user = User.create(
         username,
