@@ -12,7 +12,7 @@ from backend.types.identifiers import PostId, CommentId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
 from typing import cast
 from datetime import datetime
-from fuzzywuzzy import fuzz
+from fuzzywuzzy import fuzz  # type: ignore
 
 
 class Post:
@@ -112,7 +112,7 @@ class Post:
         permitted_list = [p for p in cls.all() if p.can_view(user)]
 
         return permitted_list
-    
+
     @classmethod
     def search_posts(cls, user: User, search_term: str) -> list["Post"]:
         """
@@ -120,16 +120,17 @@ class Post:
         ### Returns:
         * `list[Post]`: list of posts
         """
-        matches = [
-            (
-                p,
-                (
-                    fuzz.partial_ratio(p.heading, search_term) +
-                    fuzz.partial_ratio(p.text, search_term)
-                ) / 2
-            )
-            for p in cls.can_view_list(user)
-        ]
+        def sim_score(post: Post, search_term: str):
+            return (
+                fuzz.partial_ratio(post.heading, search_term) +
+                fuzz.partial_ratio(post.text, search_term)
+            ) / 2
+
+        matches = []
+        for p in cls.can_view_list(user):
+            score = sim_score(p, search_term)
+            if score >= 45:
+                matches.append((p, score))
         matches = sorted(matches, key=lambda x: (-x[1], -x[0].id))
         return [p for p, _ in matches]
 
