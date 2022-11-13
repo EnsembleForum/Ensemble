@@ -6,6 +6,7 @@ import { ApiFetch, setToken } from "../App";
 import { Prettify } from "../global_functions";
 import { APIcall, initReturn, initSchema, loginForm } from "../interfaces";
 import { StyledButton } from "./GlobalProps";
+import UserContext from "./userContext";
 
 interface Props { }
 
@@ -23,6 +24,7 @@ const StyledForm = styled(Box)`
 `;
 const InitPage = (props: Props) => {
   const navigate = useNavigate();
+  const { currentUser, setCurrentUser } = React.useContext(UserContext);
   const [initDetails, setInitDetails] = React.useState<initSchema>({
     address: 'http://localhost:5812/login',
     request_type: "get",
@@ -46,7 +48,8 @@ const InitPage = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         const check = data as initReturn;
-        setToken(check.token)
+        setToken(check.token);
+        setCurrentUser({user_id: check.user_id, permissions: check.permissions})
         navigate("/browse");
       });
   }

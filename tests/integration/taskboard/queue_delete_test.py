@@ -1,5 +1,5 @@
 """
-# Tests / Integration / Browse / Delete Queue
+# Tests / Integration / Task Board / Queue Delete
 
 Tests for the deleting queues
 
@@ -44,5 +44,5 @@ def test_success(
     """Queue gets deleted"""
     token = basic_server_setup['token']
     queue_delete(token, make_queues['queue1_id'])
-    # Main queue and make_queues[2]
-    assert len(queue_list(token)['queues']) == 2
+    # Main queue, Answered queue, Closed queue, and make_queues[2]
+    assert len(queue_list(token)['queues']) == 4

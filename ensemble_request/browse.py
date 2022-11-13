@@ -4,12 +4,20 @@
 Helper functions for requesting post browsing code
 """
 from typing import cast
-from backend.types.comment import ICommentFullInfo, ICommentId
+from backend.types.comment import (
+    ICommentFullInfo,
+    ICommentId,
+    ICommentAccepted
+)
 from backend.types.reply import IReplyId
 from backend.types.identifiers import CommentId, PostId, ReplyId
-from backend.types.post import IPostBasicInfoList, IPostFullInfo, IPostId
+from backend.types.post import (
+    IPostBasicInfoList,
+    IPostFullInfo,
+    IPostId,
+    IPostClosed
+)
 from backend.types.react import IUserReacted
-
 from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
 from .consts import URL
@@ -39,9 +47,11 @@ def post_list(token: JWT) -> IPostBasicInfoList:
             * `heading` (`str`): title of the post
             * `tags` (`list[int]`): list of tag IDs for the post (not
               implemented yet)
-            * `reacts`: object containing
-                    * `thanks` (`int`): amount of thanks the post received
-                    * `me_too` (`int`): number of me too's, the post received
+            * `me_too` (`int`): number of me too's, the post received
+            * `private` (`bool`): whether this is a private post
+            * `anonymous` (`bool`): whether this is an anonymous post
+            * `answered`: (`bool`): whether this post is answered
+            * `closed`: (`bool`): whether this post is closed
     """
     return cast(
         IPostBasicInfoList,
@@ -74,11 +84,16 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
     * `heading` (`str`): heading of the post
     * `text` (`str`): main text of the post
     * `tags` (`list[int]`): list of tag IDs for the post
-    * `reacts` (object containing):
-            * `thanks` (`int`): amount of thanks the post received
-            * `me_too` (`int`): number of me too's, the post received
+    * `me_too` (`int`): number of me too's, the post received
     * `comments` (`list[int]`): list of IDs of comments
     * `timestamp` (`int`): UNIX timestamp of the post
+    * `private` (`bool`): whether this is a private post
+    * `anonymous` (`bool`): whether this is an anonymous post
+    * `user_reacted` (`bool`): whether the user has reacted to this post
+    * `answered` (`Optional[int]`): CommentId of the accepted comment,
+                                    None if no comment is accepted
+    * `closed`: (`bool`): whether this post is closed
+    * `queue` (`QueueId`): queue that this post belongs to
     """
     return cast(
         IPostFullInfo,
@@ -153,7 +168,7 @@ def post_edit(
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `post_id` (`PostId`): identifier of the post
+    * `post_id` (`int`): identifier of the post
     * `heading` (`str`): new heading of the post
                         (should be given the old heading if unedited)
     * `text` (`str`): new text of the post
@@ -240,17 +255,18 @@ def get_comment(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
     * `Authorization` (`str`): JWT of the user
 
     ## Params
-    * `comment_id` (`CommentId`): identifier of the comment
+    * `comment_id` (`int`): identifier of the comment
 
     ## Returns
     Object containing:
     * `author` (`int`): ID of the comment author
-    * `reacts`: object containing
-            * `thanks` (`int`): amount of thanks the comment received
-            * `me_too` (`int`): number of me too's, the comment received
+    * `thanks` (`int`): amount of thanks the comment received
     * `replies` (`list[int]`): list of reply IDs for replies to this comment
     * `text` (`str`): text of the comment
     * `timestamp` (`int`): UNIX timestamp of the comment
+    * `user_reacted` (`bool`): True if the user has reacted to this reply
+    * `accepted` (`bool`): True if the comment is marked as an answer,
+                           False otherwise
     """
     return cast(
         ICommentFullInfo,
@@ -277,7 +293,7 @@ def add_reply(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `comment_id` (`CommentId`): identifier of the comment to reply to
+    * `comment_id` (`int`): identifier of the comment to reply to
     * `text` (`str`): text of the comment
 
     ## Returns
@@ -310,15 +326,14 @@ def get_reply(token: JWT, reply_id: ReplyId) -> IReplyFullInfo:
     * `Authorization` (`str`): JWT of the user
 
     ## Params
-    * `reply_id` (`ReplyId`): identifier of the reply
+    * `reply_id` (`int`): identifier of the reply
 
     ## Returns
     * `author` (`int`): ID of the author of the reply
-    * `reacts`: object containing
-            * `thanks` (`int`): amount of thanks the reply received
-            * `me_too` (`int`): number of me too's, the reply received
+    * `thanks`(`int`): amount of thanks the reply received
     * `text` (`str`): text of the reply
     * `timestamp` (`int`): UNIX timestamp of the reply
+    * `user_reacted` (`bool`): True if the user has reacted to this reply
     """
     return cast(
         IReplyFullInfo,
@@ -346,7 +361,10 @@ def post_react(token: JWT, post_id: PostId) -> IUserReacted:
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `post_id` (`PostId`): identifier of the post
+    * `post_id` (`int`): identifier of the post
+
+    ## Returns
+    * `user_reacted` (`bool`): Whether the user reacted to the post
     """
     return cast(
         IUserReacted,
@@ -372,7 +390,10 @@ def comment_react(token: JWT, comment_id: CommentId) -> IUserReacted:
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `comment_id` (`CommentId`): identifier of the comment
+    * `comment_id` (`int`): identifier of the comment
+
+    ## Returns
+    * `user_reacted` (`bool`): Whether the user reacted to the comment
     """
     return cast(
         IUserReacted,
@@ -398,7 +419,10 @@ def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `reply_id` (`ReplyId`): identifier of the reply
+    * `reply_id` (`int`): identifier of the reply
+
+    ## Returns
+    * `user_reacted` (`bool`): Whether the user reacted to the reply
     """
     return cast(
         IUserReacted,
@@ -406,6 +430,25 @@ def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
             token,
             f"{URL}/reply_view/react",
             {"reply_id": reply_id, }
+        )
+    )
+
+
+def accept_comment(token: JWT, comment_id: CommentId) -> ICommentAccepted:
+    """
+    # PUT `/browse/comment_view/accept`
+
+    Toggles whether a comment is marked as accepted
+
+    ## Permissions
+    * `PostView`
+    """
+    return cast(
+        ICommentAccepted,
+        put(
+            token,
+            f"{URL}/comment_view/accept",
+            {"comment_id": comment_id, }
         )
     )
 
@@ -427,7 +470,7 @@ def comment_edit(
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `comment_id` (`CommentId`): identifier of the comment
+    * `comment_id` (`int`): identifier of the comment
     * `text` (`str`): new text of the comment
                         (should be given the old text if unedited)
     """
@@ -458,7 +501,7 @@ def reply_edit(
     * `Authorization` (`str`): JWT of the user
 
     ## Body
-    * `reply_id` (`ReplyId`): identifier of the comment
+    * `reply_id` (`int`): identifier of the comment
     * `text` (`str`): new text of the reply
                         (should be given the old text if unedited)
     """
@@ -469,4 +512,34 @@ def reply_edit(
             "reply_id": reply_id,
             "text": text,
         },
+    )
+
+
+def close_post(
+    token: JWT,
+    post_id: PostId,
+) -> IPostClosed:
+    """
+    # PUT `/browse/post_view/close`
+
+    Close or un-close a post
+
+    ## Permissions
+    * `ClosePosts`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `post_id` (`int`): identifier of the post
+    """
+    return cast(
+        IPostClosed,
+        put(
+            token,
+            f"{URL}/post_view/close",
+            {
+                "post_id": post_id,
+            },
+        )
     )

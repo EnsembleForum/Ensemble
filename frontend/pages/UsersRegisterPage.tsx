@@ -12,7 +12,7 @@ import { StyledButton } from "./GlobalProps";
 interface Props { }
 
 const LoginLayout = styled.div`
-  height: 100%;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;

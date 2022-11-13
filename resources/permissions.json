@@ -1,0 +1,74 @@
+{
+  "0": {
+    "name": "PostView"
+  },
+  "1": {
+    "name": "ViewPrivate"
+  },
+  "2": {
+    "name": "ViewAnonymousOP"
+  },
+  "10": {
+    "name": "PostCreate"
+  },
+  "11": {
+    "name": "PostComment"
+  },
+  "12": {
+    "name": "PostOverrideExam"
+  },
+  "13": {
+    "name": "CommentAccept"
+  },
+  "20": {
+    "name": "ViewTaskboard"
+  },
+  "21": {
+    "name": "TaskboardDelegate"
+  },
+  "22": {
+    "name": "FollowQueue"
+  },
+  "23": {
+    "name": "ManageQueues"
+  },
+  "30": {
+    "name": "ReportPosts"
+  },
+  "31": {
+    "name": "ClosePosts"
+  },
+  "32": {
+    "name": "DeletePosts"
+  },
+  "33": {
+    "name": "ViewReports"
+  },
+  "40": {
+    "name": "ManageUserPermissions"
+  },
+  "41": {
+    "name": "AddUsers"
+  },
+  "42": {
+    "name": "RemoveUsers"
+  },
+  "43": {
+    "name": "ViewAllUsers"
+  },
+  "55": {
+    "name": "ManageUserProfiles"
+  },
+  "50": {
+    "name": "ManageAuthConfig"
+  },
+  "51": {
+    "name": "ManagePermissionGroups"
+  },
+  "52": {
+    "name": "SetExamMode"
+  },
+  "60": {
+    "name": "EditProfile"
+  }
+}

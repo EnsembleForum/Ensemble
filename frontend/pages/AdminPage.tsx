@@ -38,7 +38,7 @@ const AdminPanel = styled(StyledNavbar)`
 const AdminPage = (props: Props) => {
   const [currPage, setCurrPage] = React.useState<string>(props.page);
   let pages: pageList = {
-    "initialise_forum": <InitPage />,
+    //"initialise_forum": <InitPage />,
     "register_users": <UsersRegisterPage />,
     "manage_user_permissions": <ManagePermissionsPage/>
   };

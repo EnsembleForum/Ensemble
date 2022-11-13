@@ -42,6 +42,7 @@ def test_register_single_user(
             # for it
             "username": "henry8",
             "email": "henry@example.com",
+            "pronoun": "he/him",
         }],
         permission_groups["admin"]["group_id"],
     )
@@ -63,12 +64,14 @@ def test_register_multi_users(
                 "name_last": "VIII",
                 "username": "henry8",
                 "email": "henry8@example.com",
+                "pronoun": "he/him",
             },
             {
                 "name_first": "Henry",
                 "name_last": "IX",
                 "username": "henry9",
                 "email": "henry9@example.com",
+                "pronoun": "he/him",
             },
         ],
         permission_groups["admin"]["group_id"],
@@ -103,6 +106,7 @@ def test_invalid_usernames(
                 "name_last": "VIII",
                 "username": username,
                 "email": "henry@example.com",
+                "pronoun": "he/him",
             }],
             permission_groups["admin"]["group_id"]
         )
@@ -125,6 +129,7 @@ def test_invalid_email(
                     "name_last": "VIII",
                     "username": "henry8",
                     "email": "henry_example_com",
+                    "pronoun": "he/him",
                 },
                 {   # Valid user to make sure we don't get anyone else
                     # registered
@@ -132,6 +137,7 @@ def test_invalid_email(
                     "name_last": "XI",
                     "username": "henry9",
                     "email": "henry9@example.com",
+                    "pronoun": "he/him",
                 },
             ],
             permission_groups["admin"]["group_id"]
@@ -155,12 +161,14 @@ def test_duplicate_usernames(
                     "name_last": "VIII",
                     "username": "henry8",
                     "email": "henry@example.com",
+                    "pronoun": "he/him",
                 },
                 {
                     "name_first": "Henry",
                     "name_last": "VIII",
                     "username": "henry8",  # duplicate
                     "email": "henry2@example.com",
+                    "pronoun": "he/him",
                 },
             ],
             permission_groups["admin"]["group_id"]
@@ -184,12 +192,14 @@ def test_duplicate_emails(
                     "name_last": "VIII",
                     "username": "henry8",
                     "email": "henry@example.com",
+                    "pronoun": "he/him",
                 },
                 {
                     "name_first": "Henry",
                     "name_last": "VIII",
                     "username": "henry8_2",
                     "email": "henry@example.com",  # duplicate
+                    "pronoun": "he/him",
                 },
             ],
             permission_groups["admin"]["group_id"]
@@ -212,6 +222,7 @@ def test_existing_duplicate_usernames(
                 "name_last": "VIII",
                 "username": "henry8",
                 "email": "henry@example.com",
+                "pronoun": "he/him",
             },
         ],
         permission_groups["admin"]["group_id"],
@@ -225,6 +236,7 @@ def test_existing_duplicate_usernames(
                     "name_last": "VIII",
                     "username": "henry8",  # duplicate
                     "email": "henry2@example.com",
+                    "pronoun": "he/him",
                 },
                 {   # Valid user to make sure we don't get anyone else
                     # registered
@@ -232,6 +244,7 @@ def test_existing_duplicate_usernames(
                     "name_last": "XI",
                     "username": "henry9",
                     "email": "henry9@example.com",
+                    "pronoun": "he/him",
                 },
             ],
             permission_groups["admin"]["group_id"]
@@ -254,6 +267,7 @@ def test_existing_duplicate_emails(
                 "name_last": "VIII",
                 "username": "henry8",
                 "email": "henry@example.com",
+                "pronoun": "he/him",
             },
         ],
         permission_groups["admin"]["group_id"],
@@ -267,6 +281,7 @@ def test_existing_duplicate_emails(
                     "name_last": "VIII",
                     "username": "henry8_2",
                     "email": "henry@example.com",  # duplicate
+                    "pronoun": "he/him",
                 },
                 {   # Valid user to make sure we don't get anyone else
                     # registered
@@ -274,6 +289,7 @@ def test_existing_duplicate_emails(
                     "name_last": "XI",
                     "username": "henry9",
                     "email": "henry9@example.com",
+                    "pronoun": "he/him",
                 },
             ],
             permission_groups["admin"]["group_id"]
@@ -296,6 +312,7 @@ def test_invalid_name_first(
                 "name_last": "VIII",
                 "username": "henry8",
                 "email": "henry8@example.com",
+                "pronoun": "he/him",
             }],
             permission_groups["admin"]["group_id"]
         )
@@ -317,6 +334,7 @@ def test_invalid_name_last(
                 "name_last": "",
                 "username": "henry8",
                 "email": "henry8@example.com",
+                "pronoun": "he/him",
             }],
             permission_groups["admin"]["group_id"]
         )
@@ -338,6 +356,7 @@ def test_no_permission(
                 "name_last": "VIII",
                 "username": "henry8",
                 "email": "henry8@example.com",
+                "pronoun": "he/him",
             }],
             permission_groups["admin"]["group_id"],
         )

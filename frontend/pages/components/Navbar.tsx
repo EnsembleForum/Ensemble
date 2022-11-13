@@ -3,11 +3,13 @@ import React, { JSXElementConstructor } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Box, IconButton, Text } from "theme-ui";
-import { ApiFetch } from "../../App";
+import { ApiFetch, getPermission } from "../../App";
 import { Prettify } from "../../global_functions";
 import { APIcall } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
+import UserContext from "../userContext";
+import PermissionsContext from "../userContext";
 
 // Declaring and typing our props
 interface Props {
@@ -50,6 +52,7 @@ export const StyledNavbar = styled.div`
 // Exporting our example component
 const Navbar = (props: Props) => {
   const navigate = useNavigate();
+  const { currentUser, setCurrentUser } = React.useContext(UserContext);
   const logout = (
   <StyledButton onClick={(e) => {
     const api: APIcall = {
@@ -65,15 +68,19 @@ const Navbar = (props: Props) => {
 
   let pages = [
     "browse",
-    "taskboard",
-    "admin",
   ];
+  if (getPermission(20, currentUser.permissions)) {
+    pages.push("taskboard")
+  }
+  if (getPermission(40, currentUser.permissions)) {
+    pages.push("admin")
+  }
   return (
     <StyledNavbar as="nav">
       <h1>ENSEMBLE</h1>
       {Object.keys(pages).map((i) => {
         const page = pages[parseInt(i)];
-        return (<a key={page} style={(page === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={(e) => {
+        return (<a key={page} style={(page === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={() => {
           navigate("/" + page)
         }}>{Prettify(page)}</a>)
       })}

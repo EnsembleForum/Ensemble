@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 from .identifiers import CommentId, PostId, UserId
 
 
@@ -24,6 +24,8 @@ class IPostBasicInfo(TypedDict):
     * `me_too`: `int`
     * `private`: `bool`
     * `anonymous`: `bool`
+    * `closed`: `bool`
+    * `answered`: `bool`
     """
     post_id: PostId
     author: UserId
@@ -32,6 +34,8 @@ class IPostBasicInfo(TypedDict):
     me_too: int
     private: bool
     anonymous: bool
+    answered: bool
+    closed: bool
 
 
 class IPostBasicInfoList(TypedDict):
@@ -46,6 +50,7 @@ class IPostBasicInfoList(TypedDict):
         * `me_too`: `list[UserId]`
         * `private`: `bool`
         * `anonymous`: `bool`
+        * `answered`: `bool`
     """
     posts: list[IPostBasicInfo]
 
@@ -72,7 +77,10 @@ class IPostFullInfo(TypedDict):
     * `timestamp`: `int`
     * `private`: `bool`
     * `anonymous`: `bool`
+    * `closed`: `bool`
     * `user_reacted`: `bool`
+    * `answered`: `Optional[CommentId]`
+    * `queue`: `str`
     """
     post_id: PostId
     author: UserId
@@ -85,3 +93,15 @@ class IPostFullInfo(TypedDict):
     timestamp: int
     private: bool
     anonymous: bool
+    closed: bool
+    answered: Optional[CommentId]
+    queue: str
+
+
+class IPostClosed(TypedDict):
+    """
+    Whether a post is closed
+
+    * `closed`: `bool`
+    """
+    closed: bool
