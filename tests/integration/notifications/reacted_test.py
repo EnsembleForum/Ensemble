@@ -29,7 +29,8 @@ def test_notified_post(
         == [{
             "notification_id": expect.Any(int),
             "seen": False,
-            "heading": "Someone said me too to your post",
+            "user_from": None,
+            "heading": "Your post received a me too",
             "body": make_posts['head1'],
             "post": make_posts['post1_id'],
             "comment": None,
@@ -58,7 +59,8 @@ def test_notified_comment(
         == [{
             "notification_id": expect.Any(int),
             "seen": False,
-            "heading": "Someone thanked you for your comment",
+            "user_from": None,
+            "heading": "Your comment received thanks",
             "body": "This is a comment",
             "post": make_posts['post1_id'],
             "comment": comment,
@@ -92,7 +94,8 @@ def test_notified_reply(
         == [{
             "notification_id": expect.Any(int),
             "seen": False,
-            "heading": "Someone thanked you for your reply",
+            "user_from": None,
+            "heading": "Your reply received thanks",
             "body": "This is a reply",
             "post": make_posts['post1_id'],
             "comment": comment,

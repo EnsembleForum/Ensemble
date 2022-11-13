@@ -77,7 +77,7 @@ class NotificationCommented(Notification):
     def _get_info(self) -> INotificationInfo:
         if self._reply is not None:
             if self.comment.author == self.user_to:
-                heading = "New reply"
+                heading = "New reply to your comment"
             else:
                 heading = "New reply on your post"
             body = self._reply.text

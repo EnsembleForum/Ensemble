@@ -19,18 +19,19 @@ def test_closed_post_notification(
     browse.close_post(simple_users['mod']['token'], make_posts['post1_id'])
 
     notifs = notifications.list(simple_users['admin']['token'])
-    assert notifs['notifications'] == [
+    assert notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
             "seen": False,
-            "heading": f"A moderator closed your post {make_posts['head1']}",
-            "body": "",
+            "user_from": None,
+            "heading": "A mod closed your post",
+            "body": make_posts['head1'],
             'post': make_posts['post1_id'],
             'comment': None,
             'reply': None,
             'queue': None,
         },
-    ]
+    ])
 
 
 def test_reopened_post_no_notification(

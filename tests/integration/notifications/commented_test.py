@@ -31,7 +31,8 @@ def test_notification_on_comment(
     assert notifs == [{
         "notification_id": expect.Any(int),
         "seen": False,
-        "heading": f"User commented on your post {make_posts['head1']}",
+        "user_from": simple_users['user']['user_id'],
+        "heading": "New comment on your post",
         "body": "This is a comment",
         'post': make_posts['post1_id'],
         'comment': comment,
@@ -63,7 +64,8 @@ def test_notification_on_reply(
     assert notifs == [{
         "notification_id": expect.Any(int),
         "seen": False,
-        "heading": f"User replied to your comment on {make_posts['head1']}",
+        "user_from": simple_users['user']['user_id'],
+        "heading": "New reply to your comment",
         "body": "This is a reply",
         'post': make_posts['post1_id'],
         'comment': comment,
@@ -95,8 +97,8 @@ def test_reply_op_notified(
     assert notifs[0] == {
         "notification_id": expect.Any(int),
         "seen": False,
-        "heading":
-            f"User replied to a comment on your post {make_posts['head1']}",
+        "user_from": simple_users['user']['user_id'],
+        "heading": "New reply on your post",
         "body": "This is a reply",
         'post': make_posts['post1_id'],
         'comment': comment,
@@ -160,6 +162,6 @@ def test_no_notification_on_reply_to_comment_on_own_post(
         comment,
         "This is a reply",
     )['reply_id']
-    # Mod should have gotten a notification
+    # Mod should have only gotten first notification
     notifs = notifications.list(simple_users['mod']['token'])['notifications']
     assert len(notifs) == 1

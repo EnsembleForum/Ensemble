@@ -39,7 +39,8 @@ def test_commenter_notified_when_unaccepted(
         {
             "notification_id": expect.Any(int),
             "seen": False,
-            "heading": f"Dee unaccepted your answer for {make_posts['head1']}",
+            "user_from": simple_users['admin']['user_id'],
+            "heading": "Answer unaccepted",
             "body": "This is a comment",
             'post': make_posts['post1_id'],
             'comment': comment,
