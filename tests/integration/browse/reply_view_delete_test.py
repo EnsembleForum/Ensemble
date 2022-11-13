@@ -15,7 +15,8 @@ from ensemble_request.browse import (
     get_comment,
     get_reply,
     add_reply,
-    reply_delete
+    reply_delete,
+    reply_edit
 )
 from tests.integration.conftest import ISimpleUsers, IMakePosts
 
@@ -54,7 +55,7 @@ def test_mod_delete(
     assert get_reply(user_token, reply_id)["text"] == "[Deleted]."
 
 
-def test_OP_delete(
+def test_op_delete(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,
 ):
@@ -67,7 +68,9 @@ def test_OP_delete(
     reply_id = add_reply(user_token, comment_id, "reply")["reply_id"]
 
     reply_delete(user_token, reply_id)
-    assert get_reply(user_token, reply_id)["text"] == "[Deleted]."
+    reply = get_reply(user_token, reply_id)
+    assert reply["text"] == "[Deleted]."
+    assert reply["deleted"]
 
 
 def test_post_comment_list(
@@ -85,3 +88,20 @@ def test_post_comment_list(
     reply_delete(user_token, reply_id)
 
     assert get_comment(user_token, comment_id)["replies"] == [reply_id]
+
+
+def test_edit_deleted_reply(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
+    """
+    OP can delete his own reply
+    """
+    user_token = simple_users["user"]["token"]
+    post_id = make_posts["post1_id"]
+    comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
+    reply_id = add_reply(user_token, comment_id, "reply")["reply_id"]
+
+    reply_delete(user_token, reply_id)
+    with pytest.raises(http_errors.BadRequest):
+        reply_edit(user_token, reply_id, "hello")

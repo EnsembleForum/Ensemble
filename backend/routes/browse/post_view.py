@@ -48,6 +48,9 @@ def edit(user: User, *_) -> dict:
     if user != post.author:
         raise http_errors.Forbidden("Attempting to edit another user's post")
 
+    if post.deleted:
+        raise http_errors.BadRequest("Cannot edit a deleted post")
+
     post.heading = new_heading
     post.text = new_text
     post.tags = new_tags

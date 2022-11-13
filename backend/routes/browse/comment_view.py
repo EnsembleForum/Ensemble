@@ -77,6 +77,9 @@ def edit(user: User, *_) -> dict:
         raise http_errors.Forbidden(
             "Attempting to edit another user's comment")
 
+    if comment.deleted:
+        raise http_errors.BadRequest("Cannot edit a deleted comment")
+
     comment.text = new_text
     return {}
 
@@ -84,7 +87,6 @@ def edit(user: User, *_) -> dict:
 @comment_view.delete("/delete")
 @uses_token
 def delete(user: User, *_) -> dict:
-    user.permissions.assert_can(Permission.PostCreate)
     comment = Comment(CommentId(request.args["comment_id"]))
 
     if user != comment.author:

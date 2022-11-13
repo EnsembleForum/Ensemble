@@ -17,12 +17,17 @@ from ensemble_request.browse import (
     post_list,
     post_view,
     post_create,
+    post_edit
 )
 from tests.integration.conftest import (
     ISimpleUsers,
     IMakePosts,
 )
-from ensemble_request.taskboard import queue_post_list, queue_list
+from ensemble_request.taskboard import (
+    queue_post_list,
+    queue_list,
+)
+
 from tests.integration.helpers import get_queue
 
 
@@ -118,3 +123,16 @@ def test_delete_post_view_permissions(
     post_view(mod_token, post_id)
     with pytest.raises(http_errors.Forbidden):
         post_view(user_token, post_id)
+
+
+def test_edit_deleted_post(
+    simple_users: ISimpleUsers
+):
+    """
+    Cannot edit deleted post
+    """
+    user_token = simple_users["user"]["token"]
+    post_id = post_create(user_token, "heading", "text", [])["post_id"]
+    post_delete(user_token, post_id)
+    with pytest.raises(http_errors.BadRequest):
+        post_edit(user_token, post_id, "new", "new", [])

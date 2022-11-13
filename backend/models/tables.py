@@ -102,6 +102,7 @@ class TComment(_BaseTable):
 
     author = ForeignKey(TUser)
     parent = ForeignKey(TPost)
+    deleted = Boolean()
     text = Text()
     timestamp = Timestamp()
 
@@ -113,6 +114,7 @@ class TReply(_BaseTable):
 
     author = ForeignKey(TUser)
     parent = ForeignKey(TComment)
+    deleted = Boolean()
     text = Text()
     timestamp = Timestamp()
 
