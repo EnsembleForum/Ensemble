@@ -28,7 +28,7 @@ def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     Test that the 3 default queues are created on forum initialisation
     """
     queues = queue_list(basic_server_setup['token'])['queues']
-    assert len(queues) == 3
+    assert len(queues) == 4
     queue_names = sorted([q['queue_name'] for q in queues])
     assert queue_names == sorted(
         ["Main queue", "Answered queue", "Closed queue", "Deleted queue"])
