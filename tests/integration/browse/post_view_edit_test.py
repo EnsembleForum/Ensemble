@@ -49,6 +49,7 @@ def test_edit_empty_params(
         post_edit(token, make_posts["post1_id"], "new head", "", [])
 
 
+@pytest.mark.core
 def test_edit_success(
     basic_server_setup: IBasicServerSetup,
     make_posts: IMakePosts,

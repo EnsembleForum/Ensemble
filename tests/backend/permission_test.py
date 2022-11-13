@@ -8,10 +8,12 @@ resources/permissions.json file is not up-to-date.
 
 You can fix this by running `python scripts/generate_permissions.py`
 """
+import pytest
 import json
 from backend.models.permissions import Permission
 
 
+@pytest.mark.core
 def test_permissions_backend_to_json():
     """
     Are all permissions defined on the backend present in the JSON
@@ -24,6 +26,7 @@ def test_permissions_backend_to_json():
         assert perms[key]["name"] == p.name
 
 
+@pytest.mark.core
 def test_permissions_json_to_backend():
     """
     Are all permissions defined in the JSON present in the backend

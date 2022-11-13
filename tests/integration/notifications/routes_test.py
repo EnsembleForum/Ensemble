@@ -22,6 +22,7 @@ def test_no_notifs_default(basic_server_setup: IBasicServerSetup):
         notifications.list(basic_server_setup['token'])['notifications']) == 0
 
 
+@pytest.mark.core
 def test_see_notification(simple_users: ISimpleUsers, make_posts: IMakePosts):
     """Can we mark a notification as seen?"""
     # Comment on the post

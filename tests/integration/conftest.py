@@ -9,11 +9,10 @@ from backend.types.identifiers import PostId, QueueId
 from backend.types.permissions import IPermissionGroup
 from backend.types.auth import IAuthInfo
 from mock.auth import AUTH_URL
-from ensemble_request.debug import clear, echo
+from ensemble_request.debug import clear, echo, unsafe_init, unsafe_login
 from ensemble_request.browse import post_create
-from ensemble_request.admin import init, users
+from ensemble_request.admin import users
 from ensemble_request.admin.permissions import groups_list
-from ensemble_request.auth import login
 from ensemble_request.taskboard import queue_create
 
 
@@ -35,7 +34,7 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
     username = "admin1"
     password = "admin1"
     email = "admin@example.com"
-    return init(
+    return unsafe_init(
         address=f"{AUTH_URL}/login",
         request_type="get",
         username_param="username",
@@ -134,8 +133,8 @@ def simple_users(
     # Log everyone in and return their info
     return {
         "admin": basic_server_setup,
-        "mod": login("mod1", "mod1"),
-        "user": login("user1", "user1"),
+        "mod": unsafe_login("mod1"),
+        "user": unsafe_login("user1"),
     }
 
 
@@ -233,18 +232,18 @@ def all_users(
     return {
         "admins": [
             simple_users["admin"],
-            login("admin2", "admin2"),
-            login("admin3", "admin3"),
+            unsafe_login("admin2"),
+            unsafe_login("admin3"),
         ],
         "mods": [
             simple_users["mod"],
-            login("mod2", "mod2"),
-            login("mod3", "mod3"),
+            unsafe_login("mod2"),
+            unsafe_login("mod3"),
         ],
         "users": [
             simple_users["user"],
-            login("user2", "user2"),
-            login("user3", "user3"),
+            unsafe_login("user2"),
+            unsafe_login("user3"),
         ],
     }
 

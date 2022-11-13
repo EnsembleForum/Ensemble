@@ -37,6 +37,7 @@ def test_invalid_id(basic_server_setup: IBasicServerSetup):
         queue_delete(basic_server_setup['token'], QueueId(-1))
 
 
+@pytest.mark.core
 def test_success(
     basic_server_setup: IBasicServerSetup,
     make_queues: IMakeQueues,
