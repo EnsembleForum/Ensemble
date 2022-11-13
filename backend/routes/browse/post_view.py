@@ -5,6 +5,11 @@ Post View routes
 """
 import json
 from flask import Blueprint, request
+from backend.models.notifications import (
+    NotificationClosed,
+    NotificationCommented,
+    NotificationReacted,
+)
 from backend.models.permissions import Permission
 from backend.models.post import Post
 from backend.models.user import User
@@ -80,9 +85,16 @@ def comment(user: User, *_) -> ICommentId:
     text: str = data["text"]
     post = Post(data["post_id"])
 
-    comment_id = Comment.create(user, post, text).id
+    comment = Comment.create(user, post, text)
 
-    return {"comment_id": comment_id}
+    if post.author != user:
+        NotificationCommented.create(
+            post.author,
+            user,
+            comment,
+        )
+
+    return {"comment_id": comment.id}
 
 
 @post_view.put("/react")
@@ -92,6 +104,12 @@ def react(user: User, *_) -> IUserReacted:
     data = json.loads(request.data)
     post = Post(data["post_id"])
     post.react(user)
+
+    if user != post.author:
+        NotificationReacted.create(
+            post.author,
+            post,
+        )
 
     return {"user_reacted": post.has_reacted(user)}
 
@@ -103,5 +121,11 @@ def close_post(user: User, *_) -> IPostClosed:
     data = json.loads(request.data)
     post = Post(data["post_id"])
     post.closed_toggle()
+
+    if user != post.author and post.closed:
+        NotificationClosed.create(
+            post.author,
+            post,
+        )
 
     return {"closed": post.closed}

@@ -13,6 +13,7 @@ __all__ = [
     "browse",
     'user',
     'taskboard',
+    'notifications',
 ]
 
 from .debug import debug_export as debug
@@ -21,3 +22,4 @@ from .auth import auth
 from .browse import browse
 from .user import user
 from .taskboard import taskboard
+from .notifications import notifications
