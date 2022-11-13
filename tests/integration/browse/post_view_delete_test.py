@@ -38,6 +38,7 @@ def test_delete_other_user_post(
         post_delete(token, make_posts["post1_id"])
 
 
+@pytest.mark.core
 def test_delete_success(
     basic_server_setup: IBasicServerSetup,
     make_posts: IMakePosts,

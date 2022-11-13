@@ -29,6 +29,7 @@ def test_view_own_profile(simple_users: ISimpleUsers):
     }
 
 
+@pytest.mark.core
 def test_view_other_profile(simple_users: ISimpleUsers):
     """Can we view our own profile?"""
     assert profile(
