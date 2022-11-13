@@ -156,10 +156,16 @@ def mock_auth():
     return login
 
 
-def pytest():
+def pytest(core = False):
+    if core:
+        marks = ['-m', 'core']
+        app = "Pytest (core)"
+    else:
+        marks = []
+        app = "Pytest"
     t = Task(
         'pytest',
-        [sys.executable, '-u', '-m', 'pytest'],
+        [sys.executable, '-u', '-m', 'pytest'] + marks,
     )
-    print("🔨 Pytest started")
+    print(f"🔨 {app} started")
     return t

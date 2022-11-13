@@ -1,5 +1,5 @@
 """
-# Scripts / Test
+# Scripts / Pytest backend
 
 Runs pytest on the backend of the server
 """
