@@ -1,28 +1,24 @@
-import React, { ReactElement } from 'react'
-import { Flex, Checkbox, Heading, Label, Select } from 'theme-ui'
-import { permissionType, userPermissionsDetails, userView } from "../../interfaces"
+import { ReactElement } from 'react'
+import { Checkbox, Flex, Label } from 'theme-ui'
+import { permissionHolder, permissionType } from "../../interfaces"
 type Props = {
-  userPermissionsDetails: userPermissionsDetails,
+  permissionHolder: permissionHolder,
   permissionTypes: permissionType[],
   onAddUserPermission: (permissionId: number) => void,
   onRemoveUserPermission: (permissionId: number) => void
 }
 
-const UserPermissionsView = ({ userPermissionsDetails, permissionTypes, onAddUserPermission, onRemoveUserPermission }: Props) => {
-  const userPermissions = userPermissionsDetails.permissions.reduce(
+const UserPermissionsView = ({ permissionHolder, permissionTypes, onAddUserPermission, onRemoveUserPermission }: Props) => {
+  const userPermissions = permissionHolder.permissions.reduce(
     (previousPermissionIds, permission) => {
       if (permission.value) {
         previousPermissionIds.add(permission.permission_id);
       }
       return previousPermissionIds;
     }, new Set<number>());
+    
   return (
     <Flex sx={{ flexDirection: 'column' }}>
-    <Select>
-    <option>Administrator</option>
-    <option> Moderator </option>
-    <option> Student </option>
-    </Select>
       {permissionTypes.map((permissionType: permissionType): ReactElement => {
         return <Flex key={permissionType.permission_id}>
           <Label>

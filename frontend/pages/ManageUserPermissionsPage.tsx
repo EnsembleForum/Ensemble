@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
-import { Flex } from "theme-ui"
-import { APIcall, permissionType, userPermissionsDetails, userView } from "../interfaces";
-import React, { JSXElementConstructor, MouseEvent, ReactElement, useEffect, useState } from "react";
-import UserPermissionsList from "./components/UserPermissionsList";
+import { useEffect, useState } from "react";
+import { Flex } from "theme-ui";
 import { ApiFetch } from "../App";
+import { APIcall, permissionGroup, permissionType, userPermissionsDetails, userView } from "../interfaces";
+import UserPermissionGroupView from "./components/UserPermissionGroupView";
+import ItemList from "./components/ItemList";
 import UserPermissionsView from "./components/UserPermissionsView";
 
 interface Props { }
@@ -13,6 +13,7 @@ interface Props { }
 const ManageUserPermissionsPage = (props: Props) => {
   const [users, setUsers] = useState<userView[] | null>(null);
   const [permissionTypes, setPermissionTypes] = useState<permissionType[] | null>(null);
+  const [permissionGroups, setPermissionGroups] = useState<permissionGroup[] | null>(null);
   const [user, setUser] = useState<userView | null>(null);
   const [userPermissionDetails, setUserPermissionDetails] = useState<userPermissionsDetails | null>(null);
 
@@ -28,6 +29,9 @@ const ManageUserPermissionsPage = (props: Props) => {
         setUserPermissionDetails(userPermissionDetails);
       })
   }
+
+
+
 
   const handleAddUserPermission = (permission_id: number) => {
     handleSetUserPermission(permission_id, true);
@@ -46,12 +50,18 @@ const ManageUserPermissionsPage = (props: Props) => {
     ApiFetch<{ permissions: permissionType[] }>(setUserPermissionsAPIcall);
   }
 
-  const handleSetUserPermission = (permission_id: number, value: boolean) => {
+  const handleSetUserPermission = (permissionId: number, value: boolean) => {
     if (user !== null && userPermissionDetails !== null) {
-      const updatedUserPermissions = userPermissionDetails.permissions.map(permission => ({ permission_id: permission.permission_id, value: permission.permission_id === permission_id ? value : permission.value }));
-      const updatedUserPermissionDetails: userPermissionsDetails = { permissions: updatedUserPermissions, group_id: userPermissionDetails.group_id };
-      setUserPermissionDetails(updatedUserPermissionDetails);
-      invokeSetUserPermissions({ user_id: user.user_id, permissions: updatedUserPermissionDetails.permissions, group_id: updatedUserPermissionDetails.group_id });
+      const updatedUserPermissions = userPermissionDetails.permissions.map(permission => ({ permission_id: permission.permission_id, value: permission.permission_id === permissionId ? value : permission.value }));
+      setUserPermissionDetails({ permissions: updatedUserPermissions, group_id: userPermissionDetails.group_id });
+      invokeSetUserPermissions({ user_id: user.user_id, permissions: updatedUserPermissions, group_id: userPermissionDetails.group_id });
+    }
+  }
+  
+  const handleSetUserPermissionGroup = (groupId: number) => {
+    if (user !== null && userPermissionDetails !== null) {
+      setUserPermissionDetails({ permissions: userPermissionDetails.permissions, group_id: groupId });
+      invokeSetUserPermissions({ user_id: user.user_id, permissions: userPermissionDetails.permissions, group_id: groupId });
     }
   }
 
@@ -66,6 +76,15 @@ const ManageUserPermissionsPage = (props: Props) => {
         setUsers(users);
       })
 
+    const permissionGroupAPIcall: APIcall = {
+      method: 'GET',
+      path: 'admin/permissions/groups/list',
+      body: null,
+    }
+    ApiFetch<{ groups: permissionGroup[] }>(permissionGroupAPIcall).then(({ groups }) => {
+      setPermissionGroups(groups);
+    });
+
     const permissionsListAPIcall: APIcall = {
       method: 'GET',
       path: 'admin/permissions/list_permissions',
@@ -78,13 +97,14 @@ const ManageUserPermissionsPage = (props: Props) => {
   }, []);
 
   return (
-    <Flex sx={{flexDirection: 'row'}}>
-      <Flex sx={{flexDirection: 'row', flexGrow: 1}}>
-         {users !== null ? <UserPermissionsList users={users} onClickUser={handleUserSelect} /> : null}
+    <Flex sx={{ flexDirection: 'row' }}>
+      <Flex sx={{ flexDirection: 'row', flexGrow: 1 }}>
+        {users !== null ? <ItemList<userView> items={users} getItemKey={(user) => user.user_id} getItemLabel={(user) => `${user.name_first} ${user.name_last}`}  onClickItem={handleUserSelect} /> : null}
       </Flex>
-      
-      <Flex sx={{flexDirection: 'row', flexGrow: 4}}>
-          {user !== null && userPermissionDetails !== null && permissionTypes !== null ? <UserPermissionsView userPermissionsDetails={userPermissionDetails} permissionTypes={permissionTypes} onAddUserPermission={handleAddUserPermission} onRemoveUserPermission={handleRemoveUserPermission} /> : null}
+
+      <Flex sx={{ flexDirection: 'row', flexGrow: 4 }}>
+        { userPermissionDetails !== null && permissionGroups  ? <UserPermissionGroupView groupId={userPermissionDetails.group_id} permissionGroups={permissionGroups} onPermissionGroupChange={handleSetUserPermissionGroup}></UserPermissionGroupView> : null}
+        {user !== null && userPermissionDetails !== null && permissionTypes !== null && permissionGroups !== null ? <UserPermissionsView permissionHolder={userPermissionDetails} permissionTypes={permissionTypes} onAddUserPermission={handleAddUserPermission} onRemoveUserPermission={handleRemoveUserPermission}  /> : null}
       </Flex>
     </Flex>
   );

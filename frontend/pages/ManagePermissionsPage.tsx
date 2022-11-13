@@ -1,6 +1,7 @@
-import { group } from 'console'
+
 import React, { useState } from 'react'
 import {Flex, Button} from "theme-ui" 
+import ManageGroupPermissionsPage from './ManageGroupPermissionsPage'
 import ManageUserPermissionsPage from './ManageUserPermissionsPage'
 
 enum managePermissionPage {
@@ -14,7 +15,7 @@ const [currPage, setCurrPage] = useState<managePermissionPage>(managePermissionP
  
 const getCurrPermissionPage = (currentPage:managePermissionPage) => {
   if(currentPage === managePermissionPage.groups) {
-   return <div></div> 
+   return <ManageGroupPermissionsPage/>
   } else {
     return <ManageUserPermissionsPage/>
   }
