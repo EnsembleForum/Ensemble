@@ -66,3 +66,9 @@ class QueueId(Identifier):
     """
     Identifier for a queue
     """
+
+
+class NotificationId(Identifier):
+    """
+    Identifier for a notification
+    """
