@@ -53,3 +53,16 @@ def edit(user: User, *_) -> dict:
 
     reply.text = new_text
     return {}
+
+
+@reply_view.delete("/delete")
+@uses_token
+def delete(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.PostCreate)
+    reply = Reply(ReplyId(request.args["reply_id"]))
+
+    if user != reply.author:
+        user.permissions.assert_can(Permission.DeletePosts)
+
+    reply.delete()
+    return {}

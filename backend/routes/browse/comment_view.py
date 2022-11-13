@@ -79,3 +79,16 @@ def edit(user: User, *_) -> dict:
 
     comment.text = new_text
     return {}
+
+
+@comment_view.delete("/delete")
+@uses_token
+def delete(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.PostCreate)
+    comment = Comment(CommentId(request.args["comment_id"]))
+
+    if user != comment.author:
+        user.permissions.assert_can(Permission.DeletePosts)
+
+    comment.delete()
+    return {}

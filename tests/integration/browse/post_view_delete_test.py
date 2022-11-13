@@ -26,7 +26,7 @@ from ensemble_request.taskboard import queue_post_list, queue_list
 from tests.integration.helpers import get_queue
 
 
-def test_delete_other_user_post(
+def test_no_permission(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,
 ):

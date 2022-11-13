@@ -69,16 +69,11 @@ class Reply:
         id = cast(ReplyId, val["id"])
         return Reply(id)
 
-    @classmethod
-    def delete(cls, reply_id: ReplyId) -> ReplyId:
+    def delete(self):
         """
-        Deletes a reply from the database
-
-        ### Returns:
-        * `ReplyId`: identifier of the deleted reply
+        Delete this comment
         """
-        TReply.delete().where(TReply.id == reply_id).run_sync()
-        return reply_id
+        self.text = "[Deleted]."
 
     def _get(self) -> TReply:
         """

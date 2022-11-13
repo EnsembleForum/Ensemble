@@ -189,12 +189,12 @@ def post_edit(
 
 def post_delete(token: JWT, post_id: PostId):
     """
-    # DELETE `/browse/post_view/self_delete`
+    # DELETE `/browse/post_view/delete`
 
-    Deletes a post. This route must be called by the owner of the post.
+    Deletes a post.
 
     ## Permissions
-    * `PostCreate`
+    * `DeletePosts`
 
     ## Header
     * `Authorization` (`str`): JWT of the user
@@ -204,8 +204,52 @@ def post_delete(token: JWT, post_id: PostId):
     """
     delete(
         token,
-        f"{URL}/post_view/self_delete",
+        f"{URL}/post_view/delete",
         {"post_id": post_id, }
+    )
+
+
+def comment_delete(token: JWT, comment_id: CommentId):
+    """
+    # DELETE `/browse/comment_view/delete`
+
+    Deletes a comment.
+
+    ## Permissions
+    * `DeletePosts`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Params
+    * `comment_id` (`int`): identifier of the comment
+    """
+    delete(
+        token,
+        f"{URL}/comment_view/delete",
+        {"comment_id": comment_id, }
+    )
+
+
+def reply_delete(token: JWT, reply_id: ReplyId):
+    """
+    # DELETE `/browse/reply_view/delete`
+
+    Deletes a reply.
+
+    ## Permissions
+    * `DeletePosts`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Params
+    * `reply_id` (`int`): identifier of the reply
+    """
+    delete(
+        token,
+        f"{URL}/reply_view/delete",
+        {"reply_id": reply_id, }
     )
 
 

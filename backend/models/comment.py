@@ -88,16 +88,11 @@ class Comment:
             .run_sync()
         ]
 
-    @classmethod
-    def delete(cls, comment_id: CommentId) -> CommentId:
+    def delete(self):
         """
-        Deletes a comment from the database as well as all of its replies
-
-        ### Returns:
-        * `CommentId`: identifier of the deleted comment
+        Delete this comment
         """
-        TComment.delete().where(TComment.id == comment_id).run_sync()
-        return comment_id
+        self.text = "[Deleted]."
 
     def _get(self) -> TComment:
         """

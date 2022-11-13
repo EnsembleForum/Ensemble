@@ -59,7 +59,7 @@ def edit(user: User, *_) -> dict:
     return {}
 
 
-@post_view.delete("/self_delete")
+@post_view.delete("/delete")
 @uses_token
 def delete(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.PostCreate)
