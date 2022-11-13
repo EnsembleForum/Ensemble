@@ -12,6 +12,13 @@ from ensemble_request.browse import (
 )
 
 
+def get_group_stats_by_name(group_data, name):
+    for g in group_data:
+        if g["permission_group_name"] == name:
+            return g["stats"]
+    return None
+
+
 def test_mod_no_permission(
     simple_users: ISimpleUsers,
 ):
@@ -120,15 +127,22 @@ def test_all_top_posters(
     assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
     assert [i["count"] for i in all_data] == [2, 1, 1]
 
-    staff_data = data["staff"]["top_posters"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
-    assert [i["count"] for i in staff_data] == [1, 1]
+    groups_data = data["groups"]
 
-    student_data = data["students"]["top_posters"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in student_data] == [user_id]
-    assert [i["count"] for i in student_data] == [2]
+    admin_data = get_group_stats_by_name(
+        groups_data, "Administrator")["top_posters"]
+    assert [i["user_id"] for i in admin_data] == [admin_id]
+    assert [i["count"] for i in admin_data] == [1]
+
+    mod_data = get_group_stats_by_name(
+        groups_data, "Moderator")["top_posters"]
+    assert [i["user_id"] for i in mod_data] == [mod_id]
+    assert [i["count"] for i in mod_data] == [1]
+
+    user_data = get_group_stats_by_name(
+        groups_data, "User")["top_posters"]
+    assert [i["user_id"] for i in user_data] == [user_id]
+    assert [i["count"] for i in user_data] == [2]
 
 
 def test_all_top_commenters(
@@ -162,15 +176,22 @@ def test_all_top_commenters(
     assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
     assert [i["count"] for i in all_data] == [2, 1, 1]
 
-    staff_data = data["staff"]["top_commenters"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
-    assert [i["count"] for i in staff_data] == [1, 1]
+    groups_data = data["groups"]
 
-    student_data = data["students"]["top_commenters"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in student_data] == [user_id]
-    assert [i["count"] for i in student_data] == [2]
+    admin_data = get_group_stats_by_name(
+        groups_data, "Administrator")["top_commenters"]
+    assert [i["user_id"] for i in admin_data] == [admin_id]
+    assert [i["count"] for i in admin_data] == [1]
+
+    mod_data = get_group_stats_by_name(
+        groups_data, "Moderator")["top_commenters"]
+    assert [i["user_id"] for i in mod_data] == [mod_id]
+    assert [i["count"] for i in mod_data] == [1]
+
+    user_data = get_group_stats_by_name(
+        groups_data, "User")["top_commenters"]
+    assert [i["user_id"] for i in user_data] == [user_id]
+    assert [i["count"] for i in user_data] == [2]
 
 
 def test_all_top_repliers(
@@ -205,15 +226,22 @@ def test_all_top_repliers(
     assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
     assert [i["count"] for i in all_data] == [2, 1, 1]
 
-    staff_data = data["staff"]["top_repliers"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
-    assert [i["count"] for i in staff_data] == [1, 1]
+    groups_data = data["groups"]
 
-    student_data = data["students"]["top_repliers"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in student_data] == [user_id]
-    assert [i["count"] for i in student_data] == [2]
+    admin_data = get_group_stats_by_name(
+        groups_data, "Administrator")["top_repliers"]
+    assert [i["user_id"] for i in admin_data] == [admin_id]
+    assert [i["count"] for i in admin_data] == [1]
+
+    mod_data = get_group_stats_by_name(
+        groups_data, "Moderator")["top_repliers"]
+    assert [i["user_id"] for i in mod_data] == [mod_id]
+    assert [i["count"] for i in mod_data] == [1]
+
+    user_data = get_group_stats_by_name(
+        groups_data, "User")["top_repliers"]
+    assert [i["user_id"] for i in user_data] == [user_id]
+    assert [i["count"] for i in user_data] == [2]
 
 
 def test_all_top_me_too(simple_users: ISimpleUsers):
@@ -246,15 +274,22 @@ def test_all_top_me_too(simple_users: ISimpleUsers):
     assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
     assert [i["count"] for i in all_data] == [2, 1, 1]
 
-    staff_data = data["staff"]["top_me_too"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
-    assert [i["count"] for i in staff_data] == [1, 1]
+    groups_data = data["groups"]
 
-    student_data = data["students"]["top_me_too"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in student_data] == [user_id]
-    assert [i["count"] for i in student_data] == [2]
+    admin_data = get_group_stats_by_name(
+        groups_data, "Administrator")["top_me_too"]
+    assert [i["user_id"] for i in admin_data] == [admin_id]
+    assert [i["count"] for i in admin_data] == [1]
+
+    mod_data = get_group_stats_by_name(
+        groups_data, "Moderator")["top_me_too"]
+    assert [i["user_id"] for i in mod_data] == [mod_id]
+    assert [i["count"] for i in mod_data] == [1]
+
+    user_data = get_group_stats_by_name(
+        groups_data, "User")["top_me_too"]
+    assert [i["user_id"] for i in user_data] == [user_id]
+    assert [i["count"] for i in user_data] == [2]
 
 
 def test_all_top_thanks(
@@ -290,12 +325,19 @@ def test_all_top_thanks(
     assert [i["user_id"] for i in all_data] == [user_id, admin_id, mod_id]
     assert [i["count"] for i in all_data] == [3, 1, 1]
 
-    staff_data = data["staff"]["top_thanks"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in staff_data] == [admin_id, mod_id]
-    assert [i["count"] for i in staff_data] == [1, 1]
+    groups_data = data["groups"]
 
-    student_data = data["students"]["top_thanks"]
-    # Sorted from most to least number of posts, then by first name
-    assert [i["user_id"] for i in student_data] == [user_id]
-    assert [i["count"] for i in student_data] == [3]
+    admin_data = get_group_stats_by_name(
+        groups_data, "Administrator")["top_thanks"]
+    assert [i["user_id"] for i in admin_data] == [admin_id]
+    assert [i["count"] for i in admin_data] == [1]
+
+    mod_data = get_group_stats_by_name(
+        groups_data, "Moderator")["top_thanks"]
+    assert [i["user_id"] for i in mod_data] == [mod_id]
+    assert [i["count"] for i in mod_data] == [1]
+
+    user_data = get_group_stats_by_name(
+        groups_data, "User")["top_thanks"]
+    assert [i["user_id"] for i in user_data] == [user_id]
+    assert [i["count"] for i in user_data] == [3]

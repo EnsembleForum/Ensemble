@@ -2,8 +2,10 @@
 # Backend / Models / Analytics
 """
 from piccolo.query.methods.select import Count
-from typing import cast, Literal, Union
+from typing import cast, Union
+from .permissions import PermissionGroup
 from backend.types.analytics import IAllStats, IAnalyticsValue, IGroupStats
+from backend.types.identifiers import PermissionGroupId
 from .user import User
 from .tables import (TPost, TComment, TReply, TPostReacts,
                      TCommentReacts, TReplyReacts)
@@ -56,7 +58,7 @@ class Analytics:
     def top_creators(
         cls,
         table: type[Union[TPost, TComment, TReply]],
-        group: list[Literal["Administrator", "Moderator", "User"]] = None,
+        group: PermissionGroupId = None,
         num: int = 10
     ) -> list["IAnalyticsValue"]:
         """
@@ -68,7 +70,7 @@ class Analytics:
         * `table` (`type[Union[TPost, TComment, TReply]]`):
             Table to look for content in
 
-        * `group` (`list[Literal["Administrator", "Moderator", "User"]]`):
+        * `group` (`PermissionGroupId`):
             Search for top creators among the given Permission Groups
 
         * `num` (`int`): Max no. of users to return
@@ -84,7 +86,7 @@ class Analytics:
                 Count(table.author).as_alias("count")
             ).where(
                 table.author.permissions.
-                parent.name.is_in(group)  # type: ignore
+                parent.id == group  # type: ignore
             ).group_by(
                 table.author
             ).run_sync()
@@ -104,7 +106,7 @@ class Analytics:
     @classmethod
     def top_me_too(
         cls,
-        group: list[Literal["Administrator", "Moderator", "User"]] = None,
+        group: PermissionGroupId = None,
         num: int = 10
     ) -> list["IAnalyticsValue"]:
         """
@@ -113,7 +115,7 @@ class Analytics:
 
         ### Args:
 
-        * `group` (`list[Literal["Administrator", "Moderator", "User"]]`):
+        * `group` (`PermissionGroupId`):
             Search for top creators among the given Permission Groups
 
         * `num` (`int`): Max no. of users to return
@@ -128,7 +130,7 @@ class Analytics:
                 Count().as_alias("count")
             ).where(
                 TPostReacts.post.author.permissions.  # type: ignore
-                parent.name.is_in(group)
+                parent.id == group
             ).group_by(
                 TPostReacts.post.author
             ).run_sync()
@@ -148,7 +150,7 @@ class Analytics:
     @classmethod
     def top_thanks(
         cls,
-        group: list[Literal["Administrator", "Moderator", "User"]] = None,
+        group: PermissionGroupId = None,
         num: int = 10
     ) -> list["IAnalyticsValue"]:
         """
@@ -157,7 +159,7 @@ class Analytics:
 
         ### Args:
 
-        * `group` (`list[Literal["Administrator", "Moderator", "User"]]`):
+        * `group` (`PermissionGroupId`):
             Search for top creators among the given Permission Groups
 
         * `num` (`int`): Max no. of users to return
@@ -173,7 +175,7 @@ class Analytics:
                 Count().as_alias("count")
             ).where(
                 TCommentReacts.comment.author.permissions.  # type: ignore
-                parent.name.is_in(group)
+                parent.id == group
             ).group_by(
                 TCommentReacts.comment.author
             ).order_by(
@@ -185,7 +187,7 @@ class Analytics:
                 Count().as_alias("count")
             ).where(
                 TReplyReacts.reply.author.permissions.  # type: ignore
-                parent.name.is_in(group)
+                parent.id == group
             ).group_by(
                 TReplyReacts.reply.author
             ).order_by(
@@ -237,13 +239,13 @@ class Analytics:
     @classmethod
     def get_group_stats(
         cls,
-        group: list[Literal["Administrator", "Moderator", "User"]] = None
+        group: PermissionGroupId = None
     ) -> IGroupStats:
         """
         Returns the forum stats for users among the given Permission Group
 
         ### Args:
-        * `group` (`list[Literal["Administrator", "Moderator", "User"]]`):
+        * `group` (`list[PermissionGroupId]`):
             Search for top creators among the given Permission Groups
 
         * `num` (`int`): Max no. of users to return
@@ -281,6 +283,12 @@ class Analytics:
             "total_comments": cls.num_comments(),
             "total_replies": cls.num_replies(),
             "all_users": cls.get_group_stats(),
-            "students": cls.get_group_stats(["User"]),
-            "staff": cls.get_group_stats(["Administrator", "Moderator"]),
+            "groups": [
+                {
+                    "permission_group_id": p.id,
+                    "permission_group_name": p.name,
+                    "stats": cls.get_group_stats(p.id)
+                }
+                for p in PermissionGroup.all()
+            ]
         }

@@ -1,5 +1,5 @@
 from typing import TypedDict
-from .identifiers import UserId
+from .identifiers import UserId, PermissionGroupId
 
 
 class IAnalyticsValue(TypedDict):
@@ -30,6 +30,15 @@ class IGroupStats(TypedDict):
     top_thanks: list[IAnalyticsValue]
 
 
+class IGroupInfo(TypedDict):
+    """
+    Info and stats for a permission group
+    """
+    permission_group_id: PermissionGroupId
+    permission_group_name: str
+    stats: IGroupStats
+
+
 class IAllStats(TypedDict):
     """
     Full analytics for the forum
@@ -38,12 +47,10 @@ class IAllStats(TypedDict):
     * `total_comments`: `int`
     * `total_replies`: `int`
     * `all_users`: `IGroupStats`
-    * `students`: `IGroupStats`
-    * `staff`: `IGroupStats`
+    * `groups`: `list[IGroupInfo]`
     """
     total_posts: int
     total_comments: int
     total_replies: int
     all_users: IGroupStats
-    students: IGroupStats
-    staff: IGroupStats
+    groups: list[IGroupInfo]
