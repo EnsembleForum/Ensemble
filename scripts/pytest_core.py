@@ -21,5 +21,5 @@ if ret:
     # Also write outputs to stdout
     print("❌ Tests failed")
 else:
-    print(f"✅ Tests passed in {t.time : .2f} seconds! Good job!")
+    print(f"✅ Tests passed in {t.time:.2f} seconds! Good job!")
 exit(ret)
