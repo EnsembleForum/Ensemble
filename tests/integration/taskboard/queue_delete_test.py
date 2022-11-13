@@ -37,6 +37,7 @@ def test_invalid_id(basic_server_setup: IBasicServerSetup):
         queue_delete(basic_server_setup['token'], QueueId(-1))
 
 
+@pytest.mark.core
 def test_success(
     basic_server_setup: IBasicServerSetup,
     make_queues: IMakeQueues,
@@ -44,5 +45,6 @@ def test_success(
     """Queue gets deleted"""
     token = basic_server_setup['token']
     queue_delete(token, make_queues['queue1_id'])
-    # Main queue, Answered queue, Closed queue, and make_queues[2]
-    assert len(queue_list(token)['queues']) == 4
+    # Main queue, Answered queue, Closed queue,
+    # Deleted queue, and make_queues[2]
+    assert len(queue_list(token)['queues']) == 5

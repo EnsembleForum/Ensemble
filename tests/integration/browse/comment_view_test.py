@@ -31,6 +31,7 @@ def test_invalid_comment_id(
         get_comment(token, invalid_comment_id)
 
 
+@pytest.mark.core
 def test_get_comment_success(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,

@@ -26,6 +26,7 @@ def test_single_user(basic_server_setup: IBasicServerSetup):
     }
 
 
+@pytest.mark.core
 def test_returns_all(simple_users: ISimpleUsers):
     """Are the correct number of users returned?"""
     assert len(users.all(simple_users["admin"]["token"])["users"]) == 3

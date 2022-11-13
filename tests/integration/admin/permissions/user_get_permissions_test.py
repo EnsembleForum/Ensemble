@@ -37,6 +37,7 @@ def test_invalid_user_id(
         )
 
 
+@pytest.mark.core
 def test_view_permissions(
     simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,

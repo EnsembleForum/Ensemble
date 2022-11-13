@@ -3,10 +3,12 @@
 
 Tests for debug routes
 """
+import pytest
 from ensemble_request.debug import echo, fail
 from backend.util import http_errors
 
 
+@pytest.mark.core
 def test_echo():
     """Test that we can echo things"""
     assert echo("Hello, world") == {"value": "Hello, world"}
