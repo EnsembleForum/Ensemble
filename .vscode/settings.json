@@ -67,6 +67,7 @@
     "doesnt",
     "dotenv",
     "flaskenv",
+    "fuzzywuzzy",
     "Khor",
     "Neel",
     "pdoc",

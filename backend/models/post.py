@@ -10,10 +10,9 @@ from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId, CommentId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
-from typing import cast  # , TYPE_CHECKING
+from typing import cast
 from datetime import datetime
-# if TYPE_CHECKING:
-#     from backend.models.queue import Queue
+from fuzzywuzzy import fuzz
 
 
 class Post:
@@ -113,6 +112,26 @@ class Post:
         permitted_list = [p for p in cls.all() if p.can_view(user)]
 
         return permitted_list
+    
+    @classmethod
+    def search_posts(cls, user: User, search_term: str) -> list["Post"]:
+        """
+        Returns a list of posts that match the search term
+        ### Returns:
+        * `list[Post]`: list of posts
+        """
+        matches = [
+            (
+                p,
+                (
+                    fuzz.partial_ratio(p.heading, search_term) +
+                    fuzz.partial_ratio(p.text, search_term)
+                ) / 2
+            )
+            for p in cls.can_view_list(user)
+        ]
+        matches = sorted(matches, key=lambda x: (-x[1], -x[0].id))
+        return [p for p, _ in matches]
 
     @property
     def comments(self) -> list["Comment"]:
