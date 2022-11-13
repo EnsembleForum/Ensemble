@@ -31,7 +31,7 @@ def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     assert len(queues) == 3
     queue_names = sorted([q['queue_name'] for q in queues])
     assert queue_names == sorted(
-        ["Main queue", "Answered queue", "Closed queue"])
+        ["Main queue", "Answered queue", "Closed queue", "Deleted queue"])
 
 
 def test_default_queue_cannot_delete(basic_server_setup: IBasicServerSetup):
