@@ -5,23 +5,28 @@ These routes should be disabled in the production environment, perhaps using
 and environment variable to enabled/disabled them?
 """
 import sys
+import json
 from colorama import Fore
 from flask import Blueprint, request
-from backend.util import http_errors, db_status
+from backend.models.user import User
+from backend.models.token import Token
+from backend.models.permissions import Permission
+from backend.util import http_errors, db_status, setup
 from backend.util.debug import debug_active
 from backend.types.debug import IEcho, IEnabled
+from backend.types.auth import IAuthInfo
 from backend.types.errors import IErrorInfo
 from typing import NoReturn
 
-debug = Blueprint('debug', 'debug')
+__debug = Blueprint('debug', 'debug')
 
 
-@debug.get('/enabled')
+@__debug.get('/enabled')
 def enabled() -> IEnabled:
     return {"value": True}
 
 
-@debug.get('/echo')
+@__debug.get('/echo')
 def echo() -> IEcho:
     try:
         value = request.args['value']
@@ -37,34 +42,85 @@ def echo() -> IEcho:
     return {'value': value}
 
 
-@debug.delete('/clear')
+@__debug.delete('/clear')
 def clear() -> dict:
     db_status.clear_all()
     return {}
 
 
-@debug.post('/shutdown')
+@__debug.post('/shutdown')
 def shutdown() -> dict:
     print("Initiated server shutdown")
     # TODO
     return {}
 
 
-@debug.get('/fail')
+@__debug.get('/fail')
 def fail() -> NoReturn:
     raise Exception("You brought this upon yourself.")
 
 
+# Unsafe init to improve testing performance
+@__debug.post('/unsafe_init')
+def unsafe_init() -> IAuthInfo:
+    data = json.loads(request.data.decode('utf-8'))
+    address: str = data["address"]
+    request_type = str(data["request_type"]).lower()
+    username_param: str = data["username_param"]
+    password_param: str = data["password_param"]
+    success_regex: str = data["success_regex"]
+    username: str = data["username"]
+    password: str = data["password"]
+    email: str = data["email"]
+    name_first: str = data["name_first"]
+    name_last: str = data["name_last"]
+    return setup.init(
+        address,
+        request_type,
+        username_param,
+        password_param,
+        success_regex,
+        username,
+        password,
+        email,
+        name_first,
+        name_last,
+        # Skip slow checks
+        skip_slow_checks=True,
+    )
+
+
+# Unsafe init to improve testing performance
+@__debug.post('/unsafe_login')
+def unsafe_login() -> IAuthInfo:
+    data = json.loads(request.data.decode('utf-8'))
+    username = data["username"]
+    try:
+        u = User.from_username(username)
+    except http_errors.BadRequest:
+        raise http_errors.BadRequest("Username not registered") from None
+    return {
+        "user_id": u.id,
+        "token": Token.create(u).encode(),
+        "permissions": [
+            {
+                "permission_id": p.value,
+                "value": u.permissions.can(p),
+            } for p in Permission
+        ],
+    }
+
+
 # Dummy debug containing no routes
-dummy_debug = Blueprint('dummy_debug', 'debug')
+__dummy_debug = Blueprint('dummy_debug', 'debug')
 
 
-@dummy_debug.get('/enabled')
+@__dummy_debug.get('/enabled')
 def not_enabled() -> IEnabled:
     return {"value": False}
 
 
-@dummy_debug.route('/<path:path>')
+@__dummy_debug.route('/<path:path>')
 def debug_not_found(path) -> tuple[IErrorInfo, int]:
     return {
         "code": 404,
@@ -74,8 +130,8 @@ def debug_not_found(path) -> tuple[IErrorInfo, int]:
     }, 404
 
 
-# Only export the required routes
+# Only export the debug routes if debugging
 if debug_active():
-    debug_export = debug
+    debug = __debug
 else:
-    debug_export = dummy_debug
+    debug = __dummy_debug

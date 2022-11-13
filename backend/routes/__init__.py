@@ -16,7 +16,7 @@ __all__ = [
     'notifications',
 ]
 
-from .debug import debug_export as debug
+from .debug import debug
 from .admin import admin
 from .auth import auth
 from .browse import browse
