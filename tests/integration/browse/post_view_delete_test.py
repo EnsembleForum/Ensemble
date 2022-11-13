@@ -9,6 +9,7 @@ Tests for post_view/self_delete
 * Mods can see deleted posts in post_view and post_list
 * Non-OP users cannot see deleted posts in post_view and post_list
 * Deleted posts are sent to the deleted queue
+* Cannot edit deleted post
 """
 import pytest
 from backend.util import http_errors

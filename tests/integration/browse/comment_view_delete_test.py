@@ -7,6 +7,7 @@ Tests for comment_view/delete
 * Mod can delete another person's comment
 * Deleted comment's text is replaced
 * Deleted comment is still found within the post
+* Cannot edit a deleted comment
 """
 import pytest
 from backend.util import http_errors
@@ -90,7 +91,7 @@ def test_edit_deleted_comment(
     make_posts: IMakePosts,
 ):
     """
-    OP can delete his own comment
+    Cannot edit a deleted comment
     """
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]

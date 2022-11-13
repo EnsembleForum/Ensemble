@@ -7,6 +7,7 @@ Tests for reply_view/delete
 * Mod can delete another person's reply
 * Deleted reply's text is replaced
 * Deleted reply is still found within the post
+* Cannot edit a deleted reply
 """
 import pytest
 from backend.util import http_errors
@@ -95,7 +96,7 @@ def test_edit_deleted_reply(
     make_posts: IMakePosts,
 ):
     """
-    OP can delete his own reply
+    Cannot edit a deleted reply
     """
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
