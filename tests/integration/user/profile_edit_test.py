@@ -47,6 +47,27 @@ test_params = (
 )
 
 
+# Basic test to save time with core tests, since we don't want to test
+# everything
+@pytest.mark.core
+def test_user_can_edit_own_basic(
+    simple_users: ISimpleUsers,
+):
+    """Users can edit their own profiles"""
+    user_id = simple_users['user']['user_id']
+    token = simple_users['user']['token']
+    # Get profile before edit
+    p = cast(dict[str, Any], profile(token, user_id))
+    # Perform the edit
+    profile_edit_name_first(
+        token,
+        user_id,
+        "New name",
+    )
+    p["name_first"] = "New name"
+    assert p == profile(token, user_id)
+
+
 @pytest.mark.parametrize(*test_params)
 def test_user_can_edit_own(
     callback: ProfileEditCallback,

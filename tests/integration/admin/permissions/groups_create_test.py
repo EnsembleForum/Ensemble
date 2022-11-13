@@ -76,6 +76,7 @@ def test_not_all_values(basic_server_setup: IBasicServerSetup):
                ) == 3
 
 
+@pytest.mark.core
 def test_success(basic_server_setup: IBasicServerSetup):
     """Can we create a permission group successfully?"""
     group_properties: IPermissionGroup = {

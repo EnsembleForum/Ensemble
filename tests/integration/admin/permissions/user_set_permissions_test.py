@@ -115,6 +115,7 @@ def test_change_permission_group(
         assert v['value'] is None
 
 
+@pytest.mark.core
 def test_change_permissions(
     simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,

@@ -58,6 +58,7 @@ def test_no_permission_to_view(
         post_view(user_token, post_id)
 
 
+@pytest.mark.core
 def test_closed_post_view(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts
