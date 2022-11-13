@@ -127,9 +127,10 @@ class Post:
             ) / 2
 
         matches = []
+        min_score = 35
         for p in cls.can_view_list(user):
             score = sim_score(p, search_term)
-            if score >= 35:  # Filter out terrible matches
+            if score >= min_score:  # Filter out terrible matches
                 matches.append((p, score))
         matches = sorted(matches, key=lambda x: (-x[1], -x[0].id))
         return [p for p, _ in matches]
