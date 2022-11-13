@@ -38,7 +38,7 @@ def post_list(token: JWT, search_term: str = None) -> IPostBasicInfoList:
 
     ## Header
     * `Authorization` (`str`): JWT of the user
-    
+
     ## Params
     * `search_term` (`Optional[str]`): search term used for searching
 
