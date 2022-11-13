@@ -53,6 +53,9 @@ def edit(user: User, *_) -> dict:
     if user != post.author:
         raise http_errors.Forbidden("Attempting to edit another user's post")
 
+    if post.deleted:
+        raise http_errors.BadRequest("Cannot edit a deleted post")
+
     post.heading = new_heading
     post.text = new_text
     post.tags = new_tags
@@ -64,14 +67,14 @@ def edit(user: User, *_) -> dict:
     return {}
 
 
-@post_view.delete("/self_delete")
+@post_view.delete("/delete")
 @uses_token
 def delete(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.PostCreate)
     post = Post(PostId(request.args["post_id"]))
 
     if user != post.author:
-        raise http_errors.Forbidden("Attempting to delete another user's post")
+        user.permissions.assert_can(Permission.DeletePosts)
 
     post.delete()
     return {}

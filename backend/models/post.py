@@ -98,7 +98,8 @@ class Post:
         ### Returns:
         * `bool`: whether the user can view the post
         """
-        if (self.private or self.closed) and self.author != user:
+        if (self.private or self.closed or self.deleted)\
+                and self.author != user:
             return user.permissions.can(Permission.ViewPrivate)
         return True
 
@@ -158,10 +159,17 @@ class Post:
 
     def delete(self):
         """
-        Deletes this post from the database
-
+        Mark this post as deleted
         """
-        TPost.delete().where(TPost.id == self.id).run_sync()
+        self.queue = Queue.get_deleted_queue()
+        self.heading = "[Deleted] " + self.heading
+
+    @property
+    def deleted(self) -> bool:
+        """
+        Whether this post is deleted or not
+        """
+        return self.queue == Queue.get_deleted_queue()
 
     def _get(self) -> TPost:
         """
@@ -394,6 +402,7 @@ class Post:
             "me_too": self.me_too,
             "private": self.private,
             "closed": self.closed,
+            "deleted": self.deleted,
             "anonymous": self.anonymous,
             "answered": self.answered is not None,
         }
@@ -417,6 +426,7 @@ class Post:
             "private": self.private,
             "anonymous": self.anonymous,
             "closed": self.closed,
+            "deleted": self.deleted,
             "user_reacted": self.has_reacted(user),
             "answered": self.answered.id if self.answered else None,
             "queue": self.queue.name

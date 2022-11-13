@@ -59,7 +59,7 @@ class Reply:
                     TReply.author: author.id,
                     TReply.text: text,
                     TReply.parent: comment.id,
-                    # TReply.thanks: [],
+                    TReply.deleted: False,
                     TReply.timestamp: datetime.now()
                 }
             )
@@ -69,16 +69,25 @@ class Reply:
         id = cast(ReplyId, val["id"])
         return Reply(id)
 
-    @classmethod
-    def delete(cls, reply_id: ReplyId) -> ReplyId:
+    @property
+    def deleted(self) -> bool:
         """
-        Deletes a reply from the database
+        Whether the reply is deleted
+        """
+        return self._get().deleted
 
-        ### Returns:
-        * `ReplyId`: identifier of the deleted reply
+    @deleted.setter
+    def deleted(self, new_status: bool):
+        row = self._get()
+        row.deleted = new_status
+        row.save().run_sync()
+
+    def delete(self):
         """
-        TReply.delete().where(TReply.id == reply_id).run_sync()
-        return reply_id
+        Delete this reply
+        """
+        self.text = "[Deleted]."
+        self.deleted = True
 
     def _get(self) -> TReply:
         """
@@ -198,4 +207,5 @@ class Reply:
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
             "user_reacted": self.has_reacted(user),
+            "deleted": self.deleted,
         }
