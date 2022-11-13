@@ -65,13 +65,13 @@
   "51": {
     "name": "ManagePermissionGroups"
   },
-  "60": {
-    "name": "ViewAnalytics"
-  },
   "52": {
     "name": "SetExamMode"
   },
   "60": {
     "name": "EditProfile"
+  },
+  "65": {
+    "name": "ViewAnalytics"
   }
 }

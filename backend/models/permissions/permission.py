@@ -82,10 +82,6 @@ class Permission(Enum):
     modification
     """
 
-    # Analytics
-    ViewAnalytics = 60
-    """User can view forum analytics"""
-
     # Exam mode
     SetExamMode = 52
     """User can turn on or off exam mode"""
@@ -93,3 +89,7 @@ class Permission(Enum):
     # Profile management
     EditProfile = 60
     """User can edit their own profile"""
+
+    # Analytics
+    ViewAnalytics = 65
+    """User can view forum analytics"""
