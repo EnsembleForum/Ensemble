@@ -87,7 +87,6 @@ class TPost(_BaseTable):
     queue = ForeignKey(TQueue)
     private = Boolean()
     anonymous = Boolean()
-    reported = Boolean()
     answered = Integer(null=True)
     # FIXME
     # answered = ForeignKey("TComment", null=True)

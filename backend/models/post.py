@@ -71,7 +71,6 @@ class Post:
                     TPost.queue: Queue.get_main_queue().id,
                     TPost.private: private,
                     TPost.anonymous: anonymous,
-                    TPost.reported: False
                 }
             )
             .save()
@@ -171,6 +170,13 @@ class Post:
         Whether this post is deleted or not
         """
         return self.queue == Queue.get_deleted_queue()
+
+    @property
+    def reported(self) -> bool:
+        """
+        Whether this post is reported or not
+        """
+        return self.queue == Queue.get_reported_queue()
 
     def _get(self) -> TPost:
         """
@@ -404,6 +410,7 @@ class Post:
             "private": self.private,
             "closed": self.closed,
             "deleted": self.deleted,
+            "reported": self.reported,
             "anonymous": self.anonymous,
             "answered": self.answered is not None,
         }
@@ -428,6 +435,7 @@ class Post:
             "anonymous": self.anonymous,
             "closed": self.closed,
             "deleted": self.deleted,
+            "reported": self.reported,
             "user_reacted": self.has_reacted(user),
             "answered": self.answered.id if self.answered else None,
             "queue": self.queue.name

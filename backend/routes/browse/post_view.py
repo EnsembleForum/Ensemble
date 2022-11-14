@@ -132,3 +132,28 @@ def close_post(user: User, *_) -> IPostClosed:
         )
 
     return {"closed": post.closed}
+
+
+@post_view.put("/report")
+@uses_token
+def report_post(user: User, *_):
+    user.permissions.assert_can(Permission.ReportPosts)
+    data = json.loads(request.data)
+    post = Post(data["post_id"])
+    post.queue = Queue.get_reported_queue()
+
+    return {"reported": post.reported}
+
+
+@post_view.put("/unreport")
+@uses_token
+def unreport_post(user: User, *_):
+    user.permissions.assert_can(Permission.ViewReports)
+    data = json.loads(request.data)
+    post = Post(data["post_id"])
+    if post.answered is not None:
+        post.queue = Queue.get_answered_queue()
+    else:
+        post.queue = Queue.get_main_queue()
+
+    return {"reported": post.reported}
