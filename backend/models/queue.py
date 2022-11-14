@@ -8,9 +8,9 @@ from backend.util.validators import assert_valid_str_field
 from backend.util import http_errors
 from backend.types.queue import IQueueFullInfo, IQueueBasicInfo
 from typing import cast, TYPE_CHECKING
+from .user import User
 if TYPE_CHECKING:
     from .post import Post
-    from .user import User
 
 
 class Queue:
@@ -135,6 +135,18 @@ class Queue:
                     TQueueFollow.queue == self.id
                     and TQueueFollow.user == user.id
                 ).run_sync()
+
+    def get_followers(self) -> list["User"]:
+        """
+        Return the list of users following this queue
+        """
+        return [
+            User(follow_ref.user)
+            for follow_ref in TQueueFollow
+            .objects()
+            .where(TQueueFollow.queue == self.id)
+            .run_sync()
+        ]
 
     @property
     def view_only(self) -> bool:

@@ -8,6 +8,7 @@ from flask import Blueprint, request
 from backend.models.user import User
 from backend.models.queue import Queue
 from backend.models.post import Post
+from backend.models.notifications import NotificationQueueAdded
 from backend.types.identifiers import QueueId, PostId
 from backend.types.queue import IQueueFullInfo, IQueueList
 from backend.util.tokens import uses_token
@@ -93,6 +94,15 @@ def queue_post_add(user: User, *_) -> dict:
         )
 
     post.queue = queue
+
+    for u in queue.get_followers():
+        if u != user:
+            NotificationQueueAdded.create(
+                u,
+                user,
+                post,
+                queue,
+            )
 
     return {}
 
