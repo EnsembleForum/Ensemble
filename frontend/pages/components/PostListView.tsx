@@ -87,11 +87,14 @@ const PostListView = (props: Props) => {
               if (each.post_id.toString()===searchParams.get("postId")) {
                 if (each.answered) {
                   styles.backgroundColor = "#7de37d";
-                } else if (each.closed) {
+                } 
+                if (each.closed) {
                   styles.backgroundColor = "#7dacfa";
-                }  else if (each.reported) {
+                }   
+                if (each.reported) {
                   styles.backgroundColor = "#f08d8d";
-                } else if (each.deleted) {
+                } 
+                if (each.deleted) {
                   styles.backgroundColor = "#696969";
                 }
                 else {
