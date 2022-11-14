@@ -130,7 +130,7 @@ const Anonymous = styled(Private)`
   max-width: 130px;
 `
 const Queue = styled.div`
-  text-align: right;
+  text-align: center;
   font-weight: 500;
 `
 
@@ -141,7 +141,7 @@ const StyledAnonymous = styled.a`
     font-weight: 700;
   }
 `
-const Status = styled.span`
+const Row = styled.span`
   display:flex;
   padding-bottom: 10px;
 `
@@ -417,26 +417,35 @@ const TextView = (props: Props) => {
     <ActiveReportButton data-tip="Unreport post" onClick={() => unreport_post()}>❗</ActiveReportButton>
   </>)
 
-  const queue = ( <>
-    <ReactTooltip place="top" type="dark" effect="solid"/>
-    <Queue data-tip="This indicates which queue your post is in">Queue: {props.queue} </Queue>
-    </>
-  )
-
+  function formatQueue(queue : string) {
+    if (!queue.endsWith('queue')) {
+      queue += " queue"
+    }
+    return queue
+  }
+  let queue = <></>
+  if (!(props.accepted || props.deleted || props.reported || props.answered) && props.queue) {
+    queue = (<span style={{marginLeft: "10px"}}>
+      <ReactTooltip place="top" type="dark" effect="solid"/>
+      <Queue data-tip="This indicates which tutor queue your post is currently in">{formatQueue(props.queue)} </Queue>
+    </span> )
+  }
+  
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : (props.type === "comment" ? (props.accepted ? {backgroundColor: "#90EE90", padding: "10px", borderRadius: "10px"} : {}):{})}>
         <OptionsBar>
           <Col>
             {toggleEdit ? <></> : heading}
-            {author}
+            <Row>
+              {author}{queue}
+            </Row>
           </Col>
           <Col>
-            <Status>
+            <Row>
               {props.private ? <Private>PRIVATE</Private>: <></>}
               {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
-            </Status>
-            {(props.accepted || props.deleted || props.reported || props.answered) ? <></> : queue}
+            </Row>
           </Col>
         </OptionsBar>
         
