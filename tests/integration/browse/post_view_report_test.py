@@ -14,6 +14,7 @@ Tests for post_view/unreport
 """
 import pytest
 from backend.util import http_errors
+from resources import consts
 from tests.integration.conftest import (
     ISimpleUsers,
     IMakePosts,
@@ -82,20 +83,20 @@ def test_reported_queue(
     # Reporting a post sends it to the reported queue
     report_post(user_token, post_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Reported queue"
+    assert post_queue_name == consts.REPORTED_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Reported queue")["queue_id"]
+                         consts.REPORTED_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
     # Un-reporting a post sends it back to the main queue
     assert not unreport_post(mod_token, post_id)["reported"]
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Main queue"
+    assert post_queue_name == consts.MAIN_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Main queue")["queue_id"]
+                         consts.MAIN_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
@@ -117,10 +118,10 @@ def test_report_answered_post(
     # Un-reporting a post sends it back to the answered queue
     unreport_post(mod_token, post_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Answered queue"
+    assert post_queue_name == consts.ANSWERED_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Answered queue")["queue_id"]
+                         consts.ANSWERED_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 

@@ -181,3 +181,28 @@ def queue_post_add(token: JWT, queue_id: QueueId, post_id: PostId):
             "post_id": post_id,
         }
     )
+
+
+def queue_follow(token: JWT, queue_id: QueueId):
+    """
+    ## PUT `/taskboard/queue/follow`
+
+    Toggle whether you are following a queue. If so, you receive a notification
+    whenever a post is moved to a queue.
+
+    ## Permissions
+    * `TaskboardDelegate`
+
+    ## Header
+    * `Authorization` (`JWT`): JWT of the user
+
+    ## Params
+    * `queue_id` (`int`): ID of the queue to follow
+    """
+    put(
+        token,
+        f"{URL}/queue/follow",
+        {
+            "queue_id": queue_id,
+        }
+    )

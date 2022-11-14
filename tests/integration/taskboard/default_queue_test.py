@@ -8,6 +8,7 @@ Tests for the default queue
 * All new posts are added to the default queue
 """
 import pytest
+from resources import consts
 from backend.util.http_errors import BadRequest
 from tests.integration.helpers import get_queue
 from ensemble_request.taskboard import (
@@ -32,8 +33,13 @@ def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     assert len(queues) == 5
     queue_names = sorted([q['queue_name'] for q in queues])
     assert queue_names == sorted(
-        ["Main queue", "Answered queue", "Closed queue",
-         "Deleted queue", "Reported queue"]
+        [
+            consts.MAIN_QUEUE,
+            consts.ANSWERED_QUEUE,
+            consts.CLOSED_QUEUE,
+            consts.DELETED_QUEUE,
+            consts.REPORTED_QUEUE,
+        ]
     )
 
 
@@ -54,7 +60,7 @@ def test_new_post_default(basic_server_setup: IBasicServerSetup):
     Test that posts are in the main queue by default when created
     """
     token = basic_server_setup['token']
-    default_queue = get_queue(queue_list(token)['queues'], "Main queue")
+    default_queue = get_queue(queue_list(token)['queues'], consts.MAIN_QUEUE)
     posts = queue_post_list(token, default_queue['queue_id'])['posts']
     assert len(posts) == 0
     post_create(token, 'first_post', 'post_content', [])
@@ -69,11 +75,11 @@ def test_view_only_basic_info(basic_server_setup: IBasicServerSetup):
     token = basic_server_setup['token']
     queues = queue_list(token)['queues']
 
-    assert not get_queue(queues, "Main queue")["view_only"]
-    assert get_queue(queues, "Answered queue")["view_only"]
-    assert get_queue(queues, "Closed queue")["view_only"]
-    assert get_queue(queues, "Deleted queue")["view_only"]
-    assert get_queue(queues, "Reported queue")["view_only"]
+    assert not get_queue(queues, consts.MAIN_QUEUE)["view_only"]
+    assert get_queue(queues, consts.ANSWERED_QUEUE)["view_only"]
+    assert get_queue(queues, consts.CLOSED_QUEUE)["view_only"]
+    assert get_queue(queues, consts.DELETED_QUEUE)["view_only"]
+    assert get_queue(queues, consts.REPORTED_QUEUE)["view_only"]
 
 
 def test_view_only_ful_info(basic_server_setup: IBasicServerSetup):
@@ -82,11 +88,11 @@ def test_view_only_ful_info(basic_server_setup: IBasicServerSetup):
     """
     token = basic_server_setup['token']
     queues = queue_list(token)['queues']
-    main_id = get_queue(queues, "Main queue")["queue_id"]
-    answered_id = get_queue(queues, "Answered queue")["queue_id"]
-    closed_id = get_queue(queues, "Closed queue")["queue_id"]
-    deleted_id = get_queue(queues, "Deleted queue")["queue_id"]
-    reported_id = get_queue(queues, "Reported queue")["queue_id"]
+    main_id = get_queue(queues, consts.MAIN_QUEUE)["queue_id"]
+    answered_id = get_queue(queues, consts.ANSWERED_QUEUE)["queue_id"]
+    closed_id = get_queue(queues, consts.CLOSED_QUEUE)["queue_id"]
+    deleted_id = get_queue(queues, consts.DELETED_QUEUE)["queue_id"]
+    reported_id = get_queue(queues, consts.REPORTED_QUEUE)["queue_id"]
 
     assert not queue_post_list(token, main_id)["view_only"]
     assert queue_post_list(token, answered_id)["view_only"]
