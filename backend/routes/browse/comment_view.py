@@ -5,6 +5,12 @@ Comment View routes
 """
 import json
 from flask import Blueprint, request
+from backend.models.notifications import (
+    NotificationCommented,
+    NotificationAccepted,
+    NotificationUnaccepted,
+    NotificationReacted,
+)
 from backend.models.permissions import Permission
 from backend.models.reply import Reply
 from backend.models.comment import Comment
@@ -35,9 +41,25 @@ def reply(user: User, *_) -> IReplyId:
     text: str = data["text"]
     comment = Comment(data["comment_id"])
 
-    reply_id = Reply.create(user, comment, text).id
+    reply = Reply.create(user, comment, text)
 
-    return {"reply_id": reply_id}
+    if comment.author != user:
+        NotificationCommented.create(
+            comment.author,
+            user,
+            reply,
+        )
+    if (
+        comment.parent.author != user
+        and comment.author != comment.parent.author
+    ):
+        NotificationCommented.create(
+            comment.parent.author,
+            user,
+            reply,
+        )
+
+    return {"reply_id": reply.id}
 
 
 @comment_view.put("/react")
@@ -47,6 +69,12 @@ def react(user: User, *_) -> IUserReacted:
     data = json.loads(request.data)
     comment = Comment(data["comment_id"])
     comment.react(user)
+
+    if user != comment.author:
+        NotificationReacted.create(
+            comment.author,
+            comment,
+        )
 
     return {"user_reacted": comment.has_reacted(user)}
 
@@ -60,6 +88,35 @@ def accept(user: User, *_) -> ICommentAccepted:
 
     comment.accepted_toggle(user)
 
+    if comment.accepted:
+        # Give notification to comment author if they didn't accept it
+        # themselves
+        if comment.author != user:
+            NotificationAccepted.create(
+                comment.author,
+                user,
+                comment,
+            )
+        # Give notification to post author if they didn't write comment and
+        # if they didn't accept it themselves
+        if (
+            comment.parent.author != user
+            and comment.parent.author != comment.author
+        ):
+            NotificationAccepted.create(
+                comment.parent.author,
+                user,
+                comment,
+            )
+    else:
+        # Comment unaccepted
+        # Notify author unless they did it themselves
+        if comment.author != user:
+            NotificationUnaccepted.create(
+                comment.author,
+                user,
+                comment,
+            )
     return {"accepted": comment.accepted}
 
 
@@ -77,5 +134,20 @@ def edit(user: User, *_) -> dict:
         raise http_errors.Forbidden(
             "Attempting to edit another user's comment")
 
+    if comment.deleted:
+        raise http_errors.BadRequest("Cannot edit a deleted comment")
+
     comment.text = new_text
+    return {}
+
+
+@comment_view.delete("/delete")
+@uses_token
+def delete(user: User, *_) -> dict:
+    comment = Comment(CommentId(request.args["comment_id"]))
+
+    if user != comment.author:
+        user.permissions.assert_can(Permission.DeletePosts)
+
+    comment.delete()
     return {}

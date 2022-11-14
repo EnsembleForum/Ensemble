@@ -16,6 +16,7 @@ from ensemble_request.browse import (
 )
 
 
+@pytest.mark.core
 def test_get_reply_success(simple_users: ISimpleUsers, make_posts: IMakePosts):
     """
     Can we get the full details of a valid reply?

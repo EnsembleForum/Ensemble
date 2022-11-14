@@ -56,6 +56,9 @@
   "43": {
     "name": "ViewAllUsers"
   },
+  "55": {
+    "name": "ManageUserProfiles"
+  },
   "50": {
     "name": "ManageAuthConfig"
   },
@@ -64,5 +67,11 @@
   },
   "52": {
     "name": "SetExamMode"
+  },
+  "60": {
+    "name": "EditProfile"
+  },
+  "65": {
+    "name": "ViewAnalytics"
   }
 }

@@ -26,6 +26,7 @@ from tests.integration.helpers import get_queue
 from tests.integration.conftest import IAllUsers, ISimpleUsers, IMakePosts
 
 
+@pytest.mark.core
 def test_OP_mark_accepted(simple_users: ISimpleUsers):
     """
     Can the post author mark a comment as accepted?

@@ -10,10 +10,9 @@ from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import PostId, CommentId
 from backend.types.post import IPostBasicInfo, IPostFullInfo
-from typing import cast  # , TYPE_CHECKING
+from typing import cast
 from datetime import datetime
-# if TYPE_CHECKING:
-#     from backend.models.queue import Queue
+from fuzzywuzzy import fuzz  # type: ignore
 
 
 class Post:
@@ -72,7 +71,6 @@ class Post:
                     TPost.queue: Queue.get_main_queue().id,
                     TPost.private: private,
                     TPost.anonymous: anonymous,
-                    TPost.closed: False,
                 }
             )
             .save()
@@ -100,7 +98,8 @@ class Post:
         ### Returns:
         * `bool`: whether the user can view the post
         """
-        if (self.private or self.closed) and self.author != user:
+        if (self.private or self.closed or self.deleted)\
+                and self.author != user:
             return user.permissions.can(Permission.ViewPrivate)
         return True
 
@@ -114,6 +113,28 @@ class Post:
         permitted_list = [p for p in cls.all() if p.can_view(user)]
 
         return permitted_list
+
+    @classmethod
+    def search_posts(cls, user: User, search_term: str) -> list["Post"]:
+        """
+        Returns a list of posts that match the search term
+        ### Returns:
+        * `list[Post]`: list of posts
+        """
+        def sim_score(post: Post, search_term: str):
+            return (
+                fuzz.partial_ratio(post.heading, search_term) +
+                fuzz.partial_ratio(post.text, search_term)
+            ) / 2
+
+        matches = []
+        min_score = 35
+        for p in cls.can_view_list(user):
+            score = sim_score(p, search_term)
+            if score >= min_score:  # Filter out terrible matches
+                matches.append((p, score))
+        matches = sorted(matches, key=lambda x: (-x[1], -x[0].id))
+        return [p for p, _ in matches]
 
     @property
     def comments(self) -> list["Comment"]:
@@ -138,10 +159,17 @@ class Post:
 
     def delete(self):
         """
-        Deletes this post from the database
-
+        Mark this post as deleted
         """
-        TPost.delete().where(TPost.id == self.id).run_sync()
+        self.queue = Queue.get_deleted_queue()
+        self.heading = "[Deleted] " + self.heading
+
+    @property
+    def deleted(self) -> bool:
+        """
+        Whether this post is deleted or not
+        """
+        return self.queue == Queue.get_deleted_queue()
 
     def _get(self) -> TPost:
         """
@@ -347,13 +375,7 @@ class Post:
         ### Returns:
         * bool: closed
         """
-        return self._get().closed
-
-    @closed.setter
-    def closed(self, new_status: bool):
-        row = self._get()
-        row.closed = new_status
-        row.save().run_sync()
+        return self.queue == Queue.get_closed_queue()
 
     def closed_toggle(self):
         """
@@ -361,10 +383,8 @@ class Post:
         Un-close post if it was
         """
         if self.closed:
-            self.closed = False
             self.queue = Queue.get_main_queue()
         else:
-            self.closed = True
             self.queue = Queue.get_closed_queue()
 
     def basic_info(self) -> IPostBasicInfo:
@@ -382,6 +402,7 @@ class Post:
             "me_too": self.me_too,
             "private": self.private,
             "closed": self.closed,
+            "deleted": self.deleted,
             "anonymous": self.anonymous,
             "answered": self.answered is not None,
         }
@@ -405,6 +426,7 @@ class Post:
             "private": self.private,
             "anonymous": self.anonymous,
             "closed": self.closed,
+            "deleted": self.deleted,
             "user_reacted": self.has_reacted(user),
             "answered": self.answered.id if self.answered else None,
             "queue": self.queue.name

@@ -18,6 +18,7 @@ import ensemble_request
 from mock.auth import AUTH_URL
 
 
+@pytest.mark.core
 def test_clear():
     """Does the clear script work correctly?"""
     ensemble_request.debug.clear()
@@ -44,6 +45,7 @@ def test_clear():
         ensemble_request.user.profile(usr["token"], usr["user_id"])
 
 
+@pytest.mark.core
 def test_init():
     """
     Does the init script initialise the server, allowing us to login as
@@ -56,6 +58,7 @@ def test_init():
     ensemble_request.auth.login('admin1', 'admin1')
 
 
+@pytest.mark.core
 def test_routes():
     """
     Does the routes script generate routes for the API?

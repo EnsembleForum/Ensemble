@@ -40,6 +40,7 @@ def test_no_permission(
         queue_post_add(token, queue_id, post_id)
 
 
+@pytest.mark.core
 def test_success(
     simple_users: ISimpleUsers,
     make_queues: IMakeQueues,

@@ -5,9 +5,15 @@ Post View routes
 """
 import json
 from flask import Blueprint, request
+from backend.models.notifications import (
+    NotificationClosed,
+    NotificationCommented,
+    NotificationReacted,
+)
 from backend.models.permissions import Permission
 from backend.models.post import Post
 from backend.models.user import User
+from backend.models.queue import Queue
 from backend.models.comment import Comment
 from backend.types.identifiers import PostId
 from backend.types.post import IPostFullInfo, IPostClosed
@@ -28,7 +34,7 @@ def get_post(user: User, *_) -> IPostFullInfo:
     if not post.can_view(user):
         raise http_errors.Forbidden(
             "Do not have permissions to view this post"
-            )
+        )
     return post.full_info(user)
 
 
@@ -47,20 +53,28 @@ def edit(user: User, *_) -> dict:
     if user != post.author:
         raise http_errors.Forbidden("Attempting to edit another user's post")
 
+    if post.deleted:
+        raise http_errors.BadRequest("Cannot edit a deleted post")
+
     post.heading = new_heading
     post.text = new_text
     post.tags = new_tags
+
+    # Send post back to main queue if it was previously closed
+    if post.closed:
+        post.queue = Queue.get_main_queue()
+
     return {}
 
 
-@post_view.delete("/self_delete")
+@post_view.delete("/delete")
 @uses_token
 def delete(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.PostCreate)
     post = Post(PostId(request.args["post_id"]))
 
     if user != post.author:
-        raise http_errors.Forbidden("Attempting to delete another user's post")
+        user.permissions.assert_can(Permission.DeletePosts)
 
     post.delete()
     return {}
@@ -74,9 +88,16 @@ def comment(user: User, *_) -> ICommentId:
     text: str = data["text"]
     post = Post(data["post_id"])
 
-    comment_id = Comment.create(user, post, text).id
+    comment = Comment.create(user, post, text)
 
-    return {"comment_id": comment_id}
+    if post.author != user:
+        NotificationCommented.create(
+            post.author,
+            user,
+            comment,
+        )
+
+    return {"comment_id": comment.id}
 
 
 @post_view.put("/react")
@@ -86,6 +107,12 @@ def react(user: User, *_) -> IUserReacted:
     data = json.loads(request.data)
     post = Post(data["post_id"])
     post.react(user)
+
+    if user != post.author:
+        NotificationReacted.create(
+            post.author,
+            post,
+        )
 
     return {"user_reacted": post.has_reacted(user)}
 
@@ -97,5 +124,11 @@ def close_post(user: User, *_) -> IPostClosed:
     data = json.loads(request.data)
     post = Post(data["post_id"])
     post.closed_toggle()
+
+    if user != post.author and post.closed:
+        NotificationClosed.create(
+            post.author,
+            post,
+        )
 
     return {"closed": post.closed}
