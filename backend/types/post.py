@@ -1,5 +1,5 @@
 from typing import TypedDict, Optional
-from .identifiers import CommentId, PostId, UserId
+from .identifiers import CommentId, PostId, UserId, TagId
 
 
 class IReacts(TypedDict):
@@ -86,7 +86,7 @@ class IPostFullInfo(TypedDict):
     author: UserId
     heading: str
     text: str
-    tags: list[int]
+    tags: list[TagId]
     me_too: int
     user_reacted: bool
     comments: list[CommentId]

@@ -1,8 +1,9 @@
 """
 # Backend / Models / Post
 """
-from .tables import TComment, TPost, TPostReacts
+from .tables import TComment, TPost, TPostReacts, TPostTags
 from .user import User
+from .tag import Tag
 from .comment import Comment
 from .queue import Queue
 from .permissions import Permission
@@ -40,7 +41,6 @@ class Post:
         author: User,
         heading: str,
         text: str,
-        tags: list[int],
         private: bool = False,
         anonymous: bool = False,
     ) -> "Post":
@@ -67,7 +67,6 @@ class Post:
                     TPost.author: author.id,
                     TPost.heading: heading,
                     TPost.text: text,
-                    TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
                     TPost.queue: Queue.get_main_queue().id,
                     TPost.private: private,
@@ -233,25 +232,33 @@ class Post:
         row.save().run_sync()
 
     @property
-    def tags(self) -> list[int]:
+    def tags(self) -> list[Tag]:
         """
         Returns a list of tags attached to the post
 
         ### Returns:
-        * list[int]: list of tags
-
-        TODO: Need to define a new tag type, not used in sprint 1
+        * list[Tag]: list of tags
         """
-        return self._get().tags
+        return [
+            Tag(t["id"])
+            for t in
+            TPostTags.select().where(
+                TPostTags.post == self.id
+            ).run_sync()
+        ]
 
     @tags.setter
-    def tags(self, new_tags: list[int]):
-        """
-        TODO: Need to define a new tag type, not used in sprint 1
-        """
-        row = self._get()
-        row.tags = new_tags
-        row.save().run_sync()
+    def tags(self, new_tags: list[Tag]):
+        for t in self.tags:
+            TPostTags.delete().where(TPostTags.id == t.id).run_sync()
+
+        for t in new_tags:
+            TPostTags(
+                {
+                    TPostTags.post: self.id,
+                    TPostTags.tag: t.id,
+                }
+            ).save().run_sync()
 
     @property
     def me_too(self) -> int:
@@ -369,7 +376,7 @@ class Post:
             "author": self.author.id,
             "heading": self.heading,
             "post_id": PostId(self.id),
-            "tags": self.tags,
+            "tags": [t.id for t in self.tags],
             "me_too": self.me_too,
             "private": self.private,
             "closed": self.closed,
@@ -388,7 +395,7 @@ class Post:
             "post_id": self.id,
             "author": self.author.id,
             "heading": self.heading,
-            "tags": self.tags,
+            "tags": [t.id for t in self.tags],
             "me_too": self.me_too,
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
