@@ -73,6 +73,9 @@ const PostListView = (props: Props) => {
               if (each.closed) {
                 styles.backgroundColor = "#ffa3a3";
               }
+              if (each.answered) {
+                styles.backgroundColor = "#ffa3a3";
+              }
               if (each.post_id.toString()===searchParams.get("postId")) {
                 if (each.closed) {
                   styles.backgroundColor = "#f08d8d";

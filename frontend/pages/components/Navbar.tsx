@@ -72,10 +72,10 @@ const Navbar = (props: Props) => {
   let pages = [
     "browse",
   ];
-  if (getPermission(20, currentUser.permissions)) {
+  if (getPermission(20)) {
     pages.push("taskboard")
   }
-  if (getPermission(40, currentUser.permissions)) {
+  if (getPermission(40)) {
     pages.push("admin")
   }
   return (

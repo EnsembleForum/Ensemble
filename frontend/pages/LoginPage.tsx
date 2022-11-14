@@ -3,7 +3,7 @@ import { stripBasename } from "@remix-run/router";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button, } from "theme-ui";
-import { ApiFetch, setToken } from "../App";
+import { ApiFetch, setCurrentUser, setToken } from "../App";
 import { APIcall, initReturn, loginForm } from "../interfaces";
 import Navbar from "./components/Navbar";
 import { StyledButton } from "./GlobalProps";
@@ -26,7 +26,6 @@ const StyledForm = styled(Box)`
   border-radius: 2%;
 `;
 const LoginPage = (props: Props) => {
-  const { currentUser, setCurrentUser } = React.useContext(UserContext);
   const navigate = useNavigate();
   const [loginDetails, setLoginDetails] = React.useState<loginForm>({
     username: '',

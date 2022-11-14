@@ -53,16 +53,24 @@ export function ApiFetch(apiCall: APIcall) {
 }
 
 export function setToken(token: string) {
-  console.log("get: " + window.localStorage.getItem("token"))
   window.localStorage.setItem("token", token);
-  console.log("set: " + window.localStorage.getItem("token"))
 }
 export function getToken(): string | null {
   const token = window.localStorage.getItem("token");
   return token;
 }
 
-export function getPermission(id : number, userPermissions : userPermission[]) {
+export function setCurrentUser(currentUser: currentUser) {
+  window.localStorage.setItem("user", JSON.stringify(currentUser));
+  window.dispatchEvent(new Event("storage"));
+}
+export function getCurrentUser(): currentUser {
+  const ret = JSON.parse(window.localStorage.getItem("user") as string);
+  return ret;
+}
+
+export function getPermission(id : number) {
+  const userPermissions = getCurrentUser().permissions;
   for (const permission of userPermissions) {
     if (permission.permission_id === id ) {
       return permission.value;
@@ -72,8 +80,6 @@ export function getPermission(id : number, userPermissions : userPermission[]) {
 }
 
 function PassThrough() {
-  const [currentUser, setCurrentUser] = React.useState<currentUser>({user_id: 0, permissions: []});
-  const value = {currentUser, setCurrentUser};
   const [firstRun, setFirstRun] = React.useState<boolean>(true);
   const api: APIcall = {
     method: "GET",
@@ -83,29 +89,30 @@ function PassThrough() {
     const first = data as {value: boolean};
     setFirstRun(first.value);
   })
+  window.addEventListener('storage', () => {
+    setFirstRun(false);
+  });
   return (
-    <UserContext.Provider value={value}>
-      <Router>
-        <Routes>
-          {firstRun ? (
-            <><Route path="/" element={<Navigate to="/admin/init" />}></Route>
-            <Route path='/admin/init' element={<InitPage />} /></>
-          ) : (
-            <>
-            <Route path="/" element={<Navigate to="/browse" />}></Route>
-            <Route path='/admin/init' element={<Navigate to="/browse" />} />
-            <Route path='/login' element={<LoginPage />} />
-            <Route path='/register' element={<RegisterPage />} />
-            <Route path='/password_reset' element={<PasswordResetPage />} />
-            <Route path='/profile' element={<UserProfilePage userId={0} />} />
-            <Route path='/browse' element={<BrowsePage />}/>
-            {getPermission(20, currentUser.permissions) ? <Route path='/taskboard' element={<TaskboardPage />} /> : <></>}
-            {getPermission(40, currentUser.permissions)  ? <Route path='/admin' element={<AdminPage page={"register_users"} />} /> : <></>}
-            </>
-          )}
-        </Routes>
-      </Router>
-    </UserContext.Provider>
+    <Router>
+      <Routes>
+        {firstRun ? (
+          <><Route path="/" element={<Navigate to="/admin/init" />}></Route>
+          <Route path='/admin/init' element={<InitPage />} /></>
+        ) : (
+          <>
+          <Route path="/" element={<Navigate to="/browse" />}></Route>
+          <Route path='/admin/init' element={<Navigate to="/browse" />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/register' element={<RegisterPage />} />
+          <Route path='/password_reset' element={<PasswordResetPage />} />
+          <Route path='/profile' element={<UserProfilePage userId={0} />} />
+          <Route path='/browse' element={<BrowsePage />}/>
+          {getPermission(20) ? <Route path='/taskboard' element={<TaskboardPage />} /> : <></>}
+          {getPermission(40)  ? <Route path='/admin' element={<AdminPage page={"register_users"} />} /> : <></>}
+          </>
+        )}
+      </Routes>
+    </Router>
   )  
 }
 export default PassThrough;

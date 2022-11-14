@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Label, Input, Select } from "theme-ui";
-import { ApiFetch, setToken } from "../App";
+import { ApiFetch, setCurrentUser, setToken } from "../App";
 import { Prettify } from "../global_functions";
 import { APIcall, initReturn, initSchema, loginForm } from "../interfaces";
 import { StyledButton } from "./GlobalProps";
@@ -24,7 +24,6 @@ const StyledForm = styled(Box)`
 `;
 const InitPage = (props: Props) => {
   const navigate = useNavigate();
-  const { currentUser, setCurrentUser } = React.useContext(UserContext);
   const [initDetails, setInitDetails] = React.useState<initSchema>({
     address: 'http://localhost:5812/login',
     request_type: "get",
@@ -40,6 +39,7 @@ const InitPage = (props: Props) => {
   const onSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     // Here we would call api, which would reroute
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
     const api: APIcall = {
       method: "POST",
       path: "admin/init",
@@ -49,7 +49,7 @@ const InitPage = (props: Props) => {
       .then((data) => {
         const check = data as initReturn;
         setToken(check.token);
-        setCurrentUser({user_id: check.user_id, permissions: check.permissions})
+        setCurrentUser({user_id: check.user_id, permissions: check.permissions});
         navigate("/browse");
       });
   }

@@ -27,7 +27,8 @@ interface Props {
   type: "post" | "comment" | "reply",
   tags?: number[],
   answer?: boolean,
-  closed?: boolean
+  closed?: boolean,
+  accepted?: boolean,
 }
 
 const StyledText = styled.div`
@@ -133,7 +134,7 @@ const TextView = (props: Props) => {
     "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id", "browse/post_view/edit"],
     "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "comment_id", "browse/comment_view/edit"],
     "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "reply_id", "browse/reply_view/edit"],
-  }
+  } 
   let heading = <></>;
   let author = <></>;
   let closed = <></>
@@ -143,12 +144,18 @@ const TextView = (props: Props) => {
     <span data-tip="Post has been closed by a moderator. Edit post based on comment feedback">❌  </span>
     </>
   }
+  if (props.answer) {
+    closed = <>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <span data-tip="Post has been marked as answered">✅ </span>
+    </>
+  }
 
   if (props.heading) {
     heading = <h1>{closed}{props.heading}</h1>
   }
   if (props.author) {
-    if (props.anonymous && !getPermission(2, currentUser.permissions)) {
+    if (props.anonymous && !getPermission(2)) {
       author = <StyledAnonymous>Anonymous</StyledAnonymous>
     } else {
       author = <AuthorView userId={props.author}/>;
@@ -180,6 +187,20 @@ const TextView = (props: Props) => {
       method: "PUT",
       path: "browse/post_view/close",
       body: {post_id: props.id}
+    }
+    await ApiFetch(call);
+    setCommentCount(commentCount + 1);
+    if (searchParams.get('postId')?.startsWith('0')) {
+      setSearchParams({postId: props.id.toString()})
+    } else {
+      setSearchParams({postId: '0'+props.id.toString()})
+    }
+  }
+  async function answer_post() {
+    const call : APIcall = {
+      method: "PUT",
+      path: "browse/comment_view/accept",
+      body: {comment_id: props.id}
     }
     await ApiFetch(call);
     setCommentCount(commentCount + 1);
@@ -264,6 +285,16 @@ const TextView = (props: Props) => {
     <ReactTooltip place="top" type="dark" effect="solid"/>
     <ActiveCloseButton data-tip="Unclose Post" onClick={() => close_post()}>❌</ActiveCloseButton>
   </>)
+  const acceptButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <InactiveReactButton data-tip="Mark as answered" onClick={() => answer_post()}>✅</InactiveReactButton>
+  </>)
+  const activeAcceptButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <ActiveCloseButton data-tip="Unmark as answered" onClick={() => answer_post()}>✅</ActiveCloseButton>
+  </>)
+
+
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
@@ -282,8 +313,8 @@ const TextView = (props: Props) => {
         { currentUser.user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
         { toggleReply ? activeReplyButton : replyButton }
         { toggleReply ? reply : <></>}
-        { props.type === "post" && getPermission(31, currentUser.permissions) ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
-
+        { props.type === "post" && getPermission(31) ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
+        { props.type === "comment" && getPermission(13) ? (props.accepted ? activeAcceptButton : acceptButton) : <></> }
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}
     </StyledText>
