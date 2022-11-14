@@ -409,6 +409,7 @@ const TextView = (props: Props) => {
         <OptionsBar>
           {toggleEdit ? <></> : heading}
           <Status>
+          {props.accepted || props.deleted || props.reported || props.answered ? <></> : <Anonymous>Status: </Anonymous>}
           {props.private ? <Private>PRIVATE</Private>: <></>}
           {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
           </Status>
