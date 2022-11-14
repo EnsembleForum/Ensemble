@@ -1,7 +1,7 @@
 """
 # Backend / Models / Queue
 """
-from .tables import TQueue, TPost
+from .tables import TQueue, TQueueFollow, TPost
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import QueueId
 from backend.util.validators import assert_valid_str_field
@@ -10,6 +10,7 @@ from backend.types.queue import IQueueFullInfo, IQueueBasicInfo
 from typing import cast, TYPE_CHECKING
 if TYPE_CHECKING:
     from .post import Post
+    from .user import User
 
 
 class Queue:
@@ -105,6 +106,43 @@ class Queue:
         row.name = new_name
         row.save().run_sync()
 
+    def following(self, user: "User") -> bool:
+        """
+        Return whether the user is following the queue
+        """
+        t = TQueueFollow\
+            .exists()\
+            .where(
+                TQueueFollow.queue == self.id
+                and TQueueFollow.user == user.id
+            ).run_sync()
+        assert isinstance(t, bool)
+        return t
+
+    def follow(self, user: "User") -> None:
+        """
+        Make the user follow the queue
+        """
+        if not self.following(user):
+            raise http_errors.BadRequest("Already following queue")
+        TQueueFollow({
+            TQueueFollow.queue: self.id,
+            TQueueFollow.user: user.id
+        })
+
+    def unfollow(self, user: "User") -> None:
+        """
+        Make the user unfollow the queue
+        """
+        if not self.following(user):
+            raise http_errors.BadRequest("Not following queue")
+        TQueueFollow\
+            .delete()\
+            .where(
+                TQueueFollow.queue == self.id
+                and TQueueFollow.user == user.id
+            ).run_sync()
+
     @property
     def view_only(self) -> bool:
         """
@@ -136,7 +174,6 @@ class Queue:
         ### Returns:
         * `queue`: main queue
         """
-        # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Main")
 
     @classmethod
@@ -147,7 +184,6 @@ class Queue:
         ### Returns:
         * `queue`: answered queue
         """
-        # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Answered")
 
     @classmethod
@@ -158,7 +194,6 @@ class Queue:
         ### Returns:
         * `queue`: closed queue
         """
-        # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Closed")
 
     @classmethod
@@ -169,7 +204,6 @@ class Queue:
         ### Returns:
         * `queue`: deleted queue
         """
-        # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Deleted")
 
     @classmethod
@@ -180,7 +214,6 @@ class Queue:
         ### Returns:
         * `queue`: reported queue
         """
-        # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Reported")
 
     def posts(self) -> list["Post"]:
