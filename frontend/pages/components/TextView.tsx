@@ -131,6 +131,17 @@ const TextView = (props: Props) => {
   const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
   let [searchParams, setSearchParams] = useSearchParams();
+  
+  function updatePosts() {
+    const postId = searchParams.get('postId') as string;
+    if (postId.startsWith('0')) {
+      setSearchParams({postId: postId.slice(1)})
+    } else {
+      setSearchParams({postId: '0'+postId})
+    }
+  }
+
+
   const routes = {
     "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id", "browse/post_view/edit"],
     "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "comment_id", "browse/comment_view/edit"],
@@ -192,12 +203,7 @@ const TextView = (props: Props) => {
     }
     await ApiFetch(call);
     setCommentCount(commentCount + 1);
-    const postId = searchParams.get('postId') as string;
-    if (postId.startsWith('0')) {
-      setSearchParams({postId: postId.slice(1)})
-    } else {
-      setSearchParams({postId: '0'+postId})
-    }
+    updatePosts();
   }
   async function answer_post() {
     const call : APIcall = {
@@ -207,12 +213,7 @@ const TextView = (props: Props) => {
     }
     await ApiFetch(call);
     setCommentCount(commentCount + 1);
-    const postId = searchParams.get('postId') as string;
-    if (postId.startsWith('0')) {
-      setSearchParams({postId: postId.slice(1)})
-    } else {
-      setSearchParams({postId: '0'+postId})
-    }
+    updatePosts();
   }
   const reply = (
   <StyledReply>
@@ -261,6 +262,7 @@ const TextView = (props: Props) => {
           () => {
             setToggleEdit(false);
             setCommentCount(commentCount + 1);
+            updatePosts();
           }
         );
       }}>Post</StyledButton>
