@@ -11,6 +11,7 @@ interface Props { }
 const StyledLayout = styled.div`
   width: 100vw;
   max-width: 100vw;
+  min-width: 100vw;
   height: 90vh;
   display: flex;
   flex-direction: row;
@@ -20,14 +21,9 @@ const StyledLayout = styled.div`
     margin: 0;
     font-weight: 300;
   }  
-  ::-webkit-scrollbar { 
-    display: none;  /* Safari and Chrome */
-  }
 `
 const Layout = styled.span`
-  ::-webkit-scrollbar { 
-    display: none;  /* Safari and Chrome */
-  }
+  overflow: hidden;
 `
 const StyledQueues = styled.div`
   width: 60vw;
