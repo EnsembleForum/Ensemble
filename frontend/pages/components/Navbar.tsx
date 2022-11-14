@@ -3,9 +3,9 @@ import React, { JSXElementConstructor } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Box, IconButton, Text } from "theme-ui";
-import { ApiFetch, getPermission } from "../../App";
+import { ApiFetch, getCurrentUser, getPermission, setCurrentUser } from "../../App";
 import { Prettify } from "../../global_functions";
-import { APIcall } from "../../interfaces";
+import { APIcall, currentUser } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
 
@@ -54,6 +54,7 @@ export const StyledNavbar = styled.div`
 
 // Exporting our example component
 const Navbar = (props: Props) => {
+  const [showLogin, setShowLogin] = React.useState(true);
   const navigate = useNavigate();
   const logout = (
   <StyledButton onClick={(e) => {
@@ -63,10 +64,13 @@ const Navbar = (props: Props) => {
     }
     // eslint-disable-next-line no-restricted-globals
     ApiFetch(api).then(()=>{
+      const currentUser = getCurrentUser();
+      currentUser.logged_in = false;
+      setCurrentUser(currentUser);
       navigate("/login");
     });
   }}>Logout</StyledButton>);
-  const login = (<StyledButton onClick={(e) => navigate("/login")}>Login</StyledButton>);
+  const login = (<StyledButton onClick={(e) => {navigate("/login")}}>Login</StyledButton>);
 
   let pages = [
     "browse",
@@ -80,14 +84,15 @@ const Navbar = (props: Props) => {
   return (
     <StyledNavbar as="nav">
       <h1>ENSEMBLE</h1>
-      {Object.keys(pages).map((i) => {
+      {getCurrentUser().logged_in ? Object.keys(pages).map((i) => {
         const page = pages[parseInt(i)];
         return (<a key={page} style={(page === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={() => {
           navigate("/" + page)
-        }}>{Prettify(page)}</a>)
-      })}
+        }}>{Prettify(page)}</a>) 
+      }) : <></>
+      }
       <span></span>
-      {login} {logout}
+      {getCurrentUser().logged_in ? logout : login }
     </StyledNavbar>
   );
 };

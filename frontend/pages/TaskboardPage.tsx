@@ -38,7 +38,6 @@ const StyledViewOnlyQueues = styled(StyledQueues)`
 const QueueCols = styled.div`
   display: flex;
   flex-direction: row;
-  
 `
 
 const TaskboardPage = (props: Props) => {
@@ -97,9 +96,9 @@ const TaskboardPage = (props: Props) => {
             </QueueCols>
           </StyledQueues>
           <StyledViewOnlyQueues>
-            <h2>Closed and Answered</h2>
+            <h2>Answered, Closed and Deleted</h2>
             <QueueCols>
-            { queueList.filter(queue => queue.view_only).map((queue) => {
+            { queueList.filter(queue => queue.view_only).sort((a, b) => (a.queue_name > b.queue_name) ? 1 : -1).map((queue) => {
               return (
                 <QueueView queue={queue}></QueueView>
               )

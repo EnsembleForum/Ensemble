@@ -115,6 +115,7 @@ export interface userPermission {
 export interface currentUser {
   token: string,
   user_id: number,
+  logged_in: boolean,
   permissions: userPermission[]
 }
 
