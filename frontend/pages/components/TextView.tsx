@@ -101,7 +101,7 @@ const ReportButton = styled(InactiveReactButton)`
   background-color: #FF0000;
 `
 const ActiveReportButton = styled(InactiveReactButton)`
-  background-color: #2574f5;
+  background-color: black;
 `
 
 const OptionsBar = styled.div`
@@ -182,7 +182,7 @@ const TextView = (props: Props) => {
   if (props.reported && props.showUnreportButton) {
     reported = <>
     <ReactTooltip place="top" type="dark" effect="solid"/>
-    <span data-tip="Post has been reported">❗{' '}</span>
+    <span data-tip="Post has been reported">❗</span>
     </>
   }
   if (props.deleted) {
