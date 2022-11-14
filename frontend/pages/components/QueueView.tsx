@@ -45,6 +45,12 @@ const QueueItem = styled.div`
     filter: brightness(90%);
   }
 `
+const Heading = styled.span`
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+`
 
 // Exporting our example component
 const QueueView = (props: Props) => {
@@ -66,7 +72,7 @@ const QueueView = (props: Props) => {
             });
     
           }}>
-            {postShow.heading}
+            <Heading>{postShow.heading}</Heading>
             <div></div>
             <AuthorView userId={postShow.author}></AuthorView>
             <div></div>

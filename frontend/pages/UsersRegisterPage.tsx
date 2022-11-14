@@ -3,7 +3,7 @@ import { stripBasename } from "@remix-run/router";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button, } from "theme-ui";
-import { ApiFetch, getToken } from "../App";
+import { ApiFetch } from "../App";
 import { Prettify } from "../global_functions";
 import { APIcall, loginForm, usersRegister, userToAdd } from "../interfaces";
 import { StyledButton } from "./GlobalProps";

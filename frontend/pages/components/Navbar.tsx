@@ -8,8 +8,6 @@ import { Prettify } from "../../global_functions";
 import { APIcall } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
-import UserContext from "../userContext";
-import PermissionsContext from "../userContext";
 
 // Declaring and typing our props
 interface Props {
@@ -18,10 +16,10 @@ interface Props {
 
 export const StyledNavbar = styled.div`
   height: 10vh;
+  min-height: 10vh;
   width: 100vw;
   display: flex;
   border-bottom: 1px solid lightgrey;
-
   align-items: center;
   * {
     padding: 10px;
@@ -46,13 +44,17 @@ export const StyledNavbar = styled.div`
   button {
     margin-right: 10px;
   }
+  span {
+    flex-grow: 1;
+  }
   background-color: ${theme.colors?.muted};
+    overflow: hidden;
+
 `;
 
 // Exporting our example component
 const Navbar = (props: Props) => {
   const navigate = useNavigate();
-  const { currentUser, setCurrentUser } = React.useContext(UserContext);
   const logout = (
   <StyledButton onClick={(e) => {
     const api: APIcall = {
@@ -69,10 +71,10 @@ const Navbar = (props: Props) => {
   let pages = [
     "browse",
   ];
-  if (getPermission(20, currentUser.permissions)) {
+  if (getPermission(20)) {
     pages.push("taskboard")
   }
-  if (getPermission(40, currentUser.permissions)) {
+  if (getPermission(40)) {
     pages.push("admin")
   }
   return (
@@ -84,6 +86,7 @@ const Navbar = (props: Props) => {
           navigate("/" + page)
         }}>{Prettify(page)}</a>)
       })}
+      <span></span>
       {login} {logout}
     </StyledNavbar>
   );

@@ -3,13 +3,10 @@ import { stripBasename } from "@remix-run/router";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button, } from "theme-ui";
-import { ApiFetch, setToken } from "../App";
-import { APIcall, initReturn, loginForm } from "../interfaces";
+import { ApiFetch, setCurrentUser } from "../App";
+import { APIcall, currentUser, loginForm } from "../interfaces";
 import Navbar from "./components/Navbar";
 import { StyledButton } from "./GlobalProps";
-import UserContext from "./userContext";
-import PermissionsContext from "./userContext";
-
 
 interface Props { }
 
@@ -26,7 +23,6 @@ const StyledForm = styled(Box)`
   border-radius: 2%;
 `;
 const LoginPage = (props: Props) => {
-  const { currentUser, setCurrentUser } = React.useContext(UserContext);
   const navigate = useNavigate();
   const [loginDetails, setLoginDetails] = React.useState<loginForm>({
     username: '',
@@ -42,9 +38,8 @@ const LoginPage = (props: Props) => {
     }
     ApiFetch(api)
       .then((data) => {
-        const check = data as initReturn;
-        setToken(check.token);
-        setCurrentUser({user_id: check.user_id, permissions: check.permissions})
+        const check = data as currentUser;
+        setCurrentUser({token: check.token, user_id: check.user_id, permissions: check.permissions})
         navigate("/browse");
       })
   }

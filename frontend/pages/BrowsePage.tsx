@@ -20,24 +20,12 @@ const Layout = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 `
 
 
 const BrowsePage = (props: Props) => {
   let [searchParams, setSearchParams] = useSearchParams();
-  React.useEffect(()=>{
-    const api: APIcall = {
-      method: "GET",
-      path: "browse/post_list",
-    }
-    ApiFetch(api)
-      .then((data) => {
-        const test = data as { posts: postListItem[] };
-        if (test.posts.length && searchParams.get('postId') === null) {
-          setSearchParams({postId: test.posts[0].post_id.toString()})
-        }
-      })
-  }, [])
   return (
     <Layout>
       <Navbar page="browse" />

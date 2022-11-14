@@ -11,14 +11,19 @@ interface Props { }
 const StyledLayout = styled.div`
   width: 100vw;
   max-width: 100vw;
+  min-width: 100vw;
   height: 90vh;
   display: flex;
   flex-direction: row;
+  overflow: hidden;
   * > h2 {
     height: 7vh;
     margin: 0;
     font-weight: 300;
-  }
+  }  
+`
+const Layout = styled.span`
+  overflow: hidden;
 `
 const StyledQueues = styled.div`
   width: 60vw;
@@ -78,7 +83,7 @@ const TaskboardPage = (props: Props) => {
 
   if (queueList) {
     return (
-      <>
+      <Layout>
         <Navbar page="taskboard" />
         <StyledLayout>
           <StyledQueues>
@@ -103,7 +108,7 @@ const TaskboardPage = (props: Props) => {
           </StyledViewOnlyQueues>
         </StyledLayout>
         
-      </>
+      </Layout>
     );
   } else {
     return (

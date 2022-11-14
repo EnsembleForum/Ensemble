@@ -1,15 +1,13 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, Button, IconButton, Input, Text, Textarea } from "theme-ui";
 import { isPropertySignature, JsxElement } from "typescript";
-import { ApiFetch, getPermission } from "../../App";
+import { ApiFetch, getCurrentUser, getPermission } from "../../App";
 import { APIcall, postView } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
 import { StyledButton } from "../GlobalProps";
-import UserContext from "../userContext";
-import PermissionsContext from "../userContext";
 import AuthorView from "./AuthorView";
 import ReactTooltip from 'react-tooltip';
 
@@ -26,7 +24,11 @@ interface Props {
   userReacted: boolean,
   type: "post" | "comment" | "reply",
   tags?: number[],
-  answer?: boolean,
+  answered?: number | null,
+  closed?: boolean,
+  accepted?: boolean,
+  showCloseButton?: boolean,
+  showAcceptButton?: boolean,
 }
 
 const StyledText = styled.div`
@@ -75,11 +77,16 @@ const InactiveReactButton = styled(StyledButton)`
   margin-right: 5px;
   background-color: darkgrey;
   color: white;
-
 `
 const ActiveReactButton = styled(InactiveReactButton)`
   background-color: ${theme.colors?.primary};
   font-weight: 900;
+`
+const ActiveCloseButton = styled(InactiveReactButton)`
+  background-color: black;
+`
+const ActiveAcceptButton = styled(InactiveReactButton)`
+  background-color: #7de37d;
 `
 
 const OptionsBar = styled.div`
@@ -123,20 +130,45 @@ const TextView = (props: Props) => {
   const [editText, setEditText] = React.useState<string>(props.text as string);
   const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
-  const { currentUser, setCurrentUser } = React.useContext(UserContext);
+  let [searchParams, setSearchParams] = useSearchParams();
+  
+  function updatePosts() {
+    const postId = searchParams.get('postId') as string;
+    if (postId.startsWith('0')) {
+      setSearchParams({postId: postId.slice(1)})
+    } else {
+      setSearchParams({postId: '0'+postId})
+    }
+  }
+
 
   const routes = {
     "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id", "browse/post_view/edit"],
     "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "comment_id", "browse/comment_view/edit"],
     "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "reply_id", "browse/reply_view/edit"],
-  }
+  } 
   let heading = <></>;
   let author = <></>;
+  let closed = <></>;
+  let answered = <></>;
+  if (props.closed) {
+    closed = <>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <span data-tip="Post has been closed by a moderator. Edit post based on comment feedback">❌  </span>
+    </>
+  }
+  if (props.answered) {
+    answered = <>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <span data-tip="Post has been marked as answered">✅ </span>
+    </>
+  }
+
   if (props.heading) {
-    heading = <h1>{props.heading}</h1>
+    heading = <h1>{closed}{answered}{props.heading}</h1>
   }
   if (props.author) {
-    if (props.anonymous && !getPermission(2, currentUser.permissions)) {
+    if (props.anonymous && !getPermission(2)) {
       author = <StyledAnonymous>Anonymous</StyledAnonymous>
     } else {
       author = <AuthorView userId={props.author}/>;
@@ -163,7 +195,26 @@ const TextView = (props: Props) => {
       }
     );
   }
-  console.log("user:", currentUser);
+  async function close_post() {
+    const call : APIcall = {
+      method: "PUT",
+      path: "browse/post_view/close",
+      body: {post_id: props.id}
+    }
+    await ApiFetch(call);
+    setCommentCount(commentCount + 1);
+    updatePosts();
+  }
+  async function answer_post() {
+    const call : APIcall = {
+      method: "PUT",
+      path: "browse/comment_view/accept",
+      body: {comment_id: props.id}
+    }
+    await ApiFetch(call);
+    setCommentCount(commentCount + 1);
+    updatePosts();
+  }
   const reply = (
   <StyledReply>
     <Input placeholder="Reply" value={inputText} onChange={(e)=>setInputText(e.target.value)} ></Input>
@@ -211,6 +262,7 @@ const TextView = (props: Props) => {
           () => {
             setToggleEdit(false);
             setCommentCount(commentCount + 1);
+            updatePosts();
           }
         );
       }}>Post</StyledButton>
@@ -231,9 +283,26 @@ const TextView = (props: Props) => {
     <ActiveReactButton data-tip="Unreact" onClick={() => react()}>{routes[props.type][1]} <>{
             props.reacts }</></ActiveReactButton>
   </>);
+  const closeButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <InactiveReactButton data-tip="Close Post" onClick={() => close_post()}>❌</InactiveReactButton>
+  </>)
+  const activeCloseButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <ActiveCloseButton data-tip="Unclose Post" onClick={() => close_post()}>❌</ActiveCloseButton>
+  </>)
+  const acceptButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <InactiveReactButton data-tip="Mark as answered" onClick={() => answer_post()}>✅</InactiveReactButton>
+  </>)
+  const activeAcceptButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <ActiveAcceptButton data-tip="Unmark as answered" onClick={() => answer_post()}>✅</ActiveAcceptButton>
+  </>)
+
   return (
     <StyledText>
-      <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : {}}>
+      <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : (props.type === "comment" ? (props.accepted ? {backgroundColor: "#90EE90", padding: "10px", borderRadius: "10px"} : {}):{})}>
         <OptionsBar>
           {heading}
           <Status>
@@ -244,10 +313,12 @@ const TextView = (props: Props) => {
         {author}
         {toggleEdit ? <></> : tags}
         <br/>
-        {toggleEdit ? editBox : <p>{props.text}</p>}
+        { toggleEdit ? editBox : <p>{props.text}</p> }
         { props.userReacted ? activeReactButton : reactButton}
-        { currentUser.user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
+        { getCurrentUser().user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
         { toggleReply ? activeReplyButton : replyButton }
+        { props.type === "post" && props.showCloseButton? ( props.closed ? activeCloseButton : closeButton)  : <></> }
+        { props.type === "comment" && props.showAcceptButton ? (props.accepted ? activeAcceptButton : acceptButton) : <></> }
         { toggleReply ? reply : <></>}
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}
