@@ -76,7 +76,8 @@ export interface postView {
   private:boolean, 
   user_reacted:boolean,
   answered?: number,
-  closed: boolean
+  closed: boolean,
+  deleted: boolean,
 }
 
 export interface commentView {

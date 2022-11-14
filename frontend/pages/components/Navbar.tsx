@@ -9,7 +9,7 @@ import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props {
-  page: "taskboard" | "browse" | "admin" | "login";
+  page: "taskboard" | "browse" | "admin" | "login" | "profile";
 }
 
 export const StyledNavbar = styled.div`

@@ -27,6 +27,7 @@ interface Props {
   answered?: number | null,
   closed?: boolean,
   accepted?: boolean,
+  deleted?: boolean,
   showCloseButton?: boolean,
   showAcceptButton?: boolean,
   showDeleteButton?: boolean
@@ -325,23 +326,27 @@ const TextView = (props: Props) => {
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : (props.type === "comment" ? (props.accepted ? {backgroundColor: "#90EE90", padding: "10px", borderRadius: "10px"} : {}):{})}>
         <OptionsBar>
-          {heading}
+          {toggleEdit ? <></> : heading}
           <Status>
           {props.private ? <Private>PRIVATE</Private>: <></>}
           {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
           </Status>
         </OptionsBar>
         {author}
-        {toggleEdit ? <></> : tags}
-        <br/>
-        { toggleEdit ? editBox : <p>{props.text}</p> }
-        { props.userReacted ? activeReactButton : reactButton}
-        { getCurrentUser().user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
-        { toggleReply ? activeReplyButton : replyButton }
-        { props.type === "post" && props.showCloseButton ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
-        { props.type === "comment" && props.showAcceptButton ? (props.accepted ? activeAcceptButton : acceptButton) : <></> }
-        { props.type === "post" && props.showDeleteButton ? deleteButton  : <></> }
-        { toggleReply ? reply : <></>}
+        {props.deleted ? <p>{props.text}</p> : <></>}
+        <span style={props.deleted ? {display: "none"} : {}}>
+          {toggleEdit ? <></> : tags}
+          <br/>
+          { toggleEdit ? editBox : <p>{props.text}</p> }
+          { props.userReacted ? activeReactButton : reactButton}
+          { getCurrentUser().user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
+          { toggleReply ? activeReplyButton : replyButton }
+          { props.type === "post" && props.showCloseButton ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
+          { props.type === "comment" && props.showAcceptButton ? (props.accepted ? activeAcceptButton : acceptButton) : <></> }
+          { props.type === "post" && props.showDeleteButton ? deleteButton  : <></> }
+          { toggleReply ? reply : <></>}
+        </span>
+      
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}
     </StyledText>
