@@ -62,7 +62,10 @@ def edit(user: User, *_) -> dict:
 
     # Send post back to main queue if it was previously closed
     if post.closed:
-        post.queue = Queue.get_main_queue()
+        if post.answered:
+            post.queue = Queue.get_answered_queue()
+        else:
+            post.queue = Queue.get_main_queue()
 
     return {}
 

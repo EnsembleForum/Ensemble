@@ -389,7 +389,10 @@ class Post:
         Un-close post if it was
         """
         if self.closed:
-            self.queue = Queue.get_main_queue()
+            if self.answered:
+                self.queue = Queue.get_answered_queue()
+            else:
+                self.queue = Queue.get_main_queue()
         else:
             self.queue = Queue.get_closed_queue()
 

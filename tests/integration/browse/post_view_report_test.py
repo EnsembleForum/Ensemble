@@ -111,7 +111,7 @@ def test_report_answered_post(
 
     post_id = post_create(mod_token, "head", "text", [])["post_id"]
     comment_id = add_comment(user_token, post_id, "first")["comment_id"]
-    accept_comment(user_token, comment_id)
+    accept_comment(mod_token, comment_id)
     report_post(user_token, post_id)
 
     # Un-reporting a post sends it back to the main queue
