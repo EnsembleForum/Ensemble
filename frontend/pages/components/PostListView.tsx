@@ -85,6 +85,9 @@ const PostListView = (props: Props) => {
                 styles.backgroundColor = "#8c8c8c";
               }
               if (each.post_id.toString()===searchParams.get("postId")) {
+                if (!(each.answered || each.reported || each.closed || each.deleted)) {
+                  styles.backgroundColor = theme.colors?.highlight;
+                }
                 if (each.answered) {
                   styles.backgroundColor = "#7de37d";
                 } 
@@ -96,9 +99,6 @@ const PostListView = (props: Props) => {
                 } 
                 if (each.deleted) {
                   styles.backgroundColor = "#696969";
-                }
-                else {
-                  styles.backgroundColor = theme.colors?.highlight;
                 }
               }
               return (
