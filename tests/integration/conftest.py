@@ -5,15 +5,14 @@ Configuration for tests
 """
 import pytest
 from typing import TypedDict
-from backend.types.identifiers import UserId, PostId, QueueId
+from backend.types.identifiers import PostId, QueueId
 from backend.types.permissions import IPermissionGroup
-from backend.types.auth import JWT, IAuthInfo
+from backend.types.auth import IAuthInfo
 from mock.auth import AUTH_URL
-from ensemble_request.debug import clear, echo
+from ensemble_request.debug import clear, echo, unsafe_init, unsafe_login
 from ensemble_request.browse import post_create
-from ensemble_request.admin import init, users
+from ensemble_request.admin import users
 from ensemble_request.admin.permissions import groups_list
-from ensemble_request.auth import login
 from ensemble_request.taskboard import queue_create
 
 
@@ -24,15 +23,7 @@ def before_each(request: pytest.FixtureRequest):
     echo(f"{request.module.__name__}.{request.function.__name__}")
 
 
-class IBasicServerSetup(TypedDict):
-    """
-    Set up the server
-
-    * user_id
-    * token
-    """
-    user_id: UserId
-    token: JWT
+IBasicServerSetup = IAuthInfo
 
 
 @pytest.fixture
@@ -43,7 +34,7 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
     username = "admin1"
     password = "admin1"
     email = "admin@example.com"
-    result = init(
+    return unsafe_init(
         address=f"{AUTH_URL}/login",
         request_type="get",
         username_param="username",
@@ -55,10 +46,6 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
         name_first="Dee",
         name_last="Snuts",
     )
-    return {
-        "user_id": result["user_id"],
-        "token": result["token"],
-    }
 
 
 class IPermissionGroups(TypedDict):
@@ -127,6 +114,7 @@ def simple_users(
             "email": "mod1@example.com",
             "name_first": "Mod",
             "name_last": "Erator",
+            "pronoun": "he/him"
         }],
         permission_groups["mod"]["group_id"],
     )
@@ -138,17 +126,15 @@ def simple_users(
             "email": "user1@example.com",
             "name_first": "User",
             "name_last": "Ator",
+            "pronoun": "he/him"
         }],
         permission_groups["user"]["group_id"],
     )
     # Log everyone in and return their info
     return {
-        "admin": {
-            "token": basic_server_setup["token"],
-            "user_id": basic_server_setup["user_id"],
-        },
-        "mod": login("mod1", "mod1"),
-        "user": login("user1", "user1"),
+        "admin": basic_server_setup,
+        "mod": unsafe_login("mod1"),
+        "user": unsafe_login("user1"),
     }
 
 
@@ -188,12 +174,14 @@ def all_users(
                 "email": "admin2@example.com",
                 "name_first": "Admin",
                 "name_last": "Istrator",
+                "pronoun": "he/him",
             },
             {
                 "username": "admin3",
                 "email": "admin3@example.com",
                 "name_first": "Admin3",
                 "name_last": "Istrator",
+                "pronoun": "he/him",
             },
         ],
         permission_groups["admin"]["group_id"],
@@ -207,12 +195,14 @@ def all_users(
                 "email": "mod2@example.com",
                 "name_first": "Mod2",
                 "name_last": "Erator",
+                "pronoun": "he/him",
             },
             {
                 "username": "mod3",
                 "email": "mod3@example.com",
                 "name_first": "Mod3",
                 "name_last": "Erator",
+                "pronoun": "he/him",
             },
         ],
         permission_groups["mod"]["group_id"],
@@ -226,12 +216,14 @@ def all_users(
                 "email": "user2@example.com",
                 "name_first": "User2",
                 "name_last": "Ator",
+                "pronoun": "he/him",
             },
             {
                 "username": "user3",
                 "email": "user3@example.com",
                 "name_first": "User3",
                 "name_last": "Ator",
+                "pronoun": "he/him",
             },
         ],
         permission_groups["user"]["group_id"],
@@ -240,18 +232,18 @@ def all_users(
     return {
         "admins": [
             simple_users["admin"],
-            login("admin2", "admin2"),
-            login("admin3", "admin3"),
+            unsafe_login("admin2"),
+            unsafe_login("admin3"),
         ],
         "mods": [
             simple_users["mod"],
-            login("mod2", "mod2"),
-            login("mod3", "mod3"),
+            unsafe_login("mod2"),
+            unsafe_login("mod3"),
         ],
         "users": [
             simple_users["user"],
-            login("user2", "user2"),
-            login("user3", "user3"),
+            unsafe_login("user2"),
+            unsafe_login("user3"),
         ],
     }
 

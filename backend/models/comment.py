@@ -5,9 +5,12 @@ from backend.types.comment import ICommentFullInfo
 from .tables import TReply, TComment, TCommentReacts
 from .user import User
 from .reply import Reply
+from backend.models.permissions import Permission
+from backend.models.queue import Queue
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import CommentId
+from backend.util import http_errors
 from typing import cast, TYPE_CHECKING
 from datetime import datetime
 if TYPE_CHECKING:
@@ -60,8 +63,8 @@ class Comment:
                     TComment.author: author.id,
                     TComment.text: text,
                     TComment.parent: post.id,
-                    # TComment.thanks: [],
-                    TComment.timestamp: datetime.now()
+                    TComment.timestamp: datetime.now(),
+                    TComment.deleted: False,
                 }
             )
             .save()
@@ -86,16 +89,25 @@ class Comment:
             .run_sync()
         ]
 
-    @classmethod
-    def delete(cls, comment_id: CommentId) -> CommentId:
+    @property
+    def deleted(self) -> bool:
         """
-        Deletes a comment from the database as well as all of its replies
+        Whether the comment is deleted
+        """
+        return self._get().deleted
 
-        ### Returns:
-        * `CommentId`: identifier of the deleted comment
+    @deleted.setter
+    def deleted(self, new_status: bool):
+        row = self._get()
+        row.deleted = new_status
+        row.save().run_sync()
+
+    def delete(self):
         """
-        TComment.delete().where(TComment.id == comment_id).run_sync()
-        return comment_id
+        Delete this comment
+        """
+        self.text = "[Deleted]."
+        self.deleted = True
 
     def _get(self) -> TComment:
         """
@@ -159,6 +171,37 @@ class Comment:
             .where(TCommentReacts.comment == self.id).run_sync()
         )
 
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, Comment):
+            return self.id == __o.id
+        else:
+            return False
+
+    @property
+    def accepted(self) -> bool:
+        """
+        Returns whether the comment has been marked as accepted
+        """
+        return self.parent.answered == self
+
+    def accepted_toggle(self, user: User):
+        """
+        Mark comment as accepted if it was not
+        Mark comment as unaccepted if it was accepted
+        """
+        if self.parent.author != user and\
+                not user.permissions.can(Permission.CommentAccept):
+            raise http_errors.Forbidden(
+                "Do not have permissions mark as accepted"
+            )
+
+        if self.accepted:
+            self.parent.answered = None
+            self.parent.queue = Queue.get_main_queue()
+        else:
+            self.parent.answered = self
+            self.parent.queue = Queue.get_answered_queue()
+
     def has_reacted(self, user: User) -> bool:
         """
         Returns whether the user has reacted to this comment
@@ -216,4 +259,6 @@ class Comment:
             "replies": [r.id for r in self.replies],
             "timestamp": int(self.timestamp.timestamp()),
             "user_reacted": self.has_reacted(user),
+            "accepted": self.accepted,
+            "deleted": self.deleted,
         }

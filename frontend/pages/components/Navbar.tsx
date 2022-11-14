@@ -1,9 +1,7 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Box, IconButton, Text } from "theme-ui";
-import { ApiFetch } from "../../App";
+import { ApiFetch, getCurrentUser, getPermission, setCurrentUser } from "../../App";
 import { Prettify } from "../../global_functions";
 import { APIcall } from "../../interfaces";
 import { theme } from "../../theme";
@@ -11,15 +9,15 @@ import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props {
-  page: "taskboard" | "browse" | "admin" | "login";
+  page: "taskboard" | "browse" | "admin" | "login" | "profile";
 }
 
 export const StyledNavbar = styled.div`
   height: 10vh;
+  min-height: 10vh;
   width: 100vw;
   display: flex;
   border-bottom: 1px solid lightgrey;
-
   align-items: center;
   * {
     padding: 10px;
@@ -44,7 +42,12 @@ export const StyledNavbar = styled.div`
   button {
     margin-right: 10px;
   }
+  span {
+    flex-grow: 1;
+  }
   background-color: ${theme.colors?.muted};
+    overflow: hidden;
+
 `;
 
 // Exporting our example component
@@ -58,26 +61,37 @@ const Navbar = (props: Props) => {
     }
     // eslint-disable-next-line no-restricted-globals
     ApiFetch(api).then(()=>{
+      const currentUser = getCurrentUser();
+      currentUser.logged_in = false;
+      setCurrentUser(currentUser);
       navigate("/login");
     });
   }}>Logout</StyledButton>);
-  const login = (<StyledButton onClick={(e) => navigate("/login")}>Login</StyledButton>);
+  const login = (<StyledButton onClick={(e) => {navigate("/login")}}>Login</StyledButton>);
 
   let pages = [
     "browse",
-    "taskboard",
-    "admin",
   ];
+  if (getPermission(20)) {
+    pages.push("taskboard")
+  }
+  if (getPermission(40)) {
+    pages.push("admin")
+  }
   return (
     <StyledNavbar as="nav">
       <h1>ENSEMBLE</h1>
-      {Object.keys(pages).map((i) => {
+      {getCurrentUser().logged_in ? Object.keys(pages).map((i) => {
         const page = pages[parseInt(i)];
-        return (<a key={page} style={(page === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={(e) => {
-          navigate("/" + page)
-        }}>{Prettify(page)}</a>)
-      })}
-      {login} {logout}
+        return (
+          // eslint-disable-next-line jsx-a11y/anchor-is-valid
+          <a key={page} style={(page === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={() => {
+            navigate("/" + page)
+          }}>{Prettify(page)}</a>) 
+      }) : <></>
+      }
+      <span></span>
+      {getCurrentUser().logged_in ? logout : login }
     </StyledNavbar>
   );
 };

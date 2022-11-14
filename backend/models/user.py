@@ -8,7 +8,7 @@ from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_email_valid, assert_valid_str_field
 from backend.types.identifiers import UserId
 from backend.types.user import IUserProfile, IUserBasicInfo
-from typing import cast
+from typing import Optional, cast
 
 
 class User:
@@ -17,7 +17,7 @@ class User:
     """
     def __init__(self, id: UserId):
         """
-        Create a user object shadowing an existing in the database
+        Create a user object shadowing an existing user in the database
 
         ### Args:
         * `id` (`int`): user id
@@ -47,13 +47,15 @@ class User:
 
         * `name_last` (`str`): last name
 
+        * `pronoun` (`str`): pronoun
+
         * `email` (`str`): email address
 
         * `permissions_base` (`PermissionPreset`): permissions to derive this
           user's permissions from.
 
         ### Returns:
-        * `PermissionPreset`: the preset object
+        * `User`: the user object
         """
         assert_valid_str_field(username, "Username")
         if email is not None:
@@ -64,6 +66,7 @@ class User:
                 TUser.name_first: name_first,
                 TUser.name_last: name_last,
                 TUser.email: email,
+                TUser.pronouns: None,
                 TUser.permissions: PermissionUser.create(permissions_base).id,
             }
         ).save().run_sync()[0]
@@ -190,6 +193,21 @@ class User:
         row.save().run_sync()
 
     @property
+    def pronouns(self) -> Optional[str]:
+        """
+        Preferred pronouns of the user
+        """
+        return self._get().pronouns
+
+    @pronouns.setter
+    def pronouns(self, new_pronouns: Optional[str]):
+        if new_pronouns is not None:
+            assert_valid_str_field(new_pronouns, "pronouns")
+        row = self._get()
+        row.pronouns = new_pronouns
+        row.save().run_sync()
+
+    @property
     def permissions(self) -> PermissionUser:
         return PermissionUser(self._get().permissions)
 
@@ -200,12 +218,11 @@ class User:
         ### Returns:
         * `IUserBasicInfo`: basic info
         """
-        row = self._get()
         return {
-            "name_first": row.name_first,
-            "name_last": row.name_last,
-            "username": row.username,
-            "user_id": UserId(row.id),
+            "name_first": self.name_first,
+            "name_last": self.name_last,
+            "username": self.username,
+            "user_id": self.id,
         }
 
     def profile(self) -> IUserProfile:
@@ -215,11 +232,11 @@ class User:
         ### Returns:
         * `IUserProfile`: full profile info
         """
-        row = self._get()
         return {
-            "name_first": row.name_first,
-            "name_last": row.name_last,
-            "username": row.username,
-            "user_id": UserId(row.id),
-            "email": row.email,
+            "name_first": self.name_first,
+            "name_last": self.name_last,
+            "username": self.username,
+            "pronouns": self.pronouns,
+            "user_id": self.id,
+            "email": self.email,
         }

@@ -3,11 +3,10 @@ import { stripBasename } from "@remix-run/router";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button, } from "theme-ui";
-import { ApiFetch, setToken } from "../App";
-import { APIcall, loginForm } from "../interfaces";
+import { ApiFetch, setCurrentUser } from "../App";
+import { APIcall, currentUser, loginForm } from "../interfaces";
 import Navbar from "./components/Navbar";
 import { StyledButton } from "./GlobalProps";
-
 
 interface Props { }
 
@@ -39,15 +38,14 @@ const LoginPage = (props: Props) => {
     }
     ApiFetch(api)
       .then((data) => {
-        const check = data as { token: string };
-        setToken(check.token)
+        const check = data as currentUser;
+        setCurrentUser({token: check.token, user_id: check.user_id, permissions: check.permissions, logged_in: true})
         navigate("/browse");
       })
   }
   return (
     <>
     <Navbar page={"login"}/>
-
     <LoginLayout>
       <StyledForm as="form" onSubmit={onSubmit}>
         <Label htmlFor="username">Username</Label>

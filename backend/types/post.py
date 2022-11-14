@@ -1,16 +1,5 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 from .identifiers import CommentId, PostId, UserId
-
-
-class IReacts(TypedDict):
-    """
-    Aggregate of reactions to a post/comment/reply
-
-    * `thanks`: `int`
-    * `me_too`: `int`
-    """
-    thanks: int
-    me_too: int
 
 
 class IPostBasicInfo(TypedDict):
@@ -24,6 +13,9 @@ class IPostBasicInfo(TypedDict):
     * `me_too`: `int`
     * `private`: `bool`
     * `anonymous`: `bool`
+    * `closed`: `bool`
+    * `deleted`: `bool`
+    * `answered`: `bool`
     """
     post_id: PostId
     author: UserId
@@ -32,6 +24,9 @@ class IPostBasicInfo(TypedDict):
     me_too: int
     private: bool
     anonymous: bool
+    answered: bool
+    closed: bool
+    deleted: bool
 
 
 class IPostBasicInfoList(TypedDict):
@@ -46,6 +41,7 @@ class IPostBasicInfoList(TypedDict):
         * `me_too`: `list[UserId]`
         * `private`: `bool`
         * `anonymous`: `bool`
+        * `answered`: `bool`
     """
     posts: list[IPostBasicInfo]
 
@@ -72,7 +68,11 @@ class IPostFullInfo(TypedDict):
     * `timestamp`: `int`
     * `private`: `bool`
     * `anonymous`: `bool`
+    * `closed`: `bool`
+    * `deleted`: `bool`
     * `user_reacted`: `bool`
+    * `answered`: `Optional[CommentId]`
+    * `queue`: `str`
     """
     post_id: PostId
     author: UserId
@@ -85,3 +85,16 @@ class IPostFullInfo(TypedDict):
     timestamp: int
     private: bool
     anonymous: bool
+    closed: bool
+    deleted: bool
+    answered: Optional[CommentId]
+    queue: str
+
+
+class IPostClosed(TypedDict):
+    """
+    Whether a post is closed
+
+    * `closed`: `bool`
+    """
+    closed: bool

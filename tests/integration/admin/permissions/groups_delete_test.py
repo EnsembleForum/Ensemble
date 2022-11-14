@@ -96,6 +96,7 @@ def test_no_permission(
         )
 
 
+@pytest.mark.core
 def test_permissions_removed(
     basic_server_setup: IBasicServerSetup,
     permission_groups: IPermissionGroups,

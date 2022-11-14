@@ -23,6 +23,7 @@ def test_empty_post_list(simple_users: ISimpleUsers):
     assert len(posts["posts"]) == 0
 
 
+@pytest.mark.core
 def test_create_one_post(simple_users: ISimpleUsers):
     """
     Can we create a post and get it successfully?

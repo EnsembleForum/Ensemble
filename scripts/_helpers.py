@@ -32,6 +32,18 @@ def output_folder():
         pass
 
 
+class Timer:
+    def __init__(self) -> None:
+        self.__time_started = 0.
+        self.time: float | None = None
+
+    def __enter__(self) -> None:
+        self.__time_started = time.perf_counter()
+
+    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
+        self.time = time.perf_counter() - self.__time_started
+
+
 class Task:
     def __init__(
         self,
@@ -156,10 +168,16 @@ def mock_auth():
     return login
 
 
-def pytest():
+def pytest(core = False):
+    if core:
+        marks = ['-m', 'core']
+        app = "Pytest (core)"
+    else:
+        marks = []
+        app = "Pytest"
     t = Task(
         'pytest',
-        [sys.executable, '-u', '-m', 'pytest'],
+        [sys.executable, '-u', '-m', 'pytest'] + marks,
     )
-    print("🔨 Pytest started")
+    print(f"🔨 {app} started")
     return t
