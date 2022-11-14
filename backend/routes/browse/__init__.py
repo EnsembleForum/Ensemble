@@ -7,6 +7,7 @@ import json
 from flask import Blueprint, request
 from backend.models.post import Post
 from backend.models.user import User
+from backend.models.tag import Tag
 from backend.models.exam_mode import ExamMode
 from backend.models.permissions import Permission
 from backend.types.post import IPostBasicInfoList, IPostId
@@ -39,7 +40,7 @@ def create(user: User, *_) -> IPostId:
     data = json.loads(request.data)
     heading: str = data["heading"]
     text: str = data["text"]
-    tags: list[int] = data["tags"]
+    tags: list[Tag] = data["tags"]
     private: bool = data["private"]
     anonymous: bool = data["anonymous"]
 
@@ -47,7 +48,7 @@ def create(user: User, *_) -> IPostId:
         user.permissions.assert_can(Permission.PostOverrideExam)
 
     post_id = Post.create(user, heading, text, tags, private, anonymous).id
-
+    # post_id = Post.create(user, heading, text, private, anonymous).id
     return {"post_id": post_id}
 
 

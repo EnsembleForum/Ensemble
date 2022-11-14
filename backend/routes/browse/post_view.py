@@ -8,6 +8,7 @@ from flask import Blueprint, request
 from backend.models.permissions import Permission
 from backend.models.post import Post
 from backend.models.user import User
+from backend.models.tag import Tag
 from backend.models.queue import Queue
 from backend.models.comment import Comment
 from backend.types.identifiers import PostId
@@ -41,7 +42,7 @@ def edit(user: User, *_) -> dict:
     post_id: PostId = data["post_id"]
     new_heading: str = data["heading"]
     new_text: str = data["text"]
-    new_tags: list[int] = data["tags"]
+    new_tags: list[Tag] = data["tags"]
 
     post = Post(post_id)
 

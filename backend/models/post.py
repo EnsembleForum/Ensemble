@@ -41,6 +41,7 @@ class Post:
         author: User,
         heading: str,
         text: str,
+        tags: list[Tag],
         private: bool = False,
         anonymous: bool = False,
     ) -> "Post":

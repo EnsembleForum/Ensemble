@@ -82,7 +82,6 @@ class TPost(_BaseTable):
     author = ForeignKey(TUser)
     heading = Text()
     text = Text()
-    # tags = Array(Integer())
     timestamp = Timestamp()
     queue = ForeignKey(TQueue)
     private = Boolean()
