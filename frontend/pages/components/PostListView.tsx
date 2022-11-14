@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { ApiFetch } from "../../App";
+import { ApiFetch, getPermission } from "../../App";
 import { APIcall, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
 import AuthorView from "./AuthorView";
@@ -72,19 +72,33 @@ const PostListView = (props: Props) => {
         {
           posts.map((each) => {
               const styles : any = {}
-              if (each.closed) {
-                styles.backgroundColor = "#ffa3a3";
-              }
               if (each.answered) {
                 styles.backgroundColor = "#90EE90";
               }
+              if (each.closed) {
+                styles.backgroundColor = "#a2c4fc";
+              }
+              if (each.reported && getPermission(33)) {
+                styles.backgroundColor = "#ffa3a3";
+              }
+              if (each.deleted) {
+                styles.backgroundColor = "#8c8c8c";
+              }
               if (each.post_id.toString()===searchParams.get("postId")) {
-                if (each.closed) {
-                  styles.backgroundColor = "#f08d8d";
-                } else if (each.answered) {
-                  styles.backgroundColor = "#7de37d";
-                } else {
+                if (!(each.answered || each.reported || each.closed || each.deleted)) {
                   styles.backgroundColor = theme.colors?.highlight;
+                }
+                if (each.answered) {
+                  styles.backgroundColor = "#7de37d";
+                } 
+                if (each.closed) {
+                  styles.backgroundColor = "#7dacfa";
+                }   
+                if (each.reported) {
+                  styles.backgroundColor = "#f08d8d";
+                } 
+                if (each.deleted) {
+                  styles.backgroundColor = "#696969";
                 }
               }
               return (
