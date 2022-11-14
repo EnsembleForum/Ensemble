@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { ReactElement } from 'react'
 import { Checkbox, Flex, Label } from 'theme-ui'
 import { permissionHolder, permissionType } from "../../interfaces"
@@ -8,6 +9,10 @@ type Props = {
   onRemoveUserPermission: (permissionId: number) => void
 }
 
+const StyledCheckbox = styled(Checkbox) `
+  margin-bottom: 0.5rem;
+  font-size: 14;
+`
 const UserPermissionsView = ({ permissionHolder, permissionTypes, onAddUserPermission, onRemoveUserPermission }: Props) => {
   const userPermissions = permissionHolder.permissions.reduce(
     (previousPermissionIds, permission) => {
@@ -22,14 +27,14 @@ const UserPermissionsView = ({ permissionHolder, permissionTypes, onAddUserPermi
       {permissionTypes.map((permissionType: permissionType): ReactElement => {
         return <Flex key={permissionType.permission_id}>
           <Label>
-            <Checkbox
+            <StyledCheckbox
               checked={userPermissions?.has(permissionType.permission_id)}
               onChange={(event) => {
                 event.target.checked ?
                   onAddUserPermission(permissionType.permission_id)
                   : onRemoveUserPermission(permissionType.permission_id);
               }}>
-            </Checkbox>
+            </StyledCheckbox>
             {permissionType.name}
           </Label>
         </Flex>
