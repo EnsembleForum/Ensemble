@@ -121,27 +121,20 @@ class Queue:
 
     def follow(self, user: "User") -> None:
         """
-        Make the user follow the queue
+        Toggle whether the user is following the queue or not
         """
         if not self.following(user):
-            raise http_errors.BadRequest("Already following queue")
-        TQueueFollow({
-            TQueueFollow.queue: self.id,
-            TQueueFollow.user: user.id
-        })
-
-    def unfollow(self, user: "User") -> None:
-        """
-        Make the user unfollow the queue
-        """
-        if not self.following(user):
-            raise http_errors.BadRequest("Not following queue")
-        TQueueFollow\
-            .delete()\
-            .where(
-                TQueueFollow.queue == self.id
-                and TQueueFollow.user == user.id
-            ).run_sync()
+            TQueueFollow({
+                TQueueFollow.queue: self.id,
+                TQueueFollow.user: user.id
+            })
+        else:
+            TQueueFollow\
+                .delete()\
+                .where(
+                    TQueueFollow.queue == self.id
+                    and TQueueFollow.user == user.id
+                ).run_sync()
 
     @property
     def view_only(self) -> bool:

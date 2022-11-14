@@ -95,3 +95,12 @@ def queue_post_add(user: User, *_) -> dict:
     post.queue = queue
 
     return {}
+
+
+@taskboard.put("/queue/follow")
+@uses_token
+def queue_follow(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.FollowQueue)
+    queue_id = QueueId(request.args["queue_id"])
+    Queue(queue_id).follow(user)
+    return {}
