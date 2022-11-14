@@ -32,8 +32,13 @@ def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     assert len(queues) == 5
     queue_names = sorted([q['queue_name'] for q in queues])
     assert queue_names == sorted(
-        ["Main", "Answered", "Closed",
-         "Deleted", "Reported"]
+        [
+            "Main",
+            "Answered",
+            "Closed",
+            "Deleted",
+            "Reported",
+        ]
     )
 
 

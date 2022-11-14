@@ -13,7 +13,7 @@ from ensemble_request.debug import clear, echo, unsafe_init, unsafe_login
 from ensemble_request.browse import post_create
 from ensemble_request.admin import users
 from ensemble_request.admin.permissions import groups_list
-from ensemble_request.taskboard import queue_create
+from ensemble_request.taskboard import queue_create, queue_list
 
 
 @pytest.fixture(autouse=True)
@@ -69,6 +69,8 @@ def permission_groups(
     Represents all available permissions upon initialising the server
     """
     ids = groups_list(basic_server_setup['token'])["groups"]
+    # If these assertions fail, this fixture should be updated
+    assert len(ids) == 3
     assert ids[0]["name"] == "Administrator"
     assert ids[1]["name"] == "Moderator"
     assert ids[2]["name"] == "User"
@@ -287,6 +289,42 @@ def make_posts(basic_server_setup: IBasicServerSetup) -> IMakePosts:
     }
 
 
+class IDefaultQueues(TypedDict):
+    """
+    Get info on the default queues
+    """
+    main: QueueId
+    answered: QueueId
+    closed: QueueId
+    deleted: QueueId
+    reported: QueueId
+
+
+@pytest.fixture()
+def default_queues(basic_server_setup: IBasicServerSetup) -> IDefaultQueues:
+    """
+    Get info on the default queues
+    """
+    token = basic_server_setup["token"]
+    ids = queue_list(token)["queues"]
+
+    # If these assertions fail, this fixture should be updated
+    assert len(ids) == 3
+    assert ids[0]["queue_name"] == "Main"
+    assert ids[1]["queue_name"] == "Answered"
+    assert ids[2]["queue_name"] == "Closed"
+    assert ids[3]["queue_name"] == "Deleted"
+    assert ids[4]["queue_name"] == "Reported"
+
+    return {
+        "main": ids[0]["queue_id"],
+        "answered": ids[1]["queue_id"],
+        "closed": ids[2]["queue_id"],
+        "deleted": ids[3]["queue_id"],
+        "reported": ids[4]["queue_id"],
+    }
+
+
 class IMakeQueues(TypedDict):
     """
     Create two queues on the forum
@@ -298,7 +336,10 @@ class IMakeQueues(TypedDict):
 
 
 @pytest.fixture()
-def make_queues(basic_server_setup: IBasicServerSetup) -> IMakeQueues:
+def make_queues(
+    basic_server_setup: IBasicServerSetup,
+    default_queues: IDefaultQueues,
+) -> IMakeQueues:
     """
     Create two queues inside the forum
     """
