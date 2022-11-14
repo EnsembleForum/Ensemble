@@ -309,19 +309,21 @@ def default_queues(basic_server_setup: IBasicServerSetup) -> IDefaultQueues:
     ids = queue_list(token)["queues"]
 
     # If these assertions fail, this fixture should be updated
-    assert len(ids) == 3
+    # Probably we added more default queues, or changed the ordering or
+    # something
+    assert len(ids) == 5
     assert ids[0]["queue_name"] == "Main"
-    assert ids[1]["queue_name"] == "Answered"
+    assert ids[1]["queue_name"] == "Reported"
     assert ids[2]["queue_name"] == "Closed"
-    assert ids[3]["queue_name"] == "Deleted"
-    assert ids[4]["queue_name"] == "Reported"
+    assert ids[3]["queue_name"] == "Answered"
+    assert ids[4]["queue_name"] == "Deleted"
 
     return {
         "main": ids[0]["queue_id"],
-        "answered": ids[1]["queue_id"],
+        "reported": ids[1]["queue_id"],
         "closed": ids[2]["queue_id"],
-        "deleted": ids[3]["queue_id"],
-        "reported": ids[4]["queue_id"],
+        "answered": ids[2]["queue_id"],
+        "deleted": ids[4]["queue_id"],
     }
 
 

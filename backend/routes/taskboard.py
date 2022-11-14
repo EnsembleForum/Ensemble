@@ -101,6 +101,7 @@ def queue_post_add(user: User, *_) -> dict:
 @uses_token
 def queue_follow(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.FollowQueue)
-    queue_id = QueueId(request.args["queue_id"])
+    data = json.loads(request.data)
+    queue_id = QueueId(data["queue_id"])
     Queue(queue_id).follow(user)
     return {}
