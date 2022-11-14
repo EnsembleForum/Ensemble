@@ -24,7 +24,7 @@ taskboard = Blueprint('taskboard', 'taskboard')
 @uses_token
 def queue_list(user: User, *_) -> IQueueList:
     user.permissions.assert_can(Permission.ViewTaskboard)
-    return {"queues": list(map(lambda q: q.basic_info(), Queue.all()))}
+    return {"queues": list(map(lambda q: q.basic_info(user), Queue.all()))}
 
 
 @taskboard.post("/queue_list/create")
@@ -73,7 +73,7 @@ def post_list(user: User, *_) -> IQueueFullInfo:
     user.permissions.assert_can(Permission.FollowQueue)
     queue_id = QueueId(request.args["queue_id"])
     queue = Queue(queue_id)
-    return queue.full_info()
+    return queue.full_info(user)
 
 
 @taskboard.put("/queue/post_add")

@@ -249,7 +249,7 @@ class Queue:
             p.queue = main_queue
         TQueue.delete().where(TQueue.id == self.id).run_sync()
 
-    def full_info(self) -> IQueueFullInfo:
+    def full_info(self, user: "User") -> IQueueFullInfo:
         """
         Returns the full info of a queue
 
@@ -259,11 +259,12 @@ class Queue:
         return {
             "queue_id": self.id,
             "queue_name": self.name,
-            "posts": [c.id for c in self.posts()],
             "view_only": self.view_only,
+            "following": self.following(user),
+            "posts": [c.id for c in self.posts()],
         }
 
-    def basic_info(self) -> IQueueBasicInfo:
+    def basic_info(self, user: "User") -> IQueueBasicInfo:
         """
         Returns the basic info of a queue
 
@@ -274,4 +275,5 @@ class Queue:
             "queue_id": self.id,
             "queue_name": self.name,
             "view_only": self.view_only,
+            "following": self.following(user),
         }
