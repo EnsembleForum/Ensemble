@@ -182,31 +182,15 @@ def init(
         "Main",
         immutable=True,
     )
-
-    # Create the answered queue
-    Queue.create(
-        "Answered",
-        immutable=True,
-        view_only=True
-    )
-
-    Queue.create(
-        "Closed",
-        immutable=True,
-        view_only=True
-    )
-
-    Queue.create(
-        "Deleted",
-        immutable=True,
-        view_only=True
-    )
-
-    Queue.create(
-        "Reported",
-        immutable=True,
-        view_only=True
-    )
+    # WARNING: Changing this order breaks the frontend. Yes, I hate this just
+    # as much as you do, but it is not my fault, I am but a lowly backend
+    # developer
+    for name in ["Reported", "Closed", "Answered", "Deleted"]:
+        Queue.create(
+            name,
+            immutable=True,
+            view_only=True,
+        )
 
     # Register first user
     user = User.create(

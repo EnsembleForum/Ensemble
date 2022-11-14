@@ -127,7 +127,7 @@ class Queue:
             TQueueFollow({
                 TQueueFollow.queue: self.id,
                 TQueueFollow.user: user.id
-            })
+            }).save().run_sync()
         else:
             TQueueFollow\
                 .delete()\
@@ -150,8 +150,10 @@ class Queue:
         """
         # IDEA: custom ordering of queues in the future
         return [
-            Queue(q.id) for q in TQueue.objects()
-            .order_by(TQueue.name, ascending=False).run_sync()]
+            Queue(q.id)
+            for q in TQueue.objects()
+            .run_sync()
+        ]
 
     @classmethod
     def get_queue(cls, queue_name: str) -> "Queue":
