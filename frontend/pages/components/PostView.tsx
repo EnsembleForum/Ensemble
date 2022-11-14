@@ -116,7 +116,7 @@ const PostView = (props: Props) => {
                         commentId={comment.comment_id} 
                         deleted={rep.deleted}
                         userReacted={rep.user_reacted}
-                        showDeleteButton={comment.author === getCurrentUser().user_id  || getPermission(32)} 
+                        showDeleteButton={rep.author === getCurrentUser().user_id  || getPermission(32)} 
                       />
                     )
                   })}
