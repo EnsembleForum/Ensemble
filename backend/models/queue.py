@@ -64,7 +64,7 @@ class Queue:
         """
         assert_valid_str_field(name, "queue_name")
 
-        if name in [q.name for q in cls.all()]:
+        if name in (q.name for q in cls.all()):
             raise http_errors.BadRequest(
                 "There is already a queue with that name")
 
@@ -98,7 +98,7 @@ class Queue:
     @name.setter
     def name(self, new_name: str):
         assert_valid_str_field(new_name, "queue_name")
-        if new_name in [q.name for q in self.all() if q.id != self.id]:
+        if new_name in (q.name for q in self.all() if q.id != self.id):
             raise http_errors.BadRequest(
                 "There is already a queue with that name")
         row = self._get()
@@ -137,7 +137,7 @@ class Queue:
         * `queue`: main queue
         """
         # TODO: Remember not to use duplicate queue names otherwise this breaks
-        return cls.get_queue("Main queue")
+        return cls.get_queue("Main")
 
     @classmethod
     def get_answered_queue(cls) -> "Queue":
@@ -148,7 +148,7 @@ class Queue:
         * `queue`: answered queue
         """
         # TODO: Remember not to use duplicate queue names otherwise this breaks
-        return cls.get_queue("Answered queue")
+        return cls.get_queue("Answered")
 
     @classmethod
     def get_closed_queue(cls) -> "Queue":
@@ -159,7 +159,7 @@ class Queue:
         * `queue`: closed queue
         """
         # TODO: Remember not to use duplicate queue names otherwise this breaks
-        return cls.get_queue("Closed queue")
+        return cls.get_queue("Closed")
 
     @classmethod
     def get_deleted_queue(cls) -> "Queue":
@@ -170,7 +170,7 @@ class Queue:
         * `queue`: deleted queue
         """
         # TODO: Remember not to use duplicate queue names otherwise this breaks
-        return cls.get_queue("Deleted queue")
+        return cls.get_queue("Deleted")
 
     @classmethod
     def get_reported_queue(cls) -> "Queue":
@@ -181,7 +181,7 @@ class Queue:
         * `queue`: reported queue
         """
         # TODO: Remember not to use duplicate queue names otherwise this breaks
-        return cls.get_queue("Reported queue")
+        return cls.get_queue("Reported")
 
     def posts(self) -> list["Post"]:
         """
@@ -209,7 +209,7 @@ class Queue:
         # Error checking (can't delete main queue)
         row = self._get()
         if row.immutable:
-            raise http_errors.BadRequest('Cannot delete main queue')
+            raise http_errors.BadRequest('Cannot delete immutable queues')
         # Send posts back to original queue
         main_queue = self.get_main_queue()
         for p in self.posts():

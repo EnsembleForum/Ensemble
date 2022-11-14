@@ -32,8 +32,8 @@ def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     assert len(queues) == 5
     queue_names = sorted([q['queue_name'] for q in queues])
     assert queue_names == sorted(
-        ["Main queue", "Answered queue", "Closed queue",
-         "Deleted queue", "Reported queue"]
+        ["Main", "Answered", "Closed",
+         "Deleted", "Reported"]
     )
 
 
@@ -54,7 +54,7 @@ def test_new_post_default(basic_server_setup: IBasicServerSetup):
     Test that posts are in the main queue by default when created
     """
     token = basic_server_setup['token']
-    default_queue = get_queue(queue_list(token)['queues'], "Main queue")
+    default_queue = get_queue(queue_list(token)['queues'], "Main")
     posts = queue_post_list(token, default_queue['queue_id'])['posts']
     assert len(posts) == 0
     post_create(token, 'first_post', 'post_content', [])
@@ -69,11 +69,11 @@ def test_view_only_basic_info(basic_server_setup: IBasicServerSetup):
     token = basic_server_setup['token']
     queues = queue_list(token)['queues']
 
-    assert not get_queue(queues, "Main queue")["view_only"]
-    assert get_queue(queues, "Answered queue")["view_only"]
-    assert get_queue(queues, "Closed queue")["view_only"]
-    assert get_queue(queues, "Deleted queue")["view_only"]
-    assert get_queue(queues, "Reported queue")["view_only"]
+    assert not get_queue(queues, "Main")["view_only"]
+    assert get_queue(queues, "Answered")["view_only"]
+    assert get_queue(queues, "Closed")["view_only"]
+    assert get_queue(queues, "Deleted")["view_only"]
+    assert get_queue(queues, "Reported")["view_only"]
 
 
 def test_view_only_ful_info(basic_server_setup: IBasicServerSetup):
@@ -82,11 +82,11 @@ def test_view_only_ful_info(basic_server_setup: IBasicServerSetup):
     """
     token = basic_server_setup['token']
     queues = queue_list(token)['queues']
-    main_id = get_queue(queues, "Main queue")["queue_id"]
-    answered_id = get_queue(queues, "Answered queue")["queue_id"]
-    closed_id = get_queue(queues, "Closed queue")["queue_id"]
-    deleted_id = get_queue(queues, "Deleted queue")["queue_id"]
-    reported_id = get_queue(queues, "Reported queue")["queue_id"]
+    main_id = get_queue(queues, "Main")["queue_id"]
+    answered_id = get_queue(queues, "Answered")["queue_id"]
+    closed_id = get_queue(queues, "Closed")["queue_id"]
+    deleted_id = get_queue(queues, "Deleted")["queue_id"]
+    reported_id = get_queue(queues, "Reported")["queue_id"]
 
     assert not queue_post_list(token, main_id)["view_only"]
     assert queue_post_list(token, answered_id)["view_only"]

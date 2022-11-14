@@ -179,31 +179,31 @@ def init(
 
     # Create the main queue
     Queue.create(
-        "Main queue",
+        "Main",
         immutable=True,
     )
 
     # Create the answered queue
     Queue.create(
-        "Answered queue",
+        "Answered",
         immutable=True,
         view_only=True
     )
 
     Queue.create(
-        "Closed queue",
+        "Closed",
         immutable=True,
         view_only=True
     )
 
     Queue.create(
-        "Deleted queue",
+        "Deleted",
         immutable=True,
         view_only=True
     )
 
     Queue.create(
-        "Reported queue",
+        "Reported",
         immutable=True,
         view_only=True
     )
