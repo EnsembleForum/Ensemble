@@ -72,11 +72,11 @@ const PostListView = (props: Props) => {
         {
           posts.map((each) => {
               const styles : any = {}
-              if (each.closed) {
-                styles.backgroundColor = "#a2c4fc";
-              }
               if (each.answered) {
                 styles.backgroundColor = "#90EE90";
+              }
+              if (each.closed) {
+                styles.backgroundColor = "#a2c4fc";
               }
               if (each.reported && getPermission(33)) {
                 styles.backgroundColor = "#ffa3a3";
@@ -85,11 +85,11 @@ const PostListView = (props: Props) => {
                 styles.backgroundColor = "#8c8c8c";
               }
               if (each.post_id.toString()===searchParams.get("postId")) {
-                if (each.closed) {
-                  styles.backgroundColor = "#7dacfa";
-                } else if (each.answered) {
+                if (each.answered) {
                   styles.backgroundColor = "#7de37d";
-                } else if (each.reported) {
+                } else if (each.closed) {
+                  styles.backgroundColor = "#7dacfa";
+                }  else if (each.reported) {
                   styles.backgroundColor = "#f08d8d";
                 } else if (each.deleted) {
                   styles.backgroundColor = "#696969";

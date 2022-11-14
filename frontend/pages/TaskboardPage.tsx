@@ -96,9 +96,9 @@ const TaskboardPage = (props: Props) => {
             </QueueCols>
           </StyledQueues>
           <StyledViewOnlyQueues>
-            <h2>Answered, Closed and Deleted</h2>
+            <h2>Answered, Closed, Deleted and Reported Posts</h2>
             <QueueCols>
-            { queueList.filter(queue => queue.view_only).sort((a, b) => (a.queue_name > b.queue_name) ? 1 : -1).map((queue) => {
+            { queueList.filter(queue => queue.view_only).map((queue) => {
               return (
                 <QueueView queue={queue}></QueueView>
               )
