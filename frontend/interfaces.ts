@@ -60,7 +60,9 @@ export interface postListItem {
   author: number,
   me_too: number,
   answered: boolean,
-  closed: boolean
+  closed: boolean,
+  reported: boolean,
+  deleted: boolean
 }
 
 export interface postView {
@@ -78,6 +80,7 @@ export interface postView {
   answered?: number,
   closed: boolean,
   deleted: boolean,
+  reported: boolean
 }
 
 export interface commentView {

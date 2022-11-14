@@ -31,6 +31,7 @@ def profile(token: JWT, user_id: UserId) -> IUserProfile:
     * `username` (`str`): the user's username
     * `email` (`str`): the user's email address
     * `user_id` (`int`): the user's ID
+    * `permission_group` (`str`): name of the user's permission group
 
     Note that this will eventually contain more properties such as pronouns and
     the like.

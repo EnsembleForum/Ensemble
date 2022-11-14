@@ -28,9 +28,12 @@ interface Props {
   closed?: boolean,
   accepted?: boolean,
   deleted?: boolean,
+  reported?: boolean,
   showCloseButton?: boolean,
   showAcceptButton?: boolean,
-  showDeleteButton?: boolean
+  showDeleteButton?: boolean,
+  showReportButton?: boolean
+  showUnreportButton?: boolean
 }
 
 const StyledText = styled.div`
@@ -85,14 +88,20 @@ const ActiveReactButton = styled(InactiveReactButton)`
   font-weight: 900;
 `
 const ActiveCloseButton = styled(InactiveReactButton)`
-  background-color: black;
+  background-color: #2574f5;
 `
 const ActiveAcceptButton = styled(InactiveReactButton)`
   background-color: #7de37d;
 `
 
 const DeleteButton = styled(InactiveReactButton)`
+  background-color: #ff8080;
+`
+const ReportButton = styled(InactiveReactButton)`
   background-color: #FF0000;
+`
+const ActiveReportButton = styled(InactiveReactButton)`
+  background-color: black;
 `
 
 const OptionsBar = styled.div`
@@ -100,7 +109,6 @@ const OptionsBar = styled.div`
   justify-content: space-between;
   margin: 0;
 `
-
 
 const Private = styled.div`
   margin-left: 10px;
@@ -157,21 +165,35 @@ const TextView = (props: Props) => {
   let author = <></>;
   let closed = <></>;
   let answered = <></>;
+  let reported = <></>;
+  let deleted = <></>;
   if (props.closed) {
     closed = <>
     <ReactTooltip place="top" type="dark" effect="solid"/>
-    <span data-tip="Post has been closed by a moderator. Edit post based on comment feedback">❌  </span>
+    <span data-tip="Post has been closed by a moderator. Edit post based on comment feedback">🔒{' '}</span>
     </>
   }
   if (props.answered) {
     answered = <>
     <ReactTooltip place="top" type="dark" effect="solid"/>
-    <span data-tip="Post has been marked as answered">✅ </span>
+    <span data-tip="Post has been marked as answered">✅{' '}</span>
+    </>
+  }
+  if (props.reported && props.showUnreportButton) {
+    reported = <>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <span data-tip="Post has been reported">❗</span>
+    </>
+  }
+  if (props.deleted) {
+    deleted = <>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <span data-tip="Post has been deleted">🗑️{' '}</span>
     </>
   }
 
   if (props.heading) {
-    heading = <h1>{closed}{answered}{props.heading}</h1>
+    heading = <h1>{closed}{answered}{reported}{deleted}{props.heading}</h1>
   }
   if (props.author) {
     if (props.anonymous && !getPermission(2)) {
@@ -252,6 +274,28 @@ const TextView = (props: Props) => {
     updatePosts();
   }
 
+  async function report_post() {
+    const call : APIcall = {
+      method: "PUT",
+      path: "browse/post_view/report",
+      body: {"post_id": props.id}
+    }
+    console.log(call)
+    await ApiFetch(call);
+    setCommentCount(commentCount + 1);
+    updatePosts();
+  }
+  async function unreport_post() {
+    const call : APIcall = {
+      method: "PUT",
+      path: "browse/post_view/unreport",
+      body: {"post_id": props.id}
+    }
+    await ApiFetch(call);
+    setCommentCount(commentCount + 1);
+    updatePosts();
+  }
+
 
   const reply = (
   <StyledReply>
@@ -323,11 +367,11 @@ const TextView = (props: Props) => {
   </>);
   const closeButton = (<>
     <ReactTooltip place="top" type="dark" effect="solid"/>
-    <InactiveReactButton data-tip="Close Post" onClick={() => close_post()}>❌</InactiveReactButton>
+    <InactiveReactButton data-tip="Close Post" onClick={() => close_post()}>🔒</InactiveReactButton>
   </>)
   const activeCloseButton = (<>
     <ReactTooltip place="top" type="dark" effect="solid"/>
-    <ActiveCloseButton data-tip="Unclose Post" onClick={() => close_post()}>❌</ActiveCloseButton>
+    <ActiveCloseButton data-tip="Unclose Post" onClick={() => close_post()}>🔒</ActiveCloseButton>
   </>)
   const acceptButton = (<>
     <ReactTooltip place="top" type="dark" effect="solid"/>
@@ -350,12 +394,22 @@ const TextView = (props: Props) => {
     <DeleteButton data-tip="Delete reply" onClick={() => delete_reply()}>🗑️</DeleteButton>
   </>)
 
+  const reportButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <InactiveReactButton data-tip="Report post" onClick={() => report_post()}>❗</InactiveReactButton>
+  </>)
+  const unreportButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <ActiveReportButton data-tip="Unreport post" onClick={() => unreport_post()}>❗</ActiveReportButton>
+  </>)
+
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : (props.type === "comment" ? (props.accepted ? {backgroundColor: "#90EE90", padding: "10px", borderRadius: "10px"} : {}):{})}>
         <OptionsBar>
           {toggleEdit ? <></> : heading}
           <Status>
+          {props.accepted || props.deleted || props.reported || props.answered ? <></> : <Anonymous>Status: </Anonymous>}
           {props.private ? <Private>PRIVATE</Private>: <></>}
           {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
           </Status>
@@ -371,6 +425,8 @@ const TextView = (props: Props) => {
           { toggleReply ? activeReplyButton : replyButton }
           { props.type === "post" && props.showCloseButton ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
           { props.type === "comment" && props.showAcceptButton ? (props.accepted ? activeAcceptButton : acceptButton) : <></> }
+          { props.type === "post" && props.showReportButton && !props.reported ? reportButton  : <></> }
+          { props.type === "post" && props.showUnreportButton && props.reported ? unreportButton  : <></> }
           { props.type === "post" && props.showDeleteButton ? deleteButton  : <></> }
           { props.type === "comment" && props.showDeleteButton ? deleteCommentButton  : <></> }
           { props.type === "reply" && props.showDeleteButton ? deleteReplyButton  : <></> }
