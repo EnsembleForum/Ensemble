@@ -74,6 +74,14 @@ class TQueue(_BaseTable):
     name = Text()
 
 
+class TQueueFollow(_BaseTable):
+    """
+    Relationship for who follows what queues
+    """
+    user = ForeignKey(TUser)
+    queue = ForeignKey(TQueue)
+
+
 class TPost(_BaseTable):
     """
     Table containing all posts

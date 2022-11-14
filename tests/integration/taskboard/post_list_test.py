@@ -54,7 +54,7 @@ def test_success(
     Testing that admins can successfully create queues
     """
     token = basic_server_setup["token"]
-    queue_name = "queue_name"
-    queue_id = queue_create(token, "queue_name")["queue_id"]
+    queue_name = "My queue"
+    queue_id = queue_create(token, queue_name)["queue_id"]
     queue = queue_post_list(token, queue_id)
     assert queue["queue_name"] == queue_name
