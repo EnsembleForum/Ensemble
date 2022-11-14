@@ -78,7 +78,6 @@ const PostListView = (props: Props) => {
               if (each.closed) {
                 styles.backgroundColor = "#ffa3a3";
               }
-              console.log(each.answered, each.closed);
               if (each.answered) {
                 styles.backgroundColor = "#90EE90";
               }
