@@ -23,7 +23,11 @@ export function ApiFetch(apiCall: APIcall) {
   if (apiCall.params) {
     newparams = '?' + (new URLSearchParams(apiCall.params)).toString();
   }
-  const token = getCurrentUser().token;
+  
+  let token = null;
+  try {
+    token = getCurrentUser().token;
+  } catch {}
   if (token !== null) { requestOptions.headers.Authorization = `Bearer ${token}`; }
   // console.log(requestOptions);
   if (!apiCall.customUrl) {
