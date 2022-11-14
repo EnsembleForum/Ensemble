@@ -90,12 +90,13 @@ const PostView = (props: Props) => {
             showDeleteButton={currentPost.author === getCurrentUser().user_id  || getPermission(32)} 
             showReportButton={currentPost.author !== getCurrentUser().user_id && getPermission(30) && !getPermission(33)} 
             showUnreportButton={getPermission(33)} 
+            queue={currentPost.queue}
           />
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
               return (
-                  <>
+                  <> 
                   <TextView 
                     key = {comment.comment_id} 
                     text={comment.text} reacts={comment.thanks} 

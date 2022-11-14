@@ -24,6 +24,7 @@ interface Props {
   userReacted: boolean,
   type: "post" | "comment" | "reply",
   tags?: number[],
+  queue?: string,
   answered?: number | null,
   closed?: boolean,
   accepted?: boolean,
@@ -39,14 +40,17 @@ interface Props {
 const StyledText = styled.div`
   border-radius: 2px;
   overflow: hidden;
-  * {
-    margin-bottom: 10px;
-  }
   h1 {
     margin-top: 0px;
   }
   hr {
     color: white;
+  }
+  p {
+    margin-top: 0;
+  }
+  h1 {
+    margin-bottom: 10px;
   }
 `
 const StyledPost = styled.div`
@@ -125,6 +129,10 @@ const Private = styled.div`
 const Anonymous = styled(Private)`
   max-width: 130px;
 `
+const Queue = styled.div`
+  text-align: right;
+  font-weight: 500;
+`
 
 const StyledAnonymous = styled.a`
   text-decoration: underline;
@@ -134,8 +142,14 @@ const StyledAnonymous = styled.a`
   }
 `
 const Status = styled.span`
-  display:flex
+  display:flex;
+  padding-bottom: 10px;
 `
+const Col = styled.span`
+  display:flex;
+  flex-direction: column;
+`
+
 // Exporting our example component
 const TextView = (props: Props) => {
   const [inputText, setInputText] = React.useState<string>();
@@ -403,18 +417,29 @@ const TextView = (props: Props) => {
     <ActiveReportButton data-tip="Unreport post" onClick={() => unreport_post()}>❗</ActiveReportButton>
   </>)
 
+  const queue = ( <>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <Queue data-tip="This indicates which queue your post is in">Queue: {props.queue} </Queue>
+    </>
+  )
+
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : (props.type === "comment" ? (props.accepted ? {backgroundColor: "#90EE90", padding: "10px", borderRadius: "10px"} : {}):{})}>
         <OptionsBar>
-          {toggleEdit ? <></> : heading}
-          <Status>
-          {props.accepted || props.deleted || props.reported || props.answered ? <></> : <Anonymous>Status: </Anonymous>}
-          {props.private ? <Private>PRIVATE</Private>: <></>}
-          {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
-          </Status>
+          <Col>
+            {toggleEdit ? <></> : heading}
+            {author}
+          </Col>
+          <Col>
+            <Status>
+              {props.private ? <Private>PRIVATE</Private>: <></>}
+              {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
+            </Status>
+            {(props.accepted || props.deleted || props.reported || props.answered) ? <></> : queue}
+          </Col>
         </OptionsBar>
-        {author}
+        
         {props.deleted ? <p style={{color: "darkGrey", fontStyle: "italic", fontWeight: 500}}>{props.text}</p> : <></>}
         <span style={props.deleted ? {display: "none"} : {}}>
           {toggleEdit ? <></> : tags}

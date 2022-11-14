@@ -66,6 +66,7 @@ export interface postListItem {
 }
 
 export interface postView {
+  queue: string;
   post_id: number,
   author: number,
   heading: string,
