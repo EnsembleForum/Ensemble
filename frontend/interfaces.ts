@@ -84,12 +84,12 @@ export interface commentView {
   user_reacted: boolean;
   thanks: number,
   comment_id: number,
-  text: string, replies: number[] | replyView[], timestamp: number, author: number, accepted: boolean,
+  text: string, replies: number[] | replyView[], timestamp: number, author: number, accepted: boolean,deleted: boolean
 }
 
 export interface replyView {
   user_reacted: boolean;
-  reply_id: number, text: string, timestamp: number, thanks: number, author: number
+  reply_id: number, text: string, timestamp: number, thanks: number, author: number, deleted: boolean
 }
 
 export interface userView {

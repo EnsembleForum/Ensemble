@@ -100,8 +100,9 @@ const PostView = (props: Props) => {
                     author={comment.author} 
                     userReacted={comment.user_reacted}
                     accepted={comment.accepted}
-                    deleted={currentPost.deleted}
+                    deleted={comment.deleted}
                     showAcceptButton={currentPost.author === getCurrentUser().user_id || getPermission(13)}
+                    showDeleteButton={currentPost.author === getCurrentUser().user_id  || getPermission(32)} 
                   />
                   {comment.replies.map((reply) => {
                     const rep = reply as replyView;
@@ -113,8 +114,10 @@ const PostView = (props: Props) => {
                         author={rep.author} 
                         id={rep.reply_id} 
                         commentId={comment.comment_id} 
-                        deleted={currentPost.deleted}
-                        userReacted={rep.user_reacted}/>
+                        deleted={rep.deleted}
+                        userReacted={rep.user_reacted}
+                        showDeleteButton={currentPost.author === getCurrentUser().user_id  || getPermission(32)} 
+                      />
                     )
                   })}
                   </>
