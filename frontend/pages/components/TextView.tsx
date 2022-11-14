@@ -29,6 +29,7 @@ interface Props {
   accepted?: boolean,
   showCloseButton?: boolean,
   showAcceptButton?: boolean,
+  showDeleteButton?: boolean
 }
 
 const StyledText = styled.div`
@@ -87,6 +88,10 @@ const ActiveCloseButton = styled(InactiveReactButton)`
 `
 const ActiveAcceptButton = styled(InactiveReactButton)`
   background-color: #7de37d;
+`
+
+const DeleteButton = styled(InactiveReactButton)`
+  background-color: #FF0000;
 `
 
 const OptionsBar = styled.div`
@@ -313,7 +318,7 @@ const TextView = (props: Props) => {
   </>)
   const deleteButton = (<>
     <ReactTooltip place="top" type="dark" effect="solid"/>
-    <InactiveReactButton data-tip="Delete post" onClick={() => delete_post()}>🚮</InactiveReactButton>
+    <DeleteButton data-tip="Delete post" onClick={() => delete_post()}>🗑️</DeleteButton>
   </>)
 
   return (
@@ -335,7 +340,7 @@ const TextView = (props: Props) => {
         { toggleReply ? activeReplyButton : replyButton }
         { props.type === "post" && props.showCloseButton ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
         { props.type === "comment" && props.showAcceptButton ? (props.accepted ? activeAcceptButton : acceptButton) : <></> }
-        { props.type === "post" && props.showCloseButton ? deleteButton  : <></> }
+        { props.type === "post" && props.showDeleteButton ? deleteButton  : <></> }
         { toggleReply ? reply : <></>}
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}
