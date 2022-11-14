@@ -19,10 +19,15 @@ const StyledLayout = styled.div`
     height: 7vh;
     margin: 0;
     font-weight: 300;
+  }  
+  ::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
   }
 `
 const Layout = styled.span`
-  overflow: hidden;
+  ::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+  }
 `
 const StyledQueues = styled.div`
   width: 60vw;
