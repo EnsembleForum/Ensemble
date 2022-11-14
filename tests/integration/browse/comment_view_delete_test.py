@@ -50,7 +50,7 @@ def test_mod_delete(
     comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
 
     comment_delete(mod_token, comment_id)
-    assert get_comment(user_token, comment_id)["text"] == "[Deleted]."
+    assert get_comment(user_token, comment_id)["text"] == "[Deleted]"
 
 
 def test_op_delete(
@@ -66,7 +66,7 @@ def test_op_delete(
 
     comment_delete(user_token, comment_id)
     comment = get_comment(user_token, comment_id)
-    assert comment["text"] == "[Deleted]."
+    assert comment["text"] == "[Deleted]"
     assert comment["deleted"]
 
 

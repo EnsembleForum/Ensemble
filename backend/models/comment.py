@@ -106,7 +106,7 @@ class Comment:
         """
         Delete this comment
         """
-        self.text = "[Deleted]."
+        self.text = "[Deleted]"
         self.deleted = True
 
     def _get(self) -> TComment:

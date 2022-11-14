@@ -617,6 +617,9 @@ def report_post(
 
     ## Body
     * `post_id` (`int`): identifier of the post
+
+    ## Returns
+    * `reported` (`bool`): Whether the post is marked as reported
     """
     return cast(
         IPostReported,
@@ -647,6 +650,9 @@ def unreport_post(
 
     ## Body
     * `post_id` (`int`): identifier of the post
+
+    ## Returns
+    * `reported` (`bool`): Whether the post is marked as reported
     """
     return cast(
         IPostReported,

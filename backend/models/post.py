@@ -162,7 +162,6 @@ class Post:
         Mark this post as deleted
         """
         self.queue = Queue.get_deleted_queue()
-        self.heading = "[Deleted] " + self.heading
 
     @property
     def deleted(self) -> bool:
