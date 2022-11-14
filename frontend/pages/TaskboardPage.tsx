@@ -16,11 +16,6 @@ const StyledLayout = styled.div`
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  * > h2 {
-    height: 7vh;
-    margin: 0;
-    font-weight: 300;
-  }  
 `
 const Layout = styled.span`
   overflow: hidden;
@@ -30,6 +25,11 @@ const StyledQueues = styled.div`
   height: 82vh;
   padding: 30px;
   overflow:auto;
+  h2 {
+    height: 7vh;
+    margin: 0;
+    font-weight: 300;
+  }  
 `
 const StyledViewOnlyQueues = styled(StyledQueues)`
   width: 40vw;
@@ -38,7 +38,6 @@ const StyledViewOnlyQueues = styled(StyledQueues)`
 const QueueCols = styled.div`
   display: flex;
   flex-direction: row;
-  
 `
 
 const TaskboardPage = (props: Props) => {
@@ -97,9 +96,9 @@ const TaskboardPage = (props: Props) => {
             </QueueCols>
           </StyledQueues>
           <StyledViewOnlyQueues>
-            <h2>Closed and Answered</h2>
+            <h2>Answered, Closed and Deleted</h2>
             <QueueCols>
-            { queueList.filter(queue => queue.view_only).map((queue) => {
+            { queueList.filter(queue => queue.view_only).sort((a, b) => (a.queue_name > b.queue_name) ? 1 : -1).map((queue) => {
               return (
                 <QueueView queue={queue}></QueueView>
               )
@@ -114,7 +113,7 @@ const TaskboardPage = (props: Props) => {
     return (
       <>
         <Navbar page="taskboard" />
-        Loading...
+        <div style={{padding: "30px"}}> Loading... </div>
       </>
     )
   }

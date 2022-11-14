@@ -64,9 +64,11 @@ export function getCurrentUser(): currentUser {
 
 export function getPermission(id : number) {
   const userPermissions = getCurrentUser().permissions;
-  for (const permission of userPermissions) {
-    if (permission.permission_id === id ) {
-      return permission.value;
+  if (userPermissions) {
+    for (const permission of userPermissions) {
+      if (permission.permission_id === id ) {
+        return permission.value;
+      }
     }
   }
   return false;

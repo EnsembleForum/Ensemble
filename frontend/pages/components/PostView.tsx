@@ -73,17 +73,51 @@ const PostView = (props: Props) => {
     return (
       <CommentContext.Provider value={value}>
        <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={parseInt(searchParams.get("postId") as string)} userReacted={currentPost.user_reacted} type="post" private={currentPost.private} anonymous={currentPost.anonymous} closed={currentPost.closed} answered={currentPost.answered} showCloseButton={getPermission(31)}></TextView>
+          <TextView 
+            heading={currentPost.heading} 
+            text={currentPost.text} 
+            author={currentPost.author} 
+            reacts={currentPost.me_too} 
+            id={parseInt(searchParams.get("postId") as string)} 
+            userReacted={currentPost.user_reacted} 
+            type="post" private={currentPost.private} 
+            anonymous={currentPost.anonymous} 
+            closed={currentPost.closed} 
+            answered={currentPost.answered} 
+            showCloseButton={getPermission(31)} 
+            deleted={currentPost.deleted}
+            showDeleteButton={currentPost.author === getCurrentUser().user_id  || getPermission(32)} 
+          />
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
               return (
                   <>
-                  <TextView key = {comment.comment_id} text={comment.text} reacts={comment.thanks} type="comment" id={comment.comment_id} author={comment.author} userReacted={comment.user_reacted} accepted={comment.accepted} showAcceptButton={currentPost.author === getCurrentUser().user_id || getPermission(13)}></TextView>
+                  <TextView 
+                    key = {comment.comment_id} 
+                    text={comment.text} reacts={comment.thanks} 
+                    type="comment" id={comment.comment_id} 
+                    author={comment.author} 
+                    userReacted={comment.user_reacted}
+                    accepted={comment.accepted}
+                    deleted={comment.deleted}
+                    showAcceptButton={currentPost.author === getCurrentUser().user_id || getPermission(13)}
+                    showDeleteButton={comment.author === getCurrentUser().user_id  || getPermission(32)} 
+                  />
                   {comment.replies.map((reply) => {
                     const rep = reply as replyView;
                     return (
-                      <TextView text={rep.text} reacts={rep.thanks} type="reply" author={rep.author} id={rep.reply_id} commentId={comment.comment_id} userReacted={rep.user_reacted}></TextView>
+                      <TextView 
+                        text={rep.text} 
+                        reacts={rep.thanks} 
+                        type="reply" 
+                        author={rep.author} 
+                        id={rep.reply_id} 
+                        commentId={comment.comment_id} 
+                        deleted={rep.deleted}
+                        userReacted={rep.user_reacted}
+                        showDeleteButton={rep.author === getCurrentUser().user_id  || getPermission(32)} 
+                      />
                     )
                   })}
                   </>

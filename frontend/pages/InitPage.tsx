@@ -38,7 +38,6 @@ const InitPage = (props: Props) => {
   const onSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     // Here we would call api, which would reroute
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
     const api: APIcall = {
       method: "POST",
       path: "admin/init",
@@ -47,7 +46,7 @@ const InitPage = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         const check = data as currentUser;
-        setCurrentUser({token: check.token, user_id: check.user_id, permissions: check.permissions});
+        setCurrentUser({token: check.token, user_id: check.user_id, permissions: check.permissions, logged_in: true});
         navigate("/browse");
       });
   }

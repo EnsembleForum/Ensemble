@@ -10,7 +10,11 @@ import AuthorView from "./AuthorView";
 interface Props {
   queue: queueListPosts,
 }
-
+const FlexWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  content-align: space-between
+`
 // Writing styled components
 const StyledQueue = styled.div`
   padding: 10px;
@@ -57,6 +61,7 @@ const QueueView = (props: Props) => {
   const { queue } = props;
   const navigate = useNavigate();
   return (
+    <FlexWrapper>
     <StyledQueue>
       <QueueHeader>
         <h3>{queue.queue_name}</h3>
@@ -80,6 +85,8 @@ const QueueView = (props: Props) => {
         )
       })}
     </StyledQueue>
+    <span></span>
+    </FlexWrapper>
   );
 };
 
