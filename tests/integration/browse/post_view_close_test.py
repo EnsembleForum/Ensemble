@@ -234,3 +234,29 @@ def test_close_answered_post(
                          "Answered queue")["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
+
+
+def test_edit_answered_closed_post(
+    simple_users: ISimpleUsers
+):
+    """
+    If OP edits the closed post that is answered,
+    his post is sent back to the answered queue
+    """
+    user_token = simple_users["user"]["token"]
+    mod_token = simple_users["mod"]["token"]
+
+    post_id = post_create(user_token, "head", "text", [])["post_id"]
+    comment_id = add_comment(user_token, post_id, "first")["comment_id"]
+    accept_comment(user_token, comment_id)
+
+    # OP editing the post sends it back to the main queue
+    post_edit(user_token, post_id, "hi", "there", [])
+
+    post_queue_name = post_view(user_token, post_id)["queue"]
+    assert post_queue_name == "Answered queue"
+
+    queue_id = get_queue(queue_list(mod_token)['queues'],
+                         "Answered queue")["queue_id"]
+    queue = queue_post_list(mod_token, queue_id)
+    assert post_id in queue["posts"]
