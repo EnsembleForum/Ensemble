@@ -43,7 +43,7 @@ def test_view_other_profile(simple_users: ISimpleUsers):
         "email": "mod1@example.com",
         "pronouns": None,
         "user_id": simple_users['mod']['user_id'],
-        "permission_group": "Mod"
+        "permission_group": "Moderator"
     }
 
 
