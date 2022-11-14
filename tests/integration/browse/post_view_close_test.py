@@ -250,7 +250,7 @@ def test_edit_answered_closed_post(
     comment_id = add_comment(user_token, post_id, "first")["comment_id"]
     accept_comment(user_token, comment_id)
 
-    # OP editing the post sends it back to the main queue
+    # OP editing the post sends it back to the answered queue
     post_edit(user_token, post_id, "hi", "there", [])
 
     post_queue_name = post_view(user_token, post_id)["queue"]

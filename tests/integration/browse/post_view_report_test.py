@@ -114,7 +114,7 @@ def test_report_answered_post(
     accept_comment(mod_token, comment_id)
     report_post(user_token, post_id)
 
-    # Un-reporting a post sends it back to the main queue
+    # Un-reporting a post sends it back to the answered queue
     unreport_post(mod_token, post_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
     assert post_queue_name == "Answered queue"
