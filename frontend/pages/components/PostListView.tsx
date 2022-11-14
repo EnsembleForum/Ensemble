@@ -55,11 +55,16 @@ const PostListView = (props: Props) => {
     const api: APIcall = {
       method: "GET",
       path: "browse/post_list",
+      params: {"search_term": ""}
     }
+    console.log(api);
     ApiFetch(api)
       .then((data) => {
         const test = data as { posts: postListItem[] };
         setPosts(test.posts);
+        if (test.posts.length && (searchParams.get('postId') === null || searchParams.get('postId') === '0')) {
+          setSearchParams({postId: test.posts[0].post_id.toString()})
+        }
       })
   }, [searchParams])
 
