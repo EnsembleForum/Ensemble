@@ -7,6 +7,7 @@ from backend.types.identifiers import QueueId
 from backend.util.validators import assert_valid_str_field
 from backend.util import http_errors
 from backend.types.queue import IQueueFullInfo, IQueueBasicInfo
+from resources import consts
 from typing import cast, TYPE_CHECKING
 from .user import User
 if TYPE_CHECKING:
@@ -63,7 +64,7 @@ class Queue:
         ### Returns:
         * `Queue`: the new queue
         """
-        assert_valid_str_field(name, "queue_name")
+        assert_valid_str_field(name, "queue name")
 
         if name in (q.name for q in cls.all()):
             raise http_errors.BadRequest(
@@ -98,7 +99,7 @@ class Queue:
 
     @name.setter
     def name(self, new_name: str):
-        assert_valid_str_field(new_name, "queue_name")
+        assert_valid_str_field(new_name, "queue name")
         if new_name in (q.name for q in self.all() if q.id != self.id):
             raise http_errors.BadRequest(
                 "There is already a queue with that name")
@@ -181,7 +182,7 @@ class Queue:
         ### Returns:
         * `queue`: main queue
         """
-        return cls.get_queue("Main")
+        return cls.get_queue(consts.MAIN_QUEUE)
 
     @classmethod
     def get_answered_queue(cls) -> "Queue":
@@ -191,7 +192,7 @@ class Queue:
         ### Returns:
         * `queue`: answered queue
         """
-        return cls.get_queue("Answered")
+        return cls.get_queue(consts.ANSWERED_QUEUE)
 
     @classmethod
     def get_closed_queue(cls) -> "Queue":
@@ -201,7 +202,7 @@ class Queue:
         ### Returns:
         * `queue`: closed queue
         """
-        return cls.get_queue("Closed")
+        return cls.get_queue(consts.CLOSED_QUEUE)
 
     @classmethod
     def get_deleted_queue(cls) -> "Queue":
@@ -211,7 +212,7 @@ class Queue:
         ### Returns:
         * `queue`: deleted queue
         """
-        return cls.get_queue("Deleted")
+        return cls.get_queue(consts.DELETED_QUEUE)
 
     @classmethod
     def get_reported_queue(cls) -> "Queue":
@@ -221,7 +222,7 @@ class Queue:
         ### Returns:
         * `queue`: reported queue
         """
-        return cls.get_queue("Reported")
+        return cls.get_queue(consts.REPORTED_QUEUE)
 
     def posts(self) -> list["Post"]:
         """

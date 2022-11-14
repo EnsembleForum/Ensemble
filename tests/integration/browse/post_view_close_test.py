@@ -13,6 +13,7 @@ Tests for post_view/close
     un-closing sends it back to main queue
 """
 import pytest
+from resources import consts
 from backend.util import http_errors
 from tests.integration.conftest import (
     ISimpleUsers,
@@ -170,10 +171,10 @@ def test_closed_queue(
     # Un-closing a post sends it back to the main queue
     close_post(mod_token, post_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Main queue"
+    assert post_queue_name == consts.MAIN_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Main queue")["queue_id"]
+                         consts.MAIN_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
@@ -201,10 +202,10 @@ def test_edit_unclose_post(
     post_edit(user_token, post_id, "hi", "there", [])
 
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Main queue"
+    assert post_queue_name == "Main"
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Main queue")["queue_id"]
+                         "Main")["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 

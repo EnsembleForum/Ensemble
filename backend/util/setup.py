@@ -3,6 +3,7 @@
 
 Code used to initialise the server
 """
+from resources import consts
 from backend.types.auth import IAuthInfo
 from backend.models.auth_config import AuthConfig
 from backend.models.permissions import PermissionGroup, Permission
@@ -179,13 +180,18 @@ def init(
 
     # Create the main queue
     Queue.create(
-        "Main",
+        consts.MAIN_QUEUE,
         immutable=True,
     )
     # WARNING: Changing this order breaks the frontend. Yes, I hate this just
     # as much as you do, but it is not my fault, I am but a lowly backend
     # developer
-    for name in ["Reported", "Closed", "Answered", "Deleted"]:
+    for name in [
+        consts.REPORTED_QUEUE,
+        consts.CLOSED_QUEUE,
+        consts.ANSWERED_QUEUE,
+        consts.DELETED_QUEUE,
+    ]:
         Queue.create(
             name,
             immutable=True,

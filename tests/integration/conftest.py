@@ -5,6 +5,7 @@ Configuration for tests
 """
 import pytest
 from typing import TypedDict
+from resources import consts
 from backend.types.identifiers import PostId, QueueId
 from backend.types.permissions import IPermissionGroup
 from backend.types.auth import IAuthInfo
@@ -312,11 +313,11 @@ def default_queues(basic_server_setup: IBasicServerSetup) -> IDefaultQueues:
     # Probably we added more default queues, or changed the ordering or
     # something
     assert len(ids) == 5
-    assert ids[0]["queue_name"] == "Main"
-    assert ids[1]["queue_name"] == "Reported"
-    assert ids[2]["queue_name"] == "Closed"
-    assert ids[3]["queue_name"] == "Answered"
-    assert ids[4]["queue_name"] == "Deleted"
+    assert ids[0]["queue_name"] == consts.MAIN_QUEUE
+    assert ids[1]["queue_name"] == consts.REPORTED_QUEUE
+    assert ids[2]["queue_name"] == consts.CLOSED_QUEUE
+    assert ids[3]["queue_name"] == consts.ANSWERED_QUEUE
+    assert ids[4]["queue_name"] == consts.DELETED_QUEUE
 
     return {
         "main": ids[0]["queue_id"],
