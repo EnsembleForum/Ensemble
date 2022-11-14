@@ -16,10 +16,10 @@ interface Props {
 
 export const StyledNavbar = styled.div`
   height: 10vh;
+  min-height: 10vh;
   width: 100vw;
   display: flex;
   border-bottom: 1px solid lightgrey;
-  overflow: hidden;
   align-items: center;
   * {
     padding: 10px;
@@ -48,6 +48,8 @@ export const StyledNavbar = styled.div`
     flex-grow: 1;
   }
   background-color: ${theme.colors?.muted};
+    overflow: hidden;
+
 `;
 
 // Exporting our example component
