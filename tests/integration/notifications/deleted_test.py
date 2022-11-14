@@ -6,14 +6,11 @@ Tests for notifications when deleting posts
 * Users get notified when their post is deleted
 * User doesn't get notified if they delete their own post
 """
-import pytest
 import jestspectation as expect
 from ..conftest import ISimpleUsers, IMakePosts, IBasicServerSetup
 from ensemble_request import notifications, browse
 
 
-# Mods don't have permission to delete other user's posts yet
-@pytest.mark.xfail
 def test_deleted_post_notification(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,
@@ -47,8 +44,6 @@ def test_self_deleted_post_no_notification(
     assert notifs['notifications'] == []
 
 
-# No route for deleting comments or replies
-@pytest.mark.xfail
 def test_deleted_comment_notification(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,
@@ -80,8 +75,6 @@ def test_deleted_comment_notification(
     ]
 
 
-# No way to delete comments
-@pytest.mark.xfail
 def test_self_deleted_comment_no_notification(
     basic_server_setup: IBasicServerSetup,
     make_posts: IMakePosts,
@@ -102,8 +95,6 @@ def test_self_deleted_comment_no_notification(
     assert notifs['notifications'] == []
 
 
-# No route for deleting replies
-@pytest.mark.xfail
 def test_deleted_reply_notification(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,
@@ -141,8 +132,6 @@ def test_deleted_reply_notification(
     ]
 
 
-# No way to delete replies
-@pytest.mark.xfail
 def test_self_deleted_reply_no_notification(
     basic_server_setup: IBasicServerSetup,
     make_posts: IMakePosts,

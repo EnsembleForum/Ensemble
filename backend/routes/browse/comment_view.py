@@ -10,6 +10,7 @@ from backend.models.notifications import (
     NotificationAccepted,
     NotificationUnaccepted,
     NotificationReacted,
+    NotificationDeleted
 )
 from backend.models.permissions import Permission
 from backend.models.reply import Reply
@@ -148,6 +149,10 @@ def delete(user: User, *_) -> dict:
 
     if user != comment.author:
         user.permissions.assert_can(Permission.DeletePosts)
+        NotificationDeleted.create(
+            comment.author,
+            comment,
+        )
 
     comment.delete()
     return {}
