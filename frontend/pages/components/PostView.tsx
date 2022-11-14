@@ -84,9 +84,12 @@ const PostView = (props: Props) => {
             anonymous={currentPost.anonymous} 
             closed={currentPost.closed} 
             answered={currentPost.answered} 
+            reported={currentPost.reported} 
             showCloseButton={getPermission(31)} 
             deleted={currentPost.deleted}
             showDeleteButton={currentPost.author === getCurrentUser().user_id  || getPermission(32)} 
+            showReportButton={currentPost.author !== getCurrentUser().user_id && getPermission(30) && !getPermission(33)} 
+            showUnreportButton={getPermission(33)} 
           />
           <hr/><h2>Replies</h2>
           {

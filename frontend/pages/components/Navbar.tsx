@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ApiFetch, getCurrentUser, getPermission, setCurrentUser } from "../../App";
+import { ApiFetch, getCurrentUser, getLoggedIn, getPermission, setCurrentUser } from "../../App";
 import { Prettify } from "../../global_functions";
 import { APIcall } from "../../interfaces";
 import { theme } from "../../theme";
@@ -81,7 +81,7 @@ const Navbar = (props: Props) => {
   return (
     <StyledNavbar as="nav">
       <h1>ENSEMBLE</h1>
-      {getCurrentUser().logged_in ? Object.keys(pages).map((i) => {
+      {getLoggedIn() ? Object.keys(pages).map((i) => {
         const page = pages[parseInt(i)];
         return (
           // eslint-disable-next-line jsx-a11y/anchor-is-valid
@@ -91,7 +91,7 @@ const Navbar = (props: Props) => {
       }) : <></>
       }
       <span></span>
-      {getCurrentUser().logged_in ? logout : login }
+      {getLoggedIn() ? logout : login }
     </StyledNavbar>
   );
 };
