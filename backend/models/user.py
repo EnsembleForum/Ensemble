@@ -239,4 +239,5 @@ class User:
             "pronouns": self.pronouns,
             "user_id": self.id,
             "email": self.email,
+            "permission_group": self.permissions.parent.name,
         }

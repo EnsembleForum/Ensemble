@@ -70,6 +70,8 @@ class IUserProfile(TypedDict):
     * `email`: `str`
     * `user_id`: `int`
     * `pronouns`: `Optional[str]`
+    * `permission_group`: `str`
+    
 
     Note that this will eventually contain more properties such as pronouns and
     the like
@@ -81,3 +83,4 @@ class IUserProfile(TypedDict):
     email: str
     pronouns: Optional[str]
     user_id: UserId
+    permission_group: str
