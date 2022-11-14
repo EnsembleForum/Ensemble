@@ -14,6 +14,7 @@ const StyledLayout = styled.div`
   height: 90vh;
   display: flex;
   flex-direction: row;
+  overflow: hidden;
   * > h2 {
     height: 7vh;
     margin: 0;
