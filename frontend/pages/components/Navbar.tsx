@@ -19,7 +19,7 @@ export const StyledNavbar = styled.div`
   width: 100vw;
   display: flex;
   border-bottom: 1px solid lightgrey;
-
+  overflow: hidden;
   align-items: center;
   * {
     padding: 10px;
