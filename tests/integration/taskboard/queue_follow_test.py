@@ -18,6 +18,7 @@ from backend.types.identifiers import QueueId
 from ensemble_request import taskboard
 
 
+@pytest.mark.core
 def test_follow_queue(
     basic_server_setup: IBasicServerSetup,
     default_queues: IDefaultQueues,

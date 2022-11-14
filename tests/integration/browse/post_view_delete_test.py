@@ -58,10 +58,10 @@ def test_mod_delete_other_user_post(
 
     # Deleted post is sent to the deleted queue
     post_queue_name = post_view(token, post_id)["queue"]
-    assert post_queue_name == "Deleted queue"
+    assert post_queue_name == "Deleted"
 
     queue_id = get_queue(queue_list(token)['queues'],
-                         "Deleted queue")["queue_id"]
+                         "Deleted")["queue_id"]
     queue = queue_post_list(token, queue_id)
     assert post_id in queue["posts"]
 
@@ -80,12 +80,12 @@ def test_OP_delete(
     # Deleted post is sent to the deleted queue
     post_info = post_view(mod_token, post_id)
     post_queue_name = post_info["queue"]
-    assert post_queue_name == "Deleted queue"
+    assert post_queue_name == "Deleted"
     assert post_info["deleted"]
     assert len(post_list(user_token)["posts"]) == 1
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Deleted queue")["queue_id"]
+                         "Deleted")["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
