@@ -28,9 +28,12 @@ interface Props {
   closed?: boolean,
   accepted?: boolean,
   deleted?: boolean,
+  reported?: boolean,
   showCloseButton?: boolean,
   showAcceptButton?: boolean,
-  showDeleteButton?: boolean
+  showDeleteButton?: boolean,
+  showReportButton?: boolean
+  showUnreportButton?: boolean
 }
 
 const StyledText = styled.div`
@@ -92,6 +95,9 @@ const ActiveAcceptButton = styled(InactiveReactButton)`
 `
 
 const DeleteButton = styled(InactiveReactButton)`
+  background-color: #FF0000;
+`
+const ReportButton = styled(InactiveReactButton)`
   background-color: #FF0000;
 `
 
@@ -252,6 +258,28 @@ const TextView = (props: Props) => {
     updatePosts();
   }
 
+  async function report_post() {
+    const call : APIcall = {
+      method: "PUT",
+      path: "browse/post_view/report",
+      params: {"post_id": props.id.toString()}
+    }
+    console.log(call)
+    await ApiFetch(call);
+    setCommentCount(commentCount + 1);
+    updatePosts();
+  }
+  async function unreport_post() {
+    const call : APIcall = {
+      method: "PUT",
+      path: "browse/post_view/unreport",
+      params: {"post_id": props.id.toString()}
+    }
+    await ApiFetch(call);
+    setCommentCount(commentCount + 1);
+    updatePosts();
+  }
+
 
   const reply = (
   <StyledReply>
@@ -350,6 +378,15 @@ const TextView = (props: Props) => {
     <DeleteButton data-tip="Delete reply" onClick={() => delete_reply()}>🗑️</DeleteButton>
   </>)
 
+  const reportButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <InactiveReactButton data-tip="Report post" onClick={() => report_post()}>❗</InactiveReactButton>
+  </>)
+  const unreportButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <ActiveCloseButton data-tip="Unreport post" onClick={() => unreport_post()}>bruh</ActiveCloseButton>
+  </>)
+
   return (
     <StyledText>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : (props.type === "comment" ? (props.accepted ? {backgroundColor: "#90EE90", padding: "10px", borderRadius: "10px"} : {}):{})}>
@@ -374,6 +411,8 @@ const TextView = (props: Props) => {
           { props.type === "post" && props.showDeleteButton ? deleteButton  : <></> }
           { props.type === "comment" && props.showDeleteButton ? deleteCommentButton  : <></> }
           { props.type === "reply" && props.showDeleteButton ? deleteReplyButton  : <></> }
+          { props.type === "post" && props.showReportButton && !props.reported ? reportButton  : <></> }
+          { props.type === "post" && props.showUnreportButton && props.reported ? unreportButton  : <></> }
           { toggleReply ? reply : <></>}
         </span>
       

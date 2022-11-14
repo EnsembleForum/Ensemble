@@ -78,6 +78,7 @@ export interface postView {
   answered?: number,
   closed: boolean,
   deleted: boolean,
+  reported: boolean
 }
 
 export interface commentView {
