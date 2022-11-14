@@ -3,13 +3,11 @@ import React, { JSXElementConstructor } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, Button, IconButton, Input, Text, Textarea } from "theme-ui";
 import { isPropertySignature, JsxElement } from "typescript";
-import { ApiFetch, getPermission } from "../../App";
+import { ApiFetch, getCurrentUser, getPermission } from "../../App";
 import { APIcall, postView } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
 import { StyledButton } from "../GlobalProps";
-import UserContext from "../userContext";
-import PermissionsContext from "../userContext";
 import AuthorView from "./AuthorView";
 import ReactTooltip from 'react-tooltip';
 
@@ -127,7 +125,6 @@ const TextView = (props: Props) => {
   const [editText, setEditText] = React.useState<string>(props.text as string);
   const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
-  const { currentUser, setCurrentUser } = React.useContext(UserContext);
   let [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const routes = {
@@ -310,7 +307,7 @@ const TextView = (props: Props) => {
         <br/>
         { toggleEdit ? editBox : <p>{props.text}</p> }
         { props.userReacted ? activeReactButton : reactButton}
-        { currentUser.user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
+        { getCurrentUser().user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
         { toggleReply ? activeReplyButton : replyButton }
         { toggleReply ? reply : <></>}
         { props.type === "post" && getPermission(31) ? ( props.closed ? activeCloseButton : closeButton)  : <></> }

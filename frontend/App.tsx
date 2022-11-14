@@ -9,11 +9,9 @@ import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
 import PasswordResetPage from './pages/PasswordResetPage';
-import UserContext from './pages/userContext';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
-import UsersRegisterPage from './pages/UsersRegisterPage';
 
 export function ApiFetch(apiCall: APIcall) {
   const requestOptions: requestOptions = {
@@ -25,7 +23,7 @@ export function ApiFetch(apiCall: APIcall) {
   if (apiCall.params) {
     newparams = '?' + (new URLSearchParams(apiCall.params)).toString();
   }
-  const token = getToken();
+  const token = getCurrentUser().token;
   if (token !== null) { requestOptions.headers.Authorization = `Bearer ${token}`; }
   // console.log(requestOptions);
   if (!apiCall.customUrl) {
@@ -51,15 +49,6 @@ export function ApiFetch(apiCall: APIcall) {
       });
   });
 }
-
-export function setToken(token: string) {
-  window.localStorage.setItem("token", token);
-}
-export function getToken(): string | null {
-  const token = window.localStorage.getItem("token");
-  return token;
-}
-
 export function setCurrentUser(currentUser: currentUser) {
   window.localStorage.setItem("user", JSON.stringify(currentUser));
   window.dispatchEvent(new Event("storage"));

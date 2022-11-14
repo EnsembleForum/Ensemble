@@ -18,16 +18,6 @@ export interface usersRegister {
   group_id: number;
 }
 
-export interface initReturn {
-  user_id: number, token: string, permissions: userPermission[];
-}
-// you would think you would be able to write data instanceof initReturn 
-// but no :((( you have to check individual properties e.g.
-function instanceOfInitReturn(object: any): object is initReturn {
-  return ('token' in object && 'userId' in object)
-}
-
-
 // Login form types
 export interface loginForm {
   username: string,
@@ -123,6 +113,7 @@ export interface userPermission {
 }
 
 export interface currentUser {
+  token: string,
   user_id: number,
   permissions: userPermission[]
 }

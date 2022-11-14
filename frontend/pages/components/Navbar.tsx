@@ -8,8 +8,6 @@ import { Prettify } from "../../global_functions";
 import { APIcall } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
-import UserContext from "../userContext";
-import PermissionsContext from "../userContext";
 
 // Declaring and typing our props
 interface Props {
@@ -55,7 +53,6 @@ export const StyledNavbar = styled.div`
 // Exporting our example component
 const Navbar = (props: Props) => {
   const navigate = useNavigate();
-  const { currentUser, setCurrentUser } = React.useContext(UserContext);
   const logout = (
   <StyledButton onClick={(e) => {
     const api: APIcall = {
