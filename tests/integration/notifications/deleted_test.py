@@ -19,18 +19,19 @@ def test_deleted_post_notification(
     browse.post_delete(simple_users['mod']['token'], make_posts['post1_id'])
 
     notifs = notifications.list(simple_users['admin']['token'])
-    assert notifs['notifications'] == [
+    assert notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
+            "user_from": None,
             "seen": False,
-            "heading": f"A moderator deleted your post {make_posts['head1']}",
-            "body": "",
+            "heading": "Your post was deleted",
+            "body": make_posts['head1'],
             'post': make_posts['post1_id'],
             'comment': None,
             'reply': None,
             'queue': None,
         },
-    ]
+    ])
 
 
 def test_self_deleted_post_no_notification(
@@ -61,18 +62,19 @@ def test_deleted_comment_notification(
     )
 
     notifs = notifications.list(simple_users['admin']['token'])
-    assert notifs['notifications'] == [
+    assert notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
+            "user_from": None,
             "seen": False,
-            "heading": "A moderator deleted your comment 'This is a comment'",
-            "body": "",
+            "heading": "Your comment was deleted",
+            "body": "[Deleted]",
             'post': make_posts['post1_id'],
             'comment': comment,
             'reply': None,
             'queue': None,
         },
-    ]
+    ])
 
 
 def test_self_deleted_comment_no_notification(
@@ -118,18 +120,19 @@ def test_deleted_reply_notification(
     )
 
     notifs = notifications.list(simple_users['admin']['token'])
-    assert notifs['notifications'] == [
+    assert notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
+            "user_from": None,
             "seen": False,
-            "heading": "A moderator deleted your reply 'This is a reply'",
-            "body": "",
+            "heading": "Your reply was deleted",
+            "body": "[Deleted]",
             'post': make_posts['post1_id'],
             'comment': comment,
             'reply': reply,
             'queue': None,
         },
-    ]
+    ])
 
 
 def test_self_deleted_reply_no_notification(
