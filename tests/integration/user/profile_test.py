@@ -26,6 +26,7 @@ def test_view_own_profile(simple_users: ISimpleUsers):
         "email": "user1@example.com",
         "pronouns": None,
         "user_id": simple_users['user']['user_id'],
+        "permission_group": "User"
     }
 
 
@@ -42,6 +43,7 @@ def test_view_other_profile(simple_users: ISimpleUsers):
         "email": "mod1@example.com",
         "pronouns": None,
         "user_id": simple_users['mod']['user_id'],
+        "permission_group": "Moderator"
     }
 
 
