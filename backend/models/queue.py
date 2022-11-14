@@ -172,6 +172,17 @@ class Queue:
         # TODO: Remember not to use duplicate queue names otherwise this breaks
         return cls.get_queue("Deleted queue")
 
+    @classmethod
+    def get_reported_queue(cls) -> "Queue":
+        """
+        Gets the reported queue
+
+        ### Returns:
+        * `queue`: reported queue
+        """
+        # TODO: Remember not to use duplicate queue names otherwise this breaks
+        return cls.get_queue("Reported queue")
+
     def posts(self) -> list["Post"]:
         """
         List of all posts in the given queue

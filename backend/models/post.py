@@ -71,6 +71,7 @@ class Post:
                     TPost.queue: Queue.get_main_queue().id,
                     TPost.private: private,
                     TPost.anonymous: anonymous,
+                    TPost.reported: False
                 }
             )
             .save()
