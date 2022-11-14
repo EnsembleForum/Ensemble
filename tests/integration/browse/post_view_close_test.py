@@ -161,10 +161,10 @@ def test_closed_queue(
     # Closing a post sends it to the closed queue
     close_post(mod_token, post_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Closed queue"
+    assert post_queue_name == consts.CLOSED_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Closed queue")["queue_id"]
+                         consts.CLOSED_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
@@ -194,7 +194,7 @@ def test_edit_unclose_post(
     close_post(mod_token, post_id)
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Closed queue")["queue_id"]
+                         consts.CLOSED_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
@@ -229,10 +229,10 @@ def test_close_answered_post(
     # Un-closing a post sends it back to the answered queue
     close_post(mod_token, post_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Answered queue"
+    assert post_queue_name == consts.ANSWERED_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Answered queue")["queue_id"]
+                         consts.ANSWERED_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
@@ -255,9 +255,9 @@ def test_edit_answered_closed_post(
     post_edit(user_token, post_id, "hi", "there", [])
 
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Answered queue"
+    assert post_queue_name == consts.ANSWERED_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Answered queue")["queue_id"]
+                         consts.ANSWERED_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
