@@ -20,10 +20,6 @@ const StyledPostListView = styled.div`
   overflow-x: hidden;
 `
 
-export function isUsersPost(postId : number) {
-  
-}
-
 // Exporting our example component
 const PostView = (props: Props) => {
   const [commentCount, setCommentCount] = React.useState(0);
@@ -94,6 +90,7 @@ const PostView = (props: Props) => {
               )
             })
           }
+          <div style={{height: "80px"}}></div>
         </StyledPostListView>
       </CommentContext.Provider>
     )
