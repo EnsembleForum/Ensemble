@@ -83,7 +83,7 @@ export interface commentView {
   user_reacted: boolean;
   thanks: number,
   comment_id: number,
-  text: string, replies: number[] | replyView[], timestamp: number, author: number
+  text: string, replies: number[] | replyView[], timestamp: number, author: number, accepted: boolean,
 }
 
 export interface replyView {

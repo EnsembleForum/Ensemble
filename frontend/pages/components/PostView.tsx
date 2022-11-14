@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor, useEffect } from "react";
 import { Box, IconButton, Text } from "theme-ui";
-import { ApiFetch } from "../../App";
+import { ApiFetch, getCurrentUser, getPermission } from "../../App";
 import { APIcall, commentView, postView, replyView } from "../../interfaces";
 import TextView from "./TextView";
 import { theme } from "../../theme";
@@ -19,6 +19,10 @@ const StyledPostListView = styled.div`
   overflow-y: scroll;
   overflow-x: hidden;
 `
+
+export function isUsersPost(postId : number) {
+  
+}
 
 // Exporting our example component
 const PostView = (props: Props) => {
@@ -73,13 +77,13 @@ const PostView = (props: Props) => {
     return (
       <CommentContext.Provider value={value}>
        <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={parseInt(searchParams.get("postId") as string)} userReacted={currentPost.user_reacted} type="post" private={currentPost.private} anonymous={currentPost.anonymous} closed={currentPost.closed}></TextView>
+          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={parseInt(searchParams.get("postId") as string)} userReacted={currentPost.user_reacted} type="post" private={currentPost.private} anonymous={currentPost.anonymous} closed={currentPost.closed} answered={currentPost.answered} showCloseButton={getPermission(31)}></TextView>
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
               return (
                   <>
-                  <TextView key = {comment.comment_id} text={comment.text} reacts={comment.thanks} type="comment" id={comment.comment_id} author={comment.author} userReacted={comment.user_reacted}></TextView>
+                  <TextView key = {comment.comment_id} text={comment.text} reacts={comment.thanks} type="comment" id={comment.comment_id} author={comment.author} userReacted={comment.user_reacted} accepted={comment.accepted} showAcceptButton={currentPost.author === getCurrentUser().user_id || getPermission(13)}></TextView>
                   {comment.replies.map((reply) => {
                     const rep = reply as replyView;
                     return (
