@@ -15,7 +15,8 @@ from backend.types.post import (
     IPostBasicInfoList,
     IPostFullInfo,
     IPostId,
-    IPostClosed
+    IPostClosed,
+    IPostReported
 )
 from backend.types.react import IUserReacted
 from backend.types.reply import IReplyFullInfo
@@ -56,6 +57,8 @@ def post_list(token: JWT, search_term: str = "") -> IPostBasicInfoList:
             * `anonymous` (`bool`): whether this is an anonymous post
             * `answered`: (`bool`): whether this post is answered
             * `closed`: (`bool`): whether this post is closed
+            * `deleted`: (`bool`): whether this post is deleted
+            * `reported`: (`bool`): whether this post is reported
     """
     return cast(
         IPostBasicInfoList,
@@ -100,6 +103,8 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
                                     None if no comment is accepted
     * `closed`: (`bool`): whether this post is closed
     * `queue` (`QueueId`): queue that this post belongs to
+    * `deleted`: (`bool`): whether this post is deleted
+    * `reported`: (`bool`): whether this post is reported
     """
     return cast(
         IPostFullInfo,
@@ -588,6 +593,72 @@ def close_post(
         put(
             token,
             f"{URL}/post_view/close",
+            {
+                "post_id": post_id,
+            },
+        )
+    )
+
+
+def report_post(
+    token: JWT,
+    post_id: PostId,
+) -> IPostReported:
+    """
+    # PUT `/browse/post_view/report`
+
+    Report a post
+
+    ## Permissions
+    * `ReportPosts`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `post_id` (`int`): identifier of the post
+
+    ## Returns
+    * `reported` (`bool`): Whether the post is marked as reported
+    """
+    return cast(
+        IPostReported,
+        put(
+            token,
+            f"{URL}/post_view/report",
+            {
+                "post_id": post_id,
+            },
+        )
+    )
+
+
+def unreport_post(
+    token: JWT,
+    post_id: PostId,
+) -> IPostReported:
+    """
+    # PUT `/browse/post_view/unreport`
+
+    Un-report a post
+
+    ## Permissions
+    * `ViewReports`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `post_id` (`int`): identifier of the post
+
+    ## Returns
+    * `reported` (`bool`): Whether the post is marked as reported
+    """
+    return cast(
+        IPostReported,
+        put(
+            token,
+            f"{URL}/post_view/unreport",
             {
                 "post_id": post_id,
             },

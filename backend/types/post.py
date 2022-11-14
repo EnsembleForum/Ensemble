@@ -16,6 +16,7 @@ class IPostBasicInfo(TypedDict):
     * `closed`: `bool`
     * `deleted`: `bool`
     * `answered`: `bool`
+    * `reported`: `bool`
     """
     post_id: PostId
     author: UserId
@@ -27,6 +28,7 @@ class IPostBasicInfo(TypedDict):
     answered: bool
     closed: bool
     deleted: bool
+    reported: bool
 
 
 class IPostBasicInfoList(TypedDict):
@@ -41,6 +43,7 @@ class IPostBasicInfoList(TypedDict):
         * `me_too`: `list[UserId]`
         * `private`: `bool`
         * `anonymous`: `bool`
+        * `deleted`: `bool`
         * `answered`: `bool`
     """
     posts: list[IPostBasicInfo]
@@ -70,6 +73,7 @@ class IPostFullInfo(TypedDict):
     * `anonymous`: `bool`
     * `closed`: `bool`
     * `deleted`: `bool`
+    * `reported`: `bool`
     * `user_reacted`: `bool`
     * `answered`: `Optional[CommentId]`
     * `queue`: `str`
@@ -87,6 +91,7 @@ class IPostFullInfo(TypedDict):
     anonymous: bool
     closed: bool
     deleted: bool
+    reported: bool
     answered: Optional[CommentId]
     queue: str
 
@@ -98,3 +103,12 @@ class IPostClosed(TypedDict):
     * `closed`: `bool`
     """
     closed: bool
+
+
+class IPostReported(TypedDict):
+    """
+    Whether a post is reported
+
+    * `reported`: `bool`
+    """
+    reported: bool

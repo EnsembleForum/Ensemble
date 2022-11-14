@@ -26,13 +26,15 @@ from tests.integration.conftest import (
 @pytest.mark.core
 def test_default_queue_create(basic_server_setup: IBasicServerSetup):
     """
-    Test that the 3 default queues are created on forum initialisation
+    Test that the 5 default queues are created on forum initialisation
     """
     queues = queue_list(basic_server_setup['token'])['queues']
-    assert len(queues) == 4
+    assert len(queues) == 5
     queue_names = sorted([q['queue_name'] for q in queues])
     assert queue_names == sorted(
-        ["Main queue", "Answered queue", "Closed queue", "Deleted queue"])
+        ["Main queue", "Answered queue", "Closed queue",
+         "Deleted queue", "Reported queue"]
+    )
 
 
 def test_default_queue_cannot_delete(basic_server_setup: IBasicServerSetup):
@@ -71,11 +73,12 @@ def test_view_only_basic_info(basic_server_setup: IBasicServerSetup):
     assert get_queue(queues, "Answered queue")["view_only"]
     assert get_queue(queues, "Closed queue")["view_only"]
     assert get_queue(queues, "Deleted queue")["view_only"]
+    assert get_queue(queues, "Reported queue")["view_only"]
 
 
 def test_view_only_ful_info(basic_server_setup: IBasicServerSetup):
     """
-    Whether queue__post_list correctly shows that the queue is view_only or not
+    Whether queue_post_list correctly shows that the queue is view_only or not
     """
     token = basic_server_setup['token']
     queues = queue_list(token)['queues']
@@ -83,8 +86,10 @@ def test_view_only_ful_info(basic_server_setup: IBasicServerSetup):
     answered_id = get_queue(queues, "Answered queue")["queue_id"]
     closed_id = get_queue(queues, "Closed queue")["queue_id"]
     deleted_id = get_queue(queues, "Deleted queue")["queue_id"]
+    reported_id = get_queue(queues, "Reported queue")["queue_id"]
 
     assert not queue_post_list(token, main_id)["view_only"]
     assert queue_post_list(token, answered_id)["view_only"]
     assert queue_post_list(token, closed_id)["view_only"]
     assert queue_post_list(token, deleted_id)["view_only"]
+    assert queue_post_list(token, reported_id)["view_only"]

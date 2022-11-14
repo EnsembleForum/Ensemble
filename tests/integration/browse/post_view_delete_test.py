@@ -74,8 +74,7 @@ def test_OP_delete(
     """
     mod_token = simple_users["mod"]["token"]
     user_token = simple_users["user"]["token"]
-    heading = "head"
-    post_id = post_create(user_token, heading, "text", [])["post_id"]
+    post_id = post_create(user_token, "heading", "text", [])["post_id"]
     post_delete(user_token, post_id)
 
     # Deleted post is sent to the deleted queue
@@ -83,7 +82,6 @@ def test_OP_delete(
     post_queue_name = post_info["queue"]
     assert post_queue_name == "Deleted queue"
     assert post_info["deleted"]
-    assert post_info["heading"] == f"[Deleted] {heading}"
     assert len(post_list(user_token)["posts"]) == 1
 
     queue_id = get_queue(queue_list(mod_token)['queues'],

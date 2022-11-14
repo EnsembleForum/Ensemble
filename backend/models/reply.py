@@ -86,7 +86,7 @@ class Reply:
         """
         Delete this reply
         """
-        self.text = "[Deleted]."
+        self.text = "[Deleted]"
         self.deleted = True
 
     def _get(self) -> TReply:
