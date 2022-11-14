@@ -20,6 +20,9 @@ const StyledLayout = styled.div`
     font-weight: 300;
   }
 `
+const Layout = styled.span`
+  overflow: hidden;
+`
 const StyledQueues = styled.div`
   width: 60vw;
   height: 82vh;
@@ -78,7 +81,7 @@ const TaskboardPage = (props: Props) => {
 
   if (queueList) {
     return (
-      <>
+      <Layout>
         <Navbar page="taskboard" />
         <StyledLayout>
           <StyledQueues>
@@ -103,7 +106,7 @@ const TaskboardPage = (props: Props) => {
           </StyledViewOnlyQueues>
         </StyledLayout>
         
-      </>
+      </Layout>
     );
   } else {
     return (
