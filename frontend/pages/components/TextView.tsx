@@ -215,6 +215,18 @@ const TextView = (props: Props) => {
     setCommentCount(commentCount + 1);
     updatePosts();
   }
+  async function delete_post() {
+    const call : APIcall = {
+      method: "DELETE",
+      path: "browse/post_view/delete",
+      params: {post_id: props.id.toString()}
+    }
+    await ApiFetch(call);
+    setCommentCount(commentCount + 1);
+    updatePosts();
+  }
+
+
   const reply = (
   <StyledReply>
     <Input placeholder="Reply" value={inputText} onChange={(e)=>setInputText(e.target.value)} ></Input>
@@ -299,6 +311,10 @@ const TextView = (props: Props) => {
     <ReactTooltip place="top" type="dark" effect="solid"/>
     <ActiveAcceptButton data-tip="Unmark as answered" onClick={() => answer_post()}>✅</ActiveAcceptButton>
   </>)
+  const deleteButton = (<>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <InactiveReactButton data-tip="Delete post" onClick={() => delete_post()}>🚮</InactiveReactButton>
+  </>)
 
   return (
     <StyledText>
@@ -317,8 +333,9 @@ const TextView = (props: Props) => {
         { props.userReacted ? activeReactButton : reactButton}
         { getCurrentUser().user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
         { toggleReply ? activeReplyButton : replyButton }
-        { props.type === "post" && props.showCloseButton? ( props.closed ? activeCloseButton : closeButton)  : <></> }
+        { props.type === "post" && props.showCloseButton ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
         { props.type === "comment" && props.showAcceptButton ? (props.accepted ? activeAcceptButton : acceptButton) : <></> }
+        { props.type === "post" && props.showCloseButton ? deleteButton  : <></> }
         { toggleReply ? reply : <></>}
       </StyledPost>
       { props.type === "post" ? <></>: <StyledBorder/>}

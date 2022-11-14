@@ -1,11 +1,9 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Box, IconButton, Text } from "theme-ui";
 import { ApiFetch, getCurrentUser, getPermission, setCurrentUser } from "../../App";
 import { Prettify } from "../../global_functions";
-import { APIcall, currentUser } from "../../interfaces";
+import { APIcall } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
 
@@ -54,7 +52,6 @@ export const StyledNavbar = styled.div`
 
 // Exporting our example component
 const Navbar = (props: Props) => {
-  const [showLogin, setShowLogin] = React.useState(true);
   const navigate = useNavigate();
   const logout = (
   <StyledButton onClick={(e) => {
@@ -86,9 +83,11 @@ const Navbar = (props: Props) => {
       <h1>ENSEMBLE</h1>
       {getCurrentUser().logged_in ? Object.keys(pages).map((i) => {
         const page = pages[parseInt(i)];
-        return (<a key={page} style={(page === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={() => {
-          navigate("/" + page)
-        }}>{Prettify(page)}</a>) 
+        return (
+          // eslint-disable-next-line jsx-a11y/anchor-is-valid
+          <a key={page} style={(page === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={() => {
+            navigate("/" + page)
+          }}>{Prettify(page)}</a>) 
       }) : <></>
       }
       <span></span>

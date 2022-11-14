@@ -1,13 +1,10 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor } from "react";
+import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { Box, IconButton, Text } from "theme-ui";
-import { forEachChild } from "typescript";
 import { ApiFetch } from "../../App";
 import { APIcall, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
 import AuthorView from "./AuthorView";
-import ReactTooltip from 'react-tooltip';
 
 // Declaring and typing our props
 interface Props { }

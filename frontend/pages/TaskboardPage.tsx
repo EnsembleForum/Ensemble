@@ -16,11 +16,6 @@ const StyledLayout = styled.div`
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  * > h2 {
-    height: 7vh;
-    margin: 0;
-    font-weight: 300;
-  }  
 `
 const Layout = styled.span`
   overflow: hidden;
@@ -30,6 +25,11 @@ const StyledQueues = styled.div`
   height: 82vh;
   padding: 30px;
   overflow:auto;
+  h2 {
+    height: 7vh;
+    margin: 0;
+    font-weight: 300;
+  }  
 `
 const StyledViewOnlyQueues = styled(StyledQueues)`
   width: 40vw;
@@ -113,7 +113,7 @@ const TaskboardPage = (props: Props) => {
     return (
       <>
         <Navbar page="taskboard" />
-        Loading...
+        <div style={{padding: "30px"}}> Loading... </div>
       </>
     )
   }
