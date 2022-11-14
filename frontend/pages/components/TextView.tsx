@@ -361,7 +361,7 @@ const TextView = (props: Props) => {
           </Status>
         </OptionsBar>
         {author}
-        {props.deleted ? <p style={{color: "darkGrey", fontStyle: "italic"}}>{props.text}</p> : <></>}
+        {props.deleted ? <p style={{color: "darkGrey", fontStyle: "italic", fontWeight: 500}}>{props.text}</p> : <></>}
         <span style={props.deleted ? {display: "none"} : {}}>
           {toggleEdit ? <></> : tags}
           <br/>
