@@ -262,7 +262,7 @@ const TextView = (props: Props) => {
     const call : APIcall = {
       method: "PUT",
       path: "browse/post_view/report",
-      params: {"post_id": props.id.toString()}
+      body: {"post_id": props.id}
     }
     console.log(call)
     await ApiFetch(call);
@@ -273,7 +273,7 @@ const TextView = (props: Props) => {
     const call : APIcall = {
       method: "PUT",
       path: "browse/post_view/unreport",
-      params: {"post_id": props.id.toString()}
+      body: {"post_id": props.id}
     }
     await ApiFetch(call);
     setCommentCount(commentCount + 1);
@@ -384,7 +384,7 @@ const TextView = (props: Props) => {
   </>)
   const unreportButton = (<>
     <ReactTooltip place="top" type="dark" effect="solid"/>
-    <ActiveCloseButton data-tip="Unreport post" onClick={() => unreport_post()}>bruh</ActiveCloseButton>
+    <ActiveCloseButton data-tip="Unreport post" onClick={() => unreport_post()}>❗</ActiveCloseButton>
   </>)
 
   return (
