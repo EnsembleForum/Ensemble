@@ -29,6 +29,6 @@ def test_create_tag(
     """
     Successful reaction by one user
     """
-    token = simple_users["user"]["token"]
+    token = simple_users["admin"]["token"]
     tag1 = cast(ITagId, create_tag(token, "tag1"))
-    assert tag1 == {"tag_id": 0}
+    assert tag1 == {"tag_id": 1}

@@ -13,7 +13,7 @@ from backend.types.identifiers import TagId, PostId
 from backend.types.tag import ITagBasicInfo, ITagId
 from backend.util.tokens import uses_token
 
-tags_view = Blueprint("tag_view", "tag_view")
+tags_view = Blueprint("tags_view", "tags_view")
 
 
 @tags_view.get("")

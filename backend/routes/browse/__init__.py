@@ -15,10 +15,12 @@ from backend.types.identifiers import TagId
 from .post_view import post_view
 from .comment_view import comment_view
 from .reply_view import reply_view
+from .tags_view import tags_view
 from backend.util.tokens import uses_token
 
 browse = Blueprint("browse", "browse")
 browse.register_blueprint(post_view, url_prefix="/post_view")
+browse.register_blueprint(tags_view, url_prefix="/tags_view")
 browse.register_blueprint(comment_view, url_prefix="/comment_view")
 browse.register_blueprint(reply_view, url_prefix="/reply_view")
 
