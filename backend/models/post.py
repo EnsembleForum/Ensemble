@@ -78,7 +78,15 @@ class Post:
             .run_sync()[0]
         )
         id = cast(PostId, val["id"])
-        return Post(id)
+        p = Post(id)
+        for t in tags:
+            TPostTags(
+                {
+                    TPostTags.post: id,
+                    TPostTags.tag: t.id,
+                }
+            ).save().run_sync()
+        return p
 
     @classmethod
     def all(cls) -> list["Post"]:
@@ -251,7 +259,8 @@ class Post:
     @tags.setter
     def tags(self, new_tags: list[Tag]):
         for t in self.tags:
-            TPostTags.delete().where(TPostTags.id == t.id).run_sync()
+            TPostTags.delete().where(TPostTags.id == t.id, TPostTags.post \
+                == self.id).run_sync()
 
         for t in new_tags:
             TPostTags(
@@ -260,6 +269,18 @@ class Post:
                     TPostTags.tag: t.id,
                 }
             ).save().run_sync()
+
+    def add_tag(self, new_tag: Tag):
+        TPostTags(
+            {
+                TPostTags.post: self.id,
+                TPostTags.tag: new_tag.id,
+            }
+        ).save().run_sync()
+
+    def delete_tag(self, tag: Tag):
+        TPostTags.delete().where(TPostTags.id == tag.id, TPostTags.post \
+            == self.id).run_sync()
 
     @property
     def me_too(self) -> int:

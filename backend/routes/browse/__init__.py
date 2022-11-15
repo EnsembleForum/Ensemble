@@ -11,6 +11,7 @@ from backend.models.tag import Tag
 from backend.models.exam_mode import ExamMode
 from backend.models.permissions import Permission
 from backend.types.post import IPostBasicInfoList, IPostId
+from backend.types.identifiers import TagId
 from .post_view import post_view
 from .comment_view import comment_view
 from .reply_view import reply_view
@@ -40,15 +41,15 @@ def create(user: User, *_) -> IPostId:
     data = json.loads(request.data)
     heading: str = data["heading"]
     text: str = data["text"]
-    tags: list[Tag] = data["tags"]
+    tags: list[TagId] = data["tags"]
+    tags_list: list[Tag] = [Tag(i) for i in tags]
     private: bool = data["private"]
     anonymous: bool = data["anonymous"]
 
     if ExamMode.is_enabled() and not private:
         user.permissions.assert_can(Permission.PostOverrideExam)
 
-    post_id = Post.create(user, heading, text, tags, private, anonymous).id
-    # post_id = Post.create(user, heading, text, private, anonymous).id
+    post_id = Post.create(user, heading, text, tags_list, private, anonymous).id
     return {"post_id": post_id}
 
 

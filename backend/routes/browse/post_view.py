@@ -11,7 +11,7 @@ from backend.models.user import User
 from backend.models.tag import Tag
 from backend.models.queue import Queue
 from backend.models.comment import Comment
-from backend.types.identifiers import PostId
+from backend.types.identifiers import PostId, TagId
 from backend.types.post import IPostFullInfo, IPostClosed
 from backend.types.comment import ICommentId
 from backend.types.react import IUserReacted
@@ -42,7 +42,7 @@ def edit(user: User, *_) -> dict:
     post_id: PostId = data["post_id"]
     new_heading: str = data["heading"]
     new_text: str = data["text"]
-    new_tags: list[Tag] = data["tags"]
+    new_tags: list[TagId] = data["tags"]
 
     post = Post(post_id)
 
@@ -51,7 +51,7 @@ def edit(user: User, *_) -> dict:
 
     post.heading = new_heading
     post.text = new_text
-    post.tags = new_tags
+    post.tags = [Tag(t) for t in new_tags]
 
     # Send post back to main queue if it was previously closed
     if post.closed:

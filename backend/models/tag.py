@@ -1,18 +1,9 @@
-from .tables import TComment, TPost, TTag, TPostTags
-from .user import User
-from .post import Post
-from .comment import Comment
-from .queue import Queue
-from .permissions import Permission
+from .tables import TTag, TPostTags
+from backend.types.tag import ITagBasicInfo
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
-from backend.types.identifiers import PostId, CommentId, TagId
-from backend.types.post import IPostBasicInfo, IPostFullInfo
-from typing import cast  # , TYPE_CHECKING
-from datetime import datetime
-# if TYPE_CHECKING:
-#     from backend.models.queue import Queue
-
+from backend.types.identifiers import TagId
+from typing import cast, TYPE_CHECKING
 
 class Tag:
     """
@@ -24,10 +15,8 @@ class Tag:
         Create a post object shadowing an existing in the database
 
         ### Args:
-        * `id` (`int`): post id
+        * `id` (`TagId`): Tag id
 
-        ### Raises:
-        * `IdNotFound`: post does not exist
         """
         assert_id_exists(TTag, id, "TTag")
         self.__id = id
@@ -38,19 +27,13 @@ class Tag:
         name: str,
     ) -> "Tag":
         """
-        Create a new post
+        Create a new tag
 
         ### Args:
-        * `author` (`int`): user id of author
-
-        * `heading` (`str`): heading of post
-
-        * `text` (`str`): contents of post
-
-        * `tags` (`list[int]`): tags attached to post
+        * `name` (`str`): name
 
         ### Returns:
-        * `Post`: the post object
+        * `Tag`: the Tag object
         """
         assert_valid_str_field(name, "name")
         val = (
@@ -89,7 +72,7 @@ class Tag:
 
     @property
     def name(self):
-        return self.name
+        return self._get().name
 
     @name.setter
     def name(self, new_name):
@@ -97,3 +80,22 @@ class Tag:
         row = self._get()
         row.name = new_name
         row.save().run_sync()
+
+    def delete(self):
+        """
+        Deletes this tag from the database
+
+        """
+        TPostTags.delete().where(TPostTags.id == self.id).run_sync()
+
+    def basic_info(self) -> ITagBasicInfo:
+        """
+        Returns the basic info of a post
+
+        ### Returns:
+        * IPostBasicInfo: Dictionary containing basic info a post
+        """
+        return {
+            "tag_id": self.id,
+            "name": self.name,
+        }
