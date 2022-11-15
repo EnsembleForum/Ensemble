@@ -126,9 +126,9 @@ const UserProfilePage = (props: Props) => {
     );
   } else {
     return (
-      <Layout>
+      <div>
         <Navbar page="profile"/>
-      </Layout>
+      </div>
     )
   }
   
