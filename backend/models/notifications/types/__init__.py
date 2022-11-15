@@ -9,6 +9,7 @@ from .commented import NotificationCommented
 from .deleted import NotificationDeleted
 from .queue_added import NotificationQueueAdded
 from .reacted import NotificationReacted
+from .reported import NotificationReported
 from .unaccepted import NotificationUnaccepted
 
 
@@ -19,5 +20,6 @@ __all__ = [
     'NotificationAccepted',
     'NotificationQueueAdded',
     'NotificationReacted',
+    'NotificationReported',
     'NotificationUnaccepted',
 ]
