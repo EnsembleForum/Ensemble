@@ -78,6 +78,7 @@
     "taskboard",
     "unaccept",
     "unaccepts",
+    "Unreport",
     "werkzeug"
   ],
   "prettier.enable": false,

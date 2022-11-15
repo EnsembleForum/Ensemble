@@ -48,7 +48,8 @@ def post_list(token: JWT, search_term: str = "") -> IPostBasicInfoList:
     Object containing:
     * `posts`: List of objects, each containing
             * `post_id` (`int`): ID of the post
-            * `author` (`int`): ID of the creator of the post
+            * `author` (`Optional[int]`): ID of the creator of the post, or
+              None if post is anonymous
             * `heading` (`str`): title of the post
             * `tags` (`list[int]`): list of tag IDs for the post (not
               implemented yet)
@@ -89,7 +90,8 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
 
     ## Returns
     Object containing
-    * `author` (`int`): ID of the post author
+    * `author` (`Optional[int]`): ID of the creator of the post, or None if
+      post is anonymous
     * `heading` (`str`): heading of the post
     * `text` (`str`): main text of the post
     * `tags` (`list[int]`): list of tag IDs for the post

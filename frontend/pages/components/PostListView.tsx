@@ -33,12 +33,6 @@ const Post = styled.div`
     white-space: nowrap;
   }
 `
-const ActivePost = styled(Post)`
-  filter: brightness(95%);
-`
-const ClosedPost = styled(Post)`
-  background-color:#FF7F7F;
-`
 
 const Heading = styled.div`
   font-weight: 700;
@@ -63,6 +57,7 @@ const PostListView = (props: Props) => {
           setSearchParams({postId: test.posts[0].post_id.toString()})
         }
       })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
 

@@ -53,7 +53,7 @@ export function ApiFetch<T>(apiCall: APIcall) {
       });
   });
 }
-export function setCurrentUser(currentUser: currentUser) {
+export function setCurrentUser(currentUser: currentUser | null) {
   window.localStorage.setItem("user", JSON.stringify(currentUser));
   window.dispatchEvent(new Event("storage"));
 }
