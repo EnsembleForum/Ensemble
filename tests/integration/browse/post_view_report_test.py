@@ -47,7 +47,7 @@ def test_reported_post_view(
     post = post_view(tok, post_id)
     assert not post["reported"]
 
-    assert report_post(tok, post_id)["reported"]
+    report_post(tok, post_id)
     post = post_view(tok, post_id)
     assert post["reported"]
 
@@ -64,7 +64,7 @@ def test_reported_post_list(
     post = post_list(tok)["posts"][0]
     assert not post["reported"]
 
-    assert report_post(tok, post_id)["reported"]
+    report_post(tok, post_id)
     post = post_list(tok)["posts"][0]
     assert post["reported"]
 
@@ -91,7 +91,7 @@ def test_reported_queue(
     assert post_id in queue["posts"]
 
     # Un-reporting a post sends it back to the main queue
-    assert not unreport_post(tok, post_id)["reported"]
+    unreport_post(tok, post_id)
     post_queue_name = post_view(tok, post_id)["queue"]
     assert post_queue_name == consts.MAIN_QUEUE
 

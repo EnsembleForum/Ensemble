@@ -37,7 +37,7 @@ class NotificationReported(Notification):
 
         return NotificationReported(cls._create(
             user_to,
-            NotificationType.QueueAdded,
+            NotificationType.Reported,
             None,
             post,
         ))
