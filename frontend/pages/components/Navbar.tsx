@@ -70,7 +70,7 @@ const Navbar = (props: Props) => {
   const login = (<StyledButton onClick={(e) => {navigate("/login")}}>Login</StyledButton>);
 
   let pages = [
-    "browse",
+    "browse"
   ];
   if (getPermission(20)) {
     pages.push("taskboard")
@@ -78,6 +78,7 @@ const Navbar = (props: Props) => {
   if (getPermission(40)) {
     pages.push("admin")
   }
+  pages.push("profile")
   return (
     <StyledNavbar as="nav">
       <h1>ENSEMBLE</h1>
