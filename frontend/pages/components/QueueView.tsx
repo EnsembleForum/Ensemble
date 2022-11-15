@@ -75,7 +75,6 @@ const QueueView = (props: Props) => {
               pathname: '/browse',
               search: `?postId=${postShow.post_id}`,
             });
-    
           }}>
             <Heading>{postShow.heading}</Heading>
             <div></div>

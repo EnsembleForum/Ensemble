@@ -1,13 +1,10 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Box, Checkbox, IconButton, Input, Text, Textarea } from "theme-ui";
-import { TypeFlags } from "typescript";
+import React from "react";
+import { useSearchParams } from "react-router-dom";
+import { Input, Textarea } from "theme-ui";
 import { ApiFetch } from "../../App";
-import { APIcall, createPost, postView } from "../../interfaces";
+import { APIcall, createPost } from "../../interfaces";
 import { StyledButton } from "../GlobalProps";
-import TaskboardPage from "../TaskboardPage";
-import TextView from "./TextView";
 
 // Declaring and typing our props
 interface Props {}
@@ -51,6 +48,7 @@ const SpreadButtons = styled.div`
 // Exporting our example component
 const CreatePostView = (props: Props) => {
   let [toggle, setToggle] = React.useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let [searchParams, setSearchParams] = useSearchParams();
   let [post, setPost] = React.useState<createPost>({
     heading: '',

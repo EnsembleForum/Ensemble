@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor, useEffect } from "react";
-import { Box, IconButton, Text } from "theme-ui";
+import React, { useEffect } from "react";
 import { ApiFetch, getCurrentUser, getPermission } from "../../App";
 import { APIcall, commentView, postView, replyView } from "../../interfaces";
 import TextView from "./TextView";
@@ -26,6 +25,7 @@ const PostView = (props: Props) => {
   const value = { commentCount, setCommentCount};
   const [comments, setComments] = React.useState<commentView[]>();
   const [currentPost, setCurrentPost] = React.useState<postView>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let [searchParams, setSearchParams] = useSearchParams();
 
   async function getPost() {
@@ -66,6 +66,7 @@ const PostView = (props: Props) => {
     if (searchParams.get("postId") !== null && searchParams.get('postId') !== '0') {
       getPost();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[commentCount])
 
   // This is the data we would be APIfetching on props change
@@ -90,7 +91,7 @@ const PostView = (props: Props) => {
             showDeleteButton={currentPost.author === getCurrentUser().user_id  || getPermission(32)} 
             showReportButton={currentPost.author !== getCurrentUser().user_id && getPermission(30) && !getPermission(33)} 
             showUnreportButton={getPermission(33)} 
-            queue={currentPost.queue}
+            queue={currentPost.author !== getCurrentUser().user_id || getPermission(20) ? currentPost.queue : ''}
           />
           <hr/><h2>Replies</h2>
           {

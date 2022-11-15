@@ -1,10 +1,9 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Box, Button, IconButton, Input, Text, Textarea } from "theme-ui";
-import { isPropertySignature, JsxElement } from "typescript";
+import React from "react";
+import { useSearchParams } from "react-router-dom";
+import { Input, Textarea } from "theme-ui";
 import { ApiFetch, getCurrentUser, getPermission } from "../../App";
-import { APIcall, postView } from "../../interfaces";
+import { APIcall } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
 import { StyledButton } from "../GlobalProps";
@@ -213,7 +212,7 @@ const TextView = (props: Props) => {
     if (props.anonymous && !getPermission(2)) {
       author = <StyledAnonymous>Anonymous</StyledAnonymous>
     } else {
-      author = <AuthorView userId={props.author}/>;
+      author = <span style={{marginBottom: "0"}}><AuthorView userId={props.author} /></span>;
     }
   } 
 
@@ -432,7 +431,7 @@ const TextView = (props: Props) => {
   }
   
   return (
-    <StyledText>
+    <StyledText style={props.type === "comment" ? {paddingTop: "20px"} : props.type === "reply" ? {paddingTop: "10px"}:{}}>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : (props.type === "comment" ? (props.accepted ? {backgroundColor: "#90EE90", padding: "10px", borderRadius: "10px"} : {}):{})}>
         <OptionsBar>
           <Col>
