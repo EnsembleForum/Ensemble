@@ -62,16 +62,17 @@ const AuthorView = (props: Props) => {
     if (toggle) {
       return (
         <span onMouseLeave={(e) => setToggle(false)}>
-          <ActiveAuthor>{author.username} </ActiveAuthor>
+          <ActiveAuthor>{author.username} {author.permission_group !== "User" ? <>{"[" + author.permission_group + "]"}</>:<></>} </ActiveAuthor>
           <StyledText >
           Email: {author.email} <br/>
           Username: {author.username} <br/>
           Name: {author.name_first} {author.name_last}<br/>
+          {author.pronouns ? <>Pronouns: {author.pronouns} <br/></> : <></>}
           </StyledText>
         </span>
       )
     } else {
-      return (<StyledAuthor onMouseEnter={(e) => setToggle(true)}> {author.username} </StyledAuthor>)
+      return (<StyledAuthor onMouseEnter={(e) => setToggle(true)}> {author.username} {author.permission_group !== "User" ? <>{"[" + author.permission_group + "]"}</>:<></>} </StyledAuthor>)
     } 
   }
 
