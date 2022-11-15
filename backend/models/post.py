@@ -396,6 +396,16 @@ class Post:
         else:
             self.queue = Queue.get_closed_queue()
 
+    def can_view_op(self, user: User) -> bool:
+        """
+        Returns whether the given user should be able to view who made this
+        post.
+        """
+        if self.anonymous:
+            return user.permissions.can(Permission.ViewAnonymousOP)
+        else:
+            return True
+
     def basic_info(self) -> IPostBasicInfo:
         """
         Returns the basic info of a post
@@ -404,7 +414,7 @@ class Post:
         * IPostBasicInfo: Dictionary containing basic info a post
         """
         return {
-            "author": self.author.id,
+            "author": None if self.anonymous else self.author.id,
             "heading": self.heading,
             "post_id": PostId(self.id),
             "tags": self.tags,
@@ -426,7 +436,7 @@ class Post:
         """
         return {
             "post_id": self.id,
-            "author": self.author.id,
+            "author": self.author.id if self.can_view_op(user) else None,
             "heading": self.heading,
             "tags": self.tags,
             "me_too": self.me_too,
