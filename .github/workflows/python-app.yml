@@ -104,7 +104,7 @@ jobs:
       run: |
         python -m coverage xml coverage.xml
     - name: Create code coverage comment
-      if: ${{ github.event_name }} == 'pull_request'
+      if: ${{ github.event_name == 'pull_request' }}
       uses: orgoro/coverage@v3
       with:
           coverageFile: coverage.xml
