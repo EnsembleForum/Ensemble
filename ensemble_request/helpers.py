@@ -49,8 +49,10 @@ def handle_response(response: requests.Response) -> dict:
         case 404:
             raise http_errors.NotFound(response.url)
         case 405:
-            assert response.request.method is not None
-            raise http_errors.MethodNotAllowed(response.request.method)
+            method = response.request.method
+            url = response.url
+            msg = f"{method} {url}"
+            raise http_errors.MethodNotAllowed(msg)
         case 500:
             give_error_json(http_errors.InternalServerError, response.text)
         case i:
