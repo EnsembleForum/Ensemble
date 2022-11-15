@@ -99,11 +99,13 @@ const UserProfilePage = (props: Props) => {
     }
     if (user) {
       call.body[key] = user[key];
-      ApiFetch(call).then(() => setUpdate(!update));
+      ApiFetch(call).then(() => {
+        const copy = {...toggle};
+        copy[key] = false;
+        setToggle(copy);
+        setUpdate(!update)
+      });
     }
-    const copy = {...toggle};
-    copy[key] = false;
-    setToggle(copy);
   }
 
   React.useEffect(() => {
