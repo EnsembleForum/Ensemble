@@ -1,11 +1,13 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { Input } from "theme-ui";
+import { Button, Input } from "theme-ui";
 import { ApiFetch, getPermission } from "../../App";
 import { APIcall, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
 import AuthorView from "./AuthorView";
+import ReactTooltip from 'react-tooltip';
+import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props { }
@@ -40,6 +42,17 @@ const Heading = styled.div`
 `
 const Searchbar = styled(Input)`
   background-color: white;
+  border-radius: 10px 0 0 10px;
+  height: 35px;
+`
+const ConvertButton = styled(StyledButton)`
+  border-radius: 0px 10px 10px 0px;
+  border: 1px solid black;
+  border-left: 0;
+  height: 35px;
+  width: 35px;
+  padding: 0;
+  background: lightgrey;
 `
 
 // Exporting our example component
@@ -65,7 +78,17 @@ const PostListView = (props: Props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, searchTerm])
 
-  const searchBar = <div style={{padding: "10px"}}><Searchbar placeholder="Search" value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)}></Searchbar></div>
+  const searchBar = 
+  <div style={{padding: "10px", display: "flex"}}>
+    <Searchbar placeholder="Search" value={searchTerm} onChange={(e)=>{
+      setSearchTerm(e.target.value);
+    }}></Searchbar>
+    <ReactTooltip place="top" type="dark" effect="solid"/>
+    <ConvertButton data-tip="Convert post query into question" onClick={() => {
+      searchParams.set("searchTerm", searchTerm);
+      setSearchParams(searchParams);
+    }}>❓</ConvertButton>
+  </div>
 
   if (posts && posts.length > 0) {
     return (
