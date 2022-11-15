@@ -9,3 +9,7 @@ class ITagBasicInfo(TypedDict):
 
 class ITagId(TypedDict):
     tag_id: TagId
+
+
+class ITagList(TypedDict):
+    tags: list[ITagBasicInfo]

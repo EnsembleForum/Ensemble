@@ -61,7 +61,7 @@ class Tag:
             Tag(p["id"]) for p in
             TTag.select().order_by(TTag.id, ascending=False).run_sync()
         ]
-        
+
     def _get(self) -> TTag:
         """
         Return a reference to the underlying database row

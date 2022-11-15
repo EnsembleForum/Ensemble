@@ -55,7 +55,8 @@ def create(user: User, *_) -> IPostId:
     if ExamMode.is_enabled() and not private:
         user.permissions.assert_can(Permission.PostOverrideExam)
 
-    post_id = Post.create(user, heading, text, tags_list, private, anonymous).id
+    post_id = Post.create(user, heading, text, tags_list, private, anonymous)\
+        .id
     return {"post_id": post_id}
 
 

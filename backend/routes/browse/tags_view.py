@@ -48,7 +48,7 @@ def create_tag(user: User, *_) -> ITagId:
 @uses_token
 def delete_tag(user: User, *_) -> dict:
     """
-    Deleting the existence of a tag from a databse
+    Deleting the existence of a tag from a database
 
     ### Args:
     * `user` (`User`): user (who is an admin) deleting tags
@@ -57,8 +57,8 @@ def delete_tag(user: User, *_) -> dict:
     * `dict`: {}
     """
     user.permissions.assert_can(Permission.ManageTags)
-    data = json.loads(request.data)
-    tag_id = data["tag_id"]
+    data = (request.args)
+    tag_id = TagId(data["tag_id"])
     tag = Tag(tag_id)
     tag.delete()
     return {}
@@ -98,10 +98,10 @@ def remove_tag_from_post(*_) -> dict:
     ### Returns:
     * `dict`: {}
     """
-    data = json.loads(request.data)
-    post_id: PostId = data["post_id"]
+
+    post_id = PostId(request.args["post_id"])
     post = Post(post_id)
-    tag_id = data["tag_id"]
+    tag_id = TagId(request.args["tag_id"])
     tag = Tag(tag_id)
     post.delete_tag(tag)
 

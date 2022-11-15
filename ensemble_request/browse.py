@@ -520,13 +520,12 @@ def create_tag(token: JWT, tag_name: str) -> ITagBasicInfo:
 def delete_tag(token: JWT, tag_id: TagId):
     delete(
         token,
-        f"{URL}/tags_view/new_tag",
+        f"{URL}/tags_view/delete_tag",
         {"tag_id": tag_id, }
     )
 
 
 def add_tag_to_post(token: JWT, post_id: PostId, tag_id: TagId) -> ITagId:
-
     return cast(
         ITagId,
         post(
