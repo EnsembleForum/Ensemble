@@ -550,8 +550,6 @@ def remove_tag_from_post(token: JWT, post_id: PostId, tag_id: TagId):
         }
     )
 
-####
-
 
 def accept_comment(token: JWT, comment_id: CommentId) -> ICommentAccepted:
     """
