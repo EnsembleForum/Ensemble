@@ -16,7 +16,9 @@ from ensemble_request.browse import (
     comment_delete,
     get_comment,
     post_view,
-    comment_edit
+    comment_edit,
+    accept_comment,
+    post_create
 )
 from tests.integration.conftest import ISimpleUsers, IMakePosts
 
@@ -100,3 +102,19 @@ def test_edit_deleted_comment(
     comment_delete(user_token, comment_id)
     with pytest.raises(http_errors.BadRequest):
         comment_edit(user_token, comment_id, "hello")
+
+
+def test_delete_accepted_comment(
+    simple_users: ISimpleUsers
+):
+    """
+    Deleting an accepted comment marks post as unanswered
+    """
+    user_token = simple_users["user"]["token"]
+    post_id = post_create(user_token, "head", "text", [])["post_id"]
+    comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
+    accept_comment(user_token, comment_id)
+
+    comment_delete(user_token, comment_id)
+
+    assert not post_view(user_token, post_id)["answered"]

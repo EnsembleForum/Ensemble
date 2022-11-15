@@ -153,6 +153,7 @@ def delete(user: User, *_) -> dict:
             comment.author,
             comment,
         )
-
+    if comment == comment.parent.answered:
+        comment.parent.answered = None
     comment.delete()
     return {}
