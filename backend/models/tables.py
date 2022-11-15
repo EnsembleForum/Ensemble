@@ -74,6 +74,14 @@ class TQueue(_BaseTable):
     name = Text()
 
 
+class TQueueFollow(_BaseTable):
+    """
+    Relationship for who follows what queues
+    """
+    user = ForeignKey(TUser)
+    queue = ForeignKey(TQueue)
+
+
 class TPost(_BaseTable):
     """
     Table containing all posts
@@ -102,6 +110,7 @@ class TComment(_BaseTable):
 
     author = ForeignKey(TUser)
     parent = ForeignKey(TPost)
+    deleted = Boolean()
     text = Text()
     timestamp = Timestamp()
 
@@ -113,6 +122,7 @@ class TReply(_BaseTable):
 
     author = ForeignKey(TUser)
     parent = ForeignKey(TComment)
+    deleted = Boolean()
     text = Text()
     timestamp = Timestamp()
 

@@ -6,7 +6,10 @@ Reply View routes
 import json
 from flask import Blueprint, request
 from backend.models.permissions import Permission
-from backend.models.notifications import NotificationReacted
+from backend.models.notifications import (
+    NotificationReacted,
+    NotificationDeleted,
+)
 from backend.models.user import User
 from backend.models.reply import Reply
 from backend.types.identifiers import ReplyId
@@ -58,5 +61,24 @@ def edit(user: User, *_) -> dict:
         raise http_errors.Forbidden(
             "Attempting to edit another user's comment")
 
+    if reply.deleted:
+        raise http_errors.BadRequest("Cannot edit a deleted reply")
+
     reply.text = new_text
+    return {}
+
+
+@reply_view.delete("/delete")
+@uses_token
+def delete(user: User, *_) -> dict:
+    reply = Reply(ReplyId(request.args["reply_id"]))
+
+    if user != reply.author:
+        user.permissions.assert_can(Permission.DeletePosts)
+        NotificationDeleted.create(
+            reply.author,
+            reply,
+        )
+
+    reply.delete()
     return {}

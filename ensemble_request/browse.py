@@ -15,7 +15,8 @@ from backend.types.post import (
     IPostBasicInfoList,
     IPostFullInfo,
     IPostId,
-    IPostClosed
+    IPostClosed,
+    IPostReported
 )
 from backend.types.react import IUserReacted
 from backend.types.reply import IReplyFullInfo
@@ -27,7 +28,7 @@ from .helpers import post, get, put, delete
 URL = f"{URL}/browse"
 
 
-def post_list(token: JWT) -> IPostBasicInfoList:
+def post_list(token: JWT, search_term: str = "") -> IPostBasicInfoList:
     """
     ## GET `/browse/post_list`
 
@@ -38,6 +39,10 @@ def post_list(token: JWT) -> IPostBasicInfoList:
 
     ## Header
     * `Authorization` (`str`): JWT of the user
+
+    ## Params
+    * `search_term` (`str`): search term used for searching
+                             should be empty string if not searching
 
     ## Returns
     Object containing:
@@ -52,13 +57,17 @@ def post_list(token: JWT) -> IPostBasicInfoList:
             * `anonymous` (`bool`): whether this is an anonymous post
             * `answered`: (`bool`): whether this post is answered
             * `closed`: (`bool`): whether this post is closed
+            * `deleted`: (`bool`): whether this post is deleted
+            * `reported`: (`bool`): whether this post is reported
     """
     return cast(
         IPostBasicInfoList,
         get(
             token,
             f"{URL}/post_list",
-            {}
+            {
+                "search_term": search_term,
+            }
         ),
     )
 
@@ -94,6 +103,8 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
                                     None if no comment is accepted
     * `closed`: (`bool`): whether this post is closed
     * `queue` (`QueueId`): queue that this post belongs to
+    * `deleted`: (`bool`): whether this post is deleted
+    * `reported`: (`bool`): whether this post is reported
     """
     return cast(
         IPostFullInfo,
@@ -189,12 +200,12 @@ def post_edit(
 
 def post_delete(token: JWT, post_id: PostId):
     """
-    # DELETE `/browse/post_view/self_delete`
+    # DELETE `/browse/post_view/delete`
 
-    Deletes a post. This route must be called by the owner of the post.
+    Deletes a post.
 
     ## Permissions
-    * `PostCreate`
+    * `DeletePosts`
 
     ## Header
     * `Authorization` (`str`): JWT of the user
@@ -204,8 +215,52 @@ def post_delete(token: JWT, post_id: PostId):
     """
     delete(
         token,
-        f"{URL}/post_view/self_delete",
+        f"{URL}/post_view/delete",
         {"post_id": post_id, }
+    )
+
+
+def comment_delete(token: JWT, comment_id: CommentId):
+    """
+    # DELETE `/browse/comment_view/delete`
+
+    Deletes a comment.
+
+    ## Permissions
+    * `DeletePosts`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Params
+    * `comment_id` (`int`): identifier of the comment
+    """
+    delete(
+        token,
+        f"{URL}/comment_view/delete",
+        {"comment_id": comment_id, }
+    )
+
+
+def reply_delete(token: JWT, reply_id: ReplyId):
+    """
+    # DELETE `/browse/reply_view/delete`
+
+    Deletes a reply.
+
+    ## Permissions
+    * `DeletePosts`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Params
+    * `reply_id` (`int`): identifier of the reply
+    """
+    delete(
+        token,
+        f"{URL}/reply_view/delete",
+        {"reply_id": reply_id, }
     )
 
 
@@ -538,6 +593,72 @@ def close_post(
         put(
             token,
             f"{URL}/post_view/close",
+            {
+                "post_id": post_id,
+            },
+        )
+    )
+
+
+def report_post(
+    token: JWT,
+    post_id: PostId,
+) -> IPostReported:
+    """
+    # PUT `/browse/post_view/report`
+
+    Report a post
+
+    ## Permissions
+    * `ReportPosts`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `post_id` (`int`): identifier of the post
+
+    ## Returns
+    * `reported` (`bool`): Whether the post is marked as reported
+    """
+    return cast(
+        IPostReported,
+        put(
+            token,
+            f"{URL}/post_view/report",
+            {
+                "post_id": post_id,
+            },
+        )
+    )
+
+
+def unreport_post(
+    token: JWT,
+    post_id: PostId,
+) -> IPostReported:
+    """
+    # PUT `/browse/post_view/unreport`
+
+    Un-report a post
+
+    ## Permissions
+    * `ViewReports`
+
+    ## Header
+    * `Authorization` (`str`): JWT of the user
+
+    ## Body
+    * `post_id` (`int`): identifier of the post
+
+    ## Returns
+    * `reported` (`bool`): Whether the post is marked as reported
+    """
+    return cast(
+        IPostReported,
+        put(
+            token,
+            f"{URL}/post_view/unreport",
             {
                 "post_id": post_id,
             },

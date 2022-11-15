@@ -18,16 +18,6 @@ export interface usersRegister {
   group_id: number;
 }
 
-export interface initReturn {
-  user_id: number, token: string, permissions: userPermission[];
-}
-// you would think you would be able to write data instanceof initReturn 
-// but no :((( you have to check individual properties e.g.
-function instanceOfInitReturn(object: any): object is initReturn {
-  return ('token' in object && 'userId' in object)
-}
-
-
 // Login form types
 export interface loginForm {
   username: string,
@@ -68,7 +58,11 @@ export interface postListItem {
   heading: string,
   tags: number[],
   author: number,
-  reacts: reacts
+  me_too: number,
+  answered: boolean,
+  closed: boolean,
+  reported: boolean,
+  deleted: boolean
 }
 
 export interface postView {
@@ -82,19 +76,23 @@ export interface postView {
   timestamp: number,
   anonymous:boolean,
   private:boolean, 
-  user_reacted:boolean
+  user_reacted:boolean,
+  answered?: number,
+  closed: boolean,
+  deleted: boolean,
+  reported: boolean
 }
 
 export interface commentView {
   user_reacted: boolean;
   thanks: number,
   comment_id: number,
-  text: string, replies: number[] | replyView[], timestamp: number, author: number
+  text: string, replies: number[] | replyView[], timestamp: number, author: number, accepted: boolean,deleted: boolean
 }
 
 export interface replyView {
   user_reacted: boolean;
-  reply_id: number, text: string, timestamp: number, thanks: number, author: number
+  reply_id: number, text: string, timestamp: number, thanks: number, author: number, deleted: boolean
 }
 
 export interface userView {
@@ -126,7 +124,9 @@ export interface userPermission {
 }
 
 export interface currentUser {
+  token: string,
   user_id: number,
+  logged_in: boolean,
   permissions: userPermission[]
 }
 

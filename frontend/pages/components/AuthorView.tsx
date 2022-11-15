@@ -4,7 +4,6 @@ import { Box, IconButton, Input, Text } from "theme-ui";
 import { ApiFetch } from "../../App";
 import { APIcall, postView, userView } from "../../interfaces";
 import { theme } from "../../theme";
-import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props {

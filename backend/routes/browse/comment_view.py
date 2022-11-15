@@ -10,6 +10,7 @@ from backend.models.notifications import (
     NotificationAccepted,
     NotificationUnaccepted,
     NotificationReacted,
+    NotificationDeleted
 )
 from backend.models.permissions import Permission
 from backend.models.reply import Reply
@@ -134,5 +135,24 @@ def edit(user: User, *_) -> dict:
         raise http_errors.Forbidden(
             "Attempting to edit another user's comment")
 
+    if comment.deleted:
+        raise http_errors.BadRequest("Cannot edit a deleted comment")
+
     comment.text = new_text
+    return {}
+
+
+@comment_view.delete("/delete")
+@uses_token
+def delete(user: User, *_) -> dict:
+    comment = Comment(CommentId(request.args["comment_id"]))
+
+    if user != comment.author:
+        user.permissions.assert_can(Permission.DeletePosts)
+        NotificationDeleted.create(
+            comment.author,
+            comment,
+        )
+
+    comment.delete()
     return {}

@@ -40,6 +40,7 @@ def test_no_permission(
         queue_post_add(token, queue_id, post_id)
 
 
+@pytest.mark.core
 def test_success(
     simple_users: ISimpleUsers,
     make_queues: IMakeQueues,
@@ -89,7 +90,7 @@ def test_add_post_to_view_only_queue(
     token = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
     queues = queue_list(token)['queues']
-    closed_queue_id = get_queue(queues, "Closed queue")["queue_id"]
+    closed_queue_id = get_queue(queues, "Closed")["queue_id"]
     with pytest.raises(http_errors.BadRequest):
         queue_post_add(token, closed_queue_id, post_id)
 
@@ -105,7 +106,7 @@ def test_add_post_from_view_only_queue(
     token = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
     queues = queue_list(token)['queues']
-    main_queue_id = get_queue(queues, "Main queue")["queue_id"]
+    main_queue_id = get_queue(queues, "Main")["queue_id"]
 
     close_post(token, post_id)
 

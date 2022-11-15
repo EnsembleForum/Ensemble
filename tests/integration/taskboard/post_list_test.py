@@ -45,6 +45,7 @@ def test_no_permission(
                         ['token'], make_queues["queue1_id"])
 
 
+@pytest.mark.core
 def test_success(
     basic_server_setup: IBasicServerSetup,
     make_queues: IMakeQueues,
@@ -53,7 +54,7 @@ def test_success(
     Testing that admins can successfully create queues
     """
     token = basic_server_setup["token"]
-    queue_name = "queue_name"
-    queue_id = queue_create(token, "queue_name")["queue_id"]
+    queue_name = "My queue"
+    queue_id = queue_create(token, queue_name)["queue_id"]
     queue = queue_post_list(token, queue_id)
     assert queue["queue_name"] == queue_name

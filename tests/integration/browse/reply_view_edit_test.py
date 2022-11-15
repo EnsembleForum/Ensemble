@@ -55,6 +55,7 @@ def test_edit_empty_params(
         reply_edit(token, reply_id, "")
 
 
+@pytest.mark.core
 def test_edit_success(
     basic_server_setup: IBasicServerSetup,
     make_posts: IMakePosts,

@@ -10,7 +10,11 @@ import AuthorView from "./AuthorView";
 interface Props {
   queue: queueListPosts,
 }
-
+const FlexWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  content-align: space-between
+`
 // Writing styled components
 const StyledQueue = styled.div`
   padding: 10px;
@@ -45,12 +49,19 @@ const QueueItem = styled.div`
     filter: brightness(90%);
   }
 `
+const Heading = styled.span`
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+`
 
 // Exporting our example component
 const QueueView = (props: Props) => {
   const { queue } = props;
   const navigate = useNavigate();
   return (
+    <FlexWrapper>
     <StyledQueue>
       <QueueHeader>
         <h3>{queue.queue_name}</h3>
@@ -66,7 +77,7 @@ const QueueView = (props: Props) => {
             });
     
           }}>
-            {postShow.heading}
+            <Heading>{postShow.heading}</Heading>
             <div></div>
             <AuthorView userId={postShow.author}></AuthorView>
             <div></div>
@@ -74,6 +85,8 @@ const QueueView = (props: Props) => {
         )
       })}
     </StyledQueue>
+    <span></span>
+    </FlexWrapper>
   );
 };
 

@@ -1,9 +1,7 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor } from "react";
+import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { Box, IconButton, Text } from "theme-ui";
-import { forEachChild } from "typescript";
-import { ApiFetch } from "../../App";
+import { ApiFetch, getPermission } from "../../App";
 import { APIcall, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
 import AuthorView from "./AuthorView";
@@ -36,8 +34,14 @@ const Post = styled.div`
   }
 `
 const ActivePost = styled(Post)`
-  background-color: ${theme.colors?.highlight};
   filter: brightness(95%);
+`
+const ClosedPost = styled(Post)`
+  background-color:#FF7F7F;
+`
+
+const Heading = styled.div`
+  font-weight: 700;
 `
 
 // Exporting our example component
@@ -48,11 +52,16 @@ const PostListView = (props: Props) => {
     const api: APIcall = {
       method: "GET",
       path: "browse/post_list",
+      params: {"search_term": ""}
     }
+    console.log(api);
     ApiFetch(api)
       .then((data) => {
         const test = data as { posts: postListItem[] };
         setPosts(test.posts);
+        if (test.posts.length && (searchParams.get('postId') === null || searchParams.get('postId') === '0')) {
+          setSearchParams({postId: test.posts[0].post_id.toString()})
+        }
       })
   }, [searchParams])
 
@@ -62,27 +71,46 @@ const PostListView = (props: Props) => {
       <StyledLayout>
         {
           posts.map((each) => {
-            if (each.post_id === parseInt(searchParams.get("postId") as string)) {
+              const styles : any = {}
+              if (each.answered) {
+                styles.backgroundColor = "#90EE90";
+              }
+              if (each.closed) {
+                styles.backgroundColor = "#a2c4fc";
+              }
+              if (each.reported && getPermission(33)) {
+                styles.backgroundColor = "#ffa3a3";
+              }
+              if (each.deleted) {
+                styles.backgroundColor = "#8c8c8c";
+              }
+              if (each.post_id.toString()===searchParams.get("postId")) {
+                if (!(each.answered || each.reported || each.closed || each.deleted)) {
+                  styles.backgroundColor = theme.colors?.highlight;
+                }
+                if (each.answered) {
+                  styles.backgroundColor = "#7de37d";
+                } 
+                if (each.closed) {
+                  styles.backgroundColor = "#7dacfa";
+                }   
+                if (each.reported) {
+                  styles.backgroundColor = "#f08d8d";
+                } 
+                if (each.deleted) {
+                  styles.backgroundColor = "#696969";
+                }
+              }
               return (
-                <ActivePost onClick={() => {
-                  setSearchParams({postId: each.post_id.toString()});
-                }}>
-                  <div>{each.heading}</div>
-                <AuthorView userId={each.author}/>
-                <div>Tags: {each.tags}</div>
-                </ActivePost>
+                <Post style={styles}  onClick={() => setSearchParams({postId: each.post_id.toString()})}>
+                  <Heading>{each.heading}</Heading>
+                  <AuthorView userId={each.author}/>
+                  <div>Tags: {each.tags}</div>
+                </Post>
               );
             }
-            return (
-              <Post onClick={() => {
-                setSearchParams({postId: each.post_id.toString()})
-              }}>
-                <div>{each.heading}</div>
-                <AuthorView userId={each.author}/>
-                <div>Tags: {each.tags}</div>
-              </Post>
-            );
-          })}
+          ) 
+        }
       </StyledLayout>
     );
   }

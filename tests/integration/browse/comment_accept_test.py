@@ -21,11 +21,13 @@ from ensemble_request.browse import (
     post_list,
     comment_react
 )
+from resources import consts
 from ensemble_request.taskboard import queue_post_list, queue_list
 from tests.integration.helpers import get_queue
 from tests.integration.conftest import IAllUsers, ISimpleUsers, IMakePosts
 
 
+@pytest.mark.core
 def test_OP_mark_accepted(simple_users: ISimpleUsers):
     """
     Can the post author mark a comment as accepted?
@@ -170,8 +172,10 @@ def test_post_view_comments_order(
     token3 = simple_users["admin"]["token"]
     post_id = make_posts["post1_id"]
 
-    comment_ids = [add_comment(token1, post_id, "comment")["comment_id"]
-                   for i in range(5)]
+    comment_ids = [
+        add_comment(token1, post_id, "comment")["comment_id"]
+        for i in range(5)
+    ]
 
     # Comment 3 is accepted and has 2 thanks
     comment_react(token1, comment_ids[2])
@@ -187,8 +191,13 @@ def test_post_view_comments_order(
     comment_react(token2, comment_ids[1])
 
     comments = post_view(token1, post_id)["comments"]
-    correct_order = [comment_ids[2], comment_ids[1],
-                     comment_ids[0], comment_ids[4], comment_ids[3]]
+    correct_order = [
+        comment_ids[2],
+        comment_ids[1],
+        comment_ids[0],
+        comment_ids[4],
+        comment_ids[3],
+    ]
 
     assert comments == correct_order
 
@@ -211,19 +220,23 @@ def test_answered_queue(
     # Accepting a comment sends the post to the answered queue
     accept_comment(user_token, comment_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Answered queue"
+    assert post_queue_name == consts.ANSWERED_QUEUE
 
-    queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Answered queue")["queue_id"]
+    queue_id = get_queue(
+        queue_list(mod_token)['queues'],
+        consts.ANSWERED_QUEUE
+    )["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
     # Un-accepting the accepted comment sends the post to the main queue
     accept_comment(user_token, comment_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Main queue"
+    assert post_queue_name == consts.MAIN_QUEUE
 
-    queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Main queue")["queue_id"]
+    queue_id = get_queue(
+        queue_list(mod_token)['queues'],
+        consts.MAIN_QUEUE
+    )["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]

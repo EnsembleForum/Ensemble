@@ -23,6 +23,7 @@ from ensemble_request.browse import (
 )
 
 
+@pytest.mark.core
 def test_react_one_user(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,

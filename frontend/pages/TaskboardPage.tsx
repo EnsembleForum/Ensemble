@@ -11,20 +11,25 @@ interface Props { }
 const StyledLayout = styled.div`
   width: 100vw;
   max-width: 100vw;
+  min-width: 100vw;
   height: 90vh;
   display: flex;
   flex-direction: row;
-  * > h2 {
-    height: 7vh;
-    margin: 0;
-    font-weight: 300;
-  }
+  overflow: hidden;
+`
+const Layout = styled.span`
+  overflow: hidden;
 `
 const StyledQueues = styled.div`
   width: 60vw;
   height: 82vh;
   padding: 30px;
   overflow:auto;
+  h2 {
+    height: 7vh;
+    margin: 0;
+    font-weight: 300;
+  }  
 `
 const StyledViewOnlyQueues = styled(StyledQueues)`
   width: 40vw;
@@ -33,7 +38,6 @@ const StyledViewOnlyQueues = styled(StyledQueues)`
 const QueueCols = styled.div`
   display: flex;
   flex-direction: row;
-  
 `
 
 const TaskboardPage = (props: Props) => {
@@ -78,7 +82,7 @@ const TaskboardPage = (props: Props) => {
 
   if (queueList) {
     return (
-      <>
+      <Layout>
         <Navbar page="taskboard" />
         <StyledLayout>
           <StyledQueues>
@@ -92,7 +96,7 @@ const TaskboardPage = (props: Props) => {
             </QueueCols>
           </StyledQueues>
           <StyledViewOnlyQueues>
-            <h2>Closed and Answered</h2>
+            <h2>Answered, Closed, Deleted and Reported Posts</h2>
             <QueueCols>
             { queueList.filter(queue => queue.view_only).map((queue) => {
               return (
@@ -103,13 +107,13 @@ const TaskboardPage = (props: Props) => {
           </StyledViewOnlyQueues>
         </StyledLayout>
         
-      </>
+      </Layout>
     );
   } else {
     return (
       <>
         <Navbar page="taskboard" />
-        Loading...
+        <div style={{padding: "30px"}}> Loading... </div>
       </>
     )
   }

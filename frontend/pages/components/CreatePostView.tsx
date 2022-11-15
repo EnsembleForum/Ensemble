@@ -100,7 +100,6 @@ const CreatePostView = (props: Props) => {
             ApiFetch(api).then((data) => {
               const d = data as { post_id: number };
               setSearchParams({postId: d.post_id.toString()})
-              console.log(searchParams.get('postId'));
             }
             );
           }}>New Post</StyledButton>
