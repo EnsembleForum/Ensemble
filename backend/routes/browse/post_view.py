@@ -157,7 +157,7 @@ def report_post(user: User, *_):
         if u not in [user, post.author]:
             NotificationReported.create(u, post)
 
-    return {"reported": post.reported}
+    return {}
 
 
 @post_view.put("/unreport")
@@ -171,4 +171,4 @@ def unreport_post(user: User, *_):
     else:
         post.queue = Queue.get_main_queue()
 
-    return {"reported": post.reported}
+    return {}

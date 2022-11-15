@@ -16,7 +16,6 @@ from backend.types.post import (
     IPostFullInfo,
     IPostId,
     IPostClosed,
-    IPostReported
 )
 from backend.types.react import IUserReacted
 from backend.types.reply import IReplyFullInfo
@@ -605,7 +604,7 @@ def close_post(
 def report_post(
     token: JWT,
     post_id: PostId,
-) -> IPostReported:
+):
     """
     # PUT `/browse/post_view/report`
 
@@ -619,26 +618,20 @@ def report_post(
 
     ## Body
     * `post_id` (`int`): identifier of the post
-
-    ## Returns
-    * `reported` (`bool`): Whether the post is marked as reported
     """
-    return cast(
-        IPostReported,
-        put(
-            token,
-            f"{URL}/post_view/report",
-            {
-                "post_id": post_id,
-            },
-        )
+    put(
+        token,
+        f"{URL}/post_view/report",
+        {
+            "post_id": post_id,
+        },
     )
 
 
 def unreport_post(
     token: JWT,
     post_id: PostId,
-) -> IPostReported:
+):
     """
     # PUT `/browse/post_view/unreport`
 
@@ -652,17 +645,11 @@ def unreport_post(
 
     ## Body
     * `post_id` (`int`): identifier of the post
-
-    ## Returns
-    * `reported` (`bool`): Whether the post is marked as reported
     """
-    return cast(
-        IPostReported,
-        put(
-            token,
-            f"{URL}/post_view/unreport",
-            {
-                "post_id": post_id,
-            },
-        )
+    put(
+        token,
+        f"{URL}/post_view/unreport",
+        {
+            "post_id": post_id,
+        },
     )
