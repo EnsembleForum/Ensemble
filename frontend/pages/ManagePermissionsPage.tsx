@@ -35,7 +35,8 @@ border-radius: 0.5rem;
 
 const PermissionsPageContainer = styled(Flex) `
   flex-direction: row;
-  width: 100rem;
+  width: 100vw;
+  overflow: auto;
   height: 100rem;
 `
 
