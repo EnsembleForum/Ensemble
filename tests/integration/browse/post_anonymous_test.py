@@ -11,6 +11,7 @@ Tests for creating and viewing anonymous posts
 * Test for users who do not have permission to view private posts can only view
   public posts
 """
+import jestspectation as expect
 from ..conftest import ISimpleUsers, IAllUsers
 from ensemble_request.browse import post_list, post_create, post_view
 
@@ -30,12 +31,15 @@ def test_create_one_post_list(simple_users: ISimpleUsers):
     posts = post_list(token)
     assert len(posts["posts"]) == 1
     post = posts["posts"][0]
-    assert post_id == post["post_id"]
-    assert heading == post["heading"]
-    assert tags == post["tags"]
-    assert post["me_too"] == 0
-    assert not post["private"]
-    assert post["anonymous"]
+    assert post == expect.DictContainingItems({
+        "post_id": post_id,
+        "author": simple_users["user"]["user_id"],
+        "heading": heading,
+        "tags": tags,
+        "me_too": 0,
+        "private": False,
+        "anonymous": True,
+    })
 
 
 def test_anon_post_list(all_users: IAllUsers):
@@ -105,3 +109,31 @@ def test_post_view_diff_users(all_users: IAllUsers):
 
     # User 2 can view User 1's post
     post_view(user_token2, post_id)
+
+
+def test_post_anon_hidden(simple_users: ISimpleUsers):
+    post_id = post_create(
+        simple_users["mod"]["token"],
+        "My anonymous post",
+        "I know you are but who am I?",
+        tags=[],
+        private=False,
+        anonymous=True
+    )["post_id"]
+
+    # Hidden in post list
+    assert post_list(simple_users["user"]["token"])["posts"] == expect.Equals([
+        expect.DictContainingItems({
+            "post_id": post_id,
+            "anonymous": True,
+            "author": None,
+        })
+    ])
+
+    # Hidden in post view
+    post = post_view(simple_users["user"]["token"], post_id)
+    assert post == expect.DictContainingItems({
+        "post_id": post_id,
+        "anonymous": True,
+        "author": None,
+    })
