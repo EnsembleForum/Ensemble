@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, IconButton, Select, Text } from "theme-ui";
-import { ApiFetch } from "../../App";
+import { ApiFetch, getPermission } from "../../App";
 import { APIcall, postView, queueListPosts } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
@@ -56,7 +56,7 @@ const QueueItemView = (props: Props) => {
     await ApiFetch(setQueueCall);
     setUpdate(!update);
   }
-  const buttonWidth = props.viewOnly ?  "100%": '';
+  const buttonWidth = props.viewOnly || !getPermission(21) ?  "100%": '';
   return (
     <QueueItem 
     onMouseEnter={() => setToggleList(true)}
@@ -64,7 +64,7 @@ const QueueItemView = (props: Props) => {
       { toggleList ?
         <span style={{display: "flex", justifyContent: "space-evenly", alignItems: "center"}}> 
           {
-            !props.viewOnly ? 
+            props.viewOnly || !getPermission(21) ? <></> :
             <select style={{width: "80%", padding: "8px", marginRight: "5px", fontSize: "inherit"}} 
               name="permission" id="permission"
               value={selected}
@@ -73,7 +73,7 @@ const QueueItemView = (props: Props) => {
               {queueList.filter(queue => !queue.view_only).map((queue) => {
                 return (<option key={queue.queue_id} value={queue.queue_id} >{queue.queue_name}</option>)
               })}
-            </select> : <></>
+            </select> 
           }
         <StyledButton style={{height: '40px', paddingTop: "0", paddingBottom: "0", width: buttonWidth}} onClick={() => navigate({
           pathname: '/browse',

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
-import { ApiFetch } from "../App";
+import { ApiFetch, getPermission } from "../App";
 import { APIcall, postView, queueList, queueListPosts } from "../interfaces";
 import { theme } from "../theme";
 import Navbar from "./components/Navbar";
@@ -141,15 +141,14 @@ const TaskboardPage = (props: Props) => {
                     <QueueView queue={queue}></QueueView>
                   )
                 })}
-                { toggleCreate ? 
+                {getPermission(23) ? ( toggleCreate ? 
                 createForm
                  :
                 <span style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
                   <ReactTooltip place="top" type="dark" effect="solid"/>
                   <NewButton data-tip="Create a new queue" onClick={ () => setToggleCreate(true)}>+</NewButton>
                 </span>
-
-                }
+                ) : <></>}
                 <div style={{minWidth: "30px"}}></div>
               </QueueCols>
             </StyledQueues>
@@ -162,7 +161,6 @@ const TaskboardPage = (props: Props) => {
                 )
               })}
                 <div style={{minWidth: "30px"}}></div>
-
               </QueueCols>
             </StyledViewOnlyQueues>
           </StyledLayout>

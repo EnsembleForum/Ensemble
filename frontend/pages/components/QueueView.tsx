@@ -9,7 +9,7 @@ import QueueContext, { UpdateContext } from "../queueContext";
 import AuthorView from "./AuthorView";
 import QueueItemView from "./QueueItemView";
 import ReactTooltip from 'react-tooltip';
-import { ApiFetch } from "../../App";
+import { ApiFetch, getPermission } from "../../App";
 
 // Declaring and typing our props
 interface Props {
@@ -115,7 +115,7 @@ const QueueView = (props: Props) => {
           <h3>{queue.queue_name}</h3>
           <span>
             <h4>{queue.posts.length}</h4>
-            {toggleDelete && !toggleEdit ? <>
+            {toggleDelete && !toggleEdit && getPermission(23) ?  <>
               <>
               <ReactTooltip place="top" type="dark" effect="solid"/>
               <EditButton data-tip="Edit queue name" onClick={() => {setToggleEdit(true)}}>✏️</EditButton>
