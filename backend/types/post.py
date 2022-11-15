@@ -6,7 +6,7 @@ class IPostBasicInfo(TypedDict):
     """
     Basic info about a post
 
-    * `author`: `UserId`
+    * `author`: `Optional[int]`
     * `heading`: `str`
     * `post_id`: `PostId`
     * `tags`: `list[int]`
@@ -19,7 +19,7 @@ class IPostBasicInfo(TypedDict):
     * `reported`: `bool`
     """
     post_id: PostId
-    author: UserId
+    author: Optional[UserId]
     heading: str
     tags: list[int]
     me_too: int
@@ -62,24 +62,25 @@ class IPostFullInfo(TypedDict):
     """
     Full info about a post
 
-    * `author`: `UserId`
-    * `heading`: `str`
-    * `text`: `str`
-    * `tags`: `list[int]`
-    * `me_too`: `int`
-    * `comments`: `list[CommentId]`
-    * `timestamp`: `int`
-    * `private`: `bool`
-    * `anonymous`: `bool`
-    * `closed`: `bool`
-    * `deleted`: `bool`
-    * `reported`: `bool`
-    * `user_reacted`: `bool`
-    * `answered`: `Optional[CommentId]`
-    * `queue`: `str`
+    * `author` (`Optional[int]`): author of post or None if anonymous
+    * `heading` (`str`):
+    * `text` (`str`):
+    * `tags` (`list[int]`):
+    * `me_too` (`int`):
+    * `comments` (`list[CommentId]`):
+    * `timestamp` (`int`):
+    * `private` (`bool`):
+    * `anonymous` (`bool`):
+    * `closed` (`bool`):
+    * `deleted` (`bool`):
+    * `reported` (`bool`):
+    * `user_reacted` (`bool`):
+    * `answered` (`Optional[CommentId]`): ID of chosen answer if answered else
+      none
+    * `queue` (`str`):
     """
     post_id: PostId
-    author: UserId
+    author: Optional[UserId]
     heading: str
     text: str
     tags: list[int]

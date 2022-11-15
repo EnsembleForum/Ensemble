@@ -1,107 +1,98 @@
 """
-# Tests / Integration / Browse / Create
-# Tests / Integration / Browse / Post List
-# Tests / Integration / Browse / Post View
+# Tests / Integration / Browse / Post anonymous test
 
 Tests for creating and viewing anonymous posts
 
-* Test for author of private post able to see his private post
-* Test for mods and admins being able to see private posts
-* Test for author of a private post still able to see public posts
-* Test for users who do not have permission to view private posts can only view
-  public posts
+* Users cannot view OP of anonymous posts
+* Mods can view OP of anonymous posts, but still know it's anonymous
+* Users can view OP of anonymous posts if OP is them
 """
-from ..conftest import ISimpleUsers, IAllUsers
+import jestspectation as expect
+from ..conftest import ISimpleUsers
 from ensemble_request.browse import post_list, post_create, post_view
 
 
-def test_create_one_post_list(simple_users: ISimpleUsers):
-    """
-    Can we create a anonymous post and can the author get it successfully?
-    """
-    token = simple_users["user"]["token"]
-    heading = "First heading"
-    text = "First text"
-    tags: list[int] = []
-    post_id = post_create(token, heading, text,
-                          tags, private=False,
-                          anonymous=True)["post_id"]
+def test_post_anon_hidden_users(simple_users: ISimpleUsers):
+    post_id = post_create(
+        simple_users["mod"]["token"],
+        "My anonymous post",
+        "I know you are but who am I?",
+        tags=[],
+        private=False,
+        anonymous=True
+    )["post_id"]
 
-    posts = post_list(token)
-    assert len(posts["posts"]) == 1
-    post = posts["posts"][0]
-    assert post_id == post["post_id"]
-    assert heading == post["heading"]
-    assert tags == post["tags"]
-    assert post["me_too"] == 0
-    assert not post["private"]
-    assert post["anonymous"]
+    # Hidden in post list
+    assert post_list(simple_users["user"]["token"])["posts"] == expect.Equals([
+        expect.DictContainingItems({
+            "post_id": post_id,
+            "anonymous": True,
+            "author": None,
+        })
+    ])
 
-
-def test_anon_post_list(all_users: IAllUsers):
-    """
-    Anonymous posts should still appear in post_list
-    """
-    user_token1 = all_users["users"][0]["token"]
-    user_token2 = all_users["users"][1]["token"]
-    admin_token = all_users["admins"][0]["token"]
-    mod_token = all_users["mods"][0]["token"]
-
-    # User 1 creates an anonymous post
-    heading = "heading"
-    text = "text"
-    tags: list[int] = []
-    post_id1 = post_create(user_token1, heading,
-                           text, tags, private=False,
-                           anonymous=True)["post_id"]
-
-    # User 2 creates a normal post
-    heading = "Second heading"
-    text = "Second text"
-    post_id2 = post_create(user_token2, heading,
-                           text, tags, private=False,
-                           anonymous=False)["post_id"]
-
-    for token in [user_token1, user_token2, mod_token, admin_token]:
-        posts = post_list(token)["posts"]
-        assert len(posts) == 2
-        post_ids = sorted([p["post_id"] for p in posts])
-        assert post_ids == sorted([post_id1, post_id2])
+    # Hidden in post view
+    post = post_view(simple_users["user"]["token"], post_id)
+    assert post == expect.DictContainingItems({
+        "post_id": post_id,
+        "anonymous": True,
+        "author": None,
+    })
 
 
-def test_post_view_diff_users(all_users: IAllUsers):
-    """
-    Can users with permissions to view private posts
-    view private posts in post_view?
-    """
-    user_token1 = all_users["users"][0]["token"]
-    user_token2 = all_users["users"][1]["token"]
-    admin_token = all_users["admins"][0]["token"]
-    mod_token = all_users["mods"][0]["token"]
+def test_post_anon_shown_mod(simple_users: ISimpleUsers):
+    """Mods should be able to view the identity of anonymous users"""
+    post_id = post_create(
+        simple_users["user"]["token"],
+        "My anonymous post",
+        "I know you are but who am I?",
+        tags=[],
+        private=False,
+        anonymous=True
+    )["post_id"]
 
-    # User 1 creates a anonymous post
-    heading = "heading"
-    text = "text"
-    tags: list[int] = []
-    post_id = post_create(user_token1, heading,
-                          text, tags, private=False,
-                          anonymous=True)["post_id"]
+    # Shown in post list
+    assert post_list(simple_users["mod"]["token"])["posts"] == expect.Equals([
+        expect.DictContainingItems({
+            "post_id": post_id,
+            "anonymous": True,
+            "author": simple_users["user"]["user_id"],
+        })
+    ])
 
-    # User 1 can view his own post
-    post = post_view(user_token1, post_id)
-    assert post["heading"] == heading
-    assert post["text"] == text
-    assert post["comments"] == []
-    assert post["tags"] == []
-    assert post["me_too"] == 0
-    assert not post["private"]
-    assert post["anonymous"]
+    # Shown in post view
+    post = post_view(simple_users["mod"]["token"], post_id)
+    assert post == expect.DictContainingItems({
+        "post_id": post_id,
+        "anonymous": True,
+        "author": simple_users["user"]["user_id"],
+    })
 
-    # Admin can view User 1's post
-    post_view(admin_token, post_id)
 
-    # Mod can view User 1's post
-    post_view(mod_token, post_id)
+def test_post_anon_shown_op(simple_users: ISimpleUsers):
+    """OP should be able to view their own identity"""
+    post_id = post_create(
+        simple_users["user"]["token"],
+        "My anonymous post",
+        "I know you are but who am I?",
+        tags=[],
+        private=False,
+        anonymous=True
+    )["post_id"]
 
-    # User 2 can view User 1's post
-    post_view(user_token2, post_id)
+    # Shown in post list
+    assert post_list(simple_users["user"]["token"])["posts"] == expect.Equals([
+        expect.DictContainingItems({
+            "post_id": post_id,
+            "anonymous": True,
+            "author": simple_users["user"]["user_id"],
+        })
+    ])
+
+    # Shown in post view
+    post = post_view(simple_users["user"]["token"], post_id)
+    assert post == expect.DictContainingItems({
+        "post_id": post_id,
+        "anonymous": True,
+        "author": simple_users["user"]["user_id"],
+    })
