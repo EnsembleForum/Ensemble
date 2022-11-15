@@ -50,22 +50,41 @@ const StyledInput = styled(Input)`
   width: 30vw;
 `
 const SubmitButton = styled(StyledButton)`
-  border-radius: 0px 10px 10px 0px;
   border: 1px solid black;
+  border-radius: 0;
   border-left: 0;
-  max-width: 10vw;
+  max-width: 7vw;
   height: 40px;
+  padding: 0;
+`
+const CloseButton = styled(SubmitButton)`
+  border-radius: 0px 10px 10px 0px;
+  max-width: 2vw;
 `
 const Edit = styled(Row)`
   button {
     flex-grow: 1
   }
 `
-
+const EditButton = styled.span`
+  border-radius: 3px;
+  margin-left: 5px;
+  padding: 3px;
+  &:hover {
+    cursor: pointer;
+    background-color: lightgrey;
+  }
+`
 
 const UserProfilePage = (props: Props) => {
   const [user, setUser] = React.useState<userView>();
   const [update, setUpdate] = React.useState<boolean>(false);
+  const [toggle, setToggle] = React.useState<{[key: string]: boolean}>({
+    "name_first": false, 
+    "name_last": false, 
+    "pronouns" : false,
+    "email" : false,
+  });
   function edit(key : string) {
     const routes : {[key: string] : string} = {
       "name_first": "user/profile/edit_name_first", 
@@ -82,6 +101,9 @@ const UserProfilePage = (props: Props) => {
       call.body[key] = user[key];
       ApiFetch(call).then(() => setUpdate(!update));
     }
+    const copy = {...toggle};
+    copy[key] = false;
+    setToggle(copy);
   }
 
   React.useEffect(() => {
@@ -107,15 +129,35 @@ const UserProfilePage = (props: Props) => {
             { Object.keys(user).filter(key => !exclude.includes(key)).map((key) => {
               return (
                 <>
-                <h3>{Prettify(key)}: </h3>
-                  <Edit>
-                    <StyledInput value={user[key]} onChange = {((e) => {
-                      const copy = {...user};
-                      copy[key] = e.target.value;
-                      setUser(copy);
-                    })}></StyledInput>
-                    <SubmitButton onClick={() => edit(key)}>Change</SubmitButton>
-                  </Edit>
+                  {toggle[key] ? 
+                    <>
+                      <h3>{Prettify(key)}: </h3>
+                      <Edit>
+                        <StyledInput value={user[key]} onChange = {((e) => {
+                          const copy = {...user};
+                          copy[key] = e.target.value;
+                          setUser(copy);
+                        })}></StyledInput>
+                        <SubmitButton onClick={() => edit(key)}>Change</SubmitButton>
+                        <CloseButton onClick={() => {
+                          const copy = {...toggle};
+                          copy[key] = false;
+                          setToggle(copy);
+                        }}>X</CloseButton>
+                      </Edit>
+                    </>
+                  :
+                  <>
+                    <h3>
+                      {Prettify(key)}: {user[key]} 
+                      <EditButton onClick={() => {
+                          const copy = {...toggle};
+                          copy[key] = true;
+                          setToggle(copy);
+                        }}>✏️</EditButton>
+                    </h3>
+                  </>
+                  }
                 </>
               )
             })
