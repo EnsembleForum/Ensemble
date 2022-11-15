@@ -64,7 +64,7 @@ jobs:
     - name: Test with pytest
       run: |
         python scripts/pytest_core.py
-      timeout-minutes: 10
+      timeout-minutes: 3
     - name: Upload outputs
       uses: actions/upload-artifact@v3
       if: always()
@@ -97,7 +97,7 @@ jobs:
     - name: Test with pytest
       run: |
         python scripts/pytest_full.py --coverage
-      timeout-minutes: 10
+      timeout-minutes: 15
     - name: Generate code coverage report
       if: ${{ github.event_name == 'pull_request' }}
       run: |
