@@ -195,13 +195,12 @@ const TextView = (props: Props) => {
   if (props.heading) {
     heading = <h1>{closed}{answered}{reported}{deleted}{props.heading}</h1>
   }
+
   if (props.author) {
-    if (props.anonymous && !getPermission(2)) {
-      author = <StyledAnonymous>Anonymous</StyledAnonymous>
-    } else {
-      author = <AuthorView userId={props.author}/>;
-    }
-  } 
+    author = <AuthorView userId={props.author}/>;
+  } else if (props.type === "post" && props.anonymous) {
+    author = <StyledAnonymous>Anonymous</StyledAnonymous>
+  }
 
 
   let tags = <></>;
