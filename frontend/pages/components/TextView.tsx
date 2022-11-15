@@ -1,10 +1,9 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Box, Button, IconButton, Input, Text, Textarea } from "theme-ui";
-import { isPropertySignature, JsxElement } from "typescript";
+import React from "react";
+import { useSearchParams } from "react-router-dom";
+import { Input, Textarea } from "theme-ui";
 import { ApiFetch, getCurrentUser, getPermission } from "../../App";
-import { APIcall, postView } from "../../interfaces";
+import { APIcall } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
 import { StyledButton } from "../GlobalProps";
@@ -24,6 +23,7 @@ interface Props {
   userReacted: boolean,
   type: "post" | "comment" | "reply",
   tags?: number[],
+  queue?: string,
   answered?: number | null,
   closed?: boolean,
   accepted?: boolean,
@@ -39,14 +39,17 @@ interface Props {
 const StyledText = styled.div`
   border-radius: 2px;
   overflow: hidden;
-  * {
-    margin-bottom: 10px;
-  }
   h1 {
     margin-top: 0px;
   }
   hr {
     color: white;
+  }
+  p {
+    margin-top: 0;
+  }
+  h1 {
+    margin-bottom: 10px;
   }
 `
 const StyledPost = styled.div`
@@ -125,6 +128,10 @@ const Private = styled.div`
 const Anonymous = styled(Private)`
   max-width: 130px;
 `
+const Queue = styled.div`
+  text-align: center;
+  font-weight: 500;
+`
 
 const StyledAnonymous = styled.a`
   text-decoration: underline;
@@ -133,9 +140,15 @@ const StyledAnonymous = styled.a`
     font-weight: 700;
   }
 `
-const Status = styled.span`
-  display:flex
+const Row = styled.span`
+  display:flex;
+  padding-bottom: 10px;
 `
+const Col = styled.span`
+  display:flex;
+  flex-direction: column;
+`
+
 // Exporting our example component
 const TextView = (props: Props) => {
   const [inputText, setInputText] = React.useState<string>();
@@ -402,18 +415,38 @@ const TextView = (props: Props) => {
     <ActiveReportButton data-tip="Unreport post" onClick={() => unreport_post()}>❗</ActiveReportButton>
   </>)
 
+  function formatQueue(queue : string) {
+    if (!queue.endsWith('queue')) {
+      queue += " queue"
+    }
+    return queue
+  }
+  let queue = <></>
+  if (!(props.accepted || props.deleted || props.reported || props.answered) && props.queue) {
+    queue = (<span style={{marginLeft: "10px"}}>
+      <ReactTooltip place="top" type="dark" effect="solid"/>
+      <Queue data-tip="This indicates which tutor queue your post is currently in">{formatQueue(props.queue)} </Queue>
+    </span> )
+  }
+  
   return (
-    <StyledText>
+    <StyledText style={props.type === "comment" ? {paddingTop: "20px"} : props.type === "reply" ? {paddingTop: "10px"}:{}}>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : (props.type === "comment" ? (props.accepted ? {backgroundColor: "#90EE90", padding: "10px", borderRadius: "10px"} : {}):{})}>
         <OptionsBar>
-          {toggleEdit ? <></> : heading}
-          <Status>
-          {props.accepted || props.deleted || props.reported || props.answered ? <></> : <Anonymous>Status: </Anonymous>}
-          {props.private ? <Private>PRIVATE</Private>: <></>}
-          {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
-          </Status>
+          <Col>
+            {toggleEdit ? <></> : heading}
+            <Row>
+              {author}{queue}
+            </Row>
+          </Col>
+          <Col>
+            <Row>
+              {props.private ? <Private>PRIVATE</Private>: <></>}
+              {props.anonymous ? <Anonymous>ANONYMOUS</Anonymous>: <></>}
+            </Row>
+          </Col>
         </OptionsBar>
-        {author}
+        
         {props.deleted ? <p style={{color: "darkGrey", fontStyle: "italic", fontWeight: 500}}>{props.text}</p> : <></>}
         <span style={props.deleted ? {display: "none"} : {}}>
           {toggleEdit ? <></> : tags}
