@@ -7,6 +7,8 @@ import UserPermissionGroupView from './components/UserPermissionGroupView'
 import UserPermissionsView from './components/UserPermissionsView'
 import styled from "@emotion/styled";
 import { theme } from '../theme';
+import GroupPermissionsView from './components/GroupPermissionView'
+
 
 type Props = {}
 
@@ -221,13 +223,13 @@ const ManageGroupPermissionsPage = (props: Props) => {
           <SectionHeading> GROUP NAME </SectionHeading>
           <SectionText>This the name of the permission group. Need to change the name? Type the new name of your group in the box below! </SectionText>
           <Flex sx={{ flexDirection: 'row'}}>
-            <NameInputBox value={selectedPermissionGroup.name} onChange={(event) => handleSetGroupName(event.target.value)}></NameInputBox>
+            <NameInputBox disabled = {selectedPermissionGroup.group_id === 1} value={selectedPermissionGroup.name} onChange={(event) => handleSetGroupName(event.target.value)}></NameInputBox>
           </Flex>
           
           <SectionHeading>PERMISSIONS</SectionHeading>
           <SectionText>Need to set up the permissions of a group? Or maybe the permissions have changed? You can use the list below to maintain the permissions of the selected group!</SectionText>
             <PermissionList>
-            <UserPermissionsView permissionTypes={permissionTypes} permissionHolder={selectedPermissionGroup} onAddUserPermission={handleAddPermission} onRemoveUserPermission={handleRemovePermission} />
+            <GroupPermissionsView shouldDisable = {selectedPermissionGroup.group_id === 1} permissionTypes={permissionTypes} permissionHolder={selectedPermissionGroup} onAddUserPermission={handleAddPermission} onRemoveUserPermission={handleRemovePermission} />
             </PermissionList>
             
             
@@ -238,9 +240,9 @@ const ManageGroupPermissionsPage = (props: Props) => {
             <DeletePermissionGroupView>    
             <TransferGroupView>
             <SubHeadingText>Transfer members of this group to : </SubHeadingText>
-            <UserPermissionGroupView groupId={transferGroupId} onPermissionGroupChange={(groupId) => setTransferGroupId(groupId)} permissionGroups={permissionGroups}></UserPermissionGroupView>
+            <UserPermissionGroupView shouldDisable = {selectedPermissionGroup.group_id === 1} groupId={transferGroupId} onPermissionGroupChange={(groupId) => setTransferGroupId(groupId)} permissionGroups={permissionGroups}></UserPermissionGroupView>
             </TransferGroupView>
-            <DeletePermissionGroupButton onClick={handleDeleteGroup}>Delete Group</DeletePermissionGroupButton>
+            <DeletePermissionGroupButton  disabled = {selectedPermissionGroup.group_id === 1} onClick={handleDeleteGroup}>Delete Group</DeletePermissionGroupButton>
           </DeletePermissionGroupView>
           </PermissionGroupView>
           : null}

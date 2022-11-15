@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { Flex, Heading, Text } from "theme-ui";
 import { ApiFetch, getCurrentUser } from "../App";
-import { APIcall, currentUser, permissionGroup, permissionType, userPermissionsDetails, userView } from "../interfaces";
+import { APIcall, currentUser, permissionGroup, permissionType, userPermission, userPermissionsDetails, userView } from "../interfaces";
 import UserPermissionGroupView from "./components/UserPermissionGroupView";
 import ItemList from "./components/ItemList";
 import UserPermissionsView from "./components/UserPermissionsView";
 import styled from "@emotion/styled";
-import {theme} from "../theme"
+import { theme } from "../theme"
 
 interface Props { }
 
-const ManageUserPermissionsPageContainer = styled(Flex) `
+const ManageUserPermissionsPageContainer = styled(Flex)`
   flex-direction: row;
   height: 100rem;
 `
-const UsersList = styled(Flex) `
+const UsersList = styled(Flex)`
   flex-direction: column;
   flex-basis: 25%;
   height: 100rem;
@@ -26,28 +26,28 @@ const UsersList = styled(Flex) `
   padding-top: 1rem;
   
 `
-const PermissionUserView = styled(Flex) `
+const PermissionUserView = styled(Flex)`
    flex-basis: 75%;
    height: 100rem;
    margin-left: 1rem;
    margin-right: 1rem;
    flex-direction: column;
 `
-const UserSectionHeading = styled(Heading) `
+const UserSectionHeading = styled(Heading)`
   text-align: center; 
   margin: 1rem;
 `
-const UserSectionText = styled(Text) `
+const UserSectionText = styled(Text)`
   margin: 1rem;
   line-height: 1.5;
   font-size: 14;
   `
-  
-  const UserGroupPermissionsSelectionView = styled(Flex) `
+
+const UserGroupPermissionsSelectionView = styled(Flex)`
   flex-direction: row;
   margin: 1rem;
 `
-const UserSubHeadingText = styled(Text) `
+const UserSubHeadingText = styled(Text)`
   line-height: 1.5;
   font-size: 14;
   text-decoration: underline;
@@ -55,22 +55,22 @@ const UserSubHeadingText = styled(Text) `
   margin-right: 1rem;
   margin-top: 0.5rem;
   `
-  const UserPermissionPageUpper = styled(Flex) `
+const UserPermissionPageUpper = styled(Flex)`
   margin: 1rem;
   flex-direction: column;
  `
-  const UserPermissionList = styled(Flex) `
+const UserPermissionList = styled(Flex)`
   margin: 2rem;
   flex-direction: row;
  `
- 
+
 const ManageUserPermissionsPage = (props: Props) => {
   const [users, setUsers] = useState<userView[] | null>(null);
   const [permissionTypes, setPermissionTypes] = useState<permissionType[] | null>(null);
   const [permissionGroups, setPermissionGroups] = useState<permissionGroup[] | null>(null);
   const [user, setUser] = useState<userView | null>(null);
   const [userPermissionDetails, setUserPermissionDetails] = useState<userPermissionsDetails | null>(null);
-  const [currUser, setCurrUser] = useState<currentUser|null>(null); 
+  const [currUser, setCurrUser] = useState<currentUser | null>(null);
 
   const handleUserSelect = (selectedUser: userView) => {
     setUser(selectedUser);
@@ -84,16 +84,8 @@ const ManageUserPermissionsPage = (props: Props) => {
         setUserPermissionDetails(userPermissionDetails);
       })
   }
-  
-  const handleAddUserPermission = (permission_id: number) => {
-    handleSetUserPermission(permission_id, true);
-  }
 
-  const handleRemoveUserPermission = (permission_id: number) => {
-    handleSetUserPermission(permission_id, false);
-  }
-
-  const invokeSetUserPermissions = (requestBody: { user_id: number, permissions: { permission_id: number, value?: boolean }[], group_id: number }) => {
+  const invokeSetUserPermissions = (requestBody: { user_id: number, permissions: userPermission[], group_id: number }) => {
     const setUserPermissionsAPIcall: APIcall = {
       method: 'PUT',
       path: 'admin/permissions/user/set_permissions',
@@ -102,14 +94,14 @@ const ManageUserPermissionsPage = (props: Props) => {
     ApiFetch<{ permissions: permissionType[] }>(setUserPermissionsAPIcall);
   }
 
-  const handleSetUserPermission = (permissionId: number, value: boolean) => {
+  const handleSetUserPermission = (permissionId: number, value: boolean | null) => {
     if (user !== null && userPermissionDetails !== null) {
       const updatedUserPermissions = userPermissionDetails.permissions.map(permission => ({ permission_id: permission.permission_id, value: permission.permission_id === permissionId ? value : permission.value }));
       setUserPermissionDetails({ permissions: updatedUserPermissions, group_id: userPermissionDetails.group_id });
       invokeSetUserPermissions({ user_id: user.user_id, permissions: updatedUserPermissions, group_id: userPermissionDetails.group_id });
     }
   }
-  
+
   const handleSetUserPermissionGroup = (groupId: number) => {
     if (user !== null && userPermissionDetails !== null) {
       setUserPermissionDetails({ permissions: userPermissionDetails.permissions, group_id: groupId });
@@ -146,31 +138,31 @@ const ManageUserPermissionsPage = (props: Props) => {
       .then(({ permissions }) => {
         setPermissionTypes(permissions);
       })
-      setCurrUser(getCurrentUser()); 
+    setCurrUser(getCurrentUser());
   }, []);
-  
+
   return (
     <ManageUserPermissionsPageContainer>
       <UsersList>
-        {users !== null ? <ItemList<userView> selectedItem={user} items={users} getItemKey={(user) => user.user_id} getItemLabel={(user) => `${user.name_first} ${user.name_last}`}  onClickItem={handleUserSelect} /> : null}
+        {users !== null ? <ItemList<userView> selectedItem={user} items={users} getItemKey={(user) => user.user_id} getItemLabel={(user) => `${user.name_first} ${user.name_last}`} onClickItem={handleUserSelect} /> : null}
       </UsersList>
 
       <PermissionUserView>
-        { userPermissionDetails !== null && permissionGroups  ? 
-        <UserPermissionPageUpper> 
-        <UserSectionHeading> User Permissions Page </UserSectionHeading>
-        <UserSectionText>Need to change a user's group permissions? Or maybe you need provide the user with custom permissions? You can edit the permissions of this user at any time using the checkboxes below!</UserSectionText>
-        <UserGroupPermissionsSelectionView>
-        <UserSubHeadingText> Group Permissions allocated: </UserSubHeadingText>
-        <UserPermissionGroupView shouldDisable = {currUser?.user_id === user?.user_id} groupId={userPermissionDetails.group_id} permissionGroups={permissionGroups} onPermissionGroupChange={handleSetUserPermissionGroup}></UserPermissionGroupView>
-        </UserGroupPermissionsSelectionView>
-        </UserPermissionPageUpper>: null}
-        
-        {user !== null && userPermissionDetails !== null && permissionTypes !== null && permissionGroups !== null ? 
-        <UserPermissionList>
-        <UserPermissionsView shouldDisable = {currUser?.user_id === user.user_id} permissionHolder={userPermissionDetails} permissionTypes={permissionTypes} onAddUserPermission={handleAddUserPermission} onRemoveUserPermission={handleRemoveUserPermission}  />  
-        </UserPermissionList>
-        : null}
+        {userPermissionDetails !== null && permissionGroups ?
+          <UserPermissionPageUpper>
+            <UserSectionHeading> User Permissions Page </UserSectionHeading>
+            <UserSectionText>Need to change a user's group permissions? Or maybe you need provide the user with custom permissions? You can edit the permissions of this user at any time using the checkboxes below!</UserSectionText>
+            <UserGroupPermissionsSelectionView>
+              <UserSubHeadingText> Group Permissions allocated: </UserSubHeadingText>
+              <UserPermissionGroupView shouldDisable={currUser?.user_id === user?.user_id} groupId={userPermissionDetails.group_id} permissionGroups={permissionGroups} onPermissionGroupChange={handleSetUserPermissionGroup}></UserPermissionGroupView>
+            </UserGroupPermissionsSelectionView>
+          </UserPermissionPageUpper> : null}
+
+        {user !== null && userPermissionDetails !== null && permissionTypes !== null && permissionGroups !== null ?
+          <UserPermissionList>
+            <UserPermissionsView shouldDisable={currUser?.user_id === user.user_id} permissionHolder={userPermissionDetails} permissionTypes={permissionTypes} onSetUserPermission={handleSetUserPermission} groupPermissions={permissionGroups.filter(permissionGroup => permissionGroup.group_id === userPermissionDetails.group_id)[0].permissions} />
+          </UserPermissionList>
+          : null}
       </PermissionUserView>
     </ManageUserPermissionsPageContainer>
   );

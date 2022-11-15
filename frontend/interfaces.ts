@@ -133,7 +133,7 @@ export interface createPost {
 
 export interface userPermission {
   permission_id: number,
-  value: boolean
+  value: boolean|null
 }
 
 export interface currentUser {
