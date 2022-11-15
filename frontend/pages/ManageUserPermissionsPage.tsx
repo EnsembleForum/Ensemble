@@ -162,7 +162,7 @@ const ManageUserPermissionsPage = (props: Props) => {
         <UserSectionText>Need to change a user's group permissions? Or maybe you need provide the user with custom permissions? You can edit the permissions of this user at any time using the checkboxes below!</UserSectionText>
         <UserGroupPermissionsSelectionView>
         <UserSubHeadingText> Group Permissions allocated: </UserSubHeadingText>
-        <UserPermissionGroupView shouldDisable = {currUser?.user_id === user.user_id} groupId={userPermissionDetails.group_id} permissionGroups={permissionGroups} onPermissionGroupChange={handleSetUserPermissionGroup}></UserPermissionGroupView>
+        <UserPermissionGroupView shouldDisable = {currUser?.user_id === user?.user_id} groupId={userPermissionDetails.group_id} permissionGroups={permissionGroups} onPermissionGroupChange={handleSetUserPermissionGroup}></UserPermissionGroupView>
         </UserGroupPermissionsSelectionView>
         </UserPermissionPageUpper>: null}
         
