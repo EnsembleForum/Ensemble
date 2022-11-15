@@ -109,7 +109,7 @@ const UserProfilePage = (props: Props) => {
                 <>
                 <h3>{Prettify(key)}: </h3>
                   <Edit>
-                    <StyledInput value={user[key] ? user[key]: "None"} onChange = {((e) => {
+                    <StyledInput value={user[key]} onChange = {((e) => {
                       const copy = {...user};
                       copy[key] = e.target.value;
                       setUser(copy);
