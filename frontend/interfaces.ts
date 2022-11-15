@@ -130,5 +130,5 @@ export interface queueList {
 
 
 export interface queueListPosts {
-  queue_name: string, queue_id: number, view_only: boolean, posts: number[] | postView[]
+  queue_name: string, queue_id: number, view_only: boolean, posts: any[]
 }

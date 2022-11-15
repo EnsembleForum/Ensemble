@@ -1,12 +1,14 @@
 import styled from "@emotion/styled";
 import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
-import { useNavigate } from "react-router-dom";
 import { ApiFetch } from "../App";
 import { APIcall, postView, queueList, queueListPosts } from "../interfaces";
 import { theme } from "../theme";
-import AuthorView from "./components/AuthorView";
 import Navbar from "./components/Navbar";
 import QueueView from "./components/QueueView";
+import { StyledButton } from "./GlobalProps";
+import QueueContext, { UpdateContext } from "./queueContext";
+import ReactTooltip from 'react-tooltip';
+import { Box, Input, Label } from "theme-ui";
 
 interface Props { }
 
@@ -42,57 +44,30 @@ const QueueCols = styled.div`
   flex-direction: row;
 `
 
-
-const FlexWrapper = styled.div`
+const NewButton = styled(StyledButton)`
+  min-width: 30px;
+  max-height: 30px;
   display: flex;
-  flex-direction: column;
-  content-align: space-between
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 30px;
+  background-color: green;
 `
-// Writing styled components
-const StyledQueue = styled.div`
+
+const StyledForm = styled(Box)`
+  border: 3px dashed darkgrey;
   padding: 10px;
-  border-radius: 10px;
-  background-color: lightgrey;
-  width: 300px;
+  border-radius: 2%;
   min-width: 300px;
-  display: flex;
-  flex-direction: column;
-  margin-right: 30px;
 `;
-const QueueHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  h3, h4 {
-    padding: 6px 10px 6px 10px;
-    margin: 0;
-  }
-  h4 {
-    color: white;
-    border-radius: 10px;
-    background-color: ${theme.colors?.primary};
-  }
-`
-const QueueItem = styled.div`
-  padding: 10px;
-  margin-top: 10px;
-  background-color: white;
-  border-radius: 10px;
-  &:hover {
-    cursor: pointer;
-    filter: brightness(90%);
-  }
-`
-const Heading = styled.span`
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;  
-  overflow: hidden;
-`
-
 
 const TaskboardPage = (props: Props) => {
   const [queueList, setQueueList] = React.useState<queueListPosts[]>();
-  const [updateQueues, setUpdateQueues] = React.useState<boolean>(false);
+  const [update, setUpdate] = React.useState<boolean>(false);
+  const [toggleCreate, setToggleCreate] = React.useState<boolean>(false);
+  const [queueName, setQueueName] = React.useState<string>();
+
   async function getQueues() {
     const queueCall : APIcall = { 
       method: "GET",
@@ -126,63 +101,76 @@ const TaskboardPage = (props: Props) => {
     setQueueList(queuesWithPosts);
   }
 
+  async function createQueue() {
+    const createQueueCall : APIcall = { 
+      method: "POST",
+      path: "taskboard/queue_list/create",
+      body: {queue_name: queueName}
+    }
+    await ApiFetch(createQueueCall);
+    setToggleCreate(false);
+    setUpdate(!update);
+  }
+
   React.useEffect(() => {
-     getQueues();
-  },[])
-  const navigate = useNavigate();
+    getQueues();
+  },[update])
+
+  const createForm = (
+    <>
+    <StyledForm>
+      <Input type="text" placeholder="Name" name="username" id="username" mb={3} onChange={(e) => setQueueName(e.target.value)} />
+      <StyledButton style = {{width: "83%", marginRight: "2%"}} onClick={createQueue}>Create Queue</StyledButton>
+      <StyledButton style = {{width: "15%"}} onClick={() => setToggleCreate(false)}>X</StyledButton>
+    </StyledForm>
+    </>
+
+  )
+
 
   if (queueList) {
     return (
-      <Layout>
-        <Navbar page="taskboard" />
-        <StyledLayout>
-          <StyledQueues>
-            <h2>Queues</h2>
-            <QueueCols>
-              { queueList.filter(queue => !queue.view_only).map((queue) => {
+      <QueueContext.Provider value = {{queueList, setQueueList}}>
+      <UpdateContext.Provider value = {{update, setUpdate}}>
+        <Layout>
+          <Navbar page="taskboard" />
+          <StyledLayout>
+            <StyledQueues>
+              <h2>Queues</h2>
+              <QueueCols>
+                { queueList.filter(queue => !queue.view_only).map((queue) => {
+                  return (
+                    <QueueView queue={queue}></QueueView>
+                  )
+                })}
+                { toggleCreate ? 
+                createForm
+                 :
+                <span>
+                  <ReactTooltip place="top" type="dark" effect="solid"/>
+                  <NewButton data-tip="Create a new queue" onClick={ () => setToggleCreate(true)}>+</NewButton>
+                </span>
+
+                }
+                <div style={{minWidth: "30px"}}></div>
+              </QueueCols>
+            </StyledQueues>
+            <StyledViewOnlyQueues>
+              <h2>Answered, Closed, Deleted and Reported Posts</h2>
+              <QueueCols>
+              { queueList.filter(queue => queue.view_only).map((queue) => {
                 return (
                   <QueueView queue={queue}></QueueView>
                 )
               })}
-            </QueueCols>
-          </StyledQueues>
-          <StyledViewOnlyQueues>
-            <h2>Answered, Closed, Deleted and Reported Posts</h2>
-            <QueueCols>
-            { queueList.filter(queue => queue.view_only).map((queue) => {
-              return (
-                <FlexWrapper>
-                  <StyledQueue>
-                    <QueueHeader>
-                      <h3>{queue.queue_name}</h3>
-                      <h4>{queue.posts.length}</h4>
-                    </QueueHeader>
-                    { queue.posts.map((post) => {
-                      const postShow = post as postView;
-                      return (
-                        <QueueItem onClick={() => {
-                          navigate({
-                            pathname: '/browse',
-                            search: `?postId=${postShow.post_id}`,
-                          });
-                        }}>
-                          <Heading>{postShow.heading}</Heading>
-                          <div></div>
-                          <AuthorView userId={postShow.author}></AuthorView>
-                          <div></div>
-                        </QueueItem>
-                      )
-                    })}
-                  </StyledQueue>
-                  <span></span>
-                </FlexWrapper>
-              )
-            })}
-            </QueueCols>
-          </StyledViewOnlyQueues>
-        </StyledLayout>
-        
-      </Layout>
+                <div style={{minWidth: "30px"}}></div>
+
+              </QueueCols>
+            </StyledViewOnlyQueues>
+          </StyledLayout>
+        </Layout>
+        </UpdateContext.Provider>
+      </QueueContext.Provider>
     );
   } else {
     return (
