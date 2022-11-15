@@ -20,6 +20,9 @@ from ensemble_request.browse import (
     accept_comment,
     post_create
 )
+from resources import consts
+from ensemble_request.taskboard import queue_post_list, queue_list
+from tests.integration.helpers import get_queue
 from tests.integration.conftest import ISimpleUsers, IMakePosts
 
 
@@ -111,6 +114,7 @@ def test_delete_accepted_comment(
     Deleting an accepted comment marks post as unanswered
     """
     user_token = simple_users["user"]["token"]
+    mod_token = simple_users["mod"]["token"]
     post_id = post_create(user_token, "head", "text", [])["post_id"]
     comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
     accept_comment(user_token, comment_id)
@@ -118,3 +122,13 @@ def test_delete_accepted_comment(
     comment_delete(user_token, comment_id)
 
     assert not post_view(user_token, post_id)["answered"]
+
+    post_queue_name = post_view(user_token, post_id)["queue"]
+    assert post_queue_name == consts.MAIN_QUEUE
+
+    queue_id = get_queue(
+        queue_list(mod_token)['queues'],
+        consts.MAIN_QUEUE
+    )["queue_id"]
+    queue = queue_post_list(mod_token, queue_id)
+    assert post_id in queue["posts"]

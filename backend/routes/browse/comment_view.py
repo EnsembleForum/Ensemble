@@ -16,6 +16,7 @@ from backend.models.permissions import Permission
 from backend.models.reply import Reply
 from backend.models.comment import Comment
 from backend.models.user import User
+from backend.models.queue import Queue
 from backend.types.identifiers import CommentId
 from backend.types.comment import ICommentFullInfo, ICommentAccepted
 from backend.types.react import IUserReacted
@@ -155,5 +156,7 @@ def delete(user: User, *_) -> dict:
         )
     if comment == comment.parent.answered:
         comment.parent.answered = None
+        if comment.parent.queue == Queue.get_answered_queue():
+            comment.parent.queue = Queue.get_main_queue()
     comment.delete()
     return {}
