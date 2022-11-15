@@ -59,7 +59,9 @@ def post_list(token: JWT, search_term: str = "") -> IPostBasicInfoList:
             * `answered`: (`bool`): whether this post is answered
             * `closed`: (`bool`): whether this post is closed
             * `deleted`: (`bool`): whether this post is deleted
-            * `reported`: (`bool`): whether this post is reported
+            * `reported`: (`bool`): whether this post is reported. This is
+              always false if the user performing the request doesn't have
+              permission to view reported posts.
     """
     return cast(
         IPostBasicInfoList,
@@ -106,7 +108,9 @@ def post_view(token: JWT, post_id: PostId) -> IPostFullInfo:
     * `closed`: (`bool`): whether this post is closed
     * `queue` (`QueueId`): queue that this post belongs to
     * `deleted`: (`bool`): whether this post is deleted
-    * `reported`: (`bool`): whether this post is reported
+    * `reported`: (`bool`): whether this post is reported. This is always false
+      if the user performing the request doesn't have permission to view
+      reported posts.
     """
     return cast(
         IPostFullInfo,
