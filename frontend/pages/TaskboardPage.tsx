@@ -144,7 +144,7 @@ const TaskboardPage = (props: Props) => {
                 { toggleCreate ? 
                 createForm
                  :
-                <span>
+                <span style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
                   <ReactTooltip place="top" type="dark" effect="solid"/>
                   <NewButton data-tip="Create a new queue" onClick={ () => setToggleCreate(true)}>+</NewButton>
                 </span>
