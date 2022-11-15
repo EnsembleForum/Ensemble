@@ -58,7 +58,7 @@ const NewButton = styled(StyledButton)`
 const StyledForm = styled(Box)`
   border: 3px dashed darkgrey;
   padding: 10px;
-  border-radius: 2%;
+  border-radius: 10px;
   min-width: 300px;
 `;
 
@@ -144,7 +144,7 @@ const TaskboardPage = (props: Props) => {
                 {getPermission(23) ? ( toggleCreate ? 
                 createForm
                  :
-                <span style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                <span>
                   <ReactTooltip place="top" type="dark" effect="solid"/>
                   <NewButton data-tip="Create a new queue" onClick={ () => setToggleCreate(true)}>+</NewButton>
                 </span>
