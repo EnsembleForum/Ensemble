@@ -3,7 +3,8 @@ from backend.types.tag import ITagBasicInfo
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import TagId
-from typing import cast, TYPE_CHECKING
+from typing import cast
+
 
 class Tag:
     """
@@ -60,6 +61,7 @@ class Tag:
             Tag(p["id"]) for p in
             TTag.select().order_by(TTag.id, ascending=False).run_sync()
         ]
+        
     def _get(self) -> TTag:
         """
         Return a reference to the underlying database row

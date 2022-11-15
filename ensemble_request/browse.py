@@ -10,7 +10,7 @@ from backend.types.comment import (
     ICommentAccepted
 )
 from backend.types.reply import IReplyId
-from backend.types.identifiers import CommentId, PostId, ReplyId
+from backend.types.identifiers import CommentId, PostId, ReplyId, TagId
 from backend.types.post import (
     IPostBasicInfoList,
     IPostFullInfo,
@@ -19,6 +19,7 @@ from backend.types.post import (
     IPostReported
 )
 from backend.types.react import IUserReacted
+from backend.types.tag import ITagBasicInfo, ITagId
 from backend.types.reply import IReplyFullInfo
 from backend.types.auth import JWT
 from .consts import URL
@@ -489,6 +490,67 @@ def reply_react(token: JWT, reply_id: ReplyId) -> IUserReacted:
             {"reply_id": reply_id, }
         )
     )
+
+####
+
+
+def get_tag(token: JWT, tag_id: TagId) -> ITagBasicInfo:
+    return cast(
+        ITagBasicInfo,
+        get(
+            token,
+            f"{URL}/tags_view",
+            {"tag_id": tag_id, }
+        )
+    )
+
+
+def create_tag(token: JWT, tag_name: str) -> ITagBasicInfo:
+
+    return cast(
+        ITagBasicInfo,
+        post(
+            token,
+            f"{URL}/tags_view/new_tag",
+            {"tag_name": tag_name, }
+        )
+    )
+
+
+def delete_tag(token: JWT, tag_id: TagId):
+    delete(
+        token,
+        f"{URL}/tags_view/new_tag",
+        {"tag_id": tag_id, }
+    )
+
+
+def add_tag_to_post(token: JWT, post_id: PostId, tag_id: TagId) -> ITagId:
+
+    return cast(
+        ITagId,
+        post(
+            token,
+            f"{URL}/tags_view/add_tag_to_post",
+            {
+                "post_id": post_id,
+                "tag_id": tag_id,
+            }
+        )
+    )
+
+
+def remove_tag_from_post(token: JWT, post_id: PostId, tag_id: TagId):
+    delete(
+        token,
+        f"{URL}/tags_view/remove_tag_from_post",
+        {
+            "post_id": post_id,
+            "tag_id": tag_id,
+        }
+    )
+
+####
 
 
 def accept_comment(token: JWT, comment_id: CommentId) -> ICommentAccepted:

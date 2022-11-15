@@ -86,7 +86,7 @@ def add_tag_to_post(*_) -> ITagId:
     return {"tag_id": tag_id}
 
 
-@tags_view.delete("/delete_tag_from_post")
+@tags_view.delete("/remove_tag_from_post")
 @uses_token
 def remove_tag_from_post(*_) -> dict:
     """
