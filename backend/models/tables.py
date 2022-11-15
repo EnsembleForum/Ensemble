@@ -74,6 +74,14 @@ class TQueue(_BaseTable):
     name = Text()
 
 
+class TQueueFollow(_BaseTable):
+    """
+    Relationship for who follows what queues
+    """
+    user = ForeignKey(TUser)
+    queue = ForeignKey(TQueue)
+
+
 class TPost(_BaseTable):
     """
     Table containing all posts
@@ -110,6 +118,7 @@ class TComment(_BaseTable):
 
     author = ForeignKey(TUser)
     parent = ForeignKey(TPost)
+    deleted = Boolean()
     text = Text()
     timestamp = Timestamp()
 
@@ -121,6 +130,7 @@ class TReply(_BaseTable):
 
     author = ForeignKey(TUser)
     parent = ForeignKey(TComment)
+    deleted = Boolean()
     text = Text()
     timestamp = Timestamp()
 
@@ -158,6 +168,36 @@ class TToken(_BaseTable):
     """
 
     user = ForeignKey(TUser)
+
+
+class TNotification(_BaseTable):
+    """
+    Table containing notifications
+    """
+
+    notif_type = Integer()
+    """Type of notification (as per notifications.NotificationType)"""
+
+    user_to = ForeignKey(TUser)
+    """User the notification is directed to"""
+
+    seen = Boolean()
+    """Whether the notification has been seen"""
+
+    user_from = ForeignKey(TUser, null=True)
+    """User who gave the notification, if any"""
+
+    post = ForeignKey(TPost, null=True)
+    """Post the notification is related to"""
+
+    comment = ForeignKey(TComment, null=True)
+    """Comment the notification is related to"""
+
+    reply = ForeignKey(TReply, null=True)
+    """Reply the notification is related to"""
+
+    queue = ForeignKey(TQueue, null=True)
+    """Queue the notification is related to"""
 
 
 class TExamMode(_BaseTable):

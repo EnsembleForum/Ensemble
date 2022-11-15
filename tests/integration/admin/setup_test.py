@@ -27,6 +27,7 @@ from ensemble_request.auth import login
 from mock.auth import AUTH_URL
 
 
+@pytest.mark.core
 def test_first_run_empty():
     """
     When we clear the server, does is_first_run return True when the server
@@ -212,6 +213,7 @@ def test_last_name_empty():
         )
 
 
+@pytest.mark.core
 def test_init_user_created():
     """
     When we initialise the server, does a user get created?

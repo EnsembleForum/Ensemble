@@ -48,6 +48,7 @@ def test_invalid_post_comment(
         add_comment(token, invalid_post_id, "hello")
 
 
+@pytest.mark.core
 def test_add_two_comments(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts,

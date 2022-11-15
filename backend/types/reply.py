@@ -20,6 +20,7 @@ class IReplyFullInfo(TypedDict):
     * `thanks`: `int`
     * `timestamp`: `int`
     * `user_reacted`: `bool`
+    * `deleted`: `bool`
     """
     reply_id: ReplyId
     author: UserId
@@ -27,3 +28,4 @@ class IReplyFullInfo(TypedDict):
     text: str
     timestamp: int
     user_reacted: bool
+    deleted: bool

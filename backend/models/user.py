@@ -17,7 +17,7 @@ class User:
     """
     def __init__(self, id: UserId):
         """
-        Create a user object shadowing an existing in the database
+        Create a user object shadowing an existing user in the database
 
         ### Args:
         * `id` (`int`): user id
@@ -55,7 +55,7 @@ class User:
           user's permissions from.
 
         ### Returns:
-        * `PermissionPreset`: the preset object
+        * `User`: the user object
         """
         assert_valid_str_field(username, "Username")
         if email is not None:
@@ -239,4 +239,5 @@ class User:
             "pronouns": self.pronouns,
             "user_id": self.id,
             "email": self.email,
+            "permission_group": self.permissions.parent.name,
         }

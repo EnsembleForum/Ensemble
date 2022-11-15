@@ -31,6 +31,7 @@ def test_invalid_post_id(simple_users: ISimpleUsers, make_posts: IMakePosts):
         post_view(token, invalid_post_id)
 
 
+@pytest.mark.core
 def test_get_post_success(simple_users: ISimpleUsers):
     """
     Can we get the full details of a valid post?

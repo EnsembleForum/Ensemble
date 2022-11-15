@@ -5,16 +5,16 @@ Configuration for tests
 """
 import pytest
 from typing import TypedDict
+from resources import consts
 from backend.types.identifiers import PostId, QueueId
 from backend.types.permissions import IPermissionGroup
 from backend.types.auth import IAuthInfo
 from mock.auth import AUTH_URL
-from ensemble_request.debug import clear, echo
+from ensemble_request.debug import clear, echo, unsafe_init, unsafe_login
 from ensemble_request.browse import post_create
-from ensemble_request.admin import init, users
+from ensemble_request.admin import users
 from ensemble_request.admin.permissions import groups_list
-from ensemble_request.auth import login
-from ensemble_request.taskboard import queue_create
+from ensemble_request.taskboard import queue_create, queue_list
 
 
 @pytest.fixture(autouse=True)
@@ -35,7 +35,7 @@ def basic_server_setup(before_each) -> IBasicServerSetup:
     username = "admin1"
     password = "admin1"
     email = "admin@example.com"
-    return init(
+    return unsafe_init(
         address=f"{AUTH_URL}/login",
         request_type="get",
         username_param="username",
@@ -70,6 +70,8 @@ def permission_groups(
     Represents all available permissions upon initialising the server
     """
     ids = groups_list(basic_server_setup['token'])["groups"]
+    # If these assertions fail, this fixture should be updated
+    assert len(ids) == 3
     assert ids[0]["name"] == "Administrator"
     assert ids[1]["name"] == "Moderator"
     assert ids[2]["name"] == "User"
@@ -134,8 +136,8 @@ def simple_users(
     # Log everyone in and return their info
     return {
         "admin": basic_server_setup,
-        "mod": login("mod1", "mod1"),
-        "user": login("user1", "user1"),
+        "mod": unsafe_login("mod1"),
+        "user": unsafe_login("user1"),
     }
 
 
@@ -233,18 +235,18 @@ def all_users(
     return {
         "admins": [
             simple_users["admin"],
-            login("admin2", "admin2"),
-            login("admin3", "admin3"),
+            unsafe_login("admin2"),
+            unsafe_login("admin3"),
         ],
         "mods": [
             simple_users["mod"],
-            login("mod2", "mod2"),
-            login("mod3", "mod3"),
+            unsafe_login("mod2"),
+            unsafe_login("mod3"),
         ],
         "users": [
             simple_users["user"],
-            login("user2", "user2"),
-            login("user3", "user3"),
+            unsafe_login("user2"),
+            unsafe_login("user3"),
         ],
     }
 
@@ -288,6 +290,44 @@ def make_posts(basic_server_setup: IBasicServerSetup) -> IMakePosts:
     }
 
 
+class IDefaultQueues(TypedDict):
+    """
+    Get info on the default queues
+    """
+    main: QueueId
+    answered: QueueId
+    closed: QueueId
+    deleted: QueueId
+    reported: QueueId
+
+
+@pytest.fixture()
+def default_queues(basic_server_setup: IBasicServerSetup) -> IDefaultQueues:
+    """
+    Get info on the default queues
+    """
+    token = basic_server_setup["token"]
+    ids = queue_list(token)["queues"]
+
+    # If these assertions fail, this fixture should be updated
+    # Probably we added more default queues, or changed the ordering or
+    # something
+    assert len(ids) == 5
+    assert ids[0]["queue_name"] == consts.MAIN_QUEUE
+    assert ids[1]["queue_name"] == consts.REPORTED_QUEUE
+    assert ids[2]["queue_name"] == consts.CLOSED_QUEUE
+    assert ids[3]["queue_name"] == consts.ANSWERED_QUEUE
+    assert ids[4]["queue_name"] == consts.DELETED_QUEUE
+
+    return {
+        "main": ids[0]["queue_id"],
+        "reported": ids[1]["queue_id"],
+        "closed": ids[2]["queue_id"],
+        "answered": ids[2]["queue_id"],
+        "deleted": ids[4]["queue_id"],
+    }
+
+
 class IMakeQueues(TypedDict):
     """
     Create two queues on the forum
@@ -299,7 +339,10 @@ class IMakeQueues(TypedDict):
 
 
 @pytest.fixture()
-def make_queues(basic_server_setup: IBasicServerSetup) -> IMakeQueues:
+def make_queues(
+    basic_server_setup: IBasicServerSetup,
+    default_queues: IDefaultQueues,
+) -> IMakeQueues:
     """
     Create two queues inside the forum
     """

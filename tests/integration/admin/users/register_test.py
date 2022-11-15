@@ -25,6 +25,7 @@ from tests.integration.conftest import (
 )
 
 
+@pytest.mark.core
 def test_register_single_user(
     basic_server_setup: IBasicServerSetup,
     permission_groups: IPermissionGroups,

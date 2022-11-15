@@ -56,6 +56,7 @@ def test_empty_name(
         )
 
 
+@pytest.mark.core
 def test_success(
     basic_server_setup: IBasicServerSetup,
     make_queues: IMakeQueues,

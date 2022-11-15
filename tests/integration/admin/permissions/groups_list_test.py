@@ -15,6 +15,7 @@ from backend.models.permissions.permission import Permission
 from backend.util.http_errors import Forbidden
 
 
+@pytest.mark.core
 def test_default_groups(basic_server_setup: IBasicServerSetup):
     """
     Are the three default groups created, and do they contain all the required

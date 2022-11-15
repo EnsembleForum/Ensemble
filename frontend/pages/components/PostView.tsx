@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor, useEffect } from "react";
-import { Box, IconButton, Text } from "theme-ui";
-import { ApiFetch } from "../../App";
+import React, { useEffect } from "react";
+import { ApiFetch, getCurrentUser, getPermission } from "../../App";
 import { APIcall, commentView, postView, replyView } from "../../interfaces";
 import TextView from "./TextView";
 import { theme } from "../../theme";
@@ -26,6 +25,7 @@ const PostView = (props: Props) => {
   const value = { commentCount, setCommentCount};
   const [comments, setComments] = React.useState<commentView[]>();
   const [currentPost, setCurrentPost] = React.useState<postView>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let [searchParams, setSearchParams] = useSearchParams();
 
   async function getPost() {
@@ -63,9 +63,10 @@ const PostView = (props: Props) => {
   }
 
   useEffect(() => {
-    if (searchParams.get("postId")) {
+    if (searchParams.get("postId") !== null && searchParams.get('postId') !== '0') {
       getPost();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[commentCount])
 
   // This is the data we would be APIfetching on props change
@@ -73,27 +74,66 @@ const PostView = (props: Props) => {
     return (
       <CommentContext.Provider value={value}>
        <StyledPostListView>
-          <TextView heading={currentPost.heading} text={currentPost.text} author={currentPost.author} reacts={currentPost.me_too} id={parseInt(searchParams.get("postId") as string)} userReacted={currentPost.user_reacted} type="post" private={currentPost.private} anonymous={currentPost.anonymous}></TextView>
+          <TextView 
+            heading={currentPost.heading} 
+            text={currentPost.text} 
+            author={currentPost.author} 
+            reacts={currentPost.me_too} 
+            id={parseInt(searchParams.get("postId") as string)} 
+            userReacted={currentPost.user_reacted} 
+            type="post" private={currentPost.private} 
+            anonymous={currentPost.anonymous} 
+            closed={currentPost.closed} 
+            answered={currentPost.answered} 
+            reported={currentPost.reported} 
+            showCloseButton={getPermission(31)} 
+            deleted={currentPost.deleted}
+            showDeleteButton={currentPost.author === getCurrentUser().user_id  || getPermission(32)} 
+            showReportButton={currentPost.author !== getCurrentUser().user_id && getPermission(30) && !getPermission(33)} 
+            showUnreportButton={getPermission(33)} 
+            queue={currentPost.author !== getCurrentUser().user_id || getPermission(20) ? currentPost.queue : ''}
+          />
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
               return (
-                  <>
-                  <TextView key = {comment.comment_id} text={comment.text} reacts={comment.thanks} type="comment" id={comment.comment_id} author={comment.author} userReacted={comment.user_reacted}></TextView>
+                  <> 
+                  <TextView 
+                    key = {comment.comment_id} 
+                    text={comment.text} reacts={comment.thanks} 
+                    type="comment" id={comment.comment_id} 
+                    author={comment.author} 
+                    userReacted={comment.user_reacted}
+                    accepted={comment.accepted}
+                    deleted={comment.deleted}
+                    showAcceptButton={currentPost.author === getCurrentUser().user_id || getPermission(13)}
+                    showDeleteButton={comment.author === getCurrentUser().user_id  || getPermission(32)} 
+                  />
                   {comment.replies.map((reply) => {
                     const rep = reply as replyView;
                     return (
-                      <TextView text={rep.text} reacts={rep.thanks} type="reply" author={rep.author} id={rep.reply_id} commentId={comment.comment_id} userReacted={rep.user_reacted}></TextView>
+                      <TextView 
+                        text={rep.text} 
+                        reacts={rep.thanks} 
+                        type="reply" 
+                        author={rep.author} 
+                        id={rep.reply_id} 
+                        commentId={comment.comment_id} 
+                        deleted={rep.deleted}
+                        userReacted={rep.user_reacted}
+                        showDeleteButton={rep.author === getCurrentUser().user_id  || getPermission(32)} 
+                      />
                     )
                   })}
                   </>
               )
             })
           }
+          <div style={{height: "80px"}}></div>
         </StyledPostListView>
       </CommentContext.Provider>
     )
-  } else if (searchParams.get("postId")) {
+  } else if (searchParams.get("postId") && searchParams.get('postId') !== '0') {
     getPost();
     return <StyledPostListView> Loading... </StyledPostListView>
   }

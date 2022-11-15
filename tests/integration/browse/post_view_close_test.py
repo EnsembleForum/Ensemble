@@ -13,6 +13,7 @@ Tests for post_view/close
     un-closing sends it back to main queue
 """
 import pytest
+from resources import consts
 from backend.util import http_errors
 from tests.integration.conftest import (
     ISimpleUsers,
@@ -24,7 +25,9 @@ from ensemble_request.browse import (
     post_view,
     post_create,
     close_post,
-    post_edit
+    post_edit,
+    add_comment,
+    accept_comment
 )
 from ensemble_request.taskboard import queue_post_list, queue_list
 from tests.integration.helpers import get_queue
@@ -58,6 +61,7 @@ def test_no_permission_to_view(
         post_view(user_token, post_id)
 
 
+@pytest.mark.core
 def test_closed_post_view(
     simple_users: ISimpleUsers,
     make_posts: IMakePosts
@@ -95,8 +99,8 @@ def test_closed_post_list(
 
 def test_diff_users_closed_post_list(all_users: IAllUsers):
     """
-    Can users with permissions to view private posts
-    view private posts in post_list?
+    Can users with permissions to view closed posts
+    view closed posts in post_list?
     """
     user_token1 = all_users["users"][0]["token"]
     user_token2 = all_users["users"][1]["token"]
@@ -146,9 +150,8 @@ def test_closed_queue(
     simple_users: ISimpleUsers
 ):
     """
-    Does marking a comment as accepted send the post to the answered queue?
-    Does marking the accepted comment as unaccepted send the post back
-    to the main queue?
+    Does closing a post send it to the closed queue?
+    Does un-closing a post send it to the main queue?
     """
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
@@ -158,20 +161,20 @@ def test_closed_queue(
     # Closing a post sends it to the closed queue
     close_post(mod_token, post_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Closed queue"
+    assert post_queue_name == consts.CLOSED_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Closed queue")["queue_id"]
+                         consts.CLOSED_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
     # Un-closing a post sends it back to the main queue
     close_post(mod_token, post_id)
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Main queue"
+    assert post_queue_name == consts.MAIN_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Main queue")["queue_id"]
+                         consts.MAIN_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
@@ -191,7 +194,7 @@ def test_edit_unclose_post(
     close_post(mod_token, post_id)
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Closed queue")["queue_id"]
+                         consts.CLOSED_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
@@ -199,9 +202,62 @@ def test_edit_unclose_post(
     post_edit(user_token, post_id, "hi", "there", [])
 
     post_queue_name = post_view(user_token, post_id)["queue"]
-    assert post_queue_name == "Main queue"
+    assert post_queue_name == "Main"
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Main queue")["queue_id"]
+                         "Main")["queue_id"]
+    queue = queue_post_list(mod_token, queue_id)
+    assert post_id in queue["posts"]
+
+
+def test_close_answered_post(
+    simple_users: ISimpleUsers
+):
+    """
+    Does un-closing an answered post send it to the answered queue?
+    """
+    user_token = simple_users["user"]["token"]
+    mod_token = simple_users["mod"]["token"]
+
+    post_id = post_create(user_token, "head", "text", [])["post_id"]
+    comment_id = add_comment(user_token, post_id, "first")["comment_id"]
+    accept_comment(user_token, comment_id)
+
+    # Closing a post sends it to the closed queue
+    close_post(mod_token, post_id)
+
+    # Un-closing a post sends it back to the answered queue
+    close_post(mod_token, post_id)
+    post_queue_name = post_view(user_token, post_id)["queue"]
+    assert post_queue_name == consts.ANSWERED_QUEUE
+
+    queue_id = get_queue(queue_list(mod_token)['queues'],
+                         consts.ANSWERED_QUEUE)["queue_id"]
+    queue = queue_post_list(mod_token, queue_id)
+    assert post_id in queue["posts"]
+
+
+def test_edit_answered_closed_post(
+    simple_users: ISimpleUsers
+):
+    """
+    If OP edits the closed post that is answered,
+    his post is sent back to the answered queue
+    """
+    user_token = simple_users["user"]["token"]
+    mod_token = simple_users["mod"]["token"]
+
+    post_id = post_create(user_token, "head", "text", [])["post_id"]
+    comment_id = add_comment(user_token, post_id, "first")["comment_id"]
+    accept_comment(user_token, comment_id)
+
+    # OP editing the post sends it back to the answered queue
+    post_edit(user_token, post_id, "hi", "there", [])
+
+    post_queue_name = post_view(user_token, post_id)["queue"]
+    assert post_queue_name == consts.ANSWERED_QUEUE
+
+    queue_id = get_queue(queue_list(mod_token)['queues'],
+                         consts.ANSWERED_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]

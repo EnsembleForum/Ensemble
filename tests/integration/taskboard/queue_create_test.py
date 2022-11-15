@@ -35,6 +35,7 @@ def test_empty_name(basic_server_setup: IBasicServerSetup):
         queue_create(basic_server_setup['token'], "")
 
 
+@pytest.mark.core
 def test_success(basic_server_setup: IBasicServerSetup):
     """
     Can we create a queue

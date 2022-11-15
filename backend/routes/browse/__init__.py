@@ -27,8 +27,12 @@ browse.register_blueprint(reply_view, url_prefix="/reply_view")
 @uses_token
 def post_list(user: User, *_) -> IPostBasicInfoList:
     user.permissions.assert_can(Permission.PostView)
-
-    posts_info = [p.basic_info() for p in Post.can_view_list(user)]
+    search_term: str = request.args["search_term"]
+    if len(search_term) > 0:
+        posts_info = [p.basic_info(user)
+                      for p in Post.search_posts(user, search_term)]
+    else:
+        posts_info = [p.basic_info(user) for p in Post.can_view_list(user)]
 
     return {"posts": posts_info}
 

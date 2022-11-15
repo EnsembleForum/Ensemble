@@ -63,7 +63,8 @@ class Comment:
                     TComment.author: author.id,
                     TComment.text: text,
                     TComment.parent: post.id,
-                    TComment.timestamp: datetime.now()
+                    TComment.timestamp: datetime.now(),
+                    TComment.deleted: False,
                 }
             )
             .save()
@@ -88,16 +89,25 @@ class Comment:
             .run_sync()
         ]
 
-    @classmethod
-    def delete(cls, comment_id: CommentId) -> CommentId:
+    @property
+    def deleted(self) -> bool:
         """
-        Deletes a comment from the database as well as all of its replies
+        Whether the comment is deleted
+        """
+        return self._get().deleted
 
-        ### Returns:
-        * `CommentId`: identifier of the deleted comment
+    @deleted.setter
+    def deleted(self, new_status: bool):
+        row = self._get()
+        row.deleted = new_status
+        row.save().run_sync()
+
+    def delete(self):
         """
-        TComment.delete().where(TComment.id == comment_id).run_sync()
-        return comment_id
+        Delete this comment
+        """
+        self.text = "[Deleted]"
+        self.deleted = True
 
     def _get(self) -> TComment:
         """
@@ -250,4 +260,5 @@ class Comment:
             "timestamp": int(self.timestamp.timestamp()),
             "user_reacted": self.has_reacted(user),
             "accepted": self.accepted,
+            "deleted": self.deleted,
         }

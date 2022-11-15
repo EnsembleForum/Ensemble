@@ -2,6 +2,7 @@
 # Backend / Util / Error handler
 """
 import traceback
+from colorama import Fore
 from werkzeug import exceptions as wz_exceptions
 from .http_errors import HTTPException
 from backend.types.errors import IErrorInfo
@@ -75,7 +76,9 @@ def general_error_handler(err: Exception) -> IErrorInfo:
     * `IErrorInfo`: _description_
     """
     trace = "\n".join(traceback.format_exception(err))
+    print(Fore.RED, end=None)
     traceback.print_exception(err)
+    print(Fore.RESET, end=None)
     # Finally return the info
     return {
         "code": 500,

@@ -2,22 +2,11 @@ from typing import TypedDict, Optional
 from .identifiers import CommentId, PostId, UserId, TagId
 
 
-class IReacts(TypedDict):
-    """
-    Aggregate of reactions to a post/comment/reply
-
-    * `thanks`: `int`
-    * `me_too`: `int`
-    """
-    thanks: int
-    me_too: int
-
-
 class IPostBasicInfo(TypedDict):
     """
     Basic info about a post
 
-    * `author`: `UserId`
+    * `author`: `Optional[int]`
     * `heading`: `str`
     * `post_id`: `PostId`
     * `tags`: `list[int]`
@@ -25,10 +14,12 @@ class IPostBasicInfo(TypedDict):
     * `private`: `bool`
     * `anonymous`: `bool`
     * `closed`: `bool`
+    * `deleted`: `bool`
     * `answered`: `bool`
+    * `reported`: `bool`
     """
     post_id: PostId
-    author: UserId
+    author: Optional[UserId]
     heading: str
     tags: list[int]
     me_too: int
@@ -36,6 +27,8 @@ class IPostBasicInfo(TypedDict):
     anonymous: bool
     answered: bool
     closed: bool
+    deleted: bool
+    reported: bool
 
 
 class IPostBasicInfoList(TypedDict):
@@ -50,6 +43,7 @@ class IPostBasicInfoList(TypedDict):
         * `me_too`: `list[UserId]`
         * `private`: `bool`
         * `anonymous`: `bool`
+        * `deleted`: `bool`
         * `answered`: `bool`
     """
     posts: list[IPostBasicInfo]
@@ -68,22 +62,25 @@ class IPostFullInfo(TypedDict):
     """
     Full info about a post
 
-    * `author`: `UserId`
-    * `heading`: `str`
-    * `text`: `str`
-    * `tags`: `list[int]`
-    * `me_too`: `int`
-    * `comments`: `list[CommentId]`
-    * `timestamp`: `int`
-    * `private`: `bool`
-    * `anonymous`: `bool`
-    * `closed`: `bool`
-    * `user_reacted`: `bool`
-    * `answered`: `Optional[CommentId]`
-    * `queue`: `str`
+    * `author` (`Optional[int]`): author of post or None if anonymous
+    * `heading` (`str`):
+    * `text` (`str`):
+    * `tags` (`list[int]`):
+    * `me_too` (`int`):
+    * `comments` (`list[CommentId]`):
+    * `timestamp` (`int`):
+    * `private` (`bool`):
+    * `anonymous` (`bool`):
+    * `closed` (`bool`):
+    * `deleted` (`bool`):
+    * `reported` (`bool`):
+    * `user_reacted` (`bool`):
+    * `answered` (`Optional[CommentId]`): ID of chosen answer if answered else
+      none
+    * `queue` (`str`):
     """
     post_id: PostId
-    author: UserId
+    author: Optional[UserId]
     heading: str
     text: str
     tags: list[TagId]
@@ -94,6 +91,8 @@ class IPostFullInfo(TypedDict):
     private: bool
     anonymous: bool
     closed: bool
+    deleted: bool
+    reported: bool
     answered: Optional[CommentId]
     queue: str
 
@@ -105,3 +104,12 @@ class IPostClosed(TypedDict):
     * `closed`: `bool`
     """
     closed: bool
+
+
+class IPostReported(TypedDict):
+    """
+    Whether a post is reported
+
+    * `reported`: `bool`
+    """
+    reported: bool

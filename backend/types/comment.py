@@ -22,6 +22,7 @@ class ICommentFullInfo(TypedDict):
     * `timestamp`: `int`
     * `user_reacted`: `bool`
     * `accepted`: `bool`
+    * `deleted`: `bool`
     """
     comment_id: CommentId
     author: UserId
@@ -31,6 +32,7 @@ class ICommentFullInfo(TypedDict):
     timestamp: int
     user_reacted: bool
     accepted: bool
+    deleted: bool
 
 
 class ICommentAccepted(TypedDict):

@@ -14,6 +14,7 @@ from ensemble_request.auth import logout
 from ensemble_request.user import profile
 
 
+@pytest.mark.core
 def test_token_invalidated(basic_server_setup: IBasicServerSetup):
     """Does the token get invalidated when we log out?"""
     logout(basic_server_setup['token'])

@@ -1,14 +1,12 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor } from "react";
-import { Box, IconButton, Input, Text } from "theme-ui";
+import React, { } from "react";
 import { ApiFetch } from "../../App";
-import { APIcall, postView, userView } from "../../interfaces";
+import { APIcall, userView } from "../../interfaces";
 import { theme } from "../../theme";
-import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props {
-  userId: number,
+  userId: number | null,
 }
 
 const StyledAuthor = styled.a`
@@ -34,21 +32,31 @@ const StyledText = styled.div`
   }
   background: ${theme.colors?.highlight};
 `
+const StyledAnonymous = styled.a`
+  text-decoration: underline;
+  &:hover {
+    cursor: pointer;
+    font-weight: 700;
+  }
+`
+
 // Exporting our example component
 const AuthorView = (props: Props) => {
   let [toggle, setToggle] = React.useState<boolean>(false);
   const [author, setAuthor] = React.useState<userView>();
   React.useEffect(() => {
-    const call: APIcall = {
-      method: "GET",
-      path: "user/profile",
-      params: { "user_id": props.userId.toString() }
+    if (props.userId) {
+      const call: APIcall = {
+        method: "GET",
+        path: "user/profile",
+        params: { "user_id": props.userId.toString() }
+      }
+      ApiFetch(call)
+        .then((data) => {
+          const user = data as userView;
+          setAuthor(user);
+        });
     }
-    ApiFetch(call)
-      .then((data) => {
-        const user = data as userView;
-        setAuthor(user);
-      });
   }, [])
   if (author) {
     if (toggle) {
@@ -66,6 +74,11 @@ const AuthorView = (props: Props) => {
       return (<StyledAuthor onMouseEnter={(e) => setToggle(true)}> {author.username} </StyledAuthor>)
     } 
   }
+
+  if (props.userId === null) {
+    return <StyledAnonymous>Anonymous</StyledAnonymous>
+  }
+
   return (
     <></>
   );

@@ -6,6 +6,7 @@ Check that permissions callback works correctly.
 * Do we get given the right permissions?
 * If we edit a user's permissions is that reflected?
 """
+import pytest
 from typing import cast
 from ..conftest import IBasicServerSetup, ISimpleUsers
 from backend.types.permissions import IPermissionValueUser
@@ -13,6 +14,7 @@ from ensemble_request.auth import permissions
 from ensemble_request.admin.permissions import set_permissions, get_permissions
 
 
+@pytest.mark.core
 def test_correct_permissions(basic_server_setup: IBasicServerSetup):
     """Do we get given the right permissions?"""
     # Admins should have all permissions
