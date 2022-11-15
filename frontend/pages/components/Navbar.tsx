@@ -50,9 +50,28 @@ export const StyledNavbar = styled.div`
 
 `;
 
+const NotifsButton = styled(StyledButton)`
+  background-color: inherit;
+  padding: 3px 10px 3px 10px;
+  font-size: 26px;
+`
+const ActiveNotifsButton = styled(NotifsButton)`
+  background-color: ${theme.colors?.primary};
+  padding: 3px 10px 3px 10px;
+  font-size: 26px;
+`
+
+
 // Exporting our example component
 const Navbar = (props: Props) => {
   const navigate = useNavigate();
+  const [toggleNotifs, setToggleNotifs] = React.useState(false);
+
+  function getNotifications() {
+
+  }
+
+
   const logout = (
   <StyledButton onClick={(e) => {
     const api: APIcall = {
@@ -68,6 +87,10 @@ const Navbar = (props: Props) => {
     });
   }}>Logout</StyledButton>);
   const login = (<StyledButton onClick={(e) => {navigate("/login")}}>Login</StyledButton>);
+
+  const notifications = (
+    <NotifsButton onClick={(e) => {}}>🔔</NotifsButton>
+  );
 
   let pages = [
     "browse"
@@ -92,7 +115,10 @@ const Navbar = (props: Props) => {
       }) : <></>
       }
       <span></span>
-      {getLoggedIn() ? logout : login }
+      {getLoggedIn() ? 
+      <>{notifications}{logout}</>
+         
+      : login }
     </StyledNavbar>
   );
 };
