@@ -9,6 +9,7 @@ from backend.models.notifications import (
     NotificationClosed,
     NotificationCommented,
     NotificationReacted,
+    NotificationReported,
     NotificationDeleted,
 )
 from backend.models.permissions import Permission
@@ -149,6 +150,12 @@ def report_post(user: User, *_):
     data = json.loads(request.data)
     post = Post(data["post_id"])
     post.queue = Queue.get_reported_queue()
+
+    for u in User.all_where(
+        lambda u: u.permissions.can(Permission.ViewReports)
+    ):
+        if u not in [user, post.author]:
+            NotificationReported.create(u, post)
 
     return {"reported": post.reported}
 
