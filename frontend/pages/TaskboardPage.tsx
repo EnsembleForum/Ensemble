@@ -124,9 +124,7 @@ const TaskboardPage = (props: Props) => {
       <StyledButton style = {{width: "15%"}} onClick={() => setToggleCreate(false)}>X</StyledButton>
     </StyledForm>
     </>
-
   )
-
 
   if (queueList) {
     return (

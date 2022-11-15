@@ -12,6 +12,7 @@ import AuthorView from "./AuthorView";
 // Declaring and typing our props
 interface Props {
   postShow: postView,
+  viewOnly: boolean,
   queueId: number,
 }
 const QueueItem = styled.div`
@@ -19,17 +20,17 @@ const QueueItem = styled.div`
   margin-top: 10px;
   background-color: white;
   border-radius: 10px;
+  height: 40px;
   &:hover {
     cursor: pointer;
     filter: brightness(95%);
   }
 `
 
-const Heading = styled.span`
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;  
+const Heading = styled.div` 
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 `
 const RemoveMargin = styled.span`
   * {
@@ -55,23 +56,26 @@ const QueueItemView = (props: Props) => {
     await ApiFetch(setQueueCall);
     setUpdate(!update);
   }
-
+  const buttonWidth = props.viewOnly ?  "100%": '';
   return (
     <QueueItem 
     onMouseEnter={() => setToggleList(true)}
     onMouseLeave={() => setToggleList(false)}>
       { toggleList ?
         <span style={{display: "flex", justifyContent: "space-evenly", alignItems: "center"}}> 
-        <select style={{width: "80%", padding: "8px", marginRight: "5px", fontSize: "inherit"}} 
-          name="permission" id="permission"
-          value={selected}
-          onChange = {(e) => setQueue(e)}
-        >
-          {queueList.filter(queue => !queue.view_only).map((queue) => {
-            return (<option key={queue.queue_id} value={queue.queue_id} >{queue.queue_name}</option>)
-          })}
-        </select>
-        <StyledButton style={{height: '40px', paddingTop: "0", paddingBottom: "0"}} onClick={() => navigate({
+          {
+            !props.viewOnly ? 
+            <select style={{width: "80%", padding: "8px", marginRight: "5px", fontSize: "inherit"}} 
+              name="permission" id="permission"
+              value={selected}
+              onChange = {(e) => setQueue(e)}
+            >
+              {queueList.filter(queue => !queue.view_only).map((queue) => {
+                return (<option key={queue.queue_id} value={queue.queue_id} >{queue.queue_name}</option>)
+              })}
+            </select> : <></>
+          }
+        <StyledButton style={{height: '40px', paddingTop: "0", paddingBottom: "0", width: buttonWidth}} onClick={() => navigate({
           pathname: '/browse',
           search: `?postId=${props.postShow.post_id}`,
         })}>View</StyledButton>
