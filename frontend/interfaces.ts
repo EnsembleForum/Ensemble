@@ -93,11 +93,23 @@ export interface commentView {
 
 export interface replyView {
   user_reacted: boolean;
-  reply_id: number, text: string, timestamp: number, thanks: number, author: number, deleted: boolean
+  reply_id: number, 
+  text: string, 
+  timestamp: number, 
+  thanks: number, 
+  author: number, 
+  deleted: boolean
 }
 
 export interface userView {
-  name_first: string, name_last: string, username: string, email: string, user_id: number
+  [key: string]: any,
+  name_first: string, 
+  name_last: string, 
+  username: string, 
+  email: string, 
+  user_id: number,
+  permission_group: string, 
+  pronouns?: string 
 }
 
 export interface userPermissionsDetails extends permissionHolder {

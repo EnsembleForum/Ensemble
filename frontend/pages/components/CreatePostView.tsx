@@ -57,6 +57,12 @@ const CreatePostView = (props: Props) => {
     private: false,
     anonymous: false,
   });
+  React.useEffect(() => {
+    if (searchParams.get('searchTerm')) {
+      setToggle(true);
+      setPost(post => ({ ...post, heading: searchParams.get('searchTerm') as string }))
+    }
+  }, [searchParams.get('searchTerm')])
   if (toggle) {
     return (
       <StyledPost>

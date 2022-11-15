@@ -107,7 +107,7 @@ function PassThrough() {
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterPage />} />
           <Route path='/password_reset' element={<PasswordResetPage />} />
-          <Route path='/profile' element={<UserProfilePage userId={0} />} />
+          <Route path='/profile' element={<UserProfilePage />} />
           <Route path='/browse' element={<BrowsePage />}/>
           {getPermission(20) ? <Route path='/taskboard' element={<TaskboardPage />} /> : <></>}
           {getPermission(40)  ? <Route path='/admin' element={<AdminPage page={"register_users"} />} /> : <></>}
