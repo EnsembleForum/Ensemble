@@ -119,7 +119,7 @@ class Task:
         return ret
 
 
-def backend(debug=False, live_output=False):
+def backend(debug=False, live_output=False, coverage=False):
     def started() -> bool:
         try:
             requests.get(
@@ -136,9 +136,13 @@ def backend(debug=False, live_output=False):
     else:
         debug_flag = []
         env = None
+    if coverage:
+        cov_flag = ["coverage", "run", "-m"]
+    else:
+        cov_flag = []
     flask = Task(
         'backend',
-        [sys.executable, '-u', '-m', 'flask'] + debug_flag + ['run'],
+        [sys.executable, '-u', '-m'] + cov_flag + ['flask'] + debug_flag + ['run'],
         live_output,
         env,
         started

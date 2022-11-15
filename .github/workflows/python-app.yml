@@ -3,7 +3,11 @@
 
 name: Backend (Core)
 
-on: [push]
+on:
+  push:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   Start-Server:
@@ -93,8 +97,18 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
       run: |
-        python scripts/pytest_full.py
+        python scripts/pytest_full.py --coverage
       timeout-minutes: 10
+    - name: Generate code coverage report
+      if: ${{ github.event_name }} == 'pull_request'
+      run: |
+        python -m coverage xml coverage.xml
+    - name: Create code coverage comment
+      if: ${{ github.event_name }} == 'pull_request'
+      uses: orgoro/coverage@v3
+      with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload outputs
       uses: actions/upload-artifact@v3
       if: always()

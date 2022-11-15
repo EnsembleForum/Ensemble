@@ -3,11 +3,14 @@
 
 Runs pytest on the backend of the server
 """
+import sys
 from _helpers import backend, mock_auth, pytest, Timer
+
+cov = "--coverage" in sys.argv
 
 t = Timer()
 
-flask = backend(debug=True)
+flask = backend(debug=True, coverage=cov)
 auth = mock_auth()
 
 with t:
