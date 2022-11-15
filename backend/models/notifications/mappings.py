@@ -12,6 +12,7 @@ from .types import (
     NotificationDeleted,
     NotificationQueueAdded,
     NotificationReacted,
+    NotificationReported,
     NotificationUnaccepted,
 )
 
@@ -24,4 +25,5 @@ mappings: dict[NotificationType, type[Notification]] = {
     NotificationType.QueueAdded: NotificationQueueAdded,
     NotificationType.Reacted: NotificationReacted,
     NotificationType.Unaccepted: NotificationUnaccepted,
+    NotificationType.Reported: NotificationReported,
 }
