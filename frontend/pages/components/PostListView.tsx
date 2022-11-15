@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
+import { Input } from "theme-ui";
 import { ApiFetch, getPermission } from "../../App";
 import { APIcall, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
@@ -37,16 +38,20 @@ const Post = styled.div`
 const Heading = styled.div`
   font-weight: 700;
 `
+const Searchbar = styled(Input)`
+  background-color: white;
+`
 
 // Exporting our example component
 const PostListView = (props: Props) => {
   const [posts, setPosts] = React.useState<postListItem[]>();
   let [searchParams, setSearchParams] = useSearchParams();
+  let [searchTerm, setSearchTerm] = React.useState<string>('');
   React.useEffect(()=>{
     const api: APIcall = {
       method: "GET",
       path: "browse/post_list",
-      params: {"search_term": ""}
+      params: {"search_term": searchTerm}
     }
     console.log(api);
     ApiFetch(api)
@@ -58,12 +63,14 @@ const PostListView = (props: Props) => {
         }
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams])
+  }, [searchParams, searchTerm])
 
+  const searchBar = <div style={{padding: "10px"}}><Searchbar placeholder="Search" value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)}></Searchbar></div>
 
   if (posts && posts.length > 0) {
     return (
       <StyledLayout>
+        {searchBar}
         {
           posts.map((each) => {
               const styles : any = {}
@@ -111,6 +118,7 @@ const PostListView = (props: Props) => {
   }
   return (
     <StyledLayout>
+      {searchBar}
     </StyledLayout>
   )
 };
