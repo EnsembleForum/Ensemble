@@ -17,6 +17,7 @@ import dotenv
 import os
 import requests
 import subprocess
+import signal
 import sys
 import time
 from typing import Callable
@@ -53,6 +54,7 @@ class Task:
         env: dict[str, str] = None,
         wait_for: Callable[[], bool] = None,
     ):
+        wait_for = lambda: True
         self.process = None
         curr_env = os.environ.copy()
         if env is not None:
@@ -70,21 +72,21 @@ class Task:
             stderr=self.stderr,
             env=curr_env
         )
-        if wait_for is not None:
-            # Request until we get a success, but crash if we failed to start
-            # in 10 seconds
-            start_time = time.time()
-            started = False
-            while time.time() - start_time < 10:
-                if wait_for():
-                    started = True
-                    break
-            if not started:
-                print(f"❗ {name} failed to start in time")
-                sys.exit(1)
+        # Request until we get a success, but crash if we failed to start
+        # in 10 seconds
+        start_time = time.time()
+        started = False
+        while time.time() - start_time < 10:
+            if wait_for():
+                started = True
+                break
+        if not started:
+            print(f"❗ {name} failed to start in time")
+            sys.exit(1)
 
     def __del__(self):
-        # Always kill the subprocess when this goes out of scope
+        # Always kill the subprocess when this goes out of scope, so we don't
+        # end up with an orphaned process
         self.kill()
 
     def close_files(self):
@@ -93,9 +95,9 @@ class Task:
         if self.stderr is not None:
             self.stderr.close()
 
-    def terminate(self):
+    def interrupt(self):
         if self.process is not None:
-            self.process.terminate()
+            self.process.send_signal(signal.SIGINT)
         self.close_files()
 
     def kill(self):
@@ -119,7 +121,7 @@ class Task:
         return ret
 
 
-def backend(debug=False, live_output=False):
+def backend(debug=False, auto_reload=False, live_output=False, coverage=False):
     def started() -> bool:
         try:
             requests.get(
@@ -130,15 +132,28 @@ def backend(debug=False, live_output=False):
         except requests.ConnectionError:
             return False
 
+    if started():
+        print("❗ Server already running")
+        sys.exit(1)
+
     if debug:
         env = {"ENSEMBLE_DEBUG": "TRUE"}
+        print("🔨 Debugging enabled")
+    else:
+        env = None
+    if auto_reload:
         debug_flag = ["--debug"]
+        print("🔁 Auto reload enabled")
     else:
         debug_flag = []
-        env = None
+    if coverage:
+        cov_flag = ["coverage", "run", "-m"]
+        print("☔ Coverage enabled")
+    else:
+        cov_flag = []
     flask = Task(
         'backend',
-        [sys.executable, '-u', '-m', 'flask'] + debug_flag + ['run'],
+        [sys.executable, '-u', '-m'] + cov_flag + ['flask'] + debug_flag + ['run'],
         live_output,
         env,
         started
@@ -181,3 +196,11 @@ def pytest(core = False):
     )
     print(f"🔨 {app} started")
     return t
+
+
+def coverage_report():
+    Task(
+        'coverage',
+        [sys.executable, '-u', '-m', 'coverage', 'report'],
+        live_output=True
+    ).wait()

@@ -14,8 +14,8 @@ with t:
     tests = pytest(core=True)
     ret = tests.wait()
 
-flask.terminate()
-auth.terminate()
+flask.interrupt()
+auth.interrupt()
 
 if ret:
     # Also write outputs to stdout
