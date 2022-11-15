@@ -6,7 +6,10 @@ Reply View routes
 import json
 from flask import Blueprint, request
 from backend.models.permissions import Permission
-from backend.models.notifications import NotificationReacted
+from backend.models.notifications import (
+    NotificationReacted,
+    NotificationDeleted,
+)
 from backend.models.user import User
 from backend.models.reply import Reply
 from backend.types.identifiers import ReplyId
@@ -72,6 +75,10 @@ def delete(user: User, *_) -> dict:
 
     if user != reply.author:
         user.permissions.assert_can(Permission.DeletePosts)
+        NotificationDeleted.create(
+            reply.author,
+            reply,
+        )
 
     reply.delete()
     return {}

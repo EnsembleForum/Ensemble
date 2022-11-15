@@ -63,13 +63,20 @@ export function getCurrentUser(): currentUser {
 }
 
 export function getPermission(id : number) {
-  const userPermissions = getCurrentUser().permissions;
-  if (userPermissions) {
+  if (getCurrentUser()) {
+    const userPermissions = getCurrentUser().permissions;
     for (const permission of userPermissions) {
       if (permission.permission_id === id ) {
         return permission.value;
       }
     }
+  }
+  return false;
+}
+
+export function getLoggedIn() {
+  if (getCurrentUser()) {
+    return getCurrentUser().logged_in;
   }
   return false;
 }
@@ -96,7 +103,7 @@ function PassThrough() {
         ) : (
           <>
           <Route path="/" element={<Navigate to="/browse" />}></Route>
-          <Route path='/admin/init' element={<Navigate to="/browse" />} />
+          <Route path='/admin/init' element={<Navigate to="/login" />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterPage />} />
           <Route path='/password_reset' element={<PasswordResetPage />} />

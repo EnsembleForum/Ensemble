@@ -1,34 +1,40 @@
-import React, { ReactElement } from 'react'
-import { Flex, Checkbox, Heading, Label } from 'theme-ui'
-import { permissionType, userPermissionsDetails, userView } from "../../interfaces"
+import styled from '@emotion/styled'
+import { ReactElement } from 'react'
+import { Checkbox, Flex, Label } from 'theme-ui'
+import { permissionHolder, permissionType } from "../../interfaces"
 type Props = {
-  userPermissionsDetails: userPermissionsDetails,
+  permissionHolder: permissionHolder,
   permissionTypes: permissionType[],
   onAddUserPermission: (permissionId: number) => void,
   onRemoveUserPermission: (permissionId: number) => void
 }
 
-const UserPermissionsView = ({ userPermissionsDetails, permissionTypes, onAddUserPermission, onRemoveUserPermission }: Props) => {
-  const userPermissions = userPermissionsDetails.permissions.reduce(
+const StyledCheckbox = styled(Checkbox) `
+  margin-bottom: 0.5rem;
+  font-size: 14;
+`
+const UserPermissionsView = ({ permissionHolder, permissionTypes, onAddUserPermission, onRemoveUserPermission }: Props) => {
+  const userPermissions = permissionHolder.permissions.reduce(
     (previousPermissionIds, permission) => {
       if (permission.value) {
         previousPermissionIds.add(permission.permission_id);
       }
       return previousPermissionIds;
     }, new Set<number>());
+    
   return (
     <Flex sx={{ flexDirection: 'column' }}>
       {permissionTypes.map((permissionType: permissionType): ReactElement => {
         return <Flex key={permissionType.permission_id}>
           <Label>
-            <Checkbox
+            <StyledCheckbox
               checked={userPermissions?.has(permissionType.permission_id)}
               onChange={(event) => {
                 event.target.checked ?
                   onAddUserPermission(permissionType.permission_id)
                   : onRemoveUserPermission(permissionType.permission_id);
               }}>
-            </Checkbox>
+            </StyledCheckbox>
             {permissionType.name}
           </Label>
         </Flex>

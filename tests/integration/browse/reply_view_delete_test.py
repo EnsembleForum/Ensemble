@@ -53,7 +53,7 @@ def test_mod_delete(
     reply_id = add_reply(user_token, comment_id, "reply")["reply_id"]
 
     reply_delete(mod_token, reply_id)
-    assert get_reply(user_token, reply_id)["text"] == "[Deleted]."
+    assert get_reply(user_token, reply_id)["text"] == "[Deleted]"
 
 
 def test_op_delete(
@@ -70,7 +70,7 @@ def test_op_delete(
 
     reply_delete(user_token, reply_id)
     reply = get_reply(user_token, reply_id)
-    assert reply["text"] == "[Deleted]."
+    assert reply["text"] == "[Deleted]"
     assert reply["deleted"]
 
 

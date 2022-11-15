@@ -1,13 +1,15 @@
 """
 # Backend / Models / Queue
 """
-from .tables import TQueue, TPost
+from .tables import TQueue, TQueueFollow, TPost
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import QueueId
 from backend.util.validators import assert_valid_str_field
 from backend.util import http_errors
 from backend.types.queue import IQueueFullInfo, IQueueBasicInfo
+from resources import consts
 from typing import cast, TYPE_CHECKING
+from .user import User
 if TYPE_CHECKING:
     from .post import Post
 
@@ -62,9 +64,9 @@ class Queue:
         ### Returns:
         * `Queue`: the new queue
         """
-        assert_valid_str_field(name, "queue_name")
+        assert_valid_str_field(name, "queue name")
 
-        if name in [q.name for q in cls.all()]:
+        if name in (q.name for q in cls.all()):
             raise http_errors.BadRequest(
                 "There is already a queue with that name")
 
@@ -97,13 +99,55 @@ class Queue:
 
     @name.setter
     def name(self, new_name: str):
-        assert_valid_str_field(new_name, "queue_name")
-        if new_name in [q.name for q in self.all() if q.id != self.id]:
+        assert_valid_str_field(new_name, "queue name")
+        if new_name in (q.name for q in self.all() if q.id != self.id):
             raise http_errors.BadRequest(
                 "There is already a queue with that name")
         row = self._get()
         row.name = new_name
         row.save().run_sync()
+
+    def following(self, user: "User") -> bool:
+        """
+        Return whether the user is following the queue
+        """
+        t = TQueueFollow\
+            .exists()\
+            .where(
+                TQueueFollow.queue == self.id
+                and TQueueFollow.user == user.id
+            ).run_sync()
+        assert isinstance(t, bool)
+        return t
+
+    def follow(self, user: "User") -> None:
+        """
+        Toggle whether the user is following the queue or not
+        """
+        if not self.following(user):
+            TQueueFollow({
+                TQueueFollow.queue: self.id,
+                TQueueFollow.user: user.id
+            }).save().run_sync()
+        else:
+            TQueueFollow\
+                .delete()\
+                .where(
+                    TQueueFollow.queue == self.id
+                    and TQueueFollow.user == user.id
+                ).run_sync()
+
+    def get_followers(self) -> list["User"]:
+        """
+        Return the list of users following this queue
+        """
+        return [
+            User(follow_ref.user)
+            for follow_ref in TQueueFollow
+            .objects()
+            .where(TQueueFollow.queue == self.id)
+            .run_sync()
+        ]
 
     @property
     def view_only(self) -> bool:
@@ -119,8 +163,10 @@ class Queue:
         """
         # IDEA: custom ordering of queues in the future
         return [
-            Queue(q.id) for q in TQueue.objects()
-            .order_by(TQueue.name, ascending=False).run_sync()]
+            Queue(q.id)
+            for q in TQueue.objects()
+            .run_sync()
+        ]
 
     @classmethod
     def get_queue(cls, queue_name: str) -> "Queue":
@@ -136,8 +182,7 @@ class Queue:
         ### Returns:
         * `queue`: main queue
         """
-        # TODO: Remember not to use duplicate queue names otherwise this breaks
-        return cls.get_queue("Main queue")
+        return cls.get_queue(consts.MAIN_QUEUE)
 
     @classmethod
     def get_answered_queue(cls) -> "Queue":
@@ -147,8 +192,7 @@ class Queue:
         ### Returns:
         * `queue`: answered queue
         """
-        # TODO: Remember not to use duplicate queue names otherwise this breaks
-        return cls.get_queue("Answered queue")
+        return cls.get_queue(consts.ANSWERED_QUEUE)
 
     @classmethod
     def get_closed_queue(cls) -> "Queue":
@@ -158,8 +202,7 @@ class Queue:
         ### Returns:
         * `queue`: closed queue
         """
-        # TODO: Remember not to use duplicate queue names otherwise this breaks
-        return cls.get_queue("Closed queue")
+        return cls.get_queue(consts.CLOSED_QUEUE)
 
     @classmethod
     def get_deleted_queue(cls) -> "Queue":
@@ -169,8 +212,17 @@ class Queue:
         ### Returns:
         * `queue`: deleted queue
         """
-        # TODO: Remember not to use duplicate queue names otherwise this breaks
-        return cls.get_queue("Deleted queue")
+        return cls.get_queue(consts.DELETED_QUEUE)
+
+    @classmethod
+    def get_reported_queue(cls) -> "Queue":
+        """
+        Gets the reported queue
+
+        ### Returns:
+        * `queue`: reported queue
+        """
+        return cls.get_queue(consts.REPORTED_QUEUE)
 
     def posts(self) -> list["Post"]:
         """
@@ -198,14 +250,14 @@ class Queue:
         # Error checking (can't delete main queue)
         row = self._get()
         if row.immutable:
-            raise http_errors.BadRequest('Cannot delete main queue')
+            raise http_errors.BadRequest('Cannot delete immutable queues')
         # Send posts back to original queue
         main_queue = self.get_main_queue()
         for p in self.posts():
             p.queue = main_queue
         TQueue.delete().where(TQueue.id == self.id).run_sync()
 
-    def full_info(self) -> IQueueFullInfo:
+    def full_info(self, user: "User") -> IQueueFullInfo:
         """
         Returns the full info of a queue
 
@@ -215,11 +267,12 @@ class Queue:
         return {
             "queue_id": self.id,
             "queue_name": self.name,
-            "posts": [c.id for c in self.posts()],
             "view_only": self.view_only,
+            "following": self.following(user),
+            "posts": [c.id for c in self.posts()],
         }
 
-    def basic_info(self) -> IQueueBasicInfo:
+    def basic_info(self, user: "User") -> IQueueBasicInfo:
         """
         Returns the basic info of a queue
 
@@ -230,4 +283,5 @@ class Queue:
             "queue_id": self.id,
             "queue_name": self.name,
             "view_only": self.view_only,
+            "following": self.following(user),
         }

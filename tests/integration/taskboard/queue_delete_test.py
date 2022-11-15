@@ -45,6 +45,6 @@ def test_success(
     """Queue gets deleted"""
     token = basic_server_setup['token']
     queue_delete(token, make_queues['queue1_id'])
-    # Main queue, Answered queue, Closed queue,
+    # Main queue, Answered queue, Closed queue, Reported Queue
     # Deleted queue, and make_queues[2]
-    assert len(queue_list(token)['queues']) == 5
+    assert len(queue_list(token)['queues']) == 6

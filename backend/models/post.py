@@ -162,7 +162,6 @@ class Post:
         Mark this post as deleted
         """
         self.queue = Queue.get_deleted_queue()
-        self.heading = "[Deleted] " + self.heading
 
     @property
     def deleted(self) -> bool:
@@ -170,6 +169,13 @@ class Post:
         Whether this post is deleted or not
         """
         return self.queue == Queue.get_deleted_queue()
+
+    @property
+    def reported(self) -> bool:
+        """
+        Whether this post is reported or not
+        """
+        return self.queue == Queue.get_reported_queue()
 
     def _get(self) -> TPost:
         """
@@ -383,7 +389,10 @@ class Post:
         Un-close post if it was
         """
         if self.closed:
-            self.queue = Queue.get_main_queue()
+            if self.answered:
+                self.queue = Queue.get_answered_queue()
+            else:
+                self.queue = Queue.get_main_queue()
         else:
             self.queue = Queue.get_closed_queue()
 
@@ -403,6 +412,7 @@ class Post:
             "private": self.private,
             "closed": self.closed,
             "deleted": self.deleted,
+            "reported": self.reported,
             "anonymous": self.anonymous,
             "answered": self.answered is not None,
         }
@@ -427,6 +437,7 @@ class Post:
             "anonymous": self.anonymous,
             "closed": self.closed,
             "deleted": self.deleted,
+            "reported": self.reported,
             "user_reacted": self.has_reacted(user),
             "answered": self.answered.id if self.answered else None,
             "queue": self.queue.name

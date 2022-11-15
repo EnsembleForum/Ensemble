@@ -60,7 +60,9 @@ export interface postListItem {
   author: number,
   me_too: number,
   answered: boolean,
-  closed: boolean
+  closed: boolean,
+  reported: boolean,
+  deleted: boolean
 }
 
 export interface postView {
@@ -78,6 +80,7 @@ export interface postView {
   answered?: number,
   closed: boolean,
   deleted: boolean,
+  reported: boolean
 }
 
 export interface commentView {
@@ -96,14 +99,8 @@ export interface userView {
   name_first: string, name_last: string, username: string, email: string, user_id: number
 }
 
-export interface userPermissionsDetails {
-  permissions: userPermission[];
+export interface userPermissionsDetails extends permissionHolder {
   group_id: number;
-}
-
-export interface userPermission {
-  permission_id: number;
-  value?: boolean
 }
 
 export interface permissionType {
@@ -140,4 +137,13 @@ export interface queueList {
 
 export interface queueListPosts {
   queue_name: string, queue_id: number, view_only: boolean, posts: number[] | postView[]
+}
+
+export interface permissionGroup extends permissionHolder {
+  group_id: number, 
+  name: string,
+}
+
+export interface permissionHolder {
+  permissions: userPermission[]
 }
