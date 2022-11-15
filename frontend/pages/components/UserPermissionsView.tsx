@@ -7,13 +7,14 @@ type Props = {
   permissionTypes: permissionType[],
   onAddUserPermission: (permissionId: number) => void,
   onRemoveUserPermission: (permissionId: number) => void
+  shouldDisable: boolean,
 }
 
 const StyledCheckbox = styled(Checkbox) `
   margin-bottom: 0.5rem;
   font-size: 14;
 `
-const UserPermissionsView = ({ permissionHolder, permissionTypes, onAddUserPermission, onRemoveUserPermission }: Props) => {
+const UserPermissionsView = ({ permissionHolder, permissionTypes, onAddUserPermission, onRemoveUserPermission, shouldDisable }: Props) => {
   const userPermissions = permissionHolder.permissions.reduce(
     (previousPermissionIds, permission) => {
       if (permission.value) {
@@ -28,6 +29,7 @@ const UserPermissionsView = ({ permissionHolder, permissionTypes, onAddUserPermi
         return <Flex key={permissionType.permission_id}>
           <Label>
             <StyledCheckbox
+            disabled= {shouldDisable}
               checked={userPermissions?.has(permissionType.permission_id)}
               onChange={(event) => {
                 event.target.checked ?

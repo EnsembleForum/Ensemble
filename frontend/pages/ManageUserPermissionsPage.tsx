@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Flex, Heading, Text } from "theme-ui";
-import { ApiFetch } from "../App";
-import { APIcall, permissionGroup, permissionType, userPermissionsDetails, userView } from "../interfaces";
+import { ApiFetch, getCurrentUser } from "../App";
+import { APIcall, currentUser, permissionGroup, permissionType, userPermissionsDetails, userView } from "../interfaces";
 import UserPermissionGroupView from "./components/UserPermissionGroupView";
 import ItemList from "./components/ItemList";
 import UserPermissionsView from "./components/UserPermissionsView";
@@ -70,6 +70,7 @@ const ManageUserPermissionsPage = (props: Props) => {
   const [permissionGroups, setPermissionGroups] = useState<permissionGroup[] | null>(null);
   const [user, setUser] = useState<userView | null>(null);
   const [userPermissionDetails, setUserPermissionDetails] = useState<userPermissionsDetails | null>(null);
+  const [currUser, setCurrUser] = useState<currentUser|null>(null); 
 
   const handleUserSelect = (selectedUser: userView) => {
     setUser(selectedUser);
@@ -145,8 +146,9 @@ const ManageUserPermissionsPage = (props: Props) => {
       .then(({ permissions }) => {
         setPermissionTypes(permissions);
       })
+      setCurrUser(getCurrentUser()); 
   }, []);
-
+  
   return (
     <ManageUserPermissionsPageContainer>
       <UsersList>
@@ -160,13 +162,13 @@ const ManageUserPermissionsPage = (props: Props) => {
         <UserSectionText>Need to change a user's group permissions? Or maybe you need provide the user with custom permissions? You can edit the permissions of this user at any time using the checkboxes below!</UserSectionText>
         <UserGroupPermissionsSelectionView>
         <UserSubHeadingText> Group Permissions allocated: </UserSubHeadingText>
-        <UserPermissionGroupView groupId={userPermissionDetails.group_id} permissionGroups={permissionGroups} onPermissionGroupChange={handleSetUserPermissionGroup}></UserPermissionGroupView>
+        <UserPermissionGroupView shouldDisable = {currUser?.user_id === user.user_id} groupId={userPermissionDetails.group_id} permissionGroups={permissionGroups} onPermissionGroupChange={handleSetUserPermissionGroup}></UserPermissionGroupView>
         </UserGroupPermissionsSelectionView>
         </UserPermissionPageUpper>: null}
         
         {user !== null && userPermissionDetails !== null && permissionTypes !== null && permissionGroups !== null ? 
         <UserPermissionList>
-        <UserPermissionsView permissionHolder={userPermissionDetails} permissionTypes={permissionTypes} onAddUserPermission={handleAddUserPermission} onRemoveUserPermission={handleRemoveUserPermission}  />  
+        <UserPermissionsView shouldDisable = {currUser?.user_id === user.user_id} permissionHolder={userPermissionDetails} permissionTypes={permissionTypes} onAddUserPermission={handleAddUserPermission} onRemoveUserPermission={handleRemoveUserPermission}  />  
         </UserPermissionList>
         : null}
       </PermissionUserView>
