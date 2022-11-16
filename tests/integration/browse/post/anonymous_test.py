@@ -8,7 +8,7 @@ Tests for creating and viewing anonymous posts
 * Users can view OP of anonymous posts if OP is them
 """
 import jestspectation as expect
-from ..conftest import ISimpleUsers
+from ...conftest import ISimpleUsers
 from ensemble_request.browse import post_list, post_create, post_view
 
 

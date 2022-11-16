@@ -9,7 +9,7 @@ Tests for browse routes
 * browse/create fails when heading/text are empty
 """
 import pytest
-from ..conftest import ISimpleUsers
+from ...conftest import ISimpleUsers
 from backend.util import http_errors
 from ensemble_request.browse import post_list, post_create
 

@@ -12,7 +12,7 @@ Tests for creating and viewing private posts
   public posts
 """
 import pytest
-from ..conftest import ISimpleUsers, IAllUsers
+from ...conftest import ISimpleUsers, IAllUsers
 from backend.util import http_errors
 from ensemble_request.browse import post_list, post_create, post_view
 

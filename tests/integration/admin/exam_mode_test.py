@@ -14,10 +14,7 @@ from tests.integration.conftest import (
     IBasicServerSetup,
     ISimpleUsers,
 )
-from ensemble_request.browse import (
-    post_create,
-    post_list
-)
+from ensemble_request.browse import post
 from backend.util import http_errors
 from ensemble_request.admin.exam_mode import exam_is_enabled, toggle_exam_mode
 
@@ -72,11 +69,11 @@ def test_user_post_during_exam_mode(simple_users: ISimpleUsers):
     # User cannot post publicly during exam mode
     toggle_exam_mode(admin_token)
     with pytest.raises(http_errors.Forbidden):
-        post_create(user_token, 'heading', 'text', [], private=False)
+        post.create(user_token, 'heading', 'text', [], private=False)
 
     # User can post privately during exam mode
-    post_create(user_token, "First head", "First text", [], private=True)
-    assert len(post_list(user_token)["posts"]) == 1
+    post.create(user_token, "First head", "First text", [], private=True)
+    assert len(post.list(user_token)["posts"]) == 1
 
 
 def test_mod_post_during_exam_mode(simple_users: ISimpleUsers):
@@ -88,5 +85,5 @@ def test_mod_post_during_exam_mode(simple_users: ISimpleUsers):
 
     toggle_exam_mode(admin_token)
 
-    post_create(mod_token, 'heading', 'text', [], private=False)
-    assert len(post_list(mod_token)["posts"]) == 1
+    post.create(mod_token, 'heading', 'text', [], private=False)
+    assert len(post.list(mod_token)["posts"]) == 1
