@@ -45,7 +45,7 @@ const Heading = styled.div`
 
 // Exporting our example component
 const NotificationsListView = (props: Props) => {
-  const [notifications, setNotifications] = React.useState<notification[]>();
+  const [notifications, setNotifications] = React.useState<notification[]>([]);
   const [seen, setSeen] = React.useState<boolean>(false);
   let [searchParams, setSearchParams] = useSearchParams();
   React.useEffect(()=>{
@@ -71,6 +71,8 @@ const NotificationsListView = (props: Props) => {
       body: {notification_id: id, value: true}
     }
     await ApiFetch(api);
+    searchParams.set("newnewNotifs", notifications.filter(each => { return each.seen }).length.toString())
+    setSearchParams(searchParams);
     setSeen(!seen);
   }
 
