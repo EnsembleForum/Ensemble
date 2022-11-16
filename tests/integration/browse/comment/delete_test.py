@@ -15,6 +15,9 @@ from ensemble_request.browse import (
     post,
     comment,
 )
+from resources import consts
+from ensemble_request.taskboard import queue_post_list, queue_list
+from tests.integration.helpers import get_queue
 from tests.integration.conftest import ISimpleUsers, IMakePosts
 
 
@@ -97,3 +100,30 @@ def test_edit_deleted_comment(
     comment.delete(user_token, comment_id)
     with pytest.raises(http_errors.BadRequest):
         comment.edit(user_token, comment_id, "hello")
+
+
+def test_delete_accepted_comment(
+    simple_users: ISimpleUsers
+):
+    """
+    Deleting an accepted comment marks post as unanswered
+    """
+    user_token = simple_users["user"]["token"]
+    mod_token = simple_users["mod"]["token"]
+    post_id = post.create(user_token, "head", "text", [])["post_id"]
+    comment_id = comment.create(user_token, post_id, "hello")["comment_id"]
+    comment.accept(user_token, comment_id)
+
+    comment.delete(user_token, comment_id)
+
+    assert not post.view(user_token, post_id)["answered"]
+
+    post_queue_name = post.view(user_token, post_id)["queue"]
+    assert post_queue_name == consts.MAIN_QUEUE
+
+    queue_id = get_queue(
+        queue_list(mod_token)['queues'],
+        consts.MAIN_QUEUE
+    )["queue_id"]
+    queue = queue_post_list(mod_token, queue_id)
+    assert post_id in queue["posts"]

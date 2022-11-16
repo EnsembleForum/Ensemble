@@ -197,7 +197,7 @@ def test_edit_unpost_close(
     assert post_queue_name == "Main"
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Main")["queue_id"]
+                         consts.MAIN_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
