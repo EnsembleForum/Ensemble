@@ -69,6 +69,8 @@ const InitPage = (props: Props) => {
                 <Select name="request_type" id="request_type" mb={3} value={initDetails.request_type} onChange={(e) => setInitDetails(initDetails => ({ ...initDetails, request_type: e.target.value }))}>
                   <option value="post">POST</option>
                   <option value="get">GET</option>
+                  <option value="put">PUT</option>
+                  <option value="delete">DELETE</option>
                 </Select>
               </>
             )
