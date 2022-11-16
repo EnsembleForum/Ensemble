@@ -30,7 +30,7 @@ const PostView = (props: Props) => {
   const customRef = React.useRef<HTMLHeadingElement>(null);
   function scrollToNotif() {
     if (customRef.current) {
-      const offsetBottom = customRef.current.offsetTop + customRef.current.offsetHeight - 250;
+      const offsetBottom = customRef.current.offsetTop + customRef.current.offsetHeight - 225;
       const scrollableDiv = document.getElementById("scroll");
       if (scrollableDiv) {
         scrollableDiv.scrollTo({ top: offsetBottom, behavior: "smooth" });
@@ -80,6 +80,7 @@ const PostView = (props: Props) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[commentCount, searchParams])
+  const exclude = [null, '', '0'];
 
   // This is the data we would be APIfetching on props change
   if (currentPost && currentPost?.post_id === parseInt(searchParams.get("postId") as string) && comments) {
@@ -104,11 +105,11 @@ const PostView = (props: Props) => {
             showReportButton={currentPost.author !== getCurrentUser().user_id && getPermission(30) && !getPermission(33)} 
             showUnreportButton={getPermission(33)} 
             queue={currentPost.author !== getCurrentUser().user_id || getPermission(20) ? currentPost.queue : ''}
+            focus={ !exclude.includes(searchParams.get("postId")) && searchParams.get("postId") === currentPost.post_id.toString() && exclude.includes(searchParams.get("replyId")) && exclude.includes(searchParams.get("commentId"))}
           />
           <hr/><h2>Replies</h2>
           {
             comments.map((comment) => {
-              const exclude = [null, '', '0'];
               return (
                   <> 
                   <TextView 

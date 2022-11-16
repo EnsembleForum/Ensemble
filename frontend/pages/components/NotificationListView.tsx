@@ -85,6 +85,7 @@ const NotificationsListView = (props: Props) => {
                   setSearchParams(searchParams);
                 }}>
                   <Heading>{each.heading}</Heading>
+                  { each.user_from ? <>From: <AuthorView userId={each.user_from}></AuthorView></> : <></>}
                   <div>Body: {each.body}</div>
                 </Post>
               );
