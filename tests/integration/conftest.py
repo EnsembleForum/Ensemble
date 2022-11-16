@@ -117,7 +117,6 @@ def simple_users(
             "email": "mod1@example.com",
             "name_first": "Mod",
             "name_last": "Erator",
-            "pronoun": "he/him"
         }],
         permission_groups["mod"]["group_id"],
     )
@@ -129,7 +128,6 @@ def simple_users(
             "email": "user1@example.com",
             "name_first": "User",
             "name_last": "Ator",
-            "pronoun": "he/him"
         }],
         permission_groups["user"]["group_id"],
     )
@@ -177,14 +175,12 @@ def all_users(
                 "email": "admin2@example.com",
                 "name_first": "Admin",
                 "name_last": "Istrator",
-                "pronoun": "he/him",
             },
             {
                 "username": "admin3",
                 "email": "admin3@example.com",
                 "name_first": "Admin3",
                 "name_last": "Istrator",
-                "pronoun": "he/him",
             },
         ],
         permission_groups["admin"]["group_id"],
@@ -198,14 +194,12 @@ def all_users(
                 "email": "mod2@example.com",
                 "name_first": "Mod2",
                 "name_last": "Erator",
-                "pronoun": "he/him",
             },
             {
                 "username": "mod3",
                 "email": "mod3@example.com",
                 "name_first": "Mod3",
                 "name_last": "Erator",
-                "pronoun": "he/him",
             },
         ],
         permission_groups["mod"]["group_id"],
@@ -219,14 +213,12 @@ def all_users(
                 "email": "user2@example.com",
                 "name_first": "User2",
                 "name_last": "Ator",
-                "pronoun": "he/him",
             },
             {
                 "username": "user3",
                 "email": "user3@example.com",
                 "name_first": "User3",
                 "name_last": "Ator",
-                "pronoun": "he/him",
             },
         ],
         permission_groups["user"]["group_id"],

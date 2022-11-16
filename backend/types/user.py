@@ -10,13 +10,11 @@ class IUserRegisterInfo(TypedDict):
     * `name_last`: `str`
     * `username`: `str`
     * `email`: `str`
-    * `pronoun`: str`
     """
     name_first: str
     name_last: str
     username: str
     email: str
-    pronoun: str
 
 
 class IUserIdList(TypedDict):
