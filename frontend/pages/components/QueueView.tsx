@@ -102,6 +102,7 @@ const QueueView = (props: Props) => {
       path: "taskboard/queue/follow",
       body: {queue_id: queue.queue_id}
     }
+    console.log(followQueueCall);
     await ApiFetch(followQueueCall);
     setUpdate(!update);
   }
@@ -129,7 +130,7 @@ const QueueView = (props: Props) => {
             <>
               {getPermission(22) ? <>
               <ReactTooltip place="top" type="dark" effect="solid"/>
-              <EditButton data-tip="Follow this queue" onClick={followQueue}>🙋</EditButton>
+              <EditButton style={queue.following ? {backgroundColor: "darkgreen"} : {}} data-tip={queue.following ? "Unfollow this queue" : "Follow this queue"} onClick={followQueue}>🙋</EditButton>
               </> : <></>}
               {getPermission(23) ? <>
               <>

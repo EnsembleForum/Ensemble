@@ -56,7 +56,6 @@ const NotificationsListView = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         const test = data as { notifications: notification[] };
-        console.log(test);
         if (test.notifications.length) {
           setNotifications(test.notifications);
         }

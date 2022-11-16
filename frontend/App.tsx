@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { SERVER_PATH } from './constants';
 import { APIcall, currentUser, requestOptions, userPermission } from './interfaces';
 import AdminPage from './pages/AdminPage';
@@ -83,6 +83,7 @@ export function getLoggedIn() {
 
 function PassThrough() {
   const [firstRun, setFirstRun] = React.useState<boolean>(true);
+  const [update, setUpdate] =  React.useState<boolean>(true);
   const api: APIcall = {
     method: "GET",
     path: "admin/is_first_run",
@@ -92,8 +93,11 @@ function PassThrough() {
     setFirstRun(first.value);
   })
   window.addEventListener('storage', () => {
+    setUpdate(!update);
     setFirstRun(false);
   });
+
+  React.useEffect(() => {}, [update]);
   return (
     <Router>
       <Routes>

@@ -128,6 +128,7 @@ const TaskboardPage = (props: Props) => {
   )
 
   if (queueList) {
+    console.log(queueList);
     return (
       <QueueContext.Provider value = {{queueList, setQueueList}}>
       <UpdateContext.Provider value = {{update, setUpdate}}>

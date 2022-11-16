@@ -292,7 +292,6 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
       path: "browse/post/report",
       body: {"post_id": props.id}
     }
-    console.log(call)
     await ApiFetch(call);
     setCommentCount(commentCount + 1);
     updatePosts();

@@ -137,12 +137,12 @@ export interface currentUser {
 }
 
 export interface queueList {
-  queues: {queue_name: string, queue_id: number, view_only: boolean}[]
+  queues: {queue_name: string, queue_id: number, view_only: boolean, following: boolean}[]
 }
 
 
 export interface queueListPosts {
-  queue_name: string, queue_id: number, view_only: boolean, posts: any[]
+  queue_name: string, queue_id: number, view_only: boolean, posts: any[], following: boolean
 }
 
 export interface notification {
