@@ -56,7 +56,7 @@ def test_add_two_comments(
     """
     Add two comments
     List of comment_id returned by post.view should be in order
-    of newest to oldest
+    of oldest to newest
     """
     token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
@@ -64,4 +64,4 @@ def test_add_two_comments(
     comment_id2 = comment.create(token, post_id, "second")["comment_id"]
 
     p = post.view(token, post_id)
-    assert p["comments"] == [comment_id2, comment_id1]
+    assert p["comments"] == [comment_id1, comment_id2]

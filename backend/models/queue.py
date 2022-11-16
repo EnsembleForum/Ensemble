@@ -114,8 +114,8 @@ class Queue:
         t = TQueueFollow\
             .exists()\
             .where(
-                TQueueFollow.queue == self.id
-                and TQueueFollow.user == user.id
+                (TQueueFollow.queue == self.id)
+                & (TQueueFollow.user == user.id)
             ).run_sync()
         assert isinstance(t, bool)
         return t
@@ -162,11 +162,26 @@ class Queue:
         Get the list of all available queues
         """
         # IDEA: custom ordering of queues in the future
-        return [
+        main_queue = [
             Queue(q.id)
             for q in TQueue.objects()
+            .where(TQueue.name == consts.MAIN_QUEUE)  # noqa: E712
             .run_sync()
         ]
+        view_only_queues = [
+            Queue(q.id)
+            for q in TQueue.objects()
+            .where(TQueue.view_only == True)  # noqa: E712
+            .run_sync()
+        ]
+        specialised_queues = [
+            Queue(q.id)
+            for q in TQueue.objects()
+            .where(TQueue.immutable == False)  # noqa: E712
+            .order_by(TQueue.name)
+            .run_sync()
+        ]
+        return main_queue + specialised_queues + view_only_queues
 
     @classmethod
     def get_queue(cls, queue_name: str) -> "Queue":

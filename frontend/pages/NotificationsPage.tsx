@@ -33,7 +33,6 @@ const NotificationsPage = (props: Props) => {
         <NotificationsListView />
         <PostView />
       </StyledLayout>
-      <CreatePostView />
     </Layout>
   );
 };

@@ -12,10 +12,10 @@ import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
 import NotificationsPage from './pages/NotificationsPage';
 
-export function ApiFetch(apiCall: APIcall) {
+export function ApiFetch<T>(apiCall: APIcall) {
   const requestOptions: requestOptions = {
     method: apiCall.method,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   };
   if (apiCall.body) { requestOptions.body = JSON.stringify(apiCall.body); }
   let newparams = '';
@@ -32,7 +32,7 @@ export function ApiFetch(apiCall: APIcall) {
   if (!apiCall.customUrl) {
     apiCall.customUrl = SERVER_PATH;
   }
-  return new Promise((resolve, reject) => {
+  return new Promise<T>((resolve, reject) => {
     fetch(`${apiCall.customUrl}${apiCall.path}${newparams}`, requestOptions)
       .then((response) => {
         if (response.status === 200) {
@@ -106,7 +106,7 @@ function PassThrough() {
         ) : (
           <>
           <Route path="/" element={<Navigate to="/browse" />}></Route>
-          <Route path='/admin/init' element={<Navigate to="/login" />} />
+          <Route path='/admin/init' element={ getLoggedIn() ? <Navigate to="/browse" /> : <Navigate to="/login" />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/password_reset' element={<PasswordResetPage />} />
           <Route path='/profile' element={<UserProfilePage />} />

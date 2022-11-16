@@ -114,7 +114,7 @@ def test_post_view_comments_thanks_order(
 ):
     """
     Are comments of a post sorted correctly by
-    accepted -> thanks -> newest to oldest?
+    accepted -> thanks -> oldest to newest?
     """
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
@@ -135,7 +135,7 @@ def test_post_view_comments_thanks_order(
 
     comments = post.view(token1, post_id)["comments"]
     correct_order = [comment_ids[1], comment_ids[3],
-                     comment_ids[2], comment_ids[0]]
+                     comment_ids[0], comment_ids[2]]
 
     assert comments == correct_order
 

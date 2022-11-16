@@ -112,6 +112,13 @@ export interface userView {
   pronouns?: string 
 }
 
+export interface userPermissionsDetails extends permissionHolder {
+  group_id: number;
+}
+
+export interface permissionType {
+  permission_id: number, name: string
+}
 export interface pageList {
   [key: string]: JSX.Element,
 }
@@ -126,7 +133,7 @@ export interface createPost {
 
 export interface userPermission {
   permission_id: number,
-  value: boolean
+  value: boolean|null
 }
 
 export interface currentUser {
@@ -143,6 +150,15 @@ export interface queueList {
 
 export interface queueListPosts {
   queue_name: string, queue_id: number, view_only: boolean, posts: any[], following: boolean
+}
+
+export interface permissionGroup extends permissionHolder {
+  group_id: number, 
+  name: string,
+}
+
+export interface permissionHolder {
+  permissions: userPermission[]
 }
 
 export interface notification {

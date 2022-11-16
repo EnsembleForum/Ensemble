@@ -1,8 +1,9 @@
 """
 # Backend / Models / Post
 """
-from .tables import TComment, TPost, TPostReacts
+from .tables import TComment, TPost, TPostReacts, TPostTags
 from .user import User
+from .tag import Tag
 from .comment import Comment
 from .queue import Queue
 from .permissions import Permission
@@ -39,7 +40,7 @@ class Post:
         author: User,
         heading: str,
         text: str,
-        tags: list[int],
+        tags: list[Tag],
         private: bool = False,
         anonymous: bool = False,
     ) -> "Post":
@@ -66,7 +67,6 @@ class Post:
                     TPost.author: author.id,
                     TPost.heading: heading,
                     TPost.text: text,
-                    TPost.tags: tags,
                     TPost.timestamp: datetime.now(),
                     TPost.queue: Queue.get_main_queue().id,
                     TPost.private: private,
@@ -77,7 +77,15 @@ class Post:
             .run_sync()[0]
         )
         id = cast(PostId, val["id"])
-        return Post(id)
+        p = Post(id)
+        for t in tags:
+            TPostTags(
+                {
+                    TPostTags.post: id,
+                    TPostTags.tag: t.id,
+                }
+            ).save().run_sync()
+        return p
 
     @classmethod
     def all(cls) -> list["Post"]:
@@ -148,13 +156,13 @@ class Post:
             Comment(c["id"])
             for c in TComment.select()
             .where(TComment.parent == self.__id)
-            .order_by(TComment.id, ascending=False)
+            .order_by(TComment.id)
             .run_sync()
         ]
 
         return sorted(
             comments,
-            key=lambda x: (not x.accepted, -x.thanks, -x.id)
+            key=lambda x: (not x.accepted, -x.thanks, x.id)
         )
 
     def delete(self):
@@ -268,25 +276,34 @@ class Post:
         row.save().run_sync()
 
     @property
-    def tags(self) -> list[int]:
+    def tags(self) -> list[Tag]:
         """
         Returns a list of tags attached to the post
+        sorted in alphabetical order
 
         ### Returns:
-        * list[int]: list of tags
 
-        TODO: Need to define a new tag type, not used in sprint 1
+        * list[Tag]: list of tags
         """
-        return self._get().tags
+        tags = [
+            Tag(t["tag"])
+            for t in
+            TPostTags.select().where(
+                TPostTags.post == self.id
+            ).run_sync()
+        ]
+        return sorted(tags, key=lambda x: x.name)
 
     @tags.setter
-    def tags(self, new_tags: list[int]):
-        """
-        TODO: Need to define a new tag type, not used in sprint 1
-        """
-        row = self._get()
-        row.tags = new_tags
-        row.save().run_sync()
+    def tags(self, new_tags: list[Tag]):
+        TPostTags.delete().where(TPostTags.post == self.id).run_sync()
+        for t in new_tags:
+            TPostTags(
+                {
+                    TPostTags.post: self.id,
+                    TPostTags.tag: t.id,
+                }
+            ).save().run_sync()
 
     @property
     def me_too(self) -> int:
@@ -307,7 +324,7 @@ class Post:
         """
         return cast(
             bool,
-            TPostReacts.count()
+            TPostReacts.exists()
             .where(TPostReacts.post == self.id,
                    TPostReacts.user == user.id).run_sync()
         )
@@ -427,7 +444,7 @@ class Post:
             "author": self.author.id if self.can_view_op(user) else None,
             "heading": self.heading,
             "post_id": PostId(self.id),
-            "tags": self.tags,
+            "tags": [t.id for t in self.tags],
             "me_too": self.me_too,
             "private": self.private,
             "closed": self.closed,
@@ -448,7 +465,7 @@ class Post:
             "post_id": self.id,
             "author": self.author.id if self.can_view_op(user) else None,
             "heading": self.heading,
-            "tags": self.tags,
+            "tags": [t.id for t in self.tags],
             "me_too": self.me_too,
             "text": self.text,
             "timestamp": int(self.timestamp.timestamp()),
