@@ -5,7 +5,7 @@ Helper functions for requesting tags routes
 """
 from typing import cast
 from backend.types.identifiers import PostId, TagId
-from backend.types.tag import ITagBasicInfo, ITagId
+from backend.types.tag import ITagBasicInfo, ITagId, ITagList
 from backend.types.auth import JWT
 from .consts import URL
 from .helpers import post, get, delete
@@ -37,6 +37,34 @@ def get_tag(token: JWT, tag_id: TagId) -> ITagBasicInfo:
             token,
             f"{URL}/get_tag",
             {"tag_id": tag_id, }
+        )
+    )
+
+
+def tags_list(token: JWT) -> ITagList:
+    """
+    ## GET `/tags/tags_list`
+
+    Get a list of all tags
+
+    ## Permissions
+    * `PostView`
+
+    ## Header
+    * `Authorization` (`JWT`): JWT of the user
+
+    ## Returns
+    Object containing:
+    * `queues`: list of objects containing:
+             * `tag_id` (`int`): ID of the tag
+            * `name` (`str`): name of the tag
+    """
+    return cast(
+        ITagList,
+        get(
+            token,
+            f"{URL}/tags_list",
+            {}
         )
     )
 

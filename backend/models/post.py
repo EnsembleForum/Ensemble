@@ -279,18 +279,20 @@ class Post:
     def tags(self) -> list[Tag]:
         """
         Returns a list of tags attached to the post
+        sorted in alphabetical order
 
         ### Returns:
 
         * list[Tag]: list of tags
         """
-        return [
+        tags = [
             Tag(t["id"])
             for t in
             TPostTags.select().where(
                 TPostTags.post == self.id
             ).run_sync()
         ]
+        return sorted(tags, key=lambda x: x.name)
 
     @tags.setter
     def tags(self, new_tags: list[Tag]):
@@ -306,17 +308,30 @@ class Post:
                 }
             ).save().run_sync()
 
+    def has_tag(self, tag: Tag) -> bool:
+        """
+        Returns whether the this post has the given tag
+        """
+        return cast(
+            bool,
+            TPostTags.exists()
+            .where(TPostTags.post == self.id,
+                   TPostTags.tag == tag.id).run_sync()
+        )
+
     def add_tag(self, new_tag: Tag):
-        TPostTags(
-            {
-                TPostTags.post: self.id,
-                TPostTags.tag: new_tag.id,
-            }
-        ).save().run_sync()
+        if not self.has_tag(new_tag):
+            TPostTags(
+                {
+                    TPostTags.post: self.id,
+                    TPostTags.tag: new_tag.id,
+                }
+            ).save().run_sync()
 
     def delete_tag(self, tag: Tag):
-        TPostTags.delete().where(TPostTags.id == tag.id, TPostTags.post
-                                 == self.id).run_sync()
+        if self.has_tag(tag):
+            TPostTags.delete().where(TPostTags.id == tag.id, TPostTags.post
+                                     == self.id).run_sync()
 
     @property
     def me_too(self) -> int:
@@ -337,7 +352,7 @@ class Post:
         """
         return cast(
             bool,
-            TPostReacts.count()
+            TPostReacts.exists()
             .where(TPostReacts.post == self.id,
                    TPostReacts.user == user.id).run_sync()
         )

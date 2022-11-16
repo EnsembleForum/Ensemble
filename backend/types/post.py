@@ -9,7 +9,7 @@ class IPostBasicInfo(TypedDict):
     * `author`: `Optional[int]`
     * `heading`: `str`
     * `post_id`: `PostId`
-    * `tags`: `list[int]`
+    * `tags`: `list[TagId]`
     * `me_too`: `int`
     * `private`: `bool`
     * `anonymous`: `bool`
@@ -21,7 +21,7 @@ class IPostBasicInfo(TypedDict):
     post_id: PostId
     author: Optional[UserId]
     heading: str
-    tags: list[int]
+    tags: list[TagId]
     me_too: int
     private: bool
     anonymous: bool
@@ -39,7 +39,7 @@ class IPostBasicInfoList(TypedDict):
         * `author`: `UserId`
         * `heading`: `str`
         * `post_id`: `PostId`
-        * `tags`: `list[int]`
+        * `tags`: `list[TagId]`
         * `me_too`: `list[UserId]`
         * `private`: `bool`
         * `anonymous`: `bool`
@@ -65,7 +65,7 @@ class IPostFullInfo(TypedDict):
     * `author` (`Optional[int]`): author of post or None if anonymous
     * `heading` (`str`):
     * `text` (`str`):
-    * `tags` (`list[int]`):
+    * `tags` (`list[TagId]`):
     * `me_too` (`int`):
     * `comments` (`list[CommentId]`):
     * `timestamp` (`int`):

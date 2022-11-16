@@ -1,8 +1,9 @@
-from .tables import TTag, TPostTags
+from .tables import TTag
 from backend.types.tag import ITagBasicInfo
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import TagId
+from backend.util import http_errors
 from typing import cast
 
 
@@ -37,6 +38,9 @@ class Tag:
         * `Tag`: the Tag object
         """
         assert_valid_str_field(name, "name")
+        if name in (t.name for t in cls.all()):
+            raise http_errors.BadRequest(
+                "There is already a tag with that name")
         val = (
             TTag(
                 {
@@ -73,7 +77,7 @@ class Tag:
         return self.__id
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._get().name
 
     @name.setter
@@ -88,7 +92,7 @@ class Tag:
         Deletes this tag from the database
 
         """
-        TPostTags.delete().where(TPostTags.id == self.id).run_sync()
+        TTag.delete().where(TTag.id == self.id).run_sync()
 
     def basic_info(self) -> ITagBasicInfo:
         """

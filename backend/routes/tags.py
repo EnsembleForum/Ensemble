@@ -10,7 +10,7 @@ from backend.models.user import User
 from backend.models.post import Post
 from backend.models.tag import Tag
 from backend.types.identifiers import TagId, PostId
-from backend.types.tag import ITagBasicInfo, ITagId
+from backend.types.tag import ITagBasicInfo, ITagId, ITagList
 from backend.util.tokens import uses_token
 
 tags = Blueprint("tags", "tags")
@@ -23,6 +23,13 @@ def get_tag(user: User, *_) -> ITagBasicInfo:
     tag_id = TagId(request.args["tag_id"])
     tag = Tag(tag_id)
     return tag.basic_info()
+
+
+@tags.get("tags_list")
+@uses_token
+def get_tags_list(user: User, *_) -> ITagList:
+    user.permissions.assert_can(Permission.PostView)
+    return {"tags": list(map(lambda q: q.basic_info(), Tag.all()))}
 
 
 @tags.post("/new_tag")
