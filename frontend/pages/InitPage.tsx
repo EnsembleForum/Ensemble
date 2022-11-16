@@ -32,8 +32,8 @@ const InitPage = (props: Props) => {
     username: 'admin1',
     password: 'admin1',
     email: 'admin@example.com',
-    name_first: 'Robin',
-    name_last: 'Banks'
+    name_first: 'Jane',
+    name_last: 'Citizen',
   });
   const onSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
