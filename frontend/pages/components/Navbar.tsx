@@ -86,22 +86,6 @@ const NotifItem = styled.div`
 // Exporting our example component
 const Navbar = (props: Props) => {
   const navigate = useNavigate();
-  const [toggleNotifs, setToggleNotifs] = React.useState(false);
-
-  function getNotifications() {
-    setToggleNotifs(!toggleNotifs);
-    if (toggleNotifs) {
-      const call: APIcall = {
-        method: "GET",
-        path: "notifications/list",
-      }
-      ApiFetch(call).then((data) => {
-        const notifications = data as notifications;
-        console.log(notifications)
-      })
-    }
-  }
-
 
   const logout = (
   <StyledButton onClick={(e) => {
@@ -118,19 +102,6 @@ const Navbar = (props: Props) => {
     });
   }}>Logout</StyledButton>);
   const login = (<StyledButton onClick={(e) => {navigate("/login")}}>Login</StyledButton>);
-
-  const notifications = (
-    <NotifItem>
-    <NotifsButton style={toggleNotifs ? {filter: "brightness(90%)"}:{}} onClick={(e) => {getNotifications()}}>🔔</NotifsButton>
-    { toggleNotifs ? 
-    <StyledNotifList>LOL</StyledNotifList>
-    
-    :
-    <></>
-    }
-    
-    </NotifItem>
-  );
   let pages = [
     "browse"
   ];
@@ -155,10 +126,7 @@ const Navbar = (props: Props) => {
       }) : <></>
       }
       <span></span>
-      {getLoggedIn() ? 
-      <>{notifications}{logout}</>
-         
-      : login }
+      {getLoggedIn() ? logout : login }
     </StyledNavbar>
   );
 };
