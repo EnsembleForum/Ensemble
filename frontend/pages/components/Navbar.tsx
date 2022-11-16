@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ApiFetch, getCurrentUser, getLoggedIn, getPermission, setCurrentUser } from "../../App";
 import { Prettify } from "../../global_functions";
-import { APIcall, notifications } from "../../interfaces";
+import { APIcall, notification, notifications } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
 
@@ -29,6 +29,7 @@ export const StyledNavbar = styled.div`
     min-width: 60px;
     display: flex;
     justify-content: center;
+    align-content: center;
     font-weight: 400;
     &:hover {
       cursor: pointer;
@@ -78,14 +79,40 @@ const StyledNotifList = styled.div`
   background: ${theme.colors?.highlight};
 `
 const NotifItem = styled.div`
-  width: 300px;
+  width: 320px;
   display: flex;
+`
+const NumNotifs = styled.span`
+  color: white;
+  border-radius: 10px;
+  padding: 2px;
+  margin: 0px;
+  margin-left: 10px;
+  background-color: ${theme.colors?.primary}; 
 `
 
 
 // Exporting our example component
 const Navbar = (props: Props) => {
   const navigate = useNavigate();
+  const [numNotifs, setNumNotifs] = React.useState<number>(0);
+  const [update, setUpdate] = React.useState<boolean>(false);
+
+  React.useEffect(()=>{
+    console.log("cool beans")
+    const api: APIcall = {
+      method: "GET",
+      path: "notifications/list",
+    }
+    ApiFetch(api)
+      .then((data) => {
+        const notifications = data as {notifications: notification[]};
+        const newNumNotifs = notifications.notifications.filter(each => { return !each.seen }).length;   
+        setNumNotifs(newNumNotifs);
+        setTimeout(() => {setUpdate(!update)}, 5000);
+      });
+  }, [update]);
+
 
   const logout = (
   <StyledButton onClick={(e) => {
@@ -112,7 +139,6 @@ const Navbar = (props: Props) => {
     pages.push("admin")
   }
   pages.push("profile")
-  pages.push("notifications")
   return (
     <StyledNavbar as="nav">
       <h1>ENSEMBLE</h1>
@@ -121,10 +147,19 @@ const Navbar = (props: Props) => {
         return (
           // eslint-disable-next-line jsx-a11y/anchor-is-valid
           <a key={page} style={(page === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={() => {
-            navigate("/" + page)
+            navigate("/" + page);
           }}>{Prettify(page)}</a>) 
       }) : <></>
       }
+     { /* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+      <a 
+        style={("notifications" === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} 
+        onClick={() => {
+          navigate("/notifications")
+        }}
+      >
+        Notifications{numNotifs ? <>: {numNotifs}</>: <></>}
+      </a>
       <span></span>
       {getLoggedIn() ? logout : login }
     </StyledNavbar>
