@@ -32,8 +32,8 @@ const InitPage = (props: Props) => {
     username: 'admin1',
     password: 'admin1',
     email: 'admin@example.com',
-    name_first: 'Robin',
-    name_last: 'Banks'
+    name_first: 'Jane',
+    name_last: 'Citizen',
   });
   const onSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
@@ -69,6 +69,8 @@ const InitPage = (props: Props) => {
                 <Select name="request_type" id="request_type" mb={3} value={initDetails.request_type} onChange={(e) => setInitDetails(initDetails => ({ ...initDetails, request_type: e.target.value }))}>
                   <option value="post">POST</option>
                   <option value="get">GET</option>
+                  <option value="put">PUT</option>
+                  <option value="delete">DELETE</option>
                 </Select>
               </>
             )
