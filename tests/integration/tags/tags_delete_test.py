@@ -11,7 +11,6 @@ from ensemble_request.browse import post
 from ensemble_request.tags import (
     create_tag,
     delete_tag,
-    add_tag_to_post,
     tags_list
 )
 
@@ -55,9 +54,8 @@ def test_del_tag_database_remove_from_post(
     """
     token = basic_server_setup["token"]
     tag_id = create_tag(token, "tag1")["tag_id"]
-    post_id = post.create(token, "heading", "text", [])["post_id"]
+    post_id = post.create(token, "heading", "text", [tag_id])["post_id"]
 
-    add_tag_to_post(token, post_id, tag_id)
     delete_tag(token, tag_id)
 
     assert post.view(token, post_id)["tags"] == []

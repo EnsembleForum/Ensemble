@@ -305,31 +305,6 @@ class Post:
                 }
             ).save().run_sync()
 
-    def has_tag(self, tag: Tag) -> bool:
-        """
-        Returns whether the this post has the given tag
-        """
-        return cast(
-            bool,
-            TPostTags.exists()
-            .where(TPostTags.post == self.id,
-                   TPostTags.tag == tag.id).run_sync()
-        )
-
-    def add_tag(self, new_tag: Tag):
-        if not self.has_tag(new_tag):
-            TPostTags(
-                {
-                    TPostTags.post: self.id,
-                    TPostTags.tag: new_tag.id,
-                }
-            ).save().run_sync()
-
-    def delete_tag(self, tag: Tag):
-        if self.has_tag(tag):
-            TPostTags.delete().where(TPostTags.id == tag.id, TPostTags.post
-                                     == self.id).run_sync()
-
     @property
     def me_too(self) -> int:
         """

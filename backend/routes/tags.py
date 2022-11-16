@@ -7,9 +7,8 @@ import json
 from flask import Blueprint, request
 from backend.models.permissions import Permission
 from backend.models.user import User
-from backend.models.post import Post
 from backend.models.tag import Tag
-from backend.types.identifiers import TagId, PostId
+from backend.types.identifiers import TagId
 from backend.types.tag import ITagBasicInfo, ITagId, ITagList
 from backend.util.tokens import uses_token
 
@@ -69,49 +68,4 @@ def delete_tag(user: User, *_) -> dict:
     tag_id = TagId(data["tag_id"])
     tag = Tag(tag_id)
     tag.delete()
-    return {}
-
-
-@tags.post("/post_add_tag")
-@uses_token
-def add_tag_to_post(user: User, *_) -> ITagId:
-    """
-    Adding a tag to a post
-
-    ### Args:
-    * `new_tag_id` (`TagId`): id of a tag already existing in TTags
-
-    ### Returns:
-    * `ITagId`: ID of tag
-    """
-    user.permissions.assert_can(Permission.PostView)
-    data = json.loads(request.data)
-    post_id: PostId = data["post_id"]
-    post = Post(post_id)
-    tag_id = data["tag_id"]
-    tag = Tag(tag_id)
-    post.add_tag(tag)
-
-    return {"tag_id": tag_id}
-
-
-@tags.delete("/post_remove_tag")
-@uses_token
-def remove_tag_from_post(user: User, *_) -> dict:
-    """
-    Deleting a tag from a post
-
-    ### Args:
-    *
-
-    ### Returns:
-    * `dict`: {}
-    """
-    user.permissions.assert_can(Permission.PostView)
-    post_id = PostId(request.args["post_id"])
-    post = Post(post_id)
-    tag_id = TagId(request.args["tag_id"])
-    tag = Tag(tag_id)
-    post.delete_tag(tag)
-
     return {}

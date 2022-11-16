@@ -4,8 +4,8 @@
 Helper functions for requesting tags routes
 """
 from typing import cast
-from backend.types.identifiers import PostId, TagId
-from backend.types.tag import ITagBasicInfo, ITagId, ITagList
+from backend.types.identifiers import TagId
+from backend.types.tag import ITagBasicInfo, ITagList
 from backend.types.auth import JWT
 from .consts import URL
 from .helpers import post, get, delete
@@ -114,59 +114,4 @@ def delete_tag(token: JWT, tag_id: TagId):
         token,
         f"{URL}/delete_tag",
         {"tag_id": tag_id, }
-    )
-
-
-def add_tag_to_post(token: JWT, post_id: PostId, tag_id: TagId) -> ITagId:
-    """
-    ## POST `/tags/post_add_tag`
-
-    Adds a tag to a post
-
-    ## Permissions
-    * `PostView`
-
-    ## Headers
-    * `Authorization` (`JWT`): JWT of the user
-
-    ## Body
-    * `tag_id` (`int`): identifier of the tag to be added
-    * `post_id` (`int`): identifier of the post
-    """
-    return cast(
-        ITagId,
-        post(
-            token,
-            f"{URL}/post_add_tag",
-            {
-                "post_id": post_id,
-                "tag_id": tag_id,
-            }
-        )
-    )
-
-
-def remove_tag_from_post(token: JWT, post_id: PostId, tag_id: TagId):
-    """
-    ## DELETE `/tags/post_remove_tag`
-
-    Removes a tag from a post
-
-    ## Permissions
-    * `PostView`
-
-    ## Headers
-    * `Authorization` (`JWT`): JWT of the user
-
-    ## Body
-    * `tag_id` (`int`): identifier of the tag to be removed
-    * `post_id` (`int`): identifier of the post
-    """
-    delete(
-        token,
-        f"{URL}/post_remove_tag",
-        {
-            "post_id": post_id,
-            "tag_id": tag_id,
-        }
     )
