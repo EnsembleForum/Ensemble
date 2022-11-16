@@ -156,7 +156,7 @@ const Navbar = (props: Props) => {
       }) : <></>
       }
      { /* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-     { numNotifs ? 
+     { getLoggedIn() ? (numNotifs ? 
       <ActiveNotif 
         style={("notifications" === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} 
         onClick={() => { navigate("/notifications")}}
@@ -169,8 +169,8 @@ const Navbar = (props: Props) => {
         style={("notifications" === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} 
         onClick={() => { navigate("/notifications")}}
       >Notifications</a>
-      </>
-     }
+      </>) : <></>
+     } 
       <span></span>
       {getLoggedIn() ? logout : login }
     </StyledNavbar>
