@@ -3,6 +3,7 @@ import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
 import { Prettify } from "../global_functions";
 import { pageList } from "../interfaces";
 import { theme } from "../theme";
+import AnalyticsPage from "./AnalyticsPage";
 import Navbar, { StyledNavbar } from "./components/Navbar";
 import InitPage from "./InitPage";
 import RegisterPage from "./RegisterPage";
@@ -40,6 +41,7 @@ const AdminPage = (props: Props) => {
   let pages: pageList = {
     //"initialise_forum": <InitPage />,
     "register_users": <UsersRegisterPage />,
+    "analytics": <AnalyticsPage />,
   };
   return (
     <>
