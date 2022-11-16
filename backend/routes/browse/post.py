@@ -11,11 +11,7 @@ from backend.models.notifications import (
     NotificationReported,
     NotificationDeleted,
 )
-from backend.models.permissions import Permission
-from backend.models.post import Post
-from backend.models.user import User
-from backend.models.queue import Queue
-from backend.models.exam_mode import ExamMode
+from backend.models import Permission, Post, User, Queue, ExamMode
 from backend.types.identifiers import PostId
 from backend.types.post import (
     IPostFullInfo,

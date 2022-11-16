@@ -5,6 +5,7 @@ Comment View routes
 """
 import json
 from flask import Blueprint, request
+from backend.models import Permission, Post, Comment, User
 from backend.models.notifications import (
     NotificationCommented,
     NotificationAccepted,
@@ -12,10 +13,6 @@ from backend.models.notifications import (
     NotificationReacted,
     NotificationDeleted
 )
-from backend.models.permissions import Permission
-from backend.models.post import Post
-from backend.models.comment import Comment
-from backend.models.user import User
 from backend.types.identifiers import CommentId
 from backend.types.comment import (
     ICommentFullInfo,

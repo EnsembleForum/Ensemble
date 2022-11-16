@@ -6,8 +6,7 @@ Notification routes
 import json
 from flask import Blueprint, request
 from backend.util import http_errors
-from backend.models.notifications import Notification
-from backend.models.user import User
+from backend.models import Notification, User
 from backend.util.tokens import uses_token
 from backend.types.identifiers import NotificationId
 from backend.types.notifications import INotificationList

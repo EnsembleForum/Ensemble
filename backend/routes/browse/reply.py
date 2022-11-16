@@ -5,15 +5,12 @@ Reply View routes
 """
 import json
 from flask import Blueprint, request
-from backend.models.permissions import Permission
 from backend.models.notifications import (
     NotificationReacted,
     NotificationDeleted,
     NotificationCommented,
 )
-from backend.models.user import User
-from backend.models.comment import Comment
-from backend.models.reply import Reply
+from backend.models import User, Comment, Reply, Permission
 from backend.types.identifiers import ReplyId
 from backend.types.reply import IReplyFullInfo, IReplyId
 from backend.types.react import IUserReacted
