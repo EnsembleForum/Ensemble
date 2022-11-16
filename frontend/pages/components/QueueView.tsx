@@ -95,6 +95,15 @@ const QueueView = (props: Props) => {
     }
     setToggleEdit(false);
   }
+  async function followQueue() {
+    const followQueueCall : APIcall = { 
+      method: "PUT",
+      path: "taskboard/queue/follow",
+      body: {queue_id: queue.queue_id}
+    }
+    await ApiFetch(followQueueCall);
+    setUpdate(!update);
+  }
 
   return (
     <FlexWrapper>
@@ -106,6 +115,7 @@ const QueueView = (props: Props) => {
           <>
             <Input value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)}/>
             <span>
+              <EditButton onClick={followQueue}>🙋</EditButton>
               <EditButton onClick={editQueue}>✅</EditButton>
               <DeleteButton onClick={() => {setToggleEdit(false)}}>❌</DeleteButton>
             </span>
@@ -115,7 +125,13 @@ const QueueView = (props: Props) => {
           <h3>{queue.queue_name}</h3>
           <span>
             <h4>{queue.posts.length}</h4>
-            {toggleDelete && !toggleEdit && getPermission(23) ?  <>
+            {toggleDelete && !toggleEdit ?  
+            <>
+              {getPermission(22) ? <>
+              <ReactTooltip place="top" type="dark" effect="solid"/>
+              <EditButton data-tip="Follow this queue" onClick={followQueue}>🙋</EditButton>
+              </> : <></>}
+              {getPermission(23) ? <>
               <>
               <ReactTooltip place="top" type="dark" effect="solid"/>
               <EditButton data-tip="Edit queue name" onClick={() => {setToggleEdit(true)}}>✏️</EditButton>
@@ -124,6 +140,7 @@ const QueueView = (props: Props) => {
               <ReactTooltip place="top" type="dark" effect="solid"/>
               <DeleteButton data-tip="Delete this queue" onClick={deleteQueue}>🗑️</DeleteButton>
               </>
+              </>: <></>}
             </> : <></>}
           </span>
         </>

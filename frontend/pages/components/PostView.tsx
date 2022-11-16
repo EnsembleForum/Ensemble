@@ -104,7 +104,7 @@ const PostView = (props: Props) => {
             showDeleteButton={currentPost.author === getCurrentUser().user_id  || getPermission(32)} 
             showReportButton={currentPost.author !== getCurrentUser().user_id && getPermission(30) && !getPermission(33)} 
             showUnreportButton={getPermission(33)} 
-            queue={currentPost.author !== getCurrentUser().user_id || getPermission(20) ? currentPost.queue : ''}
+            queue={currentPost.author === getCurrentUser().user_id || getPermission(20) ? currentPost.queue : ''}
             focus={!exclude.includes(searchParams.get("notificationId")) && !exclude.includes(searchParams.get("postId")) && searchParams.get("postId") === currentPost.post_id.toString() && exclude.includes(searchParams.get("replyId")) && exclude.includes(searchParams.get("commentId"))}
           />
           <hr/><h2>Replies</h2>
