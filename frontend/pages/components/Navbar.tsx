@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ApiFetch, getCurrentUser, getLoggedIn, getPermission, setCurrentUser } from "../../App";
 import { Prettify } from "../../global_functions";
 import { APIcall, notification, notifications } from "../../interfaces";
@@ -101,6 +101,8 @@ const Navbar = (props: Props) => {
   const navigate = useNavigate();
   const [numNotifs, setNumNotifs] = React.useState<number>(0);
   const [update, setUpdate] = React.useState<boolean>(false);
+  let [searchParams, setSearchParams] = useSearchParams();
+
 
   React.useEffect(()=>{
     if (getLoggedIn()) {
@@ -111,7 +113,11 @@ const Navbar = (props: Props) => {
       ApiFetch(api)
         .then((data) => {
           const notifications = data as {notifications: notification[]};
-          const newNumNotifs = notifications.notifications.filter(each => { return !each.seen }).length;   
+          const newNumNotifs = notifications.notifications.filter(each => { return !each.seen }).length;
+          if (props.page === "notifications") {
+            searchParams.set("newNotifs", newNumNotifs.toString());
+            setSearchParams(searchParams);
+          };
           setNumNotifs(newNumNotifs);
           setTimeout(() => {setUpdate(!update)}, 5000);
         });
@@ -160,7 +166,10 @@ const Navbar = (props: Props) => {
      { getLoggedIn() ? (numNotifs ? 
       <ActiveNotif 
         style={("notifications" === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} 
-        onClick={() => { navigate("/notifications")}}
+        onClick={() => {
+          
+          navigate("/notifications")
+        }}
       >
       Notifications: {numNotifs}
       </ActiveNotif> :

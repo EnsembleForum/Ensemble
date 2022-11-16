@@ -3,14 +3,16 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button, Input } from "theme-ui";
 import { ApiFetch, getPermission } from "../../App";
-import { APIcall, notification, postListItem } from "../../interfaces";
+import { APIcall, notification, notifications, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
 import AuthorView from "./AuthorView";
 import ReactTooltip from 'react-tooltip';
 import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
-interface Props { }
+interface Props { 
+  notifications?: notification[]
+}
 const StyledLayout = styled.div`
   background-color: ${theme.colors?.muted};
   width: 25vw;
@@ -60,7 +62,7 @@ const NotificationsListView = (props: Props) => {
         }
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seen]);
+  }, [seen, searchParams.get("newNotifs")]);
   
   async function seenNotification(id : number) {
     const api: APIcall = {
