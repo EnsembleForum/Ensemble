@@ -11,8 +11,8 @@ from backend.models.notifications import (
     NotificationReported,
     NotificationDeleted,
 )
-from backend.models import Permission, Post, User, Queue, ExamMode
-from backend.types.identifiers import PostId
+from backend.models import Permission, Post, User, Queue, ExamMode, Tag
+from backend.types.identifiers import PostId, TagId
 from backend.types.post import (
     IPostFullInfo,
     IPostClosed,
@@ -61,7 +61,7 @@ def create(user: User, *_) -> IPostId:
     data = json.loads(request.data)
     heading: str = data["heading"]
     text: str = data["text"]
-    tags: list[int] = data["tags"]
+    tags = [Tag(i) for i in data["tags"]]
     private: bool = data["private"]
     anonymous: bool = data["anonymous"]
 
@@ -81,7 +81,7 @@ def edit(user: User, *_) -> dict:
     post_id: PostId = data["post_id"]
     new_heading: str = data["heading"]
     new_text: str = data["text"]
-    new_tags: list[int] = data["tags"]
+    new_tags: list[TagId] = data["tags"]
 
     post = Post(post_id)
 
@@ -93,7 +93,7 @@ def edit(user: User, *_) -> dict:
 
     post.heading = new_heading
     post.text = new_text
-    post.tags = new_tags
+    post.tags = [Tag(t) for t in new_tags]
 
     # Send post back to main queue if it was previously closed
     if post.closed:
