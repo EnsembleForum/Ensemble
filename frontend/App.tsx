@@ -7,11 +7,11 @@ import AdminPage from './pages/AdminPage';
 import BrowsePage from './pages/BrowsePage';
 import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
-import MainPage from './pages/MainPage';
 import PasswordResetPage from './pages/PasswordResetPage';
 import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
+import NotificationsPage from './pages/NotificationsPage';
 
 export function ApiFetch(apiCall: APIcall) {
   const requestOptions: requestOptions = {
@@ -111,6 +111,7 @@ function PassThrough() {
           <Route path='/browse' element={<BrowsePage />}/>
           {getPermission(20) ? <Route path='/taskboard' element={<TaskboardPage />} /> : <></>}
           {getPermission(40)  ? <Route path='/admin' element={<AdminPage page={"register_users"} />} /> : <></>}
+          <Route path='/notifications' element={<NotificationsPage />} />
           </>
         )}
       </Routes>

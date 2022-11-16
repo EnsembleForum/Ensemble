@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { ApiFetch, getCurrentUser, getPermission } from "../../App";
 import { APIcall, commentView, postView, replyView } from "../../interfaces";
 import TextView from "./TextView";
@@ -27,6 +27,17 @@ const PostView = (props: Props) => {
   const [currentPost, setCurrentPost] = React.useState<postView>();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let [searchParams, setSearchParams] = useSearchParams();
+  const customRef = React.useRef<HTMLHeadingElement>(null);
+  function scrollToNotif() {
+    if (customRef.current) {
+      const offsetBottom = customRef.current.offsetTop + customRef.current.offsetHeight - 225;
+      const scrollableDiv = document.getElementById("scroll");
+      if (scrollableDiv) {
+        scrollableDiv.scrollTo({ top: offsetBottom, behavior: "smooth" });
+      }
+    }
+  }
+
 
   async function getPost() {
     const call: APIcall = {
@@ -60,6 +71,7 @@ const PostView = (props: Props) => {
     }
     setCurrentPost(postToShow);
     setComments(commentArray);
+    scrollToNotif();
   }
 
   useEffect(() => {
@@ -67,13 +79,14 @@ const PostView = (props: Props) => {
       getPost();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[commentCount])
+  },[commentCount, searchParams])
+  const exclude = [null, '', '0'];
 
   // This is the data we would be APIfetching on props change
   if (currentPost && currentPost?.post_id === parseInt(searchParams.get("postId") as string) && comments) {
     return (
       <CommentContext.Provider value={value}>
-       <StyledPostListView>
+       <StyledPostListView id="scroll">
           <TextView 
             heading={currentPost.heading} 
             text={currentPost.text} 
@@ -92,6 +105,7 @@ const PostView = (props: Props) => {
             showReportButton={currentPost.author !== getCurrentUser().user_id && getPermission(30) && !getPermission(33)} 
             showUnreportButton={getPermission(33)} 
             queue={currentPost.author !== getCurrentUser().user_id || getPermission(20) ? currentPost.queue : ''}
+            focus={!exclude.includes(searchParams.get("notificationId")) && !exclude.includes(searchParams.get("postId")) && searchParams.get("postId") === currentPost.post_id.toString() && exclude.includes(searchParams.get("replyId")) && exclude.includes(searchParams.get("commentId"))}
           />
           <hr/><h2>Replies</h2>
           {
@@ -107,7 +121,9 @@ const PostView = (props: Props) => {
                     accepted={comment.accepted}
                     deleted={comment.deleted}
                     showAcceptButton={currentPost.author === getCurrentUser().user_id || getPermission(13)}
-                    showDeleteButton={comment.author === getCurrentUser().user_id  || getPermission(32)} 
+                    showDeleteButton={comment.author === getCurrentUser().user_id  || getPermission(32)}
+                    focus={ !exclude.includes(searchParams.get("commentId")) && exclude.includes(searchParams.get("replyId")) && searchParams.get("commentId") === comment.comment_id.toString()}
+                    ref={customRef} 
                   />
                   {comment.replies.map((reply) => {
                     const rep = reply as replyView;
@@ -122,6 +138,8 @@ const PostView = (props: Props) => {
                         deleted={rep.deleted}
                         userReacted={rep.user_reacted}
                         showDeleteButton={rep.author === getCurrentUser().user_id  || getPermission(32)} 
+                        focus={ !exclude.includes(searchParams.get("replyId")) && searchParams.get("replyId") === rep.reply_id.toString() }
+                        ref={customRef} 
                       />
                     )
                   })}
