@@ -5,7 +5,6 @@ import { pageList } from "../interfaces";
 import { theme } from "../theme";
 import Navbar, { StyledNavbar } from "./components/Navbar";
 import InitPage from "./InitPage";
-import RegisterPage from "./RegisterPage";
 import TaskboardPage from "./TaskboardPage";
 import UsersRegisterPage from "./UsersRegisterPage";
 
