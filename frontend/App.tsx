@@ -8,7 +8,6 @@ import BrowsePage from './pages/BrowsePage';
 import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
 import PasswordResetPage from './pages/PasswordResetPage';
-import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
 import NotificationsPage from './pages/NotificationsPage';
@@ -109,7 +108,6 @@ function PassThrough() {
           <Route path="/" element={<Navigate to="/browse" />}></Route>
           <Route path='/admin/init' element={<Navigate to="/login" />} />
           <Route path='/login' element={<LoginPage />} />
-          <Route path='/register' element={<RegisterPage />} />
           <Route path='/password_reset' element={<PasswordResetPage />} />
           <Route path='/profile' element={<UserProfilePage />} />
           <Route path='/browse' element={<BrowsePage />}/>
