@@ -9,6 +9,8 @@ URL = f"{URL}/admin/analytics"
 
 def get_analytics(token: JWT) -> IAllStats:
     """
+    # GET `/admin/analytics`
+
     Returns the analytics about the activity on the forum
 
     ## Permissions
