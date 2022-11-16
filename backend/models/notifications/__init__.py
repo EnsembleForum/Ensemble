@@ -12,6 +12,7 @@ from .types import (
     NotificationAccepted,
     NotificationQueueAdded,
     NotificationReacted,
+    NotificationReported,
     NotificationUnaccepted,
 )
 
@@ -25,5 +26,6 @@ __all__ = [
     'NotificationAccepted',
     'NotificationQueueAdded',
     'NotificationReacted',
+    'NotificationReported',
     'NotificationUnaccepted',
 ]

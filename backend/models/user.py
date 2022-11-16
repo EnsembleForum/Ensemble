@@ -8,7 +8,7 @@ from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_email_valid, assert_valid_str_field
 from backend.types.identifiers import UserId
 from backend.types.user import IUserProfile, IUserBasicInfo
-from typing import Optional, cast
+from typing import Optional, cast, Callable
 
 
 class User:
@@ -84,6 +84,25 @@ class User:
         return list(map(
             lambda u: User(u.id),
             cast(list, TUser.objects().run_sync())
+        ))
+
+    @classmethod
+    def all_where(
+        cls,
+        filter_callback: Callable[["User"], bool],
+    ) -> list["User"]:
+        """
+        Returns a list of users that match the given property
+
+        ### Args:
+        * `filter_callback` (`Callable[[User], bool]`): filter function
+
+        ### Returns:
+        * `list[User]`: list of users matching the condition
+        """
+        return list(filter(
+            filter_callback,
+            cls.all(),
         ))
 
     @classmethod
