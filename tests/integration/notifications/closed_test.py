@@ -16,7 +16,7 @@ def test_closed_post_notification(
     make_posts: IMakePosts,
 ):
     """Do users get notified when their posts are closed?"""
-    browse.close_post(simple_users['mod']['token'], make_posts['post1_id'])
+    browse.post.close(simple_users['mod']['token'], make_posts['post1_id'])
 
     notifs = notifications.list(simple_users['admin']['token'])
     assert notifs['notifications'] == expect.Equals([
@@ -39,8 +39,8 @@ def test_reopened_post_no_notification(
     make_posts: IMakePosts,
 ):
     """Do users not get notified if their post is reopened?"""
-    browse.close_post(simple_users['mod']['token'], make_posts['post1_id'])
-    browse.close_post(simple_users['mod']['token'], make_posts['post1_id'])
+    browse.post.close(simple_users['mod']['token'], make_posts['post1_id'])
+    browse.post.close(simple_users['mod']['token'], make_posts['post1_id'])
 
     notifs = notifications.list(simple_users['admin']['token'])
     # Only the notification for closing
@@ -52,7 +52,7 @@ def test_self_closed_post_no_notification(
     make_posts: IMakePosts,
 ):
     """Do users not get notified if they close their own post?"""
-    browse.close_post(basic_server_setup['token'], make_posts['post1_id'])
+    browse.post.close(basic_server_setup['token'], make_posts['post1_id'])
 
     notifs = notifications.list(basic_server_setup['token'])
     assert notifs['notifications'] == []

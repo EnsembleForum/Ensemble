@@ -16,7 +16,7 @@ def test_deleted_post_notification(
     make_posts: IMakePosts,
 ):
     """Do users get notified when their posts are deleted?"""
-    browse.post_delete(simple_users['mod']['token'], make_posts['post1_id'])
+    browse.post.delete(simple_users['mod']['token'], make_posts['post1_id'])
 
     notifs = notifications.list(simple_users['admin']['token'])
     assert notifs['notifications'] == expect.Equals([
@@ -39,7 +39,7 @@ def test_self_deleted_post_no_notification(
     make_posts: IMakePosts,
 ):
     """Do users not get notified if they delete their own post?"""
-    browse.post_delete(basic_server_setup['token'], make_posts['post1_id'])
+    browse.post.delete(basic_server_setup['token'], make_posts['post1_id'])
 
     notifs = notifications.list(basic_server_setup['token'])
     assert notifs['notifications'] == []
@@ -50,7 +50,7 @@ def test_deleted_comment_notification(
     make_posts: IMakePosts,
 ):
     """Do users get notified when their comments are deleted?"""
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['admin']['token'],
         make_posts['post1_id'],
         'This is a comment',
@@ -82,7 +82,7 @@ def test_self_deleted_comment_no_notification(
     make_posts: IMakePosts,
 ):
     """Do users not get notified if they delete their own comment?"""
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         basic_server_setup['token'],
         make_posts['post1_id'],
         'This is a comment',
@@ -102,13 +102,13 @@ def test_deleted_reply_notification(
     make_posts: IMakePosts,
 ):
     """Do users get notified when their replies are deleted?"""
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['admin']['token'],
         make_posts['post1_id'],
         'This is a comment',
     )['comment_id']
 
-    reply = browse.add_reply(
+    reply = browse.reply.create(
         simple_users['admin']['token'],
         comment,
         'This is a reply',
@@ -140,13 +140,13 @@ def test_self_deleted_reply_no_notification(
     make_posts: IMakePosts,
 ):
     """Do users not get notified if they delete their own reply?"""
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         basic_server_setup['token'],
         make_posts['post1_id'],
         'This is a comment',
     )['comment_id']
 
-    reply = browse.add_reply(
+    reply = browse.reply.create(
         basic_server_setup['token'],
         comment,
         'This is a reply',

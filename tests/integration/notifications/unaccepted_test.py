@@ -16,19 +16,19 @@ def test_commenter_notified_when_unaccepted(
     make_posts: IMakePosts,
 ):
     """Do commenters get notified if their uncomment is accepted by OP?"""
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['mod']['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
 
-    browse.accept_comment(
+    browse.comment.accept(
         simple_users['mod']['token'],
         comment,
     )
 
     # Admin unaccepts comment
-    browse.accept_comment(
+    browse.comment.accept(
         simple_users['admin']['token'],
         comment,
     )
@@ -55,19 +55,19 @@ def test_op_no_notif(
     make_posts: IMakePosts,
 ):
     """Does OP not get notified if they do stuff themselves?"""
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         basic_server_setup['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
 
-    browse.accept_comment(
+    browse.comment.accept(
         basic_server_setup['token'],
         comment,
     )
 
     # Unaccept comment
-    browse.accept_comment(
+    browse.comment.accept(
         basic_server_setup['token'],
         comment,
     )
