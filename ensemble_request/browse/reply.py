@@ -77,7 +77,7 @@ def create(token: JWT, comment_id: CommentId, text: str) -> IReplyId:
         IReplyId,
         __post(
             token,
-            f"{__URL}/reply/create",
+            f"{__URL}/create",
             {
                 "comment_id": comment_id,
                 "text": text,

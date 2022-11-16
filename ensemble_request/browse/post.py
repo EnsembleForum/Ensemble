@@ -64,7 +64,7 @@ def list(token: JWT, search_term: str = "") -> IPostBasicInfoList:
         IPostBasicInfoList,
         __get(
             token,
-            f"{__URL}/post/list",
+            f"{__URL}/list",
             {
                 "search_term": search_term,
             }
@@ -278,7 +278,7 @@ def close(
         IPostClosed,
         __put(
             token,
-            f"{__URL}/post/close",
+            f"{__URL}/close",
             {
                 "post_id": post_id,
             },
