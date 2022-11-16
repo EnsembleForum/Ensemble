@@ -55,8 +55,8 @@ def tags_list(token: JWT) -> ITagList:
 
     ## Returns
     Object containing:
-    * `queues`: list of objects containing:
-             * `tag_id` (`int`): ID of the tag
+    * `tags`: list of objects containing:
+            * `tag_id` (`int`): ID of the tag
             * `name` (`str`): name of the tag
     """
     return cast(
