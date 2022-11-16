@@ -70,8 +70,7 @@ class AuthConfig:
         * `AuthConfig`: configuration
         """
         # Make sure it doesn't already exist
-        if cls.exists():
-            raise http_errors.BadRequest("AuthConfig is already initialised")
+        assert not cls.exists()
         TAuthConfig(
             {
                 TAuthConfig.address: address,
