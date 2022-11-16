@@ -5,19 +5,16 @@ Routes for managing permissions for users
 """
 import json
 from flask import Blueprint, request
-from backend.types.permissions import IPermissionUser
+from backend.types.permissions import IPermissionUser, IPermissionValueUser
 from backend.types.identifiers import PermissionGroupId, UserId
-from backend.models.user import User
-from backend.util.tokens import uses_token
-from backend.util.http_errors import BadRequest
-from backend.types.permissions import (
-    IPermissionValueUser,
-)
-from backend.models.permissions import (
+from backend.models import (
+    User,
     PermissionGroup,
     Permission,
-    map_permissions_user,
 )
+from backend.models.permissions import map_permissions_user
+from backend.util.tokens import uses_token
+from backend.util.http_errors import BadRequest
 
 
 user = Blueprint('user', 'user')

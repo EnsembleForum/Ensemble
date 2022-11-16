@@ -17,7 +17,7 @@ def test_mod_notified(
     make_posts: IMakePosts,
 ):
     """Do all mods get a notification if a post is reported"""
-    browse.report_post(
+    browse.post.report(
         all_users['users'][0]['token'],
         make_posts['post1_id'],
     )
@@ -48,7 +48,7 @@ def test_reporter_not_notified(
     make_posts: IMakePosts,
 ):
     """Does the person who submitted the report not get notified?"""
-    browse.report_post(basic_server_setup['token'], make_posts['post1_id'])
+    browse.post.report(basic_server_setup['token'], make_posts['post1_id'])
     assert notifications.list(
         basic_server_setup['token'])['notifications'] == []
 
@@ -58,6 +58,6 @@ def test_reported_op_not_notified(
     make_posts: IMakePosts,
 ):
     """Does the person whose post got reported not get notified?"""
-    browse.report_post(simple_users['user']['token'], make_posts['post1_id'])
+    browse.post.report(simple_users['user']['token'], make_posts['post1_id'])
     assert notifications.list(
         simple_users['admin']['token'])['notifications'] == []

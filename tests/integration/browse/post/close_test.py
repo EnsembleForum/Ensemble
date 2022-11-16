@@ -1,7 +1,7 @@
 """
 # Tests / Integration / Browse / Post View / Close
 
-Tests for post_view/close
+Tests for post.view/close
 
 * Fails when no permission to close post
 * Fails when no permission to view closed post
@@ -20,15 +20,7 @@ from tests.integration.conftest import (
     IMakePosts,
     IAllUsers,
 )
-from ensemble_request.browse import (
-    post_list,
-    post_view,
-    post_create,
-    close_post,
-    post_edit,
-    add_comment,
-    accept_comment
-)
+from ensemble_request.browse import post, comment
 from ensemble_request.taskboard import queue_post_list, queue_list
 from tests.integration.helpers import get_queue
 
@@ -43,7 +35,7 @@ def test_no_permission_to_close(
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
     with pytest.raises(http_errors.Forbidden):
-        close_post(user_token, post_id)
+        post.close(user_token, post_id)
 
 
 def test_no_permission_to_view(
@@ -56,9 +48,9 @@ def test_no_permission_to_view(
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
-    close_post(mod_token, post_id)
+    post.close(mod_token, post_id)
     with pytest.raises(http_errors.Forbidden):
-        post_view(user_token, post_id)
+        post.view(user_token, post_id)
 
 
 @pytest.mark.core
@@ -67,40 +59,40 @@ def test_closed_post_view(
     make_posts: IMakePosts
 ):
     """
-    Does post_view correctly show whether the post is closed or not?
+    Does post.view correctly show whether the post is closed or not?
     """
     mod_token = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
 
-    post = post_view(mod_token, post_id)
-    assert not post["closed"]
+    p = post.view(mod_token, post_id)
+    assert not p["closed"]
 
-    close_post(mod_token, post_id)
-    post = post_view(mod_token, post_id)
-    assert post["closed"]
+    post.close(mod_token, post_id)
+    p = post.view(mod_token, post_id)
+    assert p["closed"]
 
 
 def test_closed_post_list(
     simple_users: ISimpleUsers,
 ):
     """
-    Does post_list correctly show whether the post is closed or not?
+    Does post.list correctly show whether the post is closed or not?
     """
     mod_token = simple_users["mod"]["token"]
-    post_id = post_create(mod_token, "head", "text", [])["post_id"]
+    post_id = post.create(mod_token, "head", "text", [])["post_id"]
 
-    post = post_list(mod_token)["posts"][0]
-    assert not post["closed"]
+    p = post.list(mod_token)["posts"][0]
+    assert not p["closed"]
 
-    close_post(mod_token, post_id)
-    post = post_list(mod_token)["posts"][0]
-    assert post["closed"]
+    post.close(mod_token, post_id)
+    p = post.list(mod_token)["posts"][0]
+    assert p["closed"]
 
 
 def test_diff_users_closed_post_list(all_users: IAllUsers):
     """
     Can users with permissions to view closed posts
-    view closed posts in post_list?
+    view closed posts in post.list?
     """
     user_token1 = all_users["users"][0]["token"]
     user_token2 = all_users["users"][1]["token"]
@@ -111,36 +103,36 @@ def test_diff_users_closed_post_list(all_users: IAllUsers):
     heading = "First heading"
     text = "First text"
     tags: list[int] = []
-    post_id1 = post_create(user_token1, heading, text, tags)["post_id"]
+    post_id1 = post.create(user_token1, heading, text, tags)["post_id"]
 
     # User 2 creates a public post
     heading = "Second heading"
     text = "Second text"
-    post_id2 = post_create(user_token2, heading, text, tags)["post_id"]
+    post_id2 = post.create(user_token2, heading, text, tags)["post_id"]
 
     # User 1's post is closed
-    close_post(mod_token, post_id1)
+    post.close(mod_token, post_id1)
 
     # User 1 can view both posts
-    posts = post_list(user_token1)["posts"]
+    posts = post.list(user_token1)["posts"]
     assert len(posts) == 2
     post_ids = sorted([p["post_id"] for p in posts])
     assert post_ids == sorted([post_id1, post_id2])
 
     # User 2 cannot view User 1's post
-    posts = post_list(user_token2)["posts"]
+    posts = post.list(user_token2)["posts"]
     assert len(posts) == 1
     post_ids = sorted([p["post_id"] for p in posts])
     assert post_ids == sorted([post_id2])
 
     # Admin can view both posts
-    posts = post_list(admin_token)["posts"]
+    posts = post.list(admin_token)["posts"]
     assert len(posts) == 2
     post_ids = sorted([p["post_id"] for p in posts])
     assert post_ids == sorted([post_id1, post_id2])
 
     # Mod can view both posts
-    posts = post_list(mod_token)["posts"]
+    posts = post.list(mod_token)["posts"]
     assert len(posts) == 2
     post_ids = sorted([p["post_id"] for p in posts])
     assert post_ids == sorted([post_id1, post_id2])
@@ -156,11 +148,11 @@ def test_closed_queue(
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
 
-    post_id = post_create(user_token, "head", "text", [])["post_id"]
+    post_id = post.create(user_token, "head", "text", [])["post_id"]
 
     # Closing a post sends it to the closed queue
-    close_post(mod_token, post_id)
-    post_queue_name = post_view(user_token, post_id)["queue"]
+    post.close(mod_token, post_id)
+    post_queue_name = post.view(user_token, post_id)["queue"]
     assert post_queue_name == consts.CLOSED_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
@@ -169,8 +161,8 @@ def test_closed_queue(
     assert post_id in queue["posts"]
 
     # Un-closing a post sends it back to the main queue
-    close_post(mod_token, post_id)
-    post_queue_name = post_view(user_token, post_id)["queue"]
+    post.close(mod_token, post_id)
+    post_queue_name = post.view(user_token, post_id)["queue"]
     assert post_queue_name == consts.MAIN_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
@@ -179,7 +171,7 @@ def test_closed_queue(
     assert post_id in queue["posts"]
 
 
-def test_edit_unclose_post(
+def test_edit_unpost_close(
     simple_users: ISimpleUsers
 ):
     """
@@ -188,10 +180,10 @@ def test_edit_unclose_post(
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
 
-    post_id = post_create(user_token, "head", "text", [])["post_id"]
+    post_id = post.create(user_token, "head", "text", [])["post_id"]
 
     # Closing a post sends it to the closed queue
-    close_post(mod_token, post_id)
+    post.close(mod_token, post_id)
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
                          consts.CLOSED_QUEUE)["queue_id"]
@@ -199,13 +191,13 @@ def test_edit_unclose_post(
     assert post_id in queue["posts"]
 
     # OP editing the post sends it back to the main queue
-    post_edit(user_token, post_id, "hi", "there", [])
+    post.edit(user_token, post_id, "hi", "there", [])
 
-    post_queue_name = post_view(user_token, post_id)["queue"]
+    post_queue_name = post.view(user_token, post_id)["queue"]
     assert post_queue_name == "Main"
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
-                         "Main")["queue_id"]
+                         consts.MAIN_QUEUE)["queue_id"]
     queue = queue_post_list(mod_token, queue_id)
     assert post_id in queue["posts"]
 
@@ -219,16 +211,16 @@ def test_close_answered_post(
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
 
-    post_id = post_create(user_token, "head", "text", [])["post_id"]
-    comment_id = add_comment(user_token, post_id, "first")["comment_id"]
-    accept_comment(user_token, comment_id)
+    post_id = post.create(user_token, "head", "text", [])["post_id"]
+    comment_id = comment.create(user_token, post_id, "first")["comment_id"]
+    comment.accept(user_token, comment_id)
 
     # Closing a post sends it to the closed queue
-    close_post(mod_token, post_id)
+    post.close(mod_token, post_id)
 
     # Un-closing a post sends it back to the answered queue
-    close_post(mod_token, post_id)
-    post_queue_name = post_view(user_token, post_id)["queue"]
+    post.close(mod_token, post_id)
+    post_queue_name = post.view(user_token, post_id)["queue"]
     assert post_queue_name == consts.ANSWERED_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
@@ -247,14 +239,14 @@ def test_edit_answered_closed_post(
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
 
-    post_id = post_create(user_token, "head", "text", [])["post_id"]
-    comment_id = add_comment(user_token, post_id, "first")["comment_id"]
-    accept_comment(user_token, comment_id)
+    post_id = post.create(user_token, "head", "text", [])["post_id"]
+    comment_id = comment.create(user_token, post_id, "first")["comment_id"]
+    comment.accept(user_token, comment_id)
 
     # OP editing the post sends it back to the answered queue
-    post_edit(user_token, post_id, "hi", "there", [])
+    post.edit(user_token, post_id, "hi", "there", [])
 
-    post_queue_name = post_view(user_token, post_id)["queue"]
+    post_queue_name = post.view(user_token, post_id)["queue"]
     assert post_queue_name == consts.ANSWERED_QUEUE
 
     queue_id = get_queue(queue_list(mod_token)['queues'],

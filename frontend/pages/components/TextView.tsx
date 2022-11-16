@@ -170,9 +170,9 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
 
 
   const routes = {
-    "post": ["browse/post_view/comment", "✋ ", "browse/post_view/react", "post_id", "post_id", "browse/post_view/edit"],
-    "comment": ["browse/comment_view/reply", "👍 ", "browse/comment_view/react", "comment_id", "comment_id", "browse/comment_view/edit"],
-    "reply": ["browse/comment_view/reply", "👍 ", "browse/reply_view/react", "comment_id", "reply_id", "browse/reply_view/edit"],
+    "post": ["browse/comment/create", "✋ ", "browse/post/react", "post_id", "post_id", "browse/post/edit"],
+    "comment": ["browse/reply/create", "👍 ", "browse/comment/react", "comment_id", "comment_id", "browse/comment/edit"],
+    "reply": ["browse/reply/create", "👍 ", "browse/reply/react", "comment_id", "reply_id", "browse/reply/edit"],
   } 
   let heading = <></>;
   let author = <></>;
@@ -238,7 +238,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   async function close_post() {
     const call : APIcall = {
       method: "PUT",
-      path: "browse/post_view/close",
+      path: "browse/post/close",
       body: {post_id: props.id}
     }
     await ApiFetch(call);
@@ -248,7 +248,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   async function answer_post() {
     const call : APIcall = {
       method: "PUT",
-      path: "browse/comment_view/accept",
+      path: "browse/comment/accept",
       body: {comment_id: props.id}
     }
     await ApiFetch(call);
@@ -258,7 +258,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   async function delete_post() {
     const call : APIcall = {
       method: "DELETE",
-      path: "browse/post_view/delete",
+      path: "browse/post/delete",
       params: {post_id: props.id.toString()}
     }
     await ApiFetch(call);
@@ -268,7 +268,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   async function delete_comment() {
     const call : APIcall = {
       method: "DELETE",
-      path: "browse/comment_view/delete",
+      path: "browse/comment/delete",
       params: {comment_id: props.id.toString()}
     }
     await ApiFetch(call);
@@ -278,7 +278,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   async function delete_reply() {
     const call : APIcall = {
       method: "DELETE",
-      path: "browse/reply_view/delete",
+      path: "browse/reply/delete",
       params: {reply_id: props.id.toString()}
     }
     await ApiFetch(call);
@@ -289,7 +289,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   async function report_post() {
     const call : APIcall = {
       method: "PUT",
-      path: "browse/post_view/report",
+      path: "browse/post/report",
       body: {"post_id": props.id}
     }
     console.log(call)
@@ -300,7 +300,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   async function unreport_post() {
     const call : APIcall = {
       method: "PUT",
-      path: "browse/post_view/unreport",
+      path: "browse/post/unreport",
       body: {"post_id": props.id}
     }
     await ApiFetch(call);

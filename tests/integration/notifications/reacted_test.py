@@ -22,7 +22,7 @@ def test_notified_post(
     """
     Do users receive a notification when someone reacts to their post?
     """
-    browse.post_react(simple_users['user']['token'], make_posts['post1_id'])
+    browse.post.react(simple_users['user']['token'], make_posts['post1_id'])
 
     assert (
         notifications.list(simple_users['admin']['token'])['notifications']
@@ -47,12 +47,12 @@ def test_notified_comment(
     """
     Do users receive a notification when someone reacts to their comment?
     """
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['admin']['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
-    browse.comment_react(simple_users['user']['token'], comment)
+    browse.comment.react(simple_users['user']['token'], comment)
 
     assert (
         notifications.list(simple_users['admin']['token'])['notifications']
@@ -77,17 +77,17 @@ def test_notified_reply(
     """
     Do users receive a notification when someone reacts to their reply?
     """
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['admin']['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
-    reply = browse.add_reply(
+    reply = browse.reply.create(
         simple_users['admin']['token'],
         comment,
         "This is a reply",
     )['reply_id']
-    browse.reply_react(simple_users['user']['token'], reply)
+    browse.reply.react(simple_users['user']['token'], reply)
 
     assert (
         notifications.list(simple_users['admin']['token'])['notifications']
@@ -112,7 +112,7 @@ def test_not_notified_own_post(
     """
     Do users not receive a notification when they react to their own post?
     """
-    browse.post_react(basic_server_setup['token'], make_posts['post1_id'])
+    browse.post.react(basic_server_setup['token'], make_posts['post1_id'])
 
     assert (
         notifications.list(basic_server_setup['token'])['notifications']
@@ -127,12 +127,12 @@ def test_not_notified_own_comment(
     """
     Do users not receive a notification when reacting to their own comment?
     """
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         basic_server_setup['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
-    browse.comment_react(basic_server_setup['token'], comment)
+    browse.comment.react(basic_server_setup['token'], comment)
 
     assert (
         notifications.list(basic_server_setup['token'])['notifications']
@@ -147,17 +147,17 @@ def test_not_notified_own_reply(
     """
     Do users not receive a notification when reacting to their own reply?
     """
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         basic_server_setup['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
-    reply = browse.add_reply(
+    reply = browse.reply.create(
         basic_server_setup['token'],
         comment,
         "This is a reply",
     )['reply_id']
-    browse.reply_react(basic_server_setup['token'], reply)
+    browse.reply.react(basic_server_setup['token'], reply)
 
     assert (
         notifications.list(basic_server_setup['token'])['notifications']

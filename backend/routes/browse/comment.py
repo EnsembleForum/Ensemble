@@ -5,6 +5,7 @@ Comment View routes
 """
 import json
 from flask import Blueprint, request
+from backend.models import Permission, Post, Comment, User, Queue
 from backend.models.notifications import (
     NotificationCommented,
     NotificationAccepted,
@@ -12,58 +13,90 @@ from backend.models.notifications import (
     NotificationReacted,
     NotificationDeleted
 )
-from backend.models.permissions import Permission
-from backend.models.reply import Reply
-from backend.models.comment import Comment
-from backend.models.user import User
 from backend.types.identifiers import CommentId
-from backend.types.comment import ICommentFullInfo, ICommentAccepted
+from backend.types.comment import (
+    ICommentFullInfo,
+    ICommentAccepted,
+    ICommentId,
+)
 from backend.types.react import IUserReacted
-from backend.types.reply import IReplyId
 from backend.util.tokens import uses_token
 from backend.util import http_errors
 
-comment_view = Blueprint("comment_view", "comment_view")
+comment = Blueprint("comment", "comment")
 
 
-@comment_view.get("")
+@comment.get("/view")
 @uses_token
-def get_comment(user: User, *_) -> ICommentFullInfo:
+def view(user: User, *_) -> ICommentFullInfo:
     user.permissions.assert_can(Permission.PostView)
     comment = Comment(CommentId(request.args["comment_id"]))
     return comment.full_info(user)
 
 
-@comment_view.post("/reply")
+@comment.post("/create")
 @uses_token
-def reply(user: User, *_) -> IReplyId:
+def create(user: User, *_) -> ICommentId:
     user.permissions.assert_can(Permission.PostComment)
     data = json.loads(request.data)
     text: str = data["text"]
-    comment = Comment(data["comment_id"])
+    post = Post(data["post_id"])
 
-    reply = Reply.create(user, comment, text)
+    comment = Comment.create(user, post, text)
 
-    if comment.author != user:
+    if post.author != user:
         NotificationCommented.create(
+            post.author,
+            user,
+            comment,
+        )
+
+    return {"comment_id": comment.id}
+
+
+@comment.put("/edit")
+@uses_token
+def edit(user: User, *_) -> dict:
+    user.permissions.assert_can(Permission.PostCreate)
+    data = json.loads(request.data)
+    comment_id: CommentId = data["comment_id"]
+    new_text: str = data["text"]
+
+    comment = Comment(comment_id)
+
+    if user != comment.author:
+        raise http_errors.Forbidden(
+            "Attempting to edit another user's comment")
+
+    if comment.deleted:
+        raise http_errors.BadRequest("Cannot edit a deleted comment")
+
+    comment.text = new_text
+    return {}
+
+
+@comment.delete("/delete")
+@uses_token
+def delete(user: User, *_) -> dict:
+    comment = Comment(CommentId(request.args["comment_id"]))
+
+    if user != comment.author:
+        user.permissions.assert_can(Permission.DeletePosts)
+        NotificationDeleted.create(
             comment.author,
-            user,
-            reply,
-        )
-    if (
-        comment.parent.author != user
-        and comment.author != comment.parent.author
-    ):
-        NotificationCommented.create(
-            comment.parent.author,
-            user,
-            reply,
+            comment,
         )
 
-    return {"reply_id": reply.id}
+    if comment == comment.parent.answered:
+        comment.parent.answered = None
+        if comment.parent.queue == Queue.get_answered_queue():
+            comment.parent.queue = Queue.get_main_queue()
+
+    comment.delete()
+    return {}
 
 
-@comment_view.put("/react")
+@comment.put("/react")
 @uses_token
 def react(user: User, *_) -> IUserReacted:
     user.permissions.assert_can(Permission.PostView)
@@ -80,7 +113,7 @@ def react(user: User, *_) -> IUserReacted:
     return {"user_reacted": comment.has_reacted(user)}
 
 
-@comment_view.put("/accept")
+@comment.put("/accept")
 @uses_token
 def accept(user: User, *_) -> ICommentAccepted:
     user.permissions.assert_can(Permission.PostView)
@@ -119,40 +152,3 @@ def accept(user: User, *_) -> ICommentAccepted:
                 comment,
             )
     return {"accepted": comment.accepted}
-
-
-@comment_view.put("/edit")
-@uses_token
-def edit(user: User, *_) -> dict:
-    user.permissions.assert_can(Permission.PostCreate)
-    data = json.loads(request.data)
-    comment_id: CommentId = data["comment_id"]
-    new_text: str = data["text"]
-
-    comment = Comment(comment_id)
-
-    if user != comment.author:
-        raise http_errors.Forbidden(
-            "Attempting to edit another user's comment")
-
-    if comment.deleted:
-        raise http_errors.BadRequest("Cannot edit a deleted comment")
-
-    comment.text = new_text
-    return {}
-
-
-@comment_view.delete("/delete")
-@uses_token
-def delete(user: User, *_) -> dict:
-    comment = Comment(CommentId(request.args["comment_id"]))
-
-    if user != comment.author:
-        user.permissions.assert_can(Permission.DeletePosts)
-        NotificationDeleted.create(
-            comment.author,
-            comment,
-        )
-
-    comment.delete()
-    return {}

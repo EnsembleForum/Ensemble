@@ -11,7 +11,7 @@ from backend.types.permissions import IPermissionGroup
 from backend.types.auth import IAuthInfo
 from mock.auth import AUTH_URL
 from ensemble_request.debug import clear, echo, unsafe_init, unsafe_login
-from ensemble_request.browse import post_create
+from ensemble_request.browse import post
 from ensemble_request.admin import users
 from ensemble_request.admin.permissions import groups_list
 from ensemble_request.taskboard import queue_create, queue_list
@@ -277,8 +277,8 @@ def make_posts(basic_server_setup: IBasicServerSetup) -> IMakePosts:
     head2 = "Second head"
     text1 = "First text"
     text2 = "Second text"
-    post1_id = post_create(token, head1, text1, [])["post_id"]
-    post2_id = post_create(token, head2, text2, [])["post_id"]
+    post1_id = post.create(token, head1, text1, [])["post_id"]
+    post2_id = post.create(token, head2, text2, [])["post_id"]
 
     return {
         "post1_id": post1_id,
