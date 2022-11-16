@@ -5,9 +5,7 @@ Taskboard-related routes
 """
 import json
 from flask import Blueprint, request
-from backend.models.user import User
-from backend.models.queue import Queue
-from backend.models.post import Post
+from backend.models import User, Queue, Post, Permission
 from backend.models.notifications import NotificationQueueAdded
 from backend.types.identifiers import QueueId, PostId
 from backend.types.queue import IQueueFullInfo, IQueueList
@@ -15,7 +13,6 @@ from backend.util.tokens import uses_token
 from backend.util.validators import assert_valid_str_field
 from backend.types.queue import IQueueId
 from backend.util import http_errors
-from backend.models.permissions import Permission
 
 
 taskboard = Blueprint('taskboard', 'taskboard')

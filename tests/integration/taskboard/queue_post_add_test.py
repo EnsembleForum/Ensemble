@@ -9,7 +9,7 @@ Tests for taskboard/queue/post_add
 
 import pytest
 from backend.util import http_errors
-from ensemble_request.browse import post_view, close_post
+from ensemble_request.browse import post
 from tests.integration.helpers import get_queue
 from ensemble_request.taskboard import (
     queue_post_list,
@@ -58,7 +58,7 @@ def test_success(
     queue_name1 = make_queues["queue_name1"]
 
     queue_post_add(token, queue_id1, post_id)
-    post_queue_name = post_view(token, post_id)["queue"]
+    post_queue_name = post.view(token, post_id)["queue"]
     assert post_queue_name == queue_name1
 
     queue = queue_post_list(token, queue_id1)
@@ -69,7 +69,7 @@ def test_success(
     queue_name2 = make_queues["queue_name2"]
 
     queue_post_add(token, queue_id2, post_id)
-    post_queue_name = post_view(token, post_id)["queue"]
+    post_queue_name = post.view(token, post_id)["queue"]
     assert post_queue_name == queue_name2
 
     queue = queue_post_list(token, queue_id2)
@@ -109,7 +109,7 @@ def test_add_post_from_view_only_queue(
     queues = queue_list(token)['queues']
     main_queue_id = get_queue(queues, consts.MAIN_QUEUE)["queue_id"]
 
-    close_post(token, post_id)
+    post.close(token, post_id)
 
     with pytest.raises(http_errors.BadRequest):
         queue_post_add(token, main_queue_id, post_id)

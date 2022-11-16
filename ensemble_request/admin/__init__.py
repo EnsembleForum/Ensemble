@@ -8,12 +8,16 @@ from ..consts import URL
 from ..helpers import get, post
 from . import permissions
 from . import users
+from . import analytics
+from . import exam_mode
 
 __all__ = [
     'permissions',
     'users',
     'is_first_run',
     'init',
+    'analytics',
+    'exam_mode',
 ]
 
 

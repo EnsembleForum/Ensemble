@@ -33,6 +33,7 @@ const StyledQueues = styled.div`
     height: 7vh;
     margin: 0;
     font-weight: 300;
+    width: 1000px;
   }  
 `
 const StyledViewOnlyQueues = styled(StyledQueues)`
@@ -90,7 +91,7 @@ const TaskboardPage = (props: Props) => {
       for (const postId of queue.posts) {
         const postCall: APIcall = {
           method: "GET",
-          path: "browse/post_view",
+          path: "browse/post/view",
           params: { "post_id": postId.toString() }
         }
         const post = await ApiFetch(postCall) as postView;
@@ -153,7 +154,7 @@ const TaskboardPage = (props: Props) => {
               </QueueCols>
             </StyledQueues>
             <StyledViewOnlyQueues>
-              <h2>Answered, Closed, Deleted and Reported Posts</h2>
+              <h2>Reported, Closed, Answered and Deleted Posts</h2>
               <QueueCols>
               { queueList.filter(queue => queue.view_only).map((queue) => {
                 return (

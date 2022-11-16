@@ -12,10 +12,7 @@ Tests for post_view/edit
 """
 import pytest
 from backend.util import http_errors
-from ensemble_request.browse import (
-    post_edit,
-    post_view,
-)
+from ensemble_request.browse import post
 from tests.integration.conftest import (
     IBasicServerSetup,
     ISimpleUsers,
@@ -32,7 +29,7 @@ def test_edit_other_user_post(
     """
     token = simple_users["user"]["token"]
     with pytest.raises(http_errors.Forbidden):
-        post_edit(token, make_posts["post1_id"], "new head", "new text", [])
+        post.edit(token, make_posts["post1_id"], "new head", "new text", [])
 
 
 def test_edit_empty_params(
@@ -44,9 +41,9 @@ def test_edit_empty_params(
     """
     token = basic_server_setup["token"]
     with pytest.raises(http_errors.BadRequest):
-        post_edit(token, make_posts["post1_id"], "", "new text", [])
+        post.edit(token, make_posts["post1_id"], "", "new text", [])
     with pytest.raises(http_errors.BadRequest):
-        post_edit(token, make_posts["post1_id"], "new head", "", [])
+        post.edit(token, make_posts["post1_id"], "new head", "", [])
 
 
 @pytest.mark.core
@@ -60,8 +57,8 @@ def test_edit_success(
     token = basic_server_setup["token"]
     new_head = "new_head"
     new_text = "new_text"
-    post_edit(token, make_posts["post1_id"], new_head, new_text, [])
+    post.edit(token, make_posts["post1_id"], new_head, new_text, [])
 
-    post = post_view(token, make_posts["post1_id"])
-    assert post["heading"] == new_head
-    assert post["text"] == new_text
+    p = post.view(token, make_posts["post1_id"])
+    assert p["heading"] == new_head
+    assert p["text"] == new_text

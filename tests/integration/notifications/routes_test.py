@@ -26,7 +26,7 @@ def test_no_notifs_default(basic_server_setup: IBasicServerSetup):
 def test_see_notification(simple_users: ISimpleUsers, make_posts: IMakePosts):
     """Can we mark a notification as seen?"""
     # Comment on the post
-    browse.add_comment(
+    browse.comment.create(
         simple_users['user']['token'],
         make_posts['post1_id'],
         "My reply",
@@ -49,7 +49,7 @@ def test_unseen_notification(
 ):
     """Can we mark a notification as seen?"""
     # Comment on the post
-    browse.add_comment(
+    browse.comment.create(
         simple_users['user']['token'],
         make_posts['post1_id'],
         "My reply",
@@ -78,7 +78,7 @@ def test_see_notification_wrong_user(
     """Do we get an error if we try to see a notification from the wrong user?
     """
     # Comment on the post
-    browse.add_comment(
+    browse.comment.create(
         simple_users['user']['token'],
         make_posts['post1_id'],
         "My reply",

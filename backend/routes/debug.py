@@ -8,9 +8,7 @@ import sys
 import json
 from colorama import Fore
 from flask import Blueprint, request
-from backend.models.user import User
-from backend.models.token import Token
-from backend.models.permissions import Permission
+from backend.models import User, Token, Permission
 from backend.util import http_errors, db_status, setup
 from backend.util.debug import debug_active
 from backend.types.debug import IEcho, IEnabled

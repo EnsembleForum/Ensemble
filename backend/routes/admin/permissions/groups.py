@@ -11,12 +11,12 @@ from backend.types.permissions import (
     IPermissionGroupList,
     IPermissionValueGroup,
 )
-from backend.models.permissions import (
+from backend.models import (
     PermissionGroup,
     Permission,
-    map_permissions_group,
+    User,
 )
-from backend.models.user import User
+from backend.models.permissions import map_permissions_group
 from backend.util.tokens import uses_token
 from backend.util.http_errors import BadRequest
 

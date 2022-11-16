@@ -16,10 +16,7 @@ from tests.integration.conftest import (
     ISimpleUsers,
     IMakePosts,
 )
-from ensemble_request.browse import (
-    post_react,
-    post_view,
-)
+from ensemble_request.browse import post
 
 
 @pytest.mark.core
@@ -34,18 +31,18 @@ def test_react_one_user(
     token1 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
 
-    post = post_view(token, post_id)
-    assert post["me_too"] == 0
+    p = post.view(token, post_id)
+    assert p["me_too"] == 0
 
-    assert post_react(token, post_id)["user_reacted"]
+    assert post.react(token, post_id)["user_reacted"]
 
-    post = post_view(token, post_id)
-    assert post["me_too"] == 1
-    assert post["user_reacted"]
+    p = post.view(token, post_id)
+    assert p["me_too"] == 1
+    assert p["user_reacted"]
 
-    post = post_view(token1, post_id)
-    assert post["me_too"] == 1
-    assert not post["user_reacted"]
+    p = post.view(token1, post_id)
+    assert p["me_too"] == 1
+    assert not p["user_reacted"]
 
 
 def test_react_multiple_users(
@@ -59,24 +56,24 @@ def test_react_multiple_users(
     token2 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
 
-    post = post_view(token1, post_id)
-    assert post["me_too"] == 0
+    p = post.view(token1, post_id)
+    assert p["me_too"] == 0
 
-    assert post_react(token1, post_id)["user_reacted"]
-    post = post_view(token1, post_id)
-    assert post["me_too"] == 1
+    assert post.react(token1, post_id)["user_reacted"]
+    p = post.view(token1, post_id)
+    assert p["me_too"] == 1
 
-    post_react(token2, post_id)
-    post = post_view(token1, post_id)
-    assert post["me_too"] == 2
+    post.react(token2, post_id)
+    p = post.view(token1, post_id)
+    assert p["me_too"] == 2
 
-    assert not post_react(token1, post_id)["user_reacted"]
-    post = post_view(token1, post_id)
-    assert post["me_too"] == 1
+    assert not post.react(token1, post_id)["user_reacted"]
+    p = post.view(token1, post_id)
+    assert p["me_too"] == 1
 
-    post_react(token2, post_id)
-    post = post_view(token1, post_id)
-    assert post["me_too"] == 0
+    post.react(token2, post_id)
+    p = post.view(token1, post_id)
+    assert p["me_too"] == 0
 
 
 def test_one_user_multiple_posts(
@@ -90,19 +87,19 @@ def test_one_user_multiple_posts(
     post_id1 = make_posts["post1_id"]
     post_id2 = make_posts["post2_id"]
 
-    post = post_view(token, post_id1)
-    assert post["me_too"] == 0
-    post = post_view(token, post_id2)
-    assert post["me_too"] == 0
+    p = post.view(token, post_id1)
+    assert p["me_too"] == 0
+    p = post.view(token, post_id2)
+    assert p["me_too"] == 0
 
-    post_react(token, post_id1)
-    post_react(token, post_id2)
+    post.react(token, post_id1)
+    post.react(token, post_id2)
 
-    post = post_view(token, post_id1)
-    assert post["me_too"] == 1
+    p = post.view(token, post_id1)
+    assert p["me_too"] == 1
 
-    post = post_view(token, post_id2)
-    assert post["me_too"] == 1
+    p = post.view(token, post_id2)
+    assert p["me_too"] == 1
 
 
 def test_invalid_post_id(simple_users: ISimpleUsers, make_posts: IMakePosts):
@@ -115,4 +112,4 @@ def test_invalid_post_id(simple_users: ISimpleUsers, make_posts: IMakePosts):
     )
     invalid_post_id = PostId(invalid_post_id)
     with pytest.raises(http_errors.BadRequest):
-        post_react(token, invalid_post_id)
+        post.react(token, invalid_post_id)

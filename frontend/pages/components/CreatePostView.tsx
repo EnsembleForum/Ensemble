@@ -57,6 +57,12 @@ const CreatePostView = (props: Props) => {
     private: false,
     anonymous: false,
   });
+  React.useEffect(() => {
+    if (searchParams.get('searchTerm')) {
+      setToggle(true);
+      setPost(post => ({ ...post, heading: searchParams.get('searchTerm') as string }))
+    }
+  }, [searchParams.get('searchTerm')])
   if (toggle) {
     return (
       <StyledPost>
@@ -92,7 +98,7 @@ const CreatePostView = (props: Props) => {
           <StyledButton onClick={(e) => {
             const api: APIcall = {
               method: "POST",
-              path: "browse/create",
+              path: "browse/post/create",
               body: post
             }
             ApiFetch(api).then((data) => {
