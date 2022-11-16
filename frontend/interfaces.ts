@@ -176,3 +176,25 @@ export interface notification {
 export interface notifications {
   notifications: notification[]
 }
+
+export interface analytics {
+  total_posts: number,
+  total_comments: number,
+  total_replies: number,
+  all_users: {
+    [key: string] : {[key: string]: number}[],
+    top_posters: {user_id: number, "count": number}[],
+    top_commenters: {"user_id": number, "count": number}[]
+    top_repliers: {"user_id": number, "count": number}[],
+    top_me_too: {"user_id": number, "count": number}[],
+    top_thanks: {"user_id": number, "count": number}[],
+  }
+  groups: {permission_group_id: number, permission_group_name: string, stats: {
+    [key: string] : {[key: string]: number}[],
+    "top_posters": {"user_id": number, "count": number}[],
+    "top_commenters": {"user_id": number, "count": number}[],
+    "top_repliers": {"user_id": number, "count": number}[],
+    "top_me_too": {"user_id": number, "count": number}[],
+    "top_thanks": {"user_id": number, "count": number}[],
+  }}[]
+}
