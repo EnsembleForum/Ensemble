@@ -44,6 +44,7 @@ const Heading = styled.div`
 // Exporting our example component
 const NotificationsListView = (props: Props) => {
   const [notifications, setNotifications] = React.useState<notification[]>();
+  const [seen, setSeen] = React.useState<boolean>(false);
   let [searchParams, setSearchParams] = useSearchParams();
   React.useEffect(()=>{
     const api: APIcall = {
@@ -64,7 +65,7 @@ const NotificationsListView = (props: Props) => {
         }
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [seen]);
   
   function seenNotification(id : number) {
     const api: APIcall = {
