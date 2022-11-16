@@ -31,7 +31,7 @@ const PostView = (props: Props) => {
   async function getPost() {
     const call: APIcall = {
       method: "GET",
-      path: "browse/post_view",
+      path: "browse/post/view",
       params: { "post_id": searchParams.get("postId") as string }
     }
     const postToShow = await ApiFetch(call) as postView;
@@ -39,7 +39,7 @@ const PostView = (props: Props) => {
     for (const commentId of postToShow.comments) {
       const call : APIcall = {
         method: "GET",
-        path: "browse/comment_view",
+        path: "browse/comment/view",
         params: {"comment_id": commentId.toString()}
       }
       const comment = await(ApiFetch(call)) as commentView;
@@ -50,7 +50,7 @@ const PostView = (props: Props) => {
       for (const replyId of comment.replies) {
         const call : APIcall = {
           method: "GET",
-          path: "browse/reply_view",
+          path: "browse/reply/view",
           params: {"reply_id": replyId.toString()}
         }
         const reply = await ApiFetch(call) as replyView;

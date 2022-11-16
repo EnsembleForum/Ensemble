@@ -98,7 +98,7 @@ const CreatePostView = (props: Props) => {
           <StyledButton onClick={(e) => {
             const api: APIcall = {
               method: "POST",
-              path: "browse/create",
+              path: "browse/post/create",
               body: post
             }
             ApiFetch(api).then((data) => {
