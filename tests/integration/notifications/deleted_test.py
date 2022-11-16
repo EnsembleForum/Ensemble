@@ -6,6 +6,7 @@ Tests for notifications when deleting posts
 * Users get notified when their post is deleted
 * User doesn't get notified if they delete their own post
 """
+from datetime import datetime
 import jestspectation as expect
 from ..conftest import ISimpleUsers, IMakePosts, IBasicServerSetup
 from ensemble_request import notifications, browse
@@ -23,7 +24,10 @@ def test_deleted_post_notification(
         {
             "notification_id": expect.Any(int),
             "user_from": None,
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "seen": False,
             "heading": "Your post was deleted",
             "body": make_posts['head1'],
@@ -66,7 +70,10 @@ def test_deleted_comment_notification(
     assert notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "user_from": None,
             "seen": False,
             "heading": "Your comment was deleted",
@@ -125,7 +132,10 @@ def test_deleted_reply_notification(
     assert notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "user_from": None,
             "seen": False,
             "heading": "Your reply was deleted",

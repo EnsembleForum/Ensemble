@@ -10,6 +10,7 @@ Tests for notifications when answers get accepted
   by a mod
 * OP doesn't get notification if they accept their own comment
 """
+from datetime import datetime
 import jestspectation as expect
 from ..conftest import ISimpleUsers, IMakePosts, IBasicServerSetup
 from ensemble_request import notifications, browse
@@ -36,7 +37,10 @@ def test_commenter_notified_when_accepted(
     assert mod_notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "seen": False,
             "user_from": simple_users['admin']['user_id'],
             "heading": "Answer accepted",
@@ -73,7 +77,10 @@ def test_op_and_commenter_notified_when_accepted_by_mod(
         {
             "notification_id": expect.Any(int),
             "seen": False,
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "user_from": simple_users['mod']['user_id'],
             "heading": "Answer accepted on your post",
             "body": "This is a comment",
@@ -93,7 +100,10 @@ def test_op_and_commenter_notified_when_accepted_by_mod(
         {
             "notification_id": expect.Any(int),
             "seen": False,
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "user_from": simple_users['mod']['user_id'],
             "heading": "Answer accepted",
             "body": "This is a comment",
@@ -130,7 +140,10 @@ def test_op_who_is_commenter_notified_when_accepted_by_mod(
         {
             "notification_id": expect.Any(int),
             "seen": False,
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "user_from": simple_users['mod']['user_id'],
             "heading": "Answer accepted",
             "body": "This is a comment",

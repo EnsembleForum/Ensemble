@@ -10,6 +10,7 @@ Tests for notifications when reacting to content
 * Not notified of own reaction to comment
 * Not notified of own reaction to reply
 """
+from datetime import datetime
 import jestspectation as expect
 from ..conftest import ISimpleUsers, IMakePosts, IBasicServerSetup
 from ensemble_request import notifications, browse
@@ -93,7 +94,10 @@ def test_notified_reply(
         notifications.list(simple_users['admin']['token'])['notifications']
         == [{
             "notification_id": expect.Any(int),
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "seen": False,
             "user_from": None,
             "heading": "Your reply received thanks",

@@ -10,6 +10,7 @@ Tests for users getting notifications for replies to posts
 * User doesn't get notification if they reply to their own comment
 * OP doesn't get notification if they reply to a comment on their own post TODO
 """
+from datetime import datetime
 import jestspectation as expect
 from ..conftest import ISimpleUsers, IMakePosts, IBasicServerSetup
 from ensemble_request import notifications, browse
@@ -31,7 +32,10 @@ def test_notification_on_comment(
     assert notifs == [{
         "notification_id": expect.Any(int),
         "seen": False,
-        "timestamp": expect.Any(int),
+        "timestamp": expect.FloatApprox(
+            datetime.now().timestamp(),
+            magnitude=2
+        ),
         "user_from": simple_users['user']['user_id'],
         "heading": "New comment on your post",
         "body": "This is a comment",
@@ -65,7 +69,10 @@ def test_notification_on_reply(
     assert notifs == [{
         "notification_id": expect.Any(int),
         "seen": False,
-        "timestamp": expect.Any(int),
+        "timestamp": expect.FloatApprox(
+            datetime.now().timestamp(),
+            magnitude=2
+        ),
         "user_from": simple_users['user']['user_id'],
         "heading": "New reply to your comment",
         "body": "This is a reply",
@@ -99,7 +106,10 @@ def test_reply_op_notified(
     assert notifs[0] == {
         "notification_id": expect.Any(int),
         "seen": False,
-        "timestamp": expect.Any(int),
+        "timestamp": expect.FloatApprox(
+            datetime.now().timestamp(),
+            magnitude=2
+        ),
         "user_from": simple_users['user']['user_id'],
         "heading": "New reply on your post",
         "body": "This is a reply",

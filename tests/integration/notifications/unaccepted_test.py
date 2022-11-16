@@ -6,6 +6,7 @@ Tests for notifications when answers get unaccepted
 * Commenter gets a notification if their answer is unaccepted
 * Commenter doesn't get a notification if they are also person doing action
 """
+from datetime import datetime
 import jestspectation as expect
 from ..conftest import ISimpleUsers, IMakePosts, IBasicServerSetup
 from ensemble_request import notifications, browse
@@ -38,7 +39,10 @@ def test_commenter_notified_when_unaccepted(
     assert mod_notifs['notifications'] == [
         {
             "notification_id": expect.Any(int),
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "seen": False,
             "user_from": simple_users['admin']['user_id'],
             "heading": "Answer unaccepted",

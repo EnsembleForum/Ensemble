@@ -7,6 +7,7 @@ Tests for notifications when posts get added to a queue
 * Mods don't get notified if they were the one doing the adding
 * Mods don't get notified if they aren't following the queue
 """
+from datetime import datetime
 import jestspectation as expect
 from ..conftest import (
     ISimpleUsers,
@@ -41,7 +42,10 @@ def test_followers_notified(
     assert notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
-            "timestamp": expect.Any(int),
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "seen": False,
             "user_from": simple_users['admin']['user_id'],
             "heading": "New post in queue Main",
