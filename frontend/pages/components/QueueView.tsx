@@ -74,6 +74,7 @@ const QueueView = (props: Props) => {
   const [toggleDelete, setToggleDelete] = React.useState(false);
   const [toggleEdit, setToggleEdit] = React.useState(false);
   const [editedTitle, setEditedTitle] = React.useState<string>(props.queue.queue_name);
+  //const [following, setFollowing] = React.useState<boolean>(props.queue.);
   async function deleteQueue() {
     const deleteQueueCall : APIcall = { 
       method: "DELETE",
@@ -95,6 +96,16 @@ const QueueView = (props: Props) => {
     }
     setToggleEdit(false);
   }
+  async function followQueue() {
+    const followQueueCall : APIcall = { 
+      method: "PUT",
+      path: "taskboard/queue/follow",
+      body: {queue_id: queue.queue_id}
+    }
+    console.log(followQueueCall);
+    await ApiFetch(followQueueCall);
+    setUpdate(!update);
+  }
 
   return (
     <FlexWrapper>
@@ -115,7 +126,13 @@ const QueueView = (props: Props) => {
           <h3>{queue.queue_name}</h3>
           <span>
             <h4>{queue.posts.length}</h4>
-            {toggleDelete && !toggleEdit && getPermission(23) ?  <>
+            {toggleDelete && !toggleEdit ?  
+            <>
+              {getPermission(22) ? <>
+              <ReactTooltip place="top" type="dark" effect="solid"/>
+              <EditButton style={queue.following ? {backgroundColor: "darkgreen"} : {}} data-tip={queue.following ? "Unfollow this queue" : "Follow this queue"} onClick={followQueue}>🙋</EditButton>
+              </> : <></>}
+              {getPermission(23) ? <>
               <>
               <ReactTooltip place="top" type="dark" effect="solid"/>
               <EditButton data-tip="Edit queue name" onClick={() => {setToggleEdit(true)}}>✏️</EditButton>
@@ -124,6 +141,7 @@ const QueueView = (props: Props) => {
               <ReactTooltip place="top" type="dark" effect="solid"/>
               <DeleteButton data-tip="Delete this queue" onClick={deleteQueue}>🗑️</DeleteButton>
               </>
+              </>: <></>}
             </> : <></>}
           </span>
         </>

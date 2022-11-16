@@ -11,15 +11,17 @@ import { StyledButton } from "./GlobalProps";
 
 interface Props { }
 
-const LoginLayout = styled.div`
-  height: 90vh;
+const Layout = styled.div`
+  height: 80vh;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
 `;
 
 const StyledForm = styled(Box)`
+  width: 30vw;
+  margin-top: 5vh;
+  height: 60vh;
   border: 1px solid black;
   padding: 10px;
   border-radius: 2%;
@@ -31,26 +33,40 @@ const StyledForm = styled(Box)`
 const StyledButtons = styled(Box)`
   display: flex;
   justify-content: space-evenly;
+  * {
+    height: 60px;
+    margin: 5px;
+  }
 `;
 
-const StyledTable = styled.table`
-  margin-top: 50px;
-  border: 1px solid black;
-  border-radius: 2px;
-  border-spacing:0;
-  border-collapse: collapse; 
-  width: 50%;
+const StyledTable = styled.div`
+  margin-top: 5vh;
+  width: 56vw;
+  padding: 10
+  background-colour: lightgrey;
+  border-radius: 10px;
+  border: 2px solid grey;
+  height: 60vh;
   * {
-    border: 1px solid black;
-    padding: 5px;
+    text-align: center;
   }
-  tr > th {
-    background-color: grey;
-  }
-  &:nth-child(3) {
-    background-color: lightgrey;
-  }
+  overflow: auto;
+
 `;
+const Row = styled.div`
+  width: 56vw;
+  height: 5vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid grey;
+  font-weight: 700;
+`
+
+const Col = styled.div`
+  width: 10vw;
+`
 
 
 const UsersRegisterPage = (props: Props) => {
@@ -93,7 +109,7 @@ const UsersRegisterPage = (props: Props) => {
     setRegisterDetails(defaultState);
   }
   return (
-    <LoginLayout>
+    <Layout>
       <StyledForm id="test" as="form" onSubmit={onSubmit}>
         <Label>Permission Group</Label>
         <p><small>Changing permission group will reset user list</small></p>
@@ -103,44 +119,53 @@ const UsersRegisterPage = (props: Props) => {
           <option value="3">3: User</option>
         </Select>
         {Object.keys(registerDetails).map((eachKey) => {
+          console.log(eachKey);
           return (
-            <>
-              <Label htmlFor={eachKey} key={eachKey}>{Prettify(eachKey)}</Label>
-              <Input type="text" key={eachKey + "e"} name={eachKey} id={eachKey} mb={3} value={registerDetails[eachKey]} onChange={(e) => setRegisterDetails(registerDetails => ({ ...registerDetails, [eachKey]: e.target.value }))} />
-            </>
+            <Input 
+              type="text" 
+              key={eachKey} 
+              placeholder={Prettify(eachKey)} 
+              name={eachKey} 
+              id={eachKey} 
+              mb={3} 
+              value={registerDetails[eachKey]} 
+              onChange={(e) => setRegisterDetails(registerDetails => ({ ...registerDetails, [eachKey]: e.target.value }))} 
+            />
           )
         })}
         <StyledButtons>
           <StyledButton onClick={resetUser}>Add {permissions[groupPermission - 1]}</StyledButton>
+          <StyledButton onClick={() => {setRegisterDetails(defaultState)}}>Clear {permissions[groupPermission - 1]} Info</StyledButton>
+          <StyledButton onClick={() => {setRegisterList([])}}>Clear List</StyledButton>
           <StyledButton type="submit">Submit</StyledButton>
         </StyledButtons>
       </StyledForm>
 
       <StyledTable>
-        <tr>
+        <Row style={{backgroundColor: "lightGrey"}}>
           {Object.keys(registerDetails).map((eachKey) => {
             return (
-              <th>{Prettify(eachKey)}</th>
+              <Col>{Prettify(eachKey)}</Col>
             )
           })}
-        </tr>
+        </Row>
         {registerList.map((user) => {
           return (
-            <tr>
+            <Row>
               {Object.keys(user).map((eachKey) => {
                 return (
-                  <td>
+                  <Col>
                     {user[eachKey]}
-                  </td>
+                  </Col>
                 )
               })
               }
-            </tr>
+            </Row>
           )
         })
         }
       </StyledTable>
-    </LoginLayout>
+    </Layout>
   );
 };
 

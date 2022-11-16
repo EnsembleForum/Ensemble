@@ -3,14 +3,16 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button, Input } from "theme-ui";
 import { ApiFetch, getPermission } from "../../App";
-import { APIcall, notification, postListItem } from "../../interfaces";
+import { APIcall, notification, notifications, postListItem } from "../../interfaces";
 import { theme } from "../../theme";
 import AuthorView from "./AuthorView";
 import ReactTooltip from 'react-tooltip';
 import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
-interface Props { }
+interface Props { 
+  notifications?: notification[]
+}
 const StyledLayout = styled.div`
   background-color: ${theme.colors?.muted};
   width: 25vw;
@@ -43,7 +45,7 @@ const Heading = styled.div`
 
 // Exporting our example component
 const NotificationsListView = (props: Props) => {
-  const [notifications, setNotifications] = React.useState<notification[]>();
+  const [notifications, setNotifications] = React.useState<notification[]>([]);
   const [seen, setSeen] = React.useState<boolean>(false);
   let [searchParams, setSearchParams] = useSearchParams();
   React.useEffect(()=>{
@@ -54,26 +56,23 @@ const NotificationsListView = (props: Props) => {
     ApiFetch(api)
       .then((data) => {
         const test = data as { notifications: notification[] };
-        console.log(test);
         if (test.notifications.length) {
-          searchParams.set("notificationId", test.notifications[0].notification_id.toString());
-          searchParams.set("postId", test.notifications[0].post.toString());
-          searchParams.set("commentId", test.notifications[0].comment ? test.notifications[0].comment.toString(): '');
-          searchParams.set("replyId", test.notifications[0].reply ? test.notifications[0].reply.toString() : '');
-          setSearchParams(searchParams);
           setNotifications(test.notifications);
         }
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seen]);
+  }, [seen, searchParams.get("newNotifs")]);
   
-  function seenNotification(id : number) {
+  async function seenNotification(id : number) {
     const api: APIcall = {
       method: "PUT",
       path: "notifications/seen",
       body: {notification_id: id, value: true}
     }
-    ApiFetch(api);
+    await ApiFetch(api);
+    searchParams.set("newnewNotifs", notifications.filter(each => { return each.seen }).length.toString())
+    setSearchParams(searchParams);
+    setSeen(!seen);
   }
 
   async function clearAll() {
@@ -109,13 +108,13 @@ const NotificationsListView = (props: Props) => {
             }
             return (
               <Post style={styles} onClick={() => {
-                seenNotification(each.notification_id);
-                searchParams.set("notificationId", each.notification_id.toString());
-                searchParams.set("postId", each.post.toString());
-                searchParams.set("commentId", each.comment ? each.comment.toString() : '');
-                searchParams.set("replyId", each.reply ? each.reply.toString() : '');
-                setSearchParams(searchParams);
-              }}>
+                  searchParams.set("notificationId", each.notification_id.toString());
+                  searchParams.set("postId", each.post.toString());
+                  searchParams.set("commentId", each.comment ? each.comment.toString() : '');
+                  searchParams.set("replyId", each.reply ? each.reply.toString() : '');
+                  setSearchParams(searchParams);
+                  seenNotification(each.notification_id);
+                }}>
                 <Heading>{each.heading}</Heading>
                 { each.user_from ? <>From: <AuthorView userId={each.user_from}></AuthorView></> : <></>}
                 <div>{each.heading.split(' ').splice(0, 2).join(' ')}: {each.body}</div>
@@ -132,7 +131,7 @@ const NotificationsListView = (props: Props) => {
               }
               return (
                 <Post style={styles} onClick={() => {
-                  seenNotification(each.notification_id);
+                  //seenNotification(each.notification_id);
                   searchParams.set("notificationId", each.notification_id.toString());
                   searchParams.set("postId", each.post.toString());
                   searchParams.set("commentId", each.comment ? each.comment.toString() : '');

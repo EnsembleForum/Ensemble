@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { SERVER_PATH } from './constants';
 import { APIcall, currentUser, requestOptions, userPermission } from './interfaces';
 import AdminPage from './pages/AdminPage';
@@ -8,7 +8,6 @@ import BrowsePage from './pages/BrowsePage';
 import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
 import PasswordResetPage from './pages/PasswordResetPage';
-import RegisterPage from './pages/RegisterPage';
 import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
 import NotificationsPage from './pages/NotificationsPage';
@@ -83,6 +82,7 @@ export function getLoggedIn() {
 
 function PassThrough() {
   const [firstRun, setFirstRun] = React.useState<boolean>(true);
+  const [update, setUpdate] =  React.useState<boolean>(true);
   const api: APIcall = {
     method: "GET",
     path: "admin/is_first_run",
@@ -92,8 +92,11 @@ function PassThrough() {
     setFirstRun(first.value);
   })
   window.addEventListener('storage', () => {
+    setUpdate(!update);
     setFirstRun(false);
   });
+
+  React.useEffect(() => {}, [update]);
   return (
     <Router>
       <Routes>
@@ -105,7 +108,6 @@ function PassThrough() {
           <Route path="/" element={<Navigate to="/browse" />}></Route>
           <Route path='/admin/init' element={ getLoggedIn() ? <Navigate to="/browse" /> : <Navigate to="/login" />} />
           <Route path='/login' element={<LoginPage />} />
-          <Route path='/register' element={<RegisterPage />} />
           <Route path='/password_reset' element={<PasswordResetPage />} />
           <Route path='/profile' element={<UserProfilePage />} />
           <Route path='/browse' element={<BrowsePage />}/>

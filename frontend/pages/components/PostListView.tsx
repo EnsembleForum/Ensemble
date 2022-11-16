@@ -66,7 +66,6 @@ const PostListView = (props: Props) => {
       path: "browse/post/list",
       params: {"search_term": searchTerm}
     }
-    console.log(api);
     ApiFetch(api)
       .then((data) => {
         const test = data as { posts: postListItem[] };
