@@ -74,6 +74,7 @@ const QueueView = (props: Props) => {
   const [toggleDelete, setToggleDelete] = React.useState(false);
   const [toggleEdit, setToggleEdit] = React.useState(false);
   const [editedTitle, setEditedTitle] = React.useState<string>(props.queue.queue_name);
+  //const [following, setFollowing] = React.useState<boolean>(props.queue.);
   async function deleteQueue() {
     const deleteQueueCall : APIcall = { 
       method: "DELETE",
@@ -115,7 +116,6 @@ const QueueView = (props: Props) => {
           <>
             <Input value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)}/>
             <span>
-              <EditButton onClick={followQueue}>🙋</EditButton>
               <EditButton onClick={editQueue}>✅</EditButton>
               <DeleteButton onClick={() => {setToggleEdit(false)}}>❌</DeleteButton>
             </span>
