@@ -91,6 +91,10 @@ const NumNotifs = styled.span`
   background-color: ${theme.colors?.primary}; 
 `
 
+const ActiveNotif = styled.a`
+  background-color: ${theme.colors?.primary}; 
+`
+
 
 // Exporting our example component
 const Navbar = (props: Props) => {
@@ -152,14 +156,21 @@ const Navbar = (props: Props) => {
       }) : <></>
       }
      { /* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+     { numNotifs ? 
+      <ActiveNotif 
+        style={("notifications" === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} 
+        onClick={() => { navigate("/notifications")}}
+      >
+      Notifications: {numNotifs}
+      </ActiveNotif> :
+      <>
+      { /* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <a 
         style={("notifications" === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} 
-        onClick={() => {
-          navigate("/notifications")
-        }}
-      >
-        Notifications{numNotifs ? <>: {numNotifs}</>: <></>}
-      </a>
+        onClick={() => { navigate("/notifications")}}
+      >Notifications</a>
+      </>
+     }
       <span></span>
       {getLoggedIn() ? logout : login }
     </StyledNavbar>

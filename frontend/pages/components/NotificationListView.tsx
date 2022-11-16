@@ -76,32 +76,52 @@ const NotificationsListView = (props: Props) => {
     ApiFetch(api);
   }
 
+  async function clearAll() {
+    if (notifications) {
+      const unseenNotifs = notifications.filter(each => { return !each.seen });
+      for (const notif of unseenNotifs) {
+        const api: APIcall = {
+          method: "PUT",
+          path: "notifications/seen",
+          body: {notification_id: notif.notification_id, value: true}
+        }
+        await ApiFetch(api);
+      }
+      setSeen(!seen);
+    }
+  }
+
   if (notifications && notifications.length > 0) {
     return (
       <StyledLayout>
-        <h4 style={{width: "100%", backgroundColor: "lightgrey", padding: "5px 0 5px 0", borderTop: "1px solid grey", borderBottom: "1px solid black", margin: '0', textAlign: "center"}}> New Notifications </h4>
+        <h4 style={{width: "100%", backgroundColor: "lightgrey", padding: "5px 0 5px 0", borderTop: "1px solid grey", borderBottom: "1px solid black", margin: '0', textAlign: "center"}}> 
+          New Notifications 
+          {notifications.filter(each => { return !each.seen }).length ? 
+          <StyledButton style={{marginLeft: "10px",  padding: "5px 5px 5px 5px"}} onClick={clearAll}>Clear</StyledButton> : <></>
+          }
+        </h4>
+        
         {
           notifications.filter(each => { return !each.seen }).map((each) => {
-              const styles : any = {}
-              if (each.notification_id.toString()===searchParams.get("notificationId")) {
-                styles.backgroundColor = theme.colors?.highlight;
-              }
-              return (
-                <Post style={styles} onClick={() => {
-                  seenNotification(each.notification_id);
-                  searchParams.set("notificationId", each.notification_id.toString());
-                  searchParams.set("postId", each.post.toString());
-                  searchParams.set("commentId", each.comment ? each.comment.toString() : '');
-                  searchParams.set("replyId", each.reply ? each.reply.toString() : '');
-                  setSearchParams(searchParams);
-                }}>
-                  <Heading>{each.heading}</Heading>
-                  { each.user_from ? <>From: <AuthorView userId={each.user_from}></AuthorView></> : <></>}
-                  <div>{each.heading.split(' ').splice(0, 2).join(' ')}: {each.body}</div>
-                </Post>
-              );
+            const styles : any = {}
+            if (each.notification_id.toString()===searchParams.get("notificationId")) {
+              styles.backgroundColor = theme.colors?.highlight;
             }
-          ) 
+            return (
+              <Post style={styles} onClick={() => {
+                seenNotification(each.notification_id);
+                searchParams.set("notificationId", each.notification_id.toString());
+                searchParams.set("postId", each.post.toString());
+                searchParams.set("commentId", each.comment ? each.comment.toString() : '');
+                searchParams.set("replyId", each.reply ? each.reply.toString() : '');
+                setSearchParams(searchParams);
+              }}>
+                <Heading>{each.heading}</Heading>
+                { each.user_from ? <>From: <AuthorView userId={each.user_from}></AuthorView></> : <></>}
+                <div>{each.heading.split(' ').splice(0, 2).join(' ')}: {each.body}</div>
+              </Post>
+            );
+          }) 
         }
         <h4 style={{width: "100%", backgroundColor: "lightgrey", padding: "5px 0 5px 0", borderTop: "1px solid grey", borderBottom: "1px solid grey", margin: '0', textAlign: "center"}}> Seen Notifications </h4>
         {
