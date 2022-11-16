@@ -160,3 +160,19 @@ export interface permissionGroup extends permissionHolder {
 export interface permissionHolder {
   permissions: userPermission[]
 }
+
+export interface notification {
+  notification_id: number;
+  seen: boolean;
+  user_from?: number;
+  heading: string,
+  body: string,
+  post: number,
+  comment?: number,
+  reply?: number,
+  queue?: number,
+}
+
+export interface notifications {
+  notifications: notification[]
+}

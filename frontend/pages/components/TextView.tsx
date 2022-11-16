@@ -33,7 +33,8 @@ interface Props {
   showAcceptButton?: boolean,
   showDeleteButton?: boolean,
   showReportButton?: boolean
-  showUnreportButton?: boolean
+  showUnreportButton?: boolean,
+  focus?: boolean,
 }
 
 const StyledText = styled.div`
@@ -150,7 +151,7 @@ const Col = styled.span`
 `
 
 // Exporting our example component
-const TextView = (props: Props) => {
+const TextView = React.forwardRef((props: Props, customRef: any) => {
   const [inputText, setInputText] = React.useState<string>();
   const [toggleReply, setToggleReply] = React.useState<boolean>(false);
   const [editHeading, setEditHeading] = React.useState<string>(props.heading as string);
@@ -158,7 +159,6 @@ const TextView = (props: Props) => {
   const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
   let [searchParams, setSearchParams] = useSearchParams();
-  
   function updatePosts() {
     const postId = searchParams.get('postId') as string;
     if (postId.startsWith('0')) {
@@ -428,9 +428,17 @@ const TextView = (props: Props) => {
       <Queue data-tip="This indicates which tutor queue your post is currently in">{formatQueue(props.queue)} </Queue>
     </span> )
   }
-  
+  const style : {[key: string] : string} = {}
+  if (props.type === "comment") style.marginTop = "20px";
+  if (props.type === "reply")  style.marginTop = "5px";
+  if (props.focus) {
+    style.backgroundColor = theme.colors?.highlight as string;
+    style.padding = "10px";
+    style.borderRadius = "10px";
+  }
+  const refer = props.focus ? {ref: customRef} : {};
   return (
-    <StyledText style={props.type === "comment" ? {paddingTop: "20px"} : props.type === "reply" ? {paddingTop: "10px"}:{}}>
+    <StyledText style={style} {...refer}>
       <StyledPost style={props.type === "reply" ? {paddingLeft: "20px", borderLeft: "2px solid lightgrey"} : (props.type === "comment" ? (props.accepted ? {backgroundColor: "#90EE90", padding: "10px", borderRadius: "10px"} : {}):{})}>
         <OptionsBar>
           <Col>
@@ -450,7 +458,6 @@ const TextView = (props: Props) => {
         {props.deleted ? <p style={{color: "darkGrey", fontStyle: "italic", fontWeight: 500}}>{props.text}</p> : <></>}
         <span style={props.deleted ? {display: "none"} : {}}>
           {toggleEdit ? <></> : tags}
-          <br/>
           { toggleEdit ? editBox : <p>{props.text}</p> }
           { props.userReacted ? activeReactButton : reactButton}
           { getCurrentUser().user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
@@ -469,6 +476,6 @@ const TextView = (props: Props) => {
       { props.type === "post" ? <></>: <StyledBorder/>}
     </StyledText>
   );
-};
+});
 
 export default TextView;
