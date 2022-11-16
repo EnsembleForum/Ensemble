@@ -68,6 +68,12 @@ class QueueId(Identifier):
     """
 
 
+class TagId(Identifier):
+    """
+    Identifier for a tag
+    """
+
+
 class NotificationId(Identifier):
     """
     Identifier for a notification

@@ -114,8 +114,8 @@ class Queue:
         t = TQueueFollow\
             .exists()\
             .where(
-                TQueueFollow.queue == self.id
-                and TQueueFollow.user == user.id
+                (TQueueFollow.queue == self.id)
+                & (TQueueFollow.user == user.id)
             ).run_sync()
         assert isinstance(t, bool)
         return t

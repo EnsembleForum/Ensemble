@@ -90,7 +90,6 @@ class TPost(_BaseTable):
     author = ForeignKey(TUser)
     heading = Text()
     text = Text()
-    tags = Array(Integer())
     timestamp = Timestamp()
     queue = ForeignKey(TQueue)
     private = Boolean()
@@ -101,6 +100,15 @@ class TPost(_BaseTable):
     # For some reason this causes an error:
     # ValueError: Can't find a Table subclass called
     # TComment in backend.models.tables
+
+
+class TTag(_BaseTable):
+    name = Text()
+
+
+class TPostTags(_BaseTable):
+    tag = ForeignKey(TTag)
+    post = ForeignKey(TPost)
 
 
 class TComment(_BaseTable):

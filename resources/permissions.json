@@ -71,6 +71,9 @@
   "60": {
     "name": "EditProfile"
   },
+  "63": {
+    "name": "ManageTags"
+  },
   "65": {
     "name": "ViewAnalytics"
   }

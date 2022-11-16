@@ -89,6 +89,8 @@ class Permission(Enum):
     # Profile management
     EditProfile = 60
     """User can edit their own profile"""
+    # Tags
+    ManageTags = 63
 
     # Analytics
     ViewAnalytics = 65
