@@ -20,7 +20,7 @@ def test_notification_on_comment(
     make_posts: IMakePosts,
 ):
     """Do users get a notification when someone comments on their post?"""
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['user']['token'],
         make_posts['post1_id'],
         "This is a comment",
@@ -49,12 +49,12 @@ def test_notification_on_reply(
     Do users get a notification when someone replies to their comment on
     a post?
     """
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['mod']['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
-    reply = browse.add_reply(
+    reply = browse.reply.create(
         simple_users['user']['token'],
         comment,
         "This is a reply",
@@ -81,12 +81,12 @@ def test_reply_op_notified(
     """
     Does OP get a notification when someone replies to a comment on their post
     """
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['mod']['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
-    reply = browse.add_reply(
+    reply = browse.reply.create(
         simple_users['user']['token'],
         comment,
         "This is a reply",
@@ -112,7 +112,7 @@ def test_no_notification_on_self_comment(
     make_posts: IMakePosts,
 ):
     """Do users not get notified if they comment on their own post?"""
-    browse.add_comment(
+    browse.comment.create(
         basic_server_setup['token'],
         make_posts['post1_id'],
         "This is a comment",
@@ -130,12 +130,12 @@ def test_no_notifications_on_self_reply(
     """
     Do users not get notified if they reply to their own comment?
     """
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['mod']['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
-    browse.add_reply(
+    browse.reply.create(
         simple_users['mod']['token'],
         comment,
         "This is a reply",
@@ -152,12 +152,12 @@ def test_no_notification_on_reply_to_comment_on_own_post(
     """
     Do users not get notified if they reply to a comment on their own post?
     """
-    comment = browse.add_comment(
+    comment = browse.comment.create(
         simple_users['mod']['token'],
         make_posts['post1_id'],
         "This is a comment",
     )['comment_id']
-    browse.add_reply(
+    browse.reply.create(
         simple_users['admin']['token'],
         comment,
         "This is a reply",

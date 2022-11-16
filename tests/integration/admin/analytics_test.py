@@ -3,12 +3,9 @@ from backend.util import http_errors
 from ensemble_request.admin.analytics import get_analytics
 from tests.integration.conftest import ISimpleUsers, IMakePosts
 from ensemble_request.browse import (
-    post_react,
-    post_create,
-    add_comment,
-    add_reply,
-    comment_react,
-    reply_react
+    post,
+    comment,
+    reply
 )
 
 
@@ -66,10 +63,10 @@ def test_total_comments(
     post_id2 = make_posts["post2_id"]
 
     for _ in range(3):
-        add_comment(user_token, post_id1, "hello")
+        comment.create(user_token, post_id1, "hello")
 
     for _ in range(2):
-        add_comment(mod_token, post_id2, "hello")
+        comment.create(mod_token, post_id2, "hello")
 
     assert get_analytics(admin_token)["total_comments"] == 5
 
@@ -87,14 +84,14 @@ def test_total_replies(
 
     post_id1 = make_posts["post1_id"]
     post_id2 = make_posts["post2_id"]
-    comment_id1 = add_comment(user_token, post_id1, "hello")["comment_id"]
-    comment_id2 = add_comment(mod_token, post_id2, "hello")["comment_id"]
+    comment_id1 = comment.create(user_token, post_id1, "hello")["comment_id"]
+    comment_id2 = comment.create(mod_token, post_id2, "hello")["comment_id"]
 
     for _ in range(3):
-        add_reply(user_token, comment_id1, "hello")
+        reply.create(user_token, comment_id1, "hello")
 
     for _ in range(2):
-        add_reply(mod_token, comment_id2, "hello")
+        reply.create(mod_token, comment_id2, "hello")
 
     assert get_analytics(admin_token)["total_replies"] == 5
 
@@ -114,11 +111,11 @@ def test_all_top_posters(
 
     # User has 2 posts
     for _ in range(2):
-        post_create(user_token, "heading", "text", [])
+        post.create(user_token, "heading", "text", [])
 
     # Mod and admin each have 1 post
-    post_create(mod_token, "heading", "text", [])
-    post_create(admin_token, "heading", "text", [])
+    post.create(mod_token, "heading", "text", [])
+    post.create(admin_token, "heading", "text", [])
 
     data = get_analytics(admin_token)
 
@@ -163,11 +160,11 @@ def test_all_top_commenters(
 
     # User has 2 comments
     for _ in range(2):
-        add_comment(user_token, post_id, "text")
+        comment.create(user_token, post_id, "text")
 
     # Mod and admin each have 1 post
-    add_comment(admin_token, post_id, "text")
-    add_comment(mod_token, post_id, "text")
+    comment.create(admin_token, post_id, "text")
+    comment.create(mod_token, post_id, "text")
 
     data = get_analytics(admin_token)
 
@@ -209,15 +206,15 @@ def test_all_top_repliers(
     mod_id = simple_users["mod"]["user_id"]
 
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(user_token, post_id, "text")["comment_id"]
+    comment_id = comment.create(user_token, post_id, "text")["comment_id"]
 
     # User has 2 comments
     for _ in range(2):
-        add_reply(user_token, comment_id, "text")
+        reply.create(user_token, comment_id, "text")
 
     # Mod and admin each have 1 post
-    add_reply(admin_token, comment_id, "text")
-    add_reply(mod_token, comment_id, "text")
+    reply.create(admin_token, comment_id, "text")
+    reply.create(mod_token, comment_id, "text")
 
     data = get_analytics(admin_token)
 
@@ -255,17 +252,17 @@ def test_all_top_me_too(simple_users: ISimpleUsers):
     user_id = simple_users["user"]["user_id"]
     mod_id = simple_users["mod"]["user_id"]
 
-    user_post = post_create(user_token, "heading", "text", [])["post_id"]
-    mod_post = post_create(mod_token, "heading", "text", [])["post_id"]
-    admin_post = post_create(admin_token, "heading", "text", [])["post_id"]
+    user_post = post.create(user_token, "heading", "text", [])["post_id"]
+    mod_post = post.create(mod_token, "heading", "text", [])["post_id"]
+    admin_post = post.create(admin_token, "heading", "text", [])["post_id"]
 
     # User has 2 me_too's
-    post_react(mod_token, user_post)
-    post_react(admin_token, user_post)
+    post.react(mod_token, user_post)
+    post.react(admin_token, user_post)
 
     # Mod and admin each have 1 post
-    post_react(user_token, mod_post)
-    post_react(user_token, admin_post)
+    post.react(user_token, mod_post)
+    post.react(user_token, admin_post)
 
     data = get_analytics(admin_token)
 
@@ -307,16 +304,16 @@ def test_all_top_thanks(
     mod_id = simple_users["mod"]["user_id"]
 
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(user_token, post_id, "text")["comment_id"]
-    user_reply = add_reply(user_token, comment_id, "text")["reply_id"]
-    mod_reply = add_reply(mod_token, comment_id, "text")["reply_id"]
-    admin_reply = add_reply(admin_token, comment_id, "text")["reply_id"]
+    comment_id = comment.create(user_token, post_id, "text")["comment_id"]
+    user_reply = reply.create(user_token, comment_id, "text")["reply_id"]
+    mod_reply = reply.create(mod_token, comment_id, "text")["reply_id"]
+    admin_reply = reply.create(admin_token, comment_id, "text")["reply_id"]
 
-    reply_react(user_token, mod_reply)
-    reply_react(user_token, admin_reply)
-    comment_react(mod_token, comment_id)
-    reply_react(mod_token, user_reply)
-    reply_react(admin_token, user_reply)
+    reply.react(user_token, mod_reply)
+    reply.react(user_token, admin_reply)
+    comment.react(mod_token, comment_id)
+    reply.react(mod_token, user_reply)
+    reply.react(admin_token, user_reply)
 
     data = get_analytics(admin_token)
 

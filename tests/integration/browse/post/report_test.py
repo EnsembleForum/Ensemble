@@ -20,15 +20,7 @@ from tests.integration.conftest import (
     IBasicServerSetup,
     IMakePosts,
 )
-from ensemble_request.browse import (
-    post_list,
-    post_view,
-    post_create,
-    report_post,
-    unreport_post,
-    add_comment,
-    accept_comment
-)
+from ensemble_request.browse import post, comment
 from ensemble_request.taskboard import queue_post_list, queue_list
 from tests.integration.helpers import get_queue
 
@@ -44,12 +36,12 @@ def test_reported_post_view(
     tok = basic_server_setup["token"]
     post_id = make_posts["post1_id"]
 
-    post = post_view(tok, post_id)
-    assert not post["reported"]
+    p = post.view(tok, post_id)
+    assert not p["reported"]
 
-    report_post(tok, post_id)
-    post = post_view(tok, post_id)
-    assert post["reported"]
+    post.report(tok, post_id)
+    p = post.view(tok, post_id)
+    assert p["reported"]
 
 
 def test_reported_post_list(
@@ -59,14 +51,14 @@ def test_reported_post_list(
     Does post_list correctly show whether the post is reported or not?
     """
     tok = basic_server_setup["token"]
-    post_id = post_create(tok, "head", "text", [])["post_id"]
+    post_id = post.create(tok, "head", "text", [])["post_id"]
 
-    post = post_list(tok)["posts"][0]
-    assert not post["reported"]
+    p = post.list(tok)["posts"][0]
+    assert not p["reported"]
 
-    report_post(tok, post_id)
-    post = post_list(tok)["posts"][0]
-    assert post["reported"]
+    post.report(tok, post_id)
+    p = post.list(tok)["posts"][0]
+    assert p["reported"]
 
 
 def test_reported_queue(
@@ -78,11 +70,11 @@ def test_reported_queue(
     """
     tok = basic_server_setup["token"]
 
-    post_id = post_create(tok, "head", "text", [])["post_id"]
+    post_id = post.create(tok, "head", "text", [])["post_id"]
 
     # Reporting a post sends it to the reported queue
-    report_post(tok, post_id)
-    post_queue_name = post_view(tok, post_id)["queue"]
+    post.report(tok, post_id)
+    post_queue_name = post.view(tok, post_id)["queue"]
     assert post_queue_name == consts.REPORTED_QUEUE
 
     queue_id = get_queue(queue_list(tok)['queues'],
@@ -91,8 +83,8 @@ def test_reported_queue(
     assert post_id in queue["posts"]
 
     # Un-reporting a post sends it back to the main queue
-    unreport_post(tok, post_id)
-    post_queue_name = post_view(tok, post_id)["queue"]
+    post.unreport(tok, post_id)
+    post_queue_name = post.view(tok, post_id)["queue"]
     assert post_queue_name == consts.MAIN_QUEUE
 
     queue_id = get_queue(queue_list(tok)['queues'],
@@ -109,14 +101,14 @@ def test_report_answered_post(
     """
     tok = basic_server_setup["token"]
 
-    post_id = post_create(tok, "head", "text", [])["post_id"]
-    comment_id = add_comment(tok, post_id, "first")["comment_id"]
-    accept_comment(tok, comment_id)
-    report_post(tok, post_id)
+    post_id = post.create(tok, "head", "text", [])["post_id"]
+    comment_id = comment.create(tok, post_id, "first")["comment_id"]
+    comment.accept(tok, comment_id)
+    post.report(tok, post_id)
 
     # Un-reporting a post sends it back to the answered queue
-    unreport_post(tok, post_id)
-    post_queue_name = post_view(tok, post_id)["queue"]
+    post.unreport(tok, post_id)
+    post_queue_name = post.view(tok, post_id)["queue"]
     assert post_queue_name == consts.ANSWERED_QUEUE
 
     queue_id = get_queue(queue_list(tok)['queues'],
@@ -134,7 +126,7 @@ def test_no_permission_unreport(
     user_token = simple_users["user"]["token"]
     mod_token = simple_users["mod"]["token"]
 
-    post_id = post_create(mod_token, "head", "text", [])["post_id"]
-    report_post(user_token, post_id)
+    post_id = post.create(mod_token, "head", "text", [])["post_id"]
+    post.report(user_token, post_id)
     with pytest.raises(http_errors.Forbidden):
-        unreport_post(user_token, post_id)
+        post.unreport(user_token, post_id)
