@@ -8,19 +8,21 @@ import UserPermissionsView from './components/UserPermissionsView'
 import styled from "@emotion/styled";
 import { theme } from '../theme';
 import GroupPermissionsView from './components/GroupPermissionView'
+import { StyledButton } from './GlobalProps'
 
 
 type Props = {}
 
 const ManageGroupPermissionsPageContainer = styled(Flex) `
   flex-direction: row;
-  height: 90vh;
+  height: 80vh;
+  max-height: 80vh;
   overflow:auto;
 `
 const PermissionGroupsList = styled(Flex) `
   flex-direction: column;
   flex-basis: 25%;
-  height: 90vh;
+  height: 80vh;
   overflow: auto;
   align-items: center;
   border-right: solid;
@@ -32,13 +34,13 @@ const PermissionGroupsList = styled(Flex) `
 
 const PermissionGroupView = styled(Flex) `
    flex-basis: 75%;
-   height: 90vh;
+   height: 80vh;
    overflow:auto;
    margin-left: 1rem;
    margin-right: 1rem;
    flex-direction: column;
 `
-const CreateGroupButton = styled(Button) `
+const CreateGroupButton = styled(StyledButton) `
     height: 3rem;
     width: 16rem;
     margin: 0.2rem;

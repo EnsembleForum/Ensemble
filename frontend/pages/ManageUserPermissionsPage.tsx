@@ -12,13 +12,14 @@ interface Props { }
 
 const ManageUserPermissionsPageContainer = styled(Flex)`
   flex-direction: row;
-  height: 90vh;
+  height: 80vh;
+  max-height: 80vh;
   overflow:auto;
 `
 const UsersList = styled(Flex)`
   flex-direction: column;
   flex-basis: 25%;
-  height: 90vh;
+  height: 80vh;
   overflow: auto;
   align-items: center;
   border-right: solid;
@@ -30,7 +31,7 @@ const UsersList = styled(Flex)`
 `
 const PermissionUserView = styled(Flex)`
    flex-basis: 75%;
-   height: 90vh;
+   height: 80vh;
    overflow:auto;
    margin-left: 1rem;
    margin-right: 1rem;

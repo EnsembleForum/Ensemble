@@ -5,7 +5,7 @@ import { permissionGroup, userPermissionsDetails } from '../../interfaces'
 type Props = {
   groupId: number|null,
   permissionGroups: permissionGroup[],
-  onPermissionGroupChange: (groupId: number) => void
+  onPermissionGroupChange: (groupId: number) => void,
   shouldDisable : boolean,
 }
 

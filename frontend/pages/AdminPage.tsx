@@ -4,7 +4,6 @@ import { Prettify } from "../global_functions";
 import { pageList } from "../interfaces";
 import { theme } from "../theme";
 import Navbar, { StyledNavbar } from "./components/Navbar";
-import InitPage from "./InitPage";
 import ManagePermissionsPage from "./ManagePermissionsPage";
 import UsersRegisterPage from "./UsersRegisterPage";
 
@@ -34,6 +33,10 @@ const AdminPanel = styled(StyledNavbar)`
     }
   }
 `
+const Max = styled.div`
+  max-height: 100vh;
+  overflow: hidden;
+`
 
 const AdminPage = (props: Props) => {
   const [currPage, setCurrPage] = React.useState<string>(props.page);
@@ -43,7 +46,7 @@ const AdminPage = (props: Props) => {
     "manage_user_permissions": <ManagePermissionsPage/>
   };
   return (
-    <>
+    <Max>
       <Navbar page="admin" />
       <AdminPanel>
         {Object.keys(pages).map((key) => {
@@ -55,7 +58,7 @@ const AdminPage = (props: Props) => {
         })}
       </AdminPanel>
       {pages[currPage]}
-    </>
+    </Max>
   )
 };
 

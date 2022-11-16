@@ -103,7 +103,7 @@ function PassThrough() {
         ) : (
           <>
           <Route path="/" element={<Navigate to="/browse" />}></Route>
-          <Route path='/admin/init' element={<Navigate to="/login" />} />
+          <Route path='/admin/init' element={ getLoggedIn() ? <Navigate to="/browse" /> : <Navigate to="/login" />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterPage />} />
           <Route path='/password_reset' element={<PasswordResetPage />} />
