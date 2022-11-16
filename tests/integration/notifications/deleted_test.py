@@ -56,7 +56,7 @@ def test_deleted_comment_notification(
         'This is a comment',
     )['comment_id']
 
-    browse.comment_delete(  # type: ignore
+    browse.comment.delete(  # type: ignore
         simple_users['mod']['token'],
         comment,
     )
@@ -88,7 +88,7 @@ def test_self_deleted_comment_no_notification(
         'This is a comment',
     )['comment_id']
 
-    browse.comment_delete(  # type: ignore
+    browse.comment.delete(  # type: ignore
         basic_server_setup['token'],
         comment,
     )
@@ -114,7 +114,7 @@ def test_deleted_reply_notification(
         'This is a reply',
     )['reply_id']
 
-    browse.reply_delete(  # type: ignore
+    browse.reply.delete(  # type: ignore
         simple_users['mod']['token'],
         reply,
     )
@@ -152,7 +152,7 @@ def test_self_deleted_reply_no_notification(
         'This is a reply',
     )['reply_id']
 
-    browse.reply_delete(  # type: ignore
+    browse.reply.delete(  # type: ignore
         basic_server_setup['token'],
         reply,
     )
