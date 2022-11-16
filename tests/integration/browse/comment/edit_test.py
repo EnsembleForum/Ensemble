@@ -10,11 +10,7 @@ Tests for comment_view/edit
 """
 import pytest
 from backend.util import http_errors
-from ensemble_request.browse import (
-    comment_edit,
-    get_comment,
-    add_comment
-)
+from ensemble_request.browse import comment
 from tests.integration.conftest import (
     IBasicServerSetup,
     ISimpleUsers,
@@ -32,9 +28,9 @@ def test_edit_other_user_post(
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(token2, post_id, "hello")["comment_id"]
+    comment_id = comment.create(token2, post_id, "hello")["comment_id"]
     with pytest.raises(http_errors.Forbidden):
-        comment_edit(token1, comment_id, "new comment")
+        comment.edit(token1, comment_id, "new comment")
 
 
 def test_edit_empty_params(
@@ -46,9 +42,9 @@ def test_edit_empty_params(
     """
     token = basic_server_setup["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(token, post_id, "hello")["comment_id"]
+    comment_id = comment.create(token, post_id, "hello")["comment_id"]
     with pytest.raises(http_errors.BadRequest):
-        comment_edit(token, comment_id, "")
+        comment.edit(token, comment_id, "")
 
 
 @pytest.mark.core
@@ -62,11 +58,11 @@ def test_edit_success(
     token = basic_server_setup["token"]
     post_id = make_posts["post1_id"]
     old_comment = "hello"
-    comment_id = add_comment(token, post_id, old_comment)["comment_id"]
+    comment_id = comment.create(token, post_id, old_comment)["comment_id"]
     new_comment = "new_comment"
 
-    assert get_comment(token, comment_id)["text"] == old_comment
+    assert comment.view(token, comment_id)["text"] == old_comment
 
-    comment_edit(token, comment_id, new_comment)
+    comment.edit(token, comment_id, new_comment)
 
-    assert get_comment(token, comment_id)["text"] == new_comment
+    assert comment.view(token, comment_id)["text"] == new_comment
