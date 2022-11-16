@@ -3,13 +3,13 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ApiFetch, getCurrentUser, getLoggedIn, getPermission, setCurrentUser } from "../../App";
 import { Prettify } from "../../global_functions";
-import { APIcall } from "../../interfaces";
+import { APIcall, notifications } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props {
-  page: "taskboard" | "browse" | "admin" | "login" | "profile";
+  page: "taskboard" | "browse" | "admin" | "login" | "profile" | "notifications";
 }
 
 export const StyledNavbar = styled.div`
@@ -54,11 +54,32 @@ const NotifsButton = styled(StyledButton)`
   background-color: inherit;
   padding: 3px 10px 3px 10px;
   font-size: 26px;
+  margin-left: auto;
 `
 const ActiveNotifsButton = styled(NotifsButton)`
   background-color: ${theme.colors?.primary};
   padding: 3px 10px 3px 10px;
   font-size: 26px;
+`
+
+
+const StyledNotifList = styled.div`
+  position: absolute;
+  width: 100px;
+  z-index: 100;
+  padding: 10px;
+  border-top: 1000px;
+  border-radius: 10px;
+  overflow: hidden;
+  padding-top: 10px;
+  * {
+    margin-bottom: 10px;
+  }
+  background: ${theme.colors?.highlight};
+`
+const NotifItem = styled.div`
+  width: 300px;
+  display: flex;
 `
 
 
@@ -68,7 +89,17 @@ const Navbar = (props: Props) => {
   const [toggleNotifs, setToggleNotifs] = React.useState(false);
 
   function getNotifications() {
-
+    setToggleNotifs(!toggleNotifs);
+    if (toggleNotifs) {
+      const call: APIcall = {
+        method: "GET",
+        path: "notifications/list",
+      }
+      ApiFetch(call).then((data) => {
+        const notifications = data as notifications;
+        console.log(notifications)
+      })
+    }
   }
 
 
@@ -89,9 +120,17 @@ const Navbar = (props: Props) => {
   const login = (<StyledButton onClick={(e) => {navigate("/login")}}>Login</StyledButton>);
 
   const notifications = (
-    <NotifsButton onClick={(e) => {}}>🔔</NotifsButton>
+    <NotifItem>
+    <NotifsButton style={toggleNotifs ? {filter: "brightness(90%)"}:{}} onClick={(e) => {getNotifications()}}>🔔</NotifsButton>
+    { toggleNotifs ? 
+    <StyledNotifList>LOL</StyledNotifList>
+    
+    :
+    <></>
+    }
+    
+    </NotifItem>
   );
-
   let pages = [
     "browse"
   ];
@@ -102,6 +141,7 @@ const Navbar = (props: Props) => {
     pages.push("admin")
   }
   pages.push("profile")
+  pages.push("notifications")
   return (
     <StyledNavbar as="nav">
       <h1>ENSEMBLE</h1>
