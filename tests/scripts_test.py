@@ -71,3 +71,15 @@ def test_routes():
     assert p.exists()
     assert p.is_dir()
     shutil.rmtree(p)
+
+
+@pytest.mark.core
+def test_populate():
+    """
+    Does the routes script generate routes for the API?
+    """
+    code = subprocess.Popen(
+        [sys.executable, 'scripts/populate.py', 'route_docs'],
+    ).wait()
+    assert code == 0
+    ensemble_request.auth.login("user5", "user5")
