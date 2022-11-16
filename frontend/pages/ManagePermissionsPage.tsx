@@ -36,14 +36,15 @@ border-radius: 0.5rem;
 const PermissionsPageContainer = styled(Flex) `
   flex-direction: row;
   width: 100vw;
-  overflow: auto;
-  height: 100rem;
+  height: 90vh;
+  overflow:auto;
 `
 
 const SideBar = styled(Flex) `
   flex-direction: column; 
   flex-basis: 18%; 
-  height: 100rem;
+  height: 90vh;
+  overflow: auto;
   align-items: center; 
   background-color: ${theme.colors?.muted};
   border-right: solid;
@@ -55,7 +56,8 @@ const SideBar = styled(Flex) `
 const PermissionView = styled(Flex) `
 flex-direction: column;
 flex-basis: 83%;
-height: 100rem;
+height: 90vh;
+overflow: auto;
 `
 
 const ManagePermissionsPage = (props: Props) => {

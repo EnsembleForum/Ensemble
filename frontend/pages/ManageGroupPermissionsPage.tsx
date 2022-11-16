@@ -14,12 +14,14 @@ type Props = {}
 
 const ManageGroupPermissionsPageContainer = styled(Flex) `
   flex-direction: row;
-  height: 100rem;
+  height: 90vh;
+  overflow:auto;
 `
 const PermissionGroupsList = styled(Flex) `
   flex-direction: column;
   flex-basis: 25%;
-  height: 100rem;
+  height: 90vh;
+  overflow: auto;
   align-items: center;
   border-right: solid;
   border-width:0.1rem;
@@ -30,7 +32,8 @@ const PermissionGroupsList = styled(Flex) `
 
 const PermissionGroupView = styled(Flex) `
    flex-basis: 75%;
-   height: 100rem;
+   height: 90vh;
+   overflow:auto;
    margin-left: 1rem;
    margin-right: 1rem;
    flex-direction: column;
