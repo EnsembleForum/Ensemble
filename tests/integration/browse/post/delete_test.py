@@ -1,25 +1,19 @@
 """
 # Tests / Integration / Browse / Post View / Self Delete
 
-Tests for post_view/self_delete
+Tests for post.view/self_delete
 
 * Fails when non_OP user tries to delete another user's post
 * Mods can delete posts they did not create
-* OP can see his own deleted post in post_view and post_list
-* Mods can see deleted posts in post_view and post_list
-* Non-OP users cannot see deleted posts in post_view and post_list
+* OP can see his own deleted post in post.view and post.list
+* Mods can see deleted posts in post.view and post.list
+* Non-OP users cannot see deleted posts in post.view and post.list
 * Deleted posts are sent to the deleted queue
 * Cannot edit deleted post
 """
 import pytest
 from backend.util import http_errors
-from ensemble_request.browse import (
-    post_delete,
-    post_list,
-    post_view,
-    post_create,
-    post_edit
-)
+from ensemble_request.browse import post
 from tests.integration.conftest import (
     ISimpleUsers,
     IMakePosts,
@@ -41,7 +35,7 @@ def test_no_permission(
     """
     token = simple_users["user"]["token"]
     with pytest.raises(http_errors.Forbidden):
-        post_delete(token, make_posts["post1_id"])
+        post.delete(token, make_posts["post1_id"])
 
 
 @pytest.mark.core
@@ -54,10 +48,10 @@ def test_mod_delete_other_user_post(
     """
     post_id = make_posts["post1_id"]
     token = simple_users["mod"]["token"]
-    post_delete(token, post_id)
+    post.delete(token, post_id)
 
     # Deleted post is sent to the deleted queue
-    post_queue_name = post_view(token, post_id)["queue"]
+    post_queue_name = post.view(token, post_id)["queue"]
     assert post_queue_name == "Deleted"
 
     queue_id = get_queue(queue_list(token)['queues'],
@@ -74,15 +68,15 @@ def test_OP_delete(
     """
     mod_token = simple_users["mod"]["token"]
     user_token = simple_users["user"]["token"]
-    post_id = post_create(user_token, "heading", "text", [])["post_id"]
-    post_delete(user_token, post_id)
+    post_id = post.create(user_token, "heading", "text", [])["post_id"]
+    post.delete(user_token, post_id)
 
     # Deleted post is sent to the deleted queue
-    post_info = post_view(mod_token, post_id)
+    post_info = post.view(mod_token, post_id)
     post_queue_name = post_info["queue"]
     assert post_queue_name == "Deleted"
     assert post_info["deleted"]
-    assert len(post_list(user_token)["posts"]) == 1
+    assert len(post.list(user_token)["posts"]) == 1
 
     queue_id = get_queue(queue_list(mod_token)['queues'],
                          "Deleted")["queue_id"]
@@ -95,16 +89,16 @@ def test_delete_post_list_permissions(
     make_posts: IMakePosts,
 ):
     """
-    Mods can see deleted posts in post_list
-    Non-OP users cannot see deleted posts in post_list
+    Mods can see deleted posts in post.list
+    Non-OP users cannot see deleted posts in post.list
     """
     mod_token = simple_users["mod"]["token"]
     user_token = simple_users["user"]["token"]
 
-    post_delete(mod_token, make_posts["post1_id"])
+    post.delete(mod_token, make_posts["post1_id"])
 
-    assert len(post_list(mod_token)["posts"]) == 2
-    assert len(post_list(user_token)["posts"]) == 1
+    assert len(post.list(mod_token)["posts"]) == 2
+    assert len(post.list(user_token)["posts"]) == 1
 
 
 def test_delete_post_view_permissions(
@@ -112,17 +106,17 @@ def test_delete_post_view_permissions(
     make_posts: IMakePosts,
 ):
     """
-    Mod can view a deleted post from post_view
-    User cannot view a deleted post from post_view if he is not OP
+    Mod can view a deleted post from post.view
+    User cannot view a deleted post from post.view if he is not OP
     """
     post_id = make_posts["post1_id"]
     mod_token = simple_users["mod"]["token"]
     user_token = simple_users["user"]["token"]
 
-    post_delete(mod_token, post_id)
-    post_view(mod_token, post_id)
+    post.delete(mod_token, post_id)
+    post.view(mod_token, post_id)
     with pytest.raises(http_errors.Forbidden):
-        post_view(user_token, post_id)
+        post.view(user_token, post_id)
 
 
 def test_edit_deleted_post(
@@ -132,7 +126,7 @@ def test_edit_deleted_post(
     Cannot edit deleted post
     """
     user_token = simple_users["user"]["token"]
-    post_id = post_create(user_token, "heading", "text", [])["post_id"]
-    post_delete(user_token, post_id)
+    post_id = post.create(user_token, "heading", "text", [])["post_id"]
+    post.delete(user_token, post_id)
     with pytest.raises(http_errors.BadRequest):
-        post_edit(user_token, post_id, "new", "new", [])
+        post.edit(user_token, post_id, "new", "new", [])

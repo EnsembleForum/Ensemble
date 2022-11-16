@@ -9,13 +9,10 @@ Tests for post view routes
 import pytest
 from datetime import datetime, timedelta
 from typing import cast
-from ..conftest import ISimpleUsers, IMakePosts
+from ...conftest import ISimpleUsers, IMakePosts
 from backend.types.identifiers import PostId
 from backend.util import http_errors
-from ensemble_request.browse import (
-    post_create,
-    post_view,
-)
+from ensemble_request.browse import post
 
 
 def test_invalid_post_id(simple_users: ISimpleUsers, make_posts: IMakePosts):
@@ -28,7 +25,7 @@ def test_invalid_post_id(simple_users: ISimpleUsers, make_posts: IMakePosts):
     )
     invalid_post_id = cast(PostId, invalid_post_id)
     with pytest.raises(http_errors.BadRequest):
-        post_view(token, invalid_post_id)
+        post.view(token, invalid_post_id)
 
 
 @pytest.mark.core
@@ -40,14 +37,14 @@ def test_get_post_success(simple_users: ISimpleUsers):
     heading = "heading"
     text = "text"
     post_time = datetime.now()
-    post_id = post_create(token, "heading", "text", [])["post_id"]
-    post = post_view(token, post_id)
-    assert post["heading"] == heading
-    assert post["text"] == text
-    assert post["comments"] == []
+    post_id = post.create(token, "heading", "text", [])["post_id"]
+    p = post.view(token, post_id)
+    assert p["heading"] == heading
+    assert p["text"] == text
+    assert p["comments"] == []
     assert datetime.fromtimestamp(
-        float(post["timestamp"])) - post_time < timedelta(seconds=5)
-    assert post["tags"] == []
-    assert post["me_too"] == 0
-    assert not post["private"]
-    assert not post["anonymous"]
+        float(p["timestamp"])) - post_time < timedelta(seconds=5)
+    assert p["tags"] == []
+    assert p["me_too"] == 0
+    assert not p["private"]
+    assert not p["anonymous"]
