@@ -7,7 +7,7 @@ from flask import Blueprint
 from .groups import groups
 from .user import user
 from backend.types.permissions import IPermissionList
-from backend.models.permissions import Permission
+from backend.models import Permission
 
 
 permissions = Blueprint('permissions', 'permissions')

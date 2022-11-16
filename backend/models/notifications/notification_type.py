@@ -25,3 +25,6 @@ class NotificationType(Enum):
 
     QueueAdded = 40
     """Post added to a queue you follow"""
+
+    Reported = 50
+    """A post got reported"""

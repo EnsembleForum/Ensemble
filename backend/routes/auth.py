@@ -5,10 +5,7 @@ Authentication routes
 """
 import json
 from flask import Blueprint, request
-from backend.models.user import User
-from backend.models.auth_config import AuthConfig
-from backend.models.token import Token
-from backend.models.permissions import Permission
+from backend.models import User, AuthConfig, Token, Permission
 from backend.util import http_errors
 from backend.util.tokens import uses_token
 from backend.types.auth import IAuthInfo, JWT, IUserPermissions

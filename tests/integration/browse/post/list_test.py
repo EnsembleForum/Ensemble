@@ -9,9 +9,9 @@ Tests for browse routes
 * browse/create fails when heading/text are empty
 """
 import pytest
-from ..conftest import ISimpleUsers
+from ...conftest import ISimpleUsers
 from backend.util import http_errors
-from ensemble_request.browse import post_list, post_create
+from ensemble_request.browse import post
 
 
 def test_empty_post_list(simple_users: ISimpleUsers):
@@ -19,7 +19,7 @@ def test_empty_post_list(simple_users: ISimpleUsers):
     Do we get an empty list when there are no posts in the forum?
     """
     token = simple_users["user"]["token"]
-    posts = post_list(token)
+    posts = post.list(token)
     assert len(posts["posts"]) == 0
 
 
@@ -32,8 +32,8 @@ def test_create_one_post(simple_users: ISimpleUsers):
     heading = "First heading"
     text = "First text"
     tags: list[int] = []
-    post1_id = post_create(token, heading, text, tags)["post_id"]
-    posts = post_list(token)
+    post1_id = post.create(token, heading, text, tags)["post_id"]
+    posts = post.list(token)
 
     assert len(posts["posts"]) == 1
 
@@ -49,10 +49,10 @@ def test_create_multiple_posts(simple_users: ISimpleUsers):
     Can we create multiple posts and get them successfully?
     """
     token = simple_users["user"]["token"]
-    post1_id = post_create(token, "First head", "First text", [])["post_id"]
-    post2_id = post_create(token, "Second head", "Second text", [])["post_id"]
+    post1_id = post.create(token, "First head", "First text", [])["post_id"]
+    post2_id = post.create(token, "Second head", "Second text", [])["post_id"]
 
-    posts = post_list(token)["posts"]
+    posts = post.list(token)["posts"]
 
     assert [post2_id, post1_id] == [p["post_id"] for p in posts]
 
@@ -64,7 +64,7 @@ def test_empty_heading_text(simple_users: ISimpleUsers):
     """
     token = simple_users["user"]["token"]
     with pytest.raises(http_errors.BadRequest):
-        post_create(token, "", "First text", [])
+        post.create(token, "", "First text", [])
 
     with pytest.raises(http_errors.BadRequest):
-        post_create(token, "First heading", "", [])
+        post.create(token, "First heading", "", [])

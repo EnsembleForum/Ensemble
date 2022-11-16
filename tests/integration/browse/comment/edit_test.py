@@ -3,19 +3,14 @@
 
 Tests for comment_view/edit
 
-* Fails when trying to edit another user's reply
+* Fails when trying to edit another user's comment
 * Fails when no new text is provided
     (Should be given old text if heading should be kept unchanged)
 * Succeeds when all inputs are valid
 """
 import pytest
 from backend.util import http_errors
-from ensemble_request.browse import (
-    reply_edit,
-    get_reply,
-    add_comment,
-    add_reply
-)
+from ensemble_request.browse import comment
 from tests.integration.conftest import (
     IBasicServerSetup,
     ISimpleUsers,
@@ -28,16 +23,14 @@ def test_edit_other_user_post(
     make_posts: IMakePosts,
 ):
     """
-    Does editing another person's reply raise a 403 error
+    Does editing another person's comment raise a 403 error
     """
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(token1, post_id, "first")["comment_id"]
-    reply_id = add_reply(token1, comment_id, "helo")["reply_id"]
-
+    comment_id = comment.create(token2, post_id, "hello")["comment_id"]
     with pytest.raises(http_errors.Forbidden):
-        reply_edit(token2, reply_id, "new reply")
+        comment.edit(token1, comment_id, "new comment")
 
 
 def test_edit_empty_params(
@@ -45,14 +38,13 @@ def test_edit_empty_params(
     make_posts: IMakePosts,
 ):
     """
-    Does editing a reply raise a 400 error when text is empty?
+    Does editing a comment raise a 400 error when text is empty?
     """
     token = basic_server_setup["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(token, post_id, "first")["comment_id"]
-    reply_id = add_reply(token, comment_id, "helo")["reply_id"]
+    comment_id = comment.create(token, post_id, "hello")["comment_id"]
     with pytest.raises(http_errors.BadRequest):
-        reply_edit(token, reply_id, "")
+        comment.edit(token, comment_id, "")
 
 
 @pytest.mark.core
@@ -61,17 +53,16 @@ def test_edit_success(
     make_posts: IMakePosts,
 ):
     """
-    Successful edit of one of the replies
+    Successful edit of one of the comments
     """
     token = basic_server_setup["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(token, post_id, "first")["comment_id"]
-    old_reply = "hello"
-    reply_id = add_reply(token, comment_id, old_reply)["reply_id"]
-    new_reply = "new reply"
+    old_comment = "hello"
+    comment_id = comment.create(token, post_id, old_comment)["comment_id"]
+    new_comment = "new_comment"
 
-    assert get_reply(token, reply_id)["text"] == old_reply
+    assert comment.view(token, comment_id)["text"] == old_comment
 
-    reply_edit(token, reply_id, new_reply)
+    comment.edit(token, comment_id, new_comment)
 
-    assert get_reply(token, reply_id)["text"] == new_reply
+    assert comment.view(token, comment_id)["text"] == new_comment

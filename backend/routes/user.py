@@ -6,11 +6,10 @@ Functions relating to users.
 import json
 from typing import Optional
 from flask import Blueprint, request
-from backend.models.permissions import Permission
+from backend.models import Permission, User
 from backend.types.user import IUserProfile
 from backend.types.identifiers import UserId
 from backend.util.tokens import uses_token
-from backend.models.user import User
 
 
 user = Blueprint('user', 'user')

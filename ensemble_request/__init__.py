@@ -31,6 +31,7 @@ from . import (  # noqa: E402
     debug,
     taskboard,
     user,
+    notifications,
 )
 
 __all__ = [
@@ -40,4 +41,5 @@ __all__ = [
     'debug',
     'taskboard',
     'user',
+    'notifications',
 ]

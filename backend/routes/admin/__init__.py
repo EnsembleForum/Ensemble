@@ -9,7 +9,7 @@ from .permissions import permissions
 from .users import users
 from .analytics import analytics
 from .exam_mode import exam_mode
-from backend.models.auth_config import AuthConfig
+from backend.models import AuthConfig
 from backend.types.auth import IAuthInfo
 from backend.types.admin import IIsFirstRun
 from backend.util import setup

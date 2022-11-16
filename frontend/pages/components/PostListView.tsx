@@ -63,7 +63,7 @@ const PostListView = (props: Props) => {
   React.useEffect(()=>{
     const api: APIcall = {
       method: "GET",
-      path: "browse/post_list",
+      path: "browse/post/list",
       params: {"search_term": searchTerm}
     }
     console.log(api);

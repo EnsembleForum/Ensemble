@@ -1,9 +1,7 @@
 from flask import Blueprint
 from backend.types.exam_mode import IExamModeInfo
 from backend.util.tokens import uses_token
-from backend.models.user import User
-from backend.models.exam_mode import ExamMode
-from backend.models.permissions import Permission
+from backend.models import User, ExamMode, Permission
 
 
 exam_mode = Blueprint('exam_mode', 'exam_mode')
