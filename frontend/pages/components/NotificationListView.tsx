@@ -67,25 +67,20 @@ const NotificationsListView = (props: Props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seen]);
   
-  function seenNotification(id : number) {
+  async function seenNotification(id : number) {
     const api: APIcall = {
       method: "PUT",
       path: "notifications/seen",
       body: {notification_id: id, value: true}
     }
-    ApiFetch(api);
+    await ApiFetch(api);
   }
 
   async function clearAll() {
     if (notifications) {
       const unseenNotifs = notifications.filter(each => { return !each.seen });
       for (const notif of unseenNotifs) {
-        const api: APIcall = {
-          method: "PUT",
-          path: "notifications/seen",
-          body: {notification_id: notif.notification_id, value: true}
-        }
-        await ApiFetch(api);
+        seenNotification(notif.notification_id);
       }
       setSeen(!seen);
     }
