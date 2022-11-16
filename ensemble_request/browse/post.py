@@ -306,7 +306,7 @@ def report(
     """
     __put(
         token,
-        f"{__URL}/post/report",
+        f"{__URL}/report",
         {
             "post_id": post_id,
         },
@@ -333,7 +333,7 @@ def unreport(
     """
     __put(
         token,
-        f"{__URL}/post/unreport",
+        f"{__URL}/unreport",
         {
             "post_id": post_id,
         },
