@@ -3,6 +3,7 @@ import React from "react";
 import { Prettify } from "../global_functions";
 import { pageList } from "../interfaces";
 import { theme } from "../theme";
+import AnalyticsPage from "./AnalyticsPage";
 import Navbar, { StyledNavbar } from "./components/Navbar";
 import ManagePermissionsPage from "./ManagePermissionsPage";
 import UsersRegisterPage from "./UsersRegisterPage";
@@ -43,6 +44,7 @@ const AdminPage = (props: Props) => {
   let pages: pageList = {
     //"initialise_forum": <InitPage />,
     "register_users": <UsersRegisterPage />,
+    "analytics": <AnalyticsPage />,
     "manage_user_permissions": <ManagePermissionsPage/>
   };
   return (
