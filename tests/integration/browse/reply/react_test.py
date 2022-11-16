@@ -15,12 +15,7 @@ from tests.integration.conftest import (
     ISimpleUsers,
     IMakePosts,
 )
-from ensemble_request.browse import (
-    reply_react,
-    add_comment,
-    add_reply,
-    get_reply
-)
+from ensemble_request.browse import comment, reply
 
 
 @pytest.mark.core
@@ -34,21 +29,21 @@ def test_react_one_user(
     token = simple_users["user"]["token"]
     token1 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(token, post_id, "first")["comment_id"]
-    reply_id = add_reply(token, comment_id, "helo")["reply_id"]
-    reply = get_reply(token, reply_id)
+    comment_id = comment.create(token, post_id, "first")["comment_id"]
+    reply_id = reply.create(token, comment_id, "helo")["reply_id"]
+    r = reply.view(token, reply_id)
 
-    assert reply["thanks"] == 0
+    assert r["thanks"] == 0
 
-    assert reply_react(token, reply_id)["user_reacted"]
+    assert reply.react(token, reply_id)["user_reacted"]
 
-    reply = get_reply(token, reply_id)
-    assert reply["thanks"] == 1
-    assert reply["user_reacted"]
+    r = reply.view(token, reply_id)
+    assert r["thanks"] == 1
+    assert r["user_reacted"]
 
-    reply = get_reply(token1, reply_id)
-    assert reply["thanks"] == 1
-    assert not reply["user_reacted"]
+    r = reply.view(token1, reply_id)
+    assert r["thanks"] == 1
+    assert not r["user_reacted"]
 
 
 def test_react_multiple_users(
@@ -61,28 +56,28 @@ def test_react_multiple_users(
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(token1, post_id, "first")["comment_id"]
-    reply_id = add_reply(token1, comment_id, "helo")["reply_id"]
+    comment_id = comment.create(token1, post_id, "first")["comment_id"]
+    reply_id = reply.create(token1, comment_id, "helo")["reply_id"]
 
-    reply = get_reply(token1, reply_id)
-    reply = get_reply(token1, reply_id)
-    assert reply["thanks"] == 0
+    r = reply.view(token1, reply_id)
+    r = reply.view(token1, reply_id)
+    assert r["thanks"] == 0
 
-    assert reply_react(token1, reply_id)["user_reacted"]
-    reply = get_reply(token1, reply_id)
-    assert reply["thanks"] == 1
+    assert reply.react(token1, reply_id)["user_reacted"]
+    r = reply.view(token1, reply_id)
+    assert r["thanks"] == 1
 
-    reply_react(token2, reply_id)
-    reply = get_reply(token1, reply_id)
-    assert reply["thanks"] == 2
+    reply.react(token2, reply_id)
+    r = reply.view(token1, reply_id)
+    assert r["thanks"] == 2
 
-    assert not reply_react(token1, reply_id)["user_reacted"]
-    reply = get_reply(token1, reply_id)
-    assert reply["thanks"] == 1
+    assert not reply.react(token1, reply_id)["user_reacted"]
+    r = reply.view(token1, reply_id)
+    assert r["thanks"] == 1
 
-    reply_react(token2, reply_id)
-    reply = get_reply(token1, reply_id)
-    assert reply["thanks"] == 0
+    reply.react(token2, reply_id)
+    r = reply.view(token1, reply_id)
+    assert r["thanks"] == 0
 
 
 def test_one_user_multiple_replies(
@@ -95,23 +90,23 @@ def test_one_user_multiple_replies(
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(token1, post_id, "comment")["comment_id"]
-    reply_id1 = add_reply(token1, comment_id, "first")["reply_id"]
-    reply_id2 = add_reply(token1, comment_id, "second")["reply_id"]
+    comment_id = comment.create(token1, post_id, "comment")["comment_id"]
+    reply_id1 = reply.create(token1, comment_id, "first")["reply_id"]
+    reply_id2 = reply.create(token1, comment_id, "second")["reply_id"]
 
-    reply = get_reply(token2, reply_id1)
-    assert reply["thanks"] == 0
-    reply = get_reply(token2, reply_id2)
-    assert reply["thanks"] == 0
+    r = reply.view(token2, reply_id1)
+    assert r["thanks"] == 0
+    r = reply.view(token2, reply_id2)
+    assert r["thanks"] == 0
 
-    reply_react(token2, reply_id1)
-    reply_react(token2, reply_id2)
+    reply.react(token2, reply_id1)
+    reply.react(token2, reply_id2)
 
-    reply = get_reply(token2, reply_id1)
-    assert reply["thanks"] == 1
+    r = reply.view(token2, reply_id1)
+    assert r["thanks"] == 1
 
-    reply = get_reply(token2, reply_id2)
-    assert reply["thanks"] == 1
+    r = reply.view(token2, reply_id2)
+    assert r["thanks"] == 1
 
 
 def test_invalid_comment_id(simple_users: ISimpleUsers):
@@ -121,4 +116,4 @@ def test_invalid_comment_id(simple_users: ISimpleUsers):
     token = simple_users["user"]["token"]
     invalid_reply_id = ReplyId(1)
     with pytest.raises(http_errors.BadRequest):
-        reply_react(token, invalid_reply_id)
+        reply.react(token, invalid_reply_id)
