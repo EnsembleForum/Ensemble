@@ -21,6 +21,7 @@ from tests.integration.conftest import (
     IMakeQueues,
     IMakePosts
 )
+from resources import consts
 
 
 def test_no_permission(
@@ -106,7 +107,7 @@ def test_add_post_from_view_only_queue(
     token = simple_users["mod"]["token"]
     post_id = make_posts["post1_id"]
     queues = queue_list(token)['queues']
-    main_queue_id = get_queue(queues, "Main")["queue_id"]
+    main_queue_id = get_queue(queues, consts.MAIN_QUEUE)["queue_id"]
 
     post.close(token, post_id)
 

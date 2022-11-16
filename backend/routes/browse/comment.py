@@ -5,7 +5,7 @@ Comment View routes
 """
 import json
 from flask import Blueprint, request
-from backend.models import Permission, Post, Comment, User
+from backend.models import Permission, Post, Comment, User, Queue
 from backend.models.notifications import (
     NotificationCommented,
     NotificationAccepted,
@@ -86,6 +86,11 @@ def delete(user: User, *_) -> dict:
             comment.author,
             comment,
         )
+
+    if comment == comment.parent.answered:
+        comment.parent.answered = None
+        if comment.parent.queue == Queue.get_answered_queue():
+            comment.parent.queue = Queue.get_main_queue()
 
     comment.delete()
     return {}
