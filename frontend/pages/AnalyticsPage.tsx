@@ -144,7 +144,7 @@ const AnalyticsPage = (props: Props) => {
     );
   } else {
     getAnalytics();
-    return <Layout>Loading...</Layout>
+    return <Layout style={{padding: "30px"}}>Loading...</Layout>
   }
   
 };

@@ -137,7 +137,7 @@ def test_comment_order(
     all_users: IAllUsers,
 ):
     """
-    Are comments sorted by accepted first, then by newest to oldest
+    Are comments sorted by accepted first, then by oldest to newest
     """
     user_token1 = all_users["users"][0]["token"]
     user_token2 = all_users["users"][1]["token"]
@@ -156,7 +156,7 @@ def test_comment_order(
 
     comments = browse.post.view(user_token1, post_id)["comments"]
 
-    assert comments == [comment_id2, comment_id4, comment_id3, comment_id1]
+    assert comments == [comment_id2, comment_id1, comment_id3, comment_id4]
 
 
 def test_post_view_comments_order(
@@ -165,7 +165,7 @@ def test_post_view_comments_order(
 ):
     """
     Are comments of a post sorted correctly by
-    accepted -> thanks -> newest to oldest?
+    accepted -> thanks -> oldest to newest?
     """
     token1 = simple_users["user"]["token"]
     token2 = simple_users["mod"]["token"]
@@ -195,8 +195,8 @@ def test_post_view_comments_order(
         comment_ids[2],
         comment_ids[1],
         comment_ids[0],
-        comment_ids[4],
         comment_ids[3],
+        comment_ids[4],
     ]
 
     assert comments == correct_order

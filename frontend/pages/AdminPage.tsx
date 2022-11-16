@@ -1,14 +1,13 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import React from "react";
 import { Prettify } from "../global_functions";
 import { pageList } from "../interfaces";
 import { theme } from "../theme";
 import AnalyticsPage from "./AnalyticsPage";
 import Navbar, { StyledNavbar } from "./components/Navbar";
-import InitPage from "./InitPage";
-import RegisterPage from "./RegisterPage";
-import TaskboardPage from "./TaskboardPage";
+import ManagePermissionsPage from "./ManagePermissionsPage";
 import UsersRegisterPage from "./UsersRegisterPage";
+
 
 interface Props {
   page: "initialise_forum" | "register_users";
@@ -35,6 +34,10 @@ const AdminPanel = styled(StyledNavbar)`
     }
   }
 `
+const Max = styled.div`
+  max-height: 100vh;
+  overflow: hidden;
+`
 
 const AdminPage = (props: Props) => {
   const [currPage, setCurrPage] = React.useState<string>(props.page);
@@ -42,9 +45,10 @@ const AdminPage = (props: Props) => {
     //"initialise_forum": <InitPage />,
     "register_users": <UsersRegisterPage />,
     "analytics": <AnalyticsPage />,
+    "manage_user_permissions": <ManagePermissionsPage/>
   };
   return (
-    <>
+    <Max>
       <Navbar page="admin" />
       <AdminPanel>
         {Object.keys(pages).map((key) => {
@@ -56,7 +60,7 @@ const AdminPage = (props: Props) => {
         })}
       </AdminPanel>
       {pages[currPage]}
-    </>
+    </Max>
   )
 };
 

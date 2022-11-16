@@ -34,6 +34,11 @@ def test_follow_queue(
         basic_server_setup['token'],
         default_queues['main'],
     )['following']
+    # Also make sure we're not following other queues we're not supposed to be
+    assert not taskboard.queue_post_list(
+        basic_server_setup['token'],
+        default_queues['answered'],
+    )['following']
 
 
 def test_unfollow_queue(
