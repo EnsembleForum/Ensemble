@@ -6,6 +6,7 @@ import { theme } from "../theme";
 import AnalyticsPage from "./AnalyticsPage";
 import Navbar, { StyledNavbar } from "./components/Navbar";
 import ManagePermissionsPage from "./ManagePermissionsPage";
+import ManageTagsPage from "./ManageTagsPage";
 import UsersRegisterPage from "./UsersRegisterPage";
 
 
@@ -45,7 +46,8 @@ const AdminPage = (props: Props) => {
     //"initialise_forum": <InitPage />,
     "register_users": <UsersRegisterPage />,
     "analytics": <AnalyticsPage />,
-    "manage_user_permissions": <ManagePermissionsPage/>
+    "manage_user_permissions": <ManagePermissionsPage/>,
+    "manage_tags": <ManageTagsPage/>,
   };
   return (
     <Max>
