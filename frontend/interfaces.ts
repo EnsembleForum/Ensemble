@@ -144,3 +144,19 @@ export interface queueList {
 export interface queueListPosts {
   queue_name: string, queue_id: number, view_only: boolean, posts: any[]
 }
+
+export interface notification {
+  notification_id: number;
+  seen: boolean;
+  user_from?: number;
+  heading: string,
+  body: string,
+  post: number,
+  comment?: number,
+  reply?: number,
+  queue?: number,
+}
+
+export interface notifications {
+  notifications: notification[]
+}

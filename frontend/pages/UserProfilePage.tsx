@@ -145,6 +145,7 @@ const UserProfilePage = (props: Props) => {
                           const copy = {...toggle};
                           copy[key] = false;
                           setToggle(copy);
+                          setUpdate(!update)
                         }}>X</CloseButton>
                       </Edit>
                     </>
