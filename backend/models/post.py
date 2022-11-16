@@ -286,7 +286,7 @@ class Post:
         * list[Tag]: list of tags
         """
         tags = [
-            Tag(t["id"])
+            Tag(t["tag"])
             for t in
             TPostTags.select().where(
                 TPostTags.post == self.id
@@ -296,10 +296,7 @@ class Post:
 
     @tags.setter
     def tags(self, new_tags: list[Tag]):
-        for t in self.tags:
-            TPostTags.delete().where(TPostTags.id == t.id, TPostTags.post
-                                     == self.id).run_sync()
-
+        TPostTags.delete().where(TPostTags.post == self.id).run_sync()
         for t in new_tags:
             TPostTags(
                 {
