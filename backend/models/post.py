@@ -156,13 +156,13 @@ class Post:
             Comment(c["id"])
             for c in TComment.select()
             .where(TComment.parent == self.__id)
-            .order_by(TComment.id, ascending=False)
+            .order_by(TComment.id)
             .run_sync()
         ]
 
         return sorted(
             comments,
-            key=lambda x: (not x.accepted, -x.thanks, -x.id)
+            key=lambda x: (not x.accepted, -x.thanks, x.id)
         )
 
     def delete(self):
