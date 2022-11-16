@@ -14,6 +14,7 @@ __all__ = [
     'user',
     'taskboard',
     'notifications',
+    'tags',
 ]
 
 from .debug import debug
@@ -23,3 +24,4 @@ from .browse import browse
 from .user import user
 from .taskboard import taskboard
 from .notifications import notifications
+from .tags import tags

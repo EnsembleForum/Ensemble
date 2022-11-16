@@ -15,6 +15,7 @@ from .analytics import Analytics
 from .notifications import Notification
 from .exam_mode import ExamMode
 from .queue import Queue
+from .tag import Tag
 
 
 # Initialise the database
@@ -38,4 +39,5 @@ __all__ = [
     'Notification',
     'ExamMode',
     'Queue',
+    'Tag',
 ]
