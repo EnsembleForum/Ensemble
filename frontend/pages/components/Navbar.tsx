@@ -3,13 +3,13 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ApiFetch, getCurrentUser, getLoggedIn, getPermission, setCurrentUser } from "../../App";
 import { Prettify } from "../../global_functions";
-import { APIcall } from "../../interfaces";
+import { APIcall, notification, notifications } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props {
-  page: "taskboard" | "browse" | "admin" | "login" | "profile";
+  page: "taskboard" | "browse" | "admin" | "login" | "profile" | "notifications";
 }
 
 export const StyledNavbar = styled.div`
@@ -29,6 +29,7 @@ export const StyledNavbar = styled.div`
     min-width: 60px;
     display: flex;
     justify-content: center;
+    align-content: center;
     font-weight: 400;
     &:hover {
       cursor: pointer;
@@ -50,9 +51,74 @@ export const StyledNavbar = styled.div`
 
 `;
 
+const NotifsButton = styled(StyledButton)`
+  background-color: inherit;
+  padding: 3px 10px 3px 10px;
+  font-size: 26px;
+  margin-left: auto;
+`
+const ActiveNotifsButton = styled(NotifsButton)`
+  background-color: ${theme.colors?.primary};
+  padding: 3px 10px 3px 10px;
+  font-size: 26px;
+`
+
+
+const StyledNotifList = styled.div`
+  position: absolute;
+  width: 100px;
+  z-index: 100;
+  padding: 10px;
+  border-top: 1000px;
+  border-radius: 10px;
+  overflow: hidden;
+  padding-top: 10px;
+  * {
+    margin-bottom: 10px;
+  }
+  background: ${theme.colors?.highlight};
+`
+const NotifItem = styled.div`
+  width: 320px;
+  display: flex;
+`
+const NumNotifs = styled.span`
+  color: white;
+  border-radius: 10px;
+  padding: 2px;
+  margin: 0px;
+  margin-left: 10px;
+  background-color: ${theme.colors?.primary}; 
+`
+
+const ActiveNotif = styled.a`
+  background-color: ${theme.colors?.primary}; 
+`
+
+
 // Exporting our example component
 const Navbar = (props: Props) => {
   const navigate = useNavigate();
+  const [numNotifs, setNumNotifs] = React.useState<number>(0);
+  const [update, setUpdate] = React.useState<boolean>(false);
+
+  React.useEffect(()=>{
+    if (getLoggedIn()) {
+      const api: APIcall = {
+        method: "GET",
+        path: "notifications/list",
+      }
+      ApiFetch(api)
+        .then((data) => {
+          const notifications = data as {notifications: notification[]};
+          const newNumNotifs = notifications.notifications.filter(each => { return !each.seen }).length;   
+          setNumNotifs(newNumNotifs);
+          setTimeout(() => {setUpdate(!update)}, 5000);
+        });
+    }
+  }, [update]);
+
+
   const logout = (
   <StyledButton onClick={(e) => {
     const api: APIcall = {
@@ -68,7 +134,6 @@ const Navbar = (props: Props) => {
     });
   }}>Logout</StyledButton>);
   const login = (<StyledButton onClick={(e) => {navigate("/login")}}>Login</StyledButton>);
-
   let pages = [
     "browse"
   ];
@@ -87,10 +152,26 @@ const Navbar = (props: Props) => {
         return (
           // eslint-disable-next-line jsx-a11y/anchor-is-valid
           <a key={page} style={(page === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} onClick={() => {
-            navigate("/" + page)
+            navigate("/" + page);
           }}>{Prettify(page)}</a>) 
       }) : <></>
       }
+     { /* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+     { getLoggedIn() ? (numNotifs ? 
+      <ActiveNotif 
+        style={("notifications" === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} 
+        onClick={() => { navigate("/notifications")}}
+      >
+      Notifications: {numNotifs}
+      </ActiveNotif> :
+      <>
+      { /* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+      <a 
+        style={("notifications" === props.page) ? { filter: "brightness(85%)" } : { filter: "brightness(100%)" }} 
+        onClick={() => { navigate("/notifications")}}
+      >Notifications</a>
+      </>) : <></>
+     } 
       <span></span>
       {getLoggedIn() ? logout : login }
     </StyledNavbar>
