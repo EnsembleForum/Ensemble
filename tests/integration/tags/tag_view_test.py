@@ -6,12 +6,11 @@ Tests for tag view routes
 """
 import pytest
 from typing import cast
-from ..conftest import ISimpleUsers
+from tests.integration.conftest import ISimpleUsers
 from backend.types.tag import ITagId
 from backend.util import http_errors
-from ensemble_request.browse import (
-    post_create,
-    post_view,
+from ensemble_request.browse import post
+from ensemble_request.tags import (
     get_tag,
     create_tag,
     delete_tag,
@@ -76,7 +75,7 @@ def test_add_tag_to_post_succes(
     token = simple_users["admin"]["token"]
     tag1_id = create_tag(token, "tag1")["tag_id"]
     tag2_id = create_tag(token, "tag2")["tag_id"]
-    post_id = post_create(token, "heading", "text", [])["post_id"]
+    post_id = post.create(token, "heading", "text", [])["post_id"]
 
     assert add_tag_to_post(token, post_id, tag1_id) == {
         "tag_id": 1
@@ -93,12 +92,12 @@ def test_remove_tag_from_post(
     tag1_id = create_tag(token, "tag1")["tag_id"]
     tag2_id = create_tag(token, "tag2")["tag_id"]
     tag3_id = create_tag(token, "tag2")["tag_id"]
-    post_id = post_create(token, "heading", "text", [])["post_id"]
+    post_id = post.create(token, "heading", "text", [])["post_id"]
 
     add_tag_to_post(token, post_id, tag1_id)
     add_tag_to_post(token, post_id, tag2_id)
     add_tag_to_post(token, post_id, tag3_id)
     remove_tag_from_post(token, post_id, tag3_id)
-    post = post_view(token, post_id)
+    post_tags = post.view(token, post_id)["tags"]
 
-    assert post["tags"] == [1, 2]
+    assert post_tags == [1, 2]

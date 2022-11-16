@@ -13,10 +13,10 @@ from backend.types.identifiers import TagId, PostId
 from backend.types.tag import ITagBasicInfo, ITagId
 from backend.util.tokens import uses_token
 
-tags_view = Blueprint("tags_view", "tags_view")
+tags = Blueprint("tags", "tags")
 
 
-@tags_view.get("")
+@tags.get("get_tag")
 @uses_token
 def get_tag(*_) -> ITagBasicInfo:
     tag_id = TagId(request.args["tag_id"])
@@ -24,7 +24,7 @@ def get_tag(*_) -> ITagBasicInfo:
     return tag.basic_info()
 
 
-@tags_view.post("/new_tag")
+@tags.post("/new_tag")
 @uses_token
 def create_tag(user: User, *_) -> ITagId:
     """
@@ -44,7 +44,7 @@ def create_tag(user: User, *_) -> ITagId:
     return {"tag_id": tag_id}
 
 
-@tags_view.delete("/delete_tag")
+@tags.delete("/delete_tag")
 @uses_token
 def delete_tag(user: User, *_) -> dict:
     """
@@ -64,7 +64,7 @@ def delete_tag(user: User, *_) -> dict:
     return {}
 
 
-@tags_view.post("/add_tag_to_post")
+@tags.post("/add_tag_to_post")
 @uses_token
 def add_tag_to_post(*_) -> ITagId:
     """
@@ -86,7 +86,7 @@ def add_tag_to_post(*_) -> ITagId:
     return {"tag_id": tag_id}
 
 
-@tags_view.delete("/remove_tag_from_post")
+@tags.delete("/remove_tag_from_post")
 @uses_token
 def remove_tag_from_post(*_) -> dict:
     """
