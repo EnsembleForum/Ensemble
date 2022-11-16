@@ -32,6 +32,7 @@ def queue_list(token: JWT) -> IQueueList:
             * `queue_name` (`str`): the name of the queue
             * `queue_id` (`int`): ID of the queue
             * `view_only` (`bool`): whether this queue is view only
+            * `following` (`bool`): whether the user follows this queue
     """
     return cast(
         IQueueList,
@@ -144,6 +145,7 @@ def queue_post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     * `queue_name` (`str`): name of the queue
     * `posts`: (`list[int]`): list of post IDs in this queue
     * `view_only` (`bool`): whether this queue is view only
+    * `following` (`bool`): whether the user follows this queue
     """
     return cast(
         IQueueFullInfo,
