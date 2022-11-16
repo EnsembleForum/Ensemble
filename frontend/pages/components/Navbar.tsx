@@ -103,18 +103,19 @@ const Navbar = (props: Props) => {
   const [update, setUpdate] = React.useState<boolean>(false);
 
   React.useEffect(()=>{
-    console.log("cool beans")
-    const api: APIcall = {
-      method: "GET",
-      path: "notifications/list",
+    if (getLoggedIn()) {
+      const api: APIcall = {
+        method: "GET",
+        path: "notifications/list",
+      }
+      ApiFetch(api)
+        .then((data) => {
+          const notifications = data as {notifications: notification[]};
+          const newNumNotifs = notifications.notifications.filter(each => { return !each.seen }).length;   
+          setNumNotifs(newNumNotifs);
+          setTimeout(() => {setUpdate(!update)}, 5000);
+        });
     }
-    ApiFetch(api)
-      .then((data) => {
-        const notifications = data as {notifications: notification[]};
-        const newNumNotifs = notifications.notifications.filter(each => { return !each.seen }).length;   
-        setNumNotifs(newNumNotifs);
-        setTimeout(() => {setUpdate(!update)}, 5000);
-      });
   }, [update]);
 
 
