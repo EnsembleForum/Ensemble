@@ -44,7 +44,6 @@ const Heading = styled.div`
 // Exporting our example component
 const NotificationsListView = (props: Props) => {
   const [notifications, setNotifications] = React.useState<notification[]>();
-  const [prevNotification, setPrevNotification] = React.useState<number>();
   const [seen, setSeen] = React.useState<boolean>(false);
   let [searchParams, setSearchParams] = useSearchParams();
   React.useEffect(()=>{
@@ -58,15 +57,6 @@ const NotificationsListView = (props: Props) => {
         console.log(test);
         if (test.notifications.length) {
           setNotifications(test.notifications);
-          const unseenNotifs = test.notifications.filter(each => { return !each.seen })
-          if (unseenNotifs.length) {
-            searchParams.set("notificationId", unseenNotifs[0].notification_id.toString());
-            searchParams.set("postId", unseenNotifs[0].post.toString());
-            searchParams.set("commentId", unseenNotifs[0].comment ? unseenNotifs[0].comment.toString(): '');
-            searchParams.set("replyId", unseenNotifs[0].reply ? unseenNotifs[0].reply.toString() : '');
-            setSearchParams(searchParams);
-            //setPrevNotification(unseenNotifs[0].notification_id);
-          } 
         }
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,16 +105,13 @@ const NotificationsListView = (props: Props) => {
             }
             return (
               <Post style={styles} onClick={() => {
-                seenNotification(each.notification_id);
                   searchParams.set("notificationId", each.notification_id.toString());
                   searchParams.set("postId", each.post.toString());
                   searchParams.set("commentId", each.comment ? each.comment.toString() : '');
                   searchParams.set("replyId", each.reply ? each.reply.toString() : '');
                   setSearchParams(searchParams);
-                if (prevNotification && prevNotification !== each.notification_id) {
-                  setPrevNotification(each.notification_id);
-                }
-              }}>
+                  seenNotification(each.notification_id);
+                }}>
                 <Heading>{each.heading}</Heading>
                 { each.user_from ? <>From: <AuthorView userId={each.user_from}></AuthorView></> : <></>}
                 <div>{each.heading.split(' ').splice(0, 2).join(' ')}: {each.body}</div>
