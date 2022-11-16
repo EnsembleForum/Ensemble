@@ -23,6 +23,7 @@ def test_closed_post_notification(
         {
             "notification_id": expect.Any(int),
             "seen": False,
+            "timestamp": expect.Any(int),
             "user_from": None,
             "heading": "A mod closed your post",
             "body": make_posts['head1'],

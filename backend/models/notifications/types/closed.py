@@ -49,6 +49,7 @@ class NotificationClosed(Notification):
         return {
             "notification_id": self.id,
             "seen": self.seen,
+            "timestamp": self.timestamp,
             "user_from": None,
             "heading": "A mod closed your post",
             "body": self.post.heading,

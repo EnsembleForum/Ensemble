@@ -36,6 +36,7 @@ def test_commenter_notified_when_accepted(
     assert mod_notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
+            "timestamp": expect.Any(int),
             "seen": False,
             "user_from": simple_users['admin']['user_id'],
             "heading": "Answer accepted",
@@ -72,6 +73,7 @@ def test_op_and_commenter_notified_when_accepted_by_mod(
         {
             "notification_id": expect.Any(int),
             "seen": False,
+            "timestamp": expect.Any(int),
             "user_from": simple_users['mod']['user_id'],
             "heading": "Answer accepted on your post",
             "body": "This is a comment",
@@ -91,6 +93,7 @@ def test_op_and_commenter_notified_when_accepted_by_mod(
         {
             "notification_id": expect.Any(int),
             "seen": False,
+            "timestamp": expect.Any(int),
             "user_from": simple_users['mod']['user_id'],
             "heading": "Answer accepted",
             "body": "This is a comment",
@@ -127,6 +130,7 @@ def test_op_who_is_commenter_notified_when_accepted_by_mod(
         {
             "notification_id": expect.Any(int),
             "seen": False,
+            "timestamp": expect.Any(int),
             "user_from": simple_users['mod']['user_id'],
             "heading": "Answer accepted",
             "body": "This is a comment",

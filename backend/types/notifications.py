@@ -19,9 +19,10 @@ class INotificationInfo(TypedDict):
     Information for a notification
 
     * `notification_id` (`int`): ID of notification
-    * `seen` (`bool`): whether the post has been seen
     * `user_from` (`int`, optional): user ID of person who sent the
       notification, or null if the action was anonymous
+    * `seen` (`bool`): whether the post has been seen
+    * `timestamp` (`int`): the time when the notification was sent
     * `heading` (`str`): Heading of notification text
     * `body` (`str`): Body of notification text
     * `post` (`int`, optional): ID of post related to notification
@@ -35,6 +36,7 @@ class INotificationInfo(TypedDict):
     notification_id: NotificationId
     user_from: Optional[UserId]
     seen: bool
+    timestamp: int
     heading: str
     body: str
     post: Optional[PostId]

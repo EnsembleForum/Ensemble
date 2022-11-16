@@ -31,6 +31,7 @@ def test_notification_on_comment(
     assert notifs == [{
         "notification_id": expect.Any(int),
         "seen": False,
+        "timestamp": expect.Any(int),
         "user_from": simple_users['user']['user_id'],
         "heading": "New comment on your post",
         "body": "This is a comment",
@@ -64,6 +65,7 @@ def test_notification_on_reply(
     assert notifs == [{
         "notification_id": expect.Any(int),
         "seen": False,
+        "timestamp": expect.Any(int),
         "user_from": simple_users['user']['user_id'],
         "heading": "New reply to your comment",
         "body": "This is a reply",
@@ -97,6 +99,7 @@ def test_reply_op_notified(
     assert notifs[0] == {
         "notification_id": expect.Any(int),
         "seen": False,
+        "timestamp": expect.Any(int),
         "user_from": simple_users['user']['user_id'],
         "heading": "New reply on your post",
         "body": "This is a reply",

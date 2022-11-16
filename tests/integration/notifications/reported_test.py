@@ -23,6 +23,7 @@ def test_mod_notified(
     )
     expected = expect.Equals([{
         "notification_id": expect.Any(int),
+        "timestamp": expect.Any(int),
         "seen": False,
         "user_from": None,
         "heading": "Post reported",

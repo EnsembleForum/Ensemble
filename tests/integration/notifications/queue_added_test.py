@@ -41,6 +41,7 @@ def test_followers_notified(
     assert notifs['notifications'] == expect.Equals([
         {
             "notification_id": expect.Any(int),
+            "timestamp": expect.Any(int),
             "seen": False,
             "user_from": simple_users['admin']['user_id'],
             "heading": "New post in queue Main",

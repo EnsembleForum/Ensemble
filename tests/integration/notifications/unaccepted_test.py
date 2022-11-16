@@ -38,6 +38,7 @@ def test_commenter_notified_when_unaccepted(
     assert mod_notifs['notifications'] == [
         {
             "notification_id": expect.Any(int),
+            "timestamp": expect.Any(int),
             "seen": False,
             "user_from": simple_users['admin']['user_id'],
             "heading": "Answer unaccepted",
