@@ -3,7 +3,7 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { Input, Textarea } from "theme-ui";
 import { ApiFetch, getCurrentUser, getPermission } from "../../App";
-import { APIcall } from "../../interfaces";
+import { APIcall, userView } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
 import { StyledButton } from "../GlobalProps";
@@ -183,7 +183,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   if (props.closed) {
     closed = <>
     <ReactTooltip place="top" type="dark" effect="solid"/>
-    <span data-tip="Post has been closed by a moderator. Edit post based on comment feedback">🔒{' '}</span>
+    <span data-tip="Post has been closed by a moderator. Edit post based on feedback to unclose.">🔒{' '}</span>
     </>
   }
   if (props.answered) {
@@ -292,7 +292,6 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
       path: "browse/post/report",
       body: {"post_id": props.id}
     }
-    console.log(call)
     await ApiFetch(call);
     setCommentCount(commentCount + 1);
     updatePosts();
@@ -307,41 +306,57 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
     setCommentCount(commentCount + 1);
     updatePosts();
   }
-
-
-  const reply = (
-  <StyledReply>
-    <Input placeholder="Reply" value={inputText} onChange={(e)=>setInputText(e.target.value)} ></Input>
-    <ActiveReactButton onClick={(e) => {
-        const call : APIcall = {
-          method: "POST",
-          path: routes[props.type][0],
-          body: {"text": inputText}
-        }
-        if (props.commentId) {
-          call.body[routes[props.type][3]] = props.commentId;
-        } else {
-          call.body[routes[props.type][3]] = props.id;
-        }
+  async function postReply() {
+    const usernameCall: APIcall = {
+      method: "GET",
+      path: "user/profile",
+      params: { "user_id": props.author.toString() }
+    }
+    const user = await ApiFetch(usernameCall) as userView;
+    const call : APIcall = {
+      method: "POST",
+      path: routes[props.type][0],
+      body: {"text": inputText}
+    }
+    if (props.commentId) {
+      call.body[routes[props.type][3]] = props.commentId;
+    } else {
+      call.body[routes[props.type][3]] = props.id;
+    }
+    if (props.anonymous && inputText?.includes(user.username)) {
+      // eslint-disable-next-line no-restricted-globals
+      if (confirm("Your comment will reveal the anonymous poster's name. Would you like to continue?")) {
         ApiFetch(call).then(()=>{
           setCommentCount(commentCount + 1);
           setToggleReply(false);
         });
-    }}>Post</ActiveReactButton>
+      }
+    } else {
+      ApiFetch(call).then(()=>{
+        setCommentCount(commentCount + 1);
+        setToggleReply(false);
+      });
+    }
+  }
+
+  const reply = (
+  <StyledReply>
+    <Input placeholder="Reply" value={inputText} onChange={(e)=>setInputText(e.target.value)} ></Input>
+    <ActiveReactButton onClick={(e) => {postReply()}}>Post</ActiveReactButton>
   </StyledReply>)
   const replyButton = (<><ReactTooltip place="top" type="dark" effect="solid"/><InactiveReactButton data-tip="Reply" onClick={() => setToggleReply(true)}>↩️</InactiveReactButton></>);
   const activeReplyButton = (<ActiveReactButton onClick={() => setToggleReply(false)}>↩️</ActiveReactButton>);
+  const editHeadingBox = (<>
+    {props.type === "post" ?
+      <>
+        <Textarea value={editHeading} onChange={(e) => setEditHeading(e.target.value)}></Textarea> 
+      </>: <></>
+    }</>
+  )
   const editBox = (
     <>
-      {props.type === "post" ?
-      <>
-        Tags Todo
-        <Textarea value={editHeading} onChange={(e) => setEditHeading(e.target.value)}></Textarea> 
-        {/*<Textarea value={editTags} onChange={(e) => setEditTags(e.target.value)}></Textarea>*/}
-      </>: <></>
-      }
-      <Textarea value={editText} onChange={(e) => setEditText(e.target.value)}></Textarea>
-      <StyledButton onClick={() => {
+      <Textarea style={{marginBottom: "10px"}} value={editText} onChange={(e) => setEditText(e.target.value)}></Textarea>
+      <ActiveReactButton onClick={() => {
         const call : APIcall = {
           method: "PUT",
           path: routes[props.type][5],
@@ -359,14 +374,14 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
             updatePosts();
           }
         );
-      }}>Post</StyledButton>
+      }}>Save</ActiveReactButton>
     </>
   );
   const editButton = (<>
   <ReactTooltip place="top" type="dark" effect="solid"/>
   <InactiveReactButton data-tip="Edit" onClick={() => setToggleEdit(true)}>✏️</InactiveReactButton>
   </>);
-  const activeEditButton = (<ActiveReactButton onClick={() => setToggleEdit(false)}>✏️</ActiveReactButton>);
+  const activeEditButton = (<InactiveReactButton onClick={() => setToggleEdit(false)}>X</InactiveReactButton>);
   const reactButton = (<>
     <ReactTooltip place="top" type="dark" effect="solid"/>
     <InactiveReactButton data-tip={props.type === "post" ? "Me too!" : "Thanks!"} onClick={() => react()}>{routes[props.type][1]} <>{
@@ -457,19 +472,28 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
         
         {props.deleted ? <p style={{color: "darkGrey", fontStyle: "italic", fontWeight: 500}}>{props.text}</p> : <></>}
         <span style={props.deleted ? {display: "none"} : {}}>
-          {toggleEdit ? <></> : tags}
-          { toggleEdit ? editBox : <p>{props.text}</p> }
-          { props.userReacted ? activeReactButton : reactButton}
-          { getCurrentUser().user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
-          { toggleReply ? activeReplyButton : replyButton }
-          { props.type === "post" && props.showCloseButton ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
-          { props.type === "comment" && props.showAcceptButton ? (props.accepted ? activeAcceptButton : acceptButton) : <></> }
-          { props.type === "post" && props.showReportButton && !props.reported ? reportButton  : <></> }
-          { props.type === "post" && props.showUnreportButton && props.reported ? unreportButton  : <></> }
-          { props.type === "post" && props.showDeleteButton ? deleteButton  : <></> }
-          { props.type === "comment" && props.showDeleteButton ? deleteCommentButton  : <></> }
-          { props.type === "reply" && props.showDeleteButton ? deleteReplyButton  : <></> }
-          { toggleReply ? reply : <></>}
+          {
+            toggleEdit ? <>
+              {editHeadingBox}
+              {tags}
+              {editBox}
+              {activeEditButton}
+            </> : <>
+              {toggleEdit ? <></> : tags}
+              { toggleEdit ? editBox : <p>{props.text}</p> }
+              { props.userReacted ? activeReactButton : reactButton}
+              { getCurrentUser().user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }
+              { toggleReply ? activeReplyButton : replyButton }
+              { props.type === "post" && props.showCloseButton ? ( props.closed ? activeCloseButton : closeButton)  : <></> }
+              { props.type === "comment" && props.showAcceptButton ? (props.accepted ? activeAcceptButton : acceptButton) : <></> }
+              { props.type === "post" && props.showReportButton && !props.reported ? reportButton  : <></> }
+              { props.type === "post" && props.showUnreportButton && props.reported ? unreportButton  : <></> }
+              { props.type === "post" && props.showDeleteButton ? deleteButton  : <></> }
+              { props.type === "comment" && props.showDeleteButton ? deleteCommentButton  : <></> }
+              { props.type === "reply" && props.showDeleteButton ? deleteReplyButton  : <></> }
+              { toggleReply ? reply : <></>}
+            </> 
+          }
         </span>
       
       </StyledPost>
