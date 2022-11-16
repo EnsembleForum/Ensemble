@@ -18,7 +18,8 @@ tags = Blueprint("tags", "tags")
 
 @tags.get("get_tag")
 @uses_token
-def get_tag(*_) -> ITagBasicInfo:
+def get_tag(user: User, *_) -> ITagBasicInfo:
+    user.permissions.assert_can(Permission.PostView)
     tag_id = TagId(request.args["tag_id"])
     tag = Tag(tag_id)
     return tag.basic_info()
@@ -64,9 +65,9 @@ def delete_tag(user: User, *_) -> dict:
     return {}
 
 
-@tags.post("/add_tag_to_post")
+@tags.post("/post_add_tag")
 @uses_token
-def add_tag_to_post(*_) -> ITagId:
+def add_tag_to_post(user: User, *_) -> ITagId:
     """
     Adding a tag to a post
 
@@ -76,6 +77,7 @@ def add_tag_to_post(*_) -> ITagId:
     ### Returns:
     * `ITagId`: ID of tag
     """
+    user.permissions.assert_can(Permission.PostView)
     data = json.loads(request.data)
     post_id: PostId = data["post_id"]
     post = Post(post_id)
@@ -86,9 +88,9 @@ def add_tag_to_post(*_) -> ITagId:
     return {"tag_id": tag_id}
 
 
-@tags.delete("/remove_tag_from_post")
+@tags.delete("/post_remove_tag")
 @uses_token
-def remove_tag_from_post(*_) -> dict:
+def remove_tag_from_post(user: User, *_) -> dict:
     """
     Deleting a tag from a post
 
@@ -98,7 +100,7 @@ def remove_tag_from_post(*_) -> dict:
     ### Returns:
     * `dict`: {}
     """
-
+    user.permissions.assert_can(Permission.PostView)
     post_id = PostId(request.args["post_id"])
     post = Post(post_id)
     tag_id = TagId(request.args["tag_id"])
