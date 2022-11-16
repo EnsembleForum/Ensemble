@@ -159,6 +159,31 @@ spec_queue = ensemble.taskboard.queue_create(
 )["queue_id"]
 
 
+# Set up some extra profile info for some people
+############################################################
+
+ensemble.user.profile_edit_pronouns(
+    ada["token"],
+    ada["user_id"],
+    "She/Her",
+)
+ensemble.user.profile_edit_pronouns(
+    guido["token"],
+    guido["user_id"],
+    "He/Him",
+)
+ensemble.user.profile_edit_pronouns(
+    richard["token"],
+    richard["user_id"],
+    "He/Him",
+)
+ensemble.user.profile_edit_pronouns(
+    margaret["token"],
+    margaret["user_id"],
+    "She/Her",
+)
+
+
 # Create a bunch of content
 ############################################################
 
@@ -259,6 +284,10 @@ oss_assignment_no = ensemble.browse.comment.create(
     oss_assignment["post_id"],
     "No. That is academic misconduct.",
 )
+ensemble.browse.comment.react(
+    ada["token"],
+    oss_assignment_no["comment_id"],
+)
 ensemble.browse.comment.accept(
     charles["token"],
     oss_assignment_no["comment_id"],
@@ -269,6 +298,24 @@ ensemble.browse.reply.create(
     "That's annoying. Guess I'll just have to write a very similar project "
     "but make it technically different enough that you can't do anything "
     "about it"
+)
+
+c_extension = ensemble.browse.post.create(
+    dennis["token"],
+    "Extension work for your assignment",
+    "This is a reminder that for extra marks, you can write a C extension to "
+    "your Python assignment.",
+    []
+)
+c_extension_js = ensemble.browse.comment.create(
+    tim["token"],
+    c_extension["post_id"],
+    "That sounds fun, but wouldn't it be nicer to use a language like JS?"
+)
+ensemble.browse.reply.create(
+    guido["token"],
+    c_extension_js["comment_id"],
+    "We use real programming languages in this course.",
 )
 
 
@@ -316,6 +363,14 @@ ensemble.browse.post.react(
 ensemble.browse.post.react(
     tim["token"],
     undefined_behaviour["post_id"],
+)
+
+ensemble.browse.post.create(
+    tim["token"],
+    "What is a StackOverflow error?",
+    "I tried googling it, but I just found some stupid forum where all the "
+    "questions get downvoted and marked as a duplicate.",
+    []
 )
 
 ensemble.browse.post.create(
