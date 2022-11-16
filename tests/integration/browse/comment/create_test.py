@@ -1,7 +1,7 @@
 """
 # Tests / Integration / Browse / Post View / Comment
 
-Tests for post_view/comment
+Tests for post.view/comment
 
 * Fails with empty comment string
 * Fails when post trying to comment on does not exist
@@ -10,12 +10,12 @@ Tests for post_view/comment
 """
 import pytest
 from typing import cast
-from ..conftest import ISimpleUsers, IMakePosts
+from ...conftest import ISimpleUsers, IMakePosts
 from backend.types.identifiers import PostId
 from backend.util import http_errors
 from ensemble_request.browse import (
-    post_view,
-    add_comment,
+    post,
+    comment,
 )
 
 
@@ -28,7 +28,7 @@ def test_empty_text_comment(
     """
     token = simple_users["user"]["token"]
     with pytest.raises(http_errors.BadRequest):
-        add_comment(token, make_posts["post1_id"], "")
+        comment.create(token, make_posts["post1_id"], "")
 
 
 def test_invalid_post_comment(
@@ -45,7 +45,7 @@ def test_invalid_post_comment(
     )
     invalid_post_id = cast(PostId, invalid_post_id)
     with pytest.raises(http_errors.BadRequest):
-        add_comment(token, invalid_post_id, "hello")
+        comment.create(token, invalid_post_id, "hello")
 
 
 @pytest.mark.core
@@ -55,13 +55,13 @@ def test_add_two_comments(
 ):
     """
     Add two comments
-    List of comment_id returned by post_view should be in order
+    List of comment_id returned by post.view should be in order
     of newest to oldest
     """
     token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id1 = add_comment(token, post_id, "first")["comment_id"]
-    comment_id2 = add_comment(token, post_id, "second")["comment_id"]
+    comment_id1 = comment.create(token, post_id, "first")["comment_id"]
+    comment_id2 = comment.create(token, post_id, "second")["comment_id"]
 
-    post = post_view(token, post_id)
-    assert post["comments"] == [comment_id2, comment_id1]
+    p = post.view(token, post_id)
+    assert p["comments"] == [comment_id2, comment_id1]

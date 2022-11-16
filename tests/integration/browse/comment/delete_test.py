@@ -12,11 +12,8 @@ Tests for comment_view/delete
 import pytest
 from backend.util import http_errors
 from ensemble_request.browse import (
-    add_comment,
-    comment_delete,
-    get_comment,
-    post_view,
-    comment_edit
+    post,
+    comment,
 )
 from tests.integration.conftest import ISimpleUsers, IMakePosts
 
@@ -31,10 +28,10 @@ def test_no_permission(
     mod_token = simple_users["mod"]["token"]
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(mod_token, post_id, "hello")["comment_id"]
+    comment_id = comment.create(mod_token, post_id, "hello")["comment_id"]
 
     with pytest.raises(http_errors.Forbidden):
-        comment_delete(user_token, comment_id)
+        comment.delete(user_token, comment_id)
 
 
 def test_mod_delete(
@@ -47,10 +44,10 @@ def test_mod_delete(
     mod_token = simple_users["mod"]["token"]
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
+    comment_id = comment.create(user_token, post_id, "hello")["comment_id"]
 
-    comment_delete(mod_token, comment_id)
-    assert get_comment(user_token, comment_id)["text"] == "[Deleted]"
+    comment.delete(mod_token, comment_id)
+    assert comment.view(user_token, comment_id)["text"] == "[Deleted]"
 
 
 def test_op_delete(
@@ -62,12 +59,12 @@ def test_op_delete(
     """
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
+    comment_id = comment.create(user_token, post_id, "hello")["comment_id"]
 
-    comment_delete(user_token, comment_id)
-    comment = get_comment(user_token, comment_id)
-    assert comment["text"] == "[Deleted]"
-    assert comment["deleted"]
+    comment.delete(user_token, comment_id)
+    c = comment.view(user_token, comment_id)
+    assert c["text"] == "[Deleted]"
+    assert c["deleted"]
 
 
 def test_post_comment_list(
@@ -79,11 +76,11 @@ def test_post_comment_list(
     """
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
+    comment_id = comment.create(user_token, post_id, "hello")["comment_id"]
 
-    comment_delete(user_token, comment_id)
+    comment.delete(user_token, comment_id)
 
-    assert post_view(user_token, post_id)["comments"] == [comment_id]
+    assert post.view(user_token, post_id)["comments"] == [comment_id]
 
 
 def test_edit_deleted_comment(
@@ -95,8 +92,8 @@ def test_edit_deleted_comment(
     """
     user_token = simple_users["user"]["token"]
     post_id = make_posts["post1_id"]
-    comment_id = add_comment(user_token, post_id, "hello")["comment_id"]
+    comment_id = comment.create(user_token, post_id, "hello")["comment_id"]
 
-    comment_delete(user_token, comment_id)
+    comment.delete(user_token, comment_id)
     with pytest.raises(http_errors.BadRequest):
-        comment_edit(user_token, comment_id, "hello")
+        comment.edit(user_token, comment_id, "hello")

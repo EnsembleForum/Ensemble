@@ -438,6 +438,14 @@ class Post:
         else:
             return True
 
+    def reported_perspective(self, user: User) -> bool:
+        """
+        Returns whether the post should view as reported from the given user's
+        perspective. Only mods and admins should be able to view reported posts
+        by default.
+        """
+        return self.reported and user.permissions.can(Permission.ViewReports)
+
     def basic_info(self, user: User) -> IPostBasicInfo:
         """
         Returns the basic info of a post
@@ -454,7 +462,7 @@ class Post:
             "private": self.private,
             "closed": self.closed,
             "deleted": self.deleted,
-            "reported": self.reported,
+            "reported": self.reported_perspective(user),
             "anonymous": self.anonymous,
             "answered": self.answered is not None,
         }
@@ -479,7 +487,7 @@ class Post:
             "anonymous": self.anonymous,
             "closed": self.closed,
             "deleted": self.deleted,
-            "reported": self.reported,
+            "reported": self.reported_perspective(user),
             "user_reacted": self.has_reacted(user),
             "answered": self.answered.id if self.answered else None,
             "queue": self.queue.name

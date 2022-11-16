@@ -7,29 +7,42 @@ import json
 from flask import Blueprint, request
 from backend.models.notifications import (
     NotificationClosed,
-    NotificationCommented,
     NotificationReacted,
+    NotificationReported,
     NotificationDeleted,
 )
-from backend.models.permissions import Permission
-from backend.models.post import Post
-from backend.models.user import User
-from backend.models.tag import Tag
-from backend.models.queue import Queue
-from backend.models.comment import Comment
+from backend.models import Permission, Post, User, Queue, ExamMode, Tag
 from backend.types.identifiers import PostId, TagId
-from backend.types.post import IPostFullInfo, IPostClosed
-from backend.types.comment import ICommentId
+from backend.types.post import (
+    IPostFullInfo,
+    IPostClosed,
+    IPostBasicInfoList,
+    IPostId,
+)
 from backend.types.react import IUserReacted
 from backend.util import http_errors
 from backend.util.tokens import uses_token
 
-post_view = Blueprint("post_view", "post_view")
+post = Blueprint("post", "post")
 
 
-@post_view.get("")
+@post.get("/list")
 @uses_token
-def get_post(user: User, *_) -> IPostFullInfo:
+def post_list(user: User, *_) -> IPostBasicInfoList:
+    user.permissions.assert_can(Permission.PostView)
+    search_term: str = request.args["search_term"]
+    if len(search_term) > 0:
+        posts_info = [p.basic_info(user)
+                      for p in Post.search_posts(user, search_term)]
+    else:
+        posts_info = [p.basic_info(user) for p in Post.can_view_list(user)]
+
+    return {"posts": posts_info}
+
+
+@post.get("/view")
+@uses_token
+def view(user: User, *_) -> IPostFullInfo:
     user.permissions.assert_can(Permission.PostView)
     post_id = PostId(request.args["post_id"])
     post = Post(post_id)
@@ -40,7 +53,27 @@ def get_post(user: User, *_) -> IPostFullInfo:
     return post.full_info(user)
 
 
-@post_view.put("/edit")
+@post.post("/create")
+@uses_token
+def create(user: User, *_) -> IPostId:
+    user.permissions.assert_can(Permission.PostCreate)
+
+    data = json.loads(request.data)
+    heading: str = data["heading"]
+    text: str = data["text"]
+    tags = [Tag(i) for i in data["tags"]]
+    private: bool = data["private"]
+    anonymous: bool = data["anonymous"]
+
+    if ExamMode.is_enabled() and not private:
+        user.permissions.assert_can(Permission.PostOverrideExam)
+
+    post_id = Post.create(user, heading, text, tags, private, anonymous).id
+
+    return {"post_id": post_id}
+
+
+@post.put("/edit")
 @uses_token
 def edit(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.PostCreate)
@@ -72,7 +105,7 @@ def edit(user: User, *_) -> dict:
     return {}
 
 
-@post_view.delete("/delete")
+@post.delete("/delete")
 @uses_token
 def delete(user: User, *_) -> dict:
     user.permissions.assert_can(Permission.PostCreate)
@@ -89,27 +122,7 @@ def delete(user: User, *_) -> dict:
     return {}
 
 
-@post_view.post("/comment")
-@uses_token
-def comment(user: User, *_) -> ICommentId:
-    user.permissions.assert_can(Permission.PostComment)
-    data = json.loads(request.data)
-    text: str = data["text"]
-    post = Post(data["post_id"])
-
-    comment = Comment.create(user, post, text)
-
-    if post.author != user:
-        NotificationCommented.create(
-            post.author,
-            user,
-            comment,
-        )
-
-    return {"comment_id": comment.id}
-
-
-@post_view.put("/react")
+@post.put("/react")
 @uses_token
 def react(user: User, *_) -> IUserReacted:
     user.permissions.assert_can(Permission.PostView)
@@ -126,7 +139,7 @@ def react(user: User, *_) -> IUserReacted:
     return {"user_reacted": post.has_reacted(user)}
 
 
-@post_view.put("/close")
+@post.put("/close")
 @uses_token
 def close_post(user: User, *_) -> IPostClosed:
     user.permissions.assert_can(Permission.ClosePosts)
@@ -143,7 +156,7 @@ def close_post(user: User, *_) -> IPostClosed:
     return {"closed": post.closed}
 
 
-@post_view.put("/report")
+@post.put("/report")
 @uses_token
 def report_post(user: User, *_):
     user.permissions.assert_can(Permission.ReportPosts)
@@ -151,10 +164,16 @@ def report_post(user: User, *_):
     post = Post(data["post_id"])
     post.queue = Queue.get_reported_queue()
 
-    return {"reported": post.reported}
+    for u in User.all_where(
+        lambda u: u.permissions.can(Permission.ViewReports)
+    ):
+        if u not in [user, post.author]:
+            NotificationReported.create(u, post)
+
+    return {}
 
 
-@post_view.put("/unreport")
+@post.put("/unreport")
 @uses_token
 def unreport_post(user: User, *_):
     user.permissions.assert_can(Permission.ViewReports)
@@ -165,4 +184,4 @@ def unreport_post(user: User, *_):
     else:
         post.queue = Queue.get_main_queue()
 
-    return {"reported": post.reported}
+    return {}

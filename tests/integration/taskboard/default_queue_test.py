@@ -16,12 +16,8 @@ from ensemble_request.taskboard import (
     queue_list,
     queue_delete,
 )
-from ensemble_request.browse import (
-    post_create
-)
-from tests.integration.conftest import (
-    IBasicServerSetup,
-)
+from ensemble_request.browse.post import create
+from tests.integration.conftest import IBasicServerSetup
 
 
 @pytest.mark.core
@@ -63,7 +59,7 @@ def test_new_post_default(basic_server_setup: IBasicServerSetup):
     default_queue = get_queue(queue_list(token)['queues'], consts.MAIN_QUEUE)
     posts = queue_post_list(token, default_queue['queue_id'])['posts']
     assert len(posts) == 0
-    post_create(token, 'first_post', 'post_content', [])
+    create(token, 'first_post', 'post_content', [])
     posts = queue_post_list(token, default_queue['queue_id'])['posts']
     assert len(posts) == 1
 

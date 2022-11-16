@@ -1,9 +1,7 @@
 from flask import Blueprint
 from backend.types.analytics import IAllStats
 from backend.util.tokens import uses_token
-from backend.models.user import User
-from backend.models.analytics import Analytics
-from backend.models.permissions import Permission
+from backend.models import User, Analytics, Permission
 
 
 analytics = Blueprint('analytics', 'analytics')

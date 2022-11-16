@@ -104,12 +104,3 @@ class IPostClosed(TypedDict):
     * `closed`: `bool`
     """
     closed: bool
-
-
-class IPostReported(TypedDict):
-    """
-    Whether a post is reported
-
-    * `reported`: `bool`
-    """
-    reported: bool

@@ -6,11 +6,10 @@ from backend.types.user import (
     IUserRegisterInfo,
 )
 from backend.types.identifiers import PermissionGroupId
+from backend.models import User, PermissionGroup, Permission
 from backend.util.validators import assert_email_valid, assert_valid_str_field
 from backend.util import http_errors
 from backend.util.tokens import uses_token
-from backend.models.user import User
-from backend.models.permissions import PermissionGroup, Permission
 
 
 users = Blueprint('users', 'users')
