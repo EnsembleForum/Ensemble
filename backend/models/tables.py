@@ -184,6 +184,9 @@ class TNotification(_BaseTable):
     seen = Boolean()
     """Whether the notification has been seen"""
 
+    timestamp = Timestamp()
+    """When the notification was sent"""
+
     user_from = ForeignKey(TUser, null=True)
     """User who gave the notification, if any"""
 
