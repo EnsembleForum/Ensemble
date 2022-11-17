@@ -115,45 +115,48 @@ const CreatePostView = (props: Props) => {
     }
   }, [searchParams.get('searchTerm')])
 
-  if (toggle && tags) {
+  if (toggle) {
     return (
       <StyledPost>
         <Input placeholder="Heading" value={post.heading} onChange={(e) => setPost(post => ({ ...post, heading: e.target.value }))}></Input>
         <Textarea placeholder="Text" value={post.text} onChange={(e) => setPost(post => ({ ...post, text: e.target.value }))}></Textarea>
-        <TagCreate>
-          <TagCreateSelect value={currentTag} onChange={(e) => {setCurrentTag(parseInt(e.target.value))}}>
-            { tags.map((tag) => {
-              return (<option value={tag.tag_id}>{tag.name}</option>)
-            })}
-          </TagCreateSelect>
-          <TagCreateButton onClick={() => {
-            const tag = tags?.find((e) => e.tag_id === currentTag);
-            const alreadyThere = selectedTags.find((e) => e.tag_id === currentTag);
-            if (tag?.tag_id && !alreadyThere?.tag_id) {
-              const newTags = [...selectedTags, {...tag}];
-              setSelectedTags(newTags);
-              setPost(post => ({ ...post, tags: newTags.map(a => a.tag_id)}));
-            }
-          }}>Add Tag</TagCreateButton>
-        </TagCreate>
-        {/* This is where tags are displayed*/}
+        { tags ? 
+        <>
+           <TagCreate>
+           <TagCreateSelect value={currentTag} onChange={(e) => {setCurrentTag(parseInt(e.target.value))}}>
+             { tags ? tags.map((tag) => {
+               return (<option value={tag.tag_id}>{tag.name}</option>)
+             }): <></>}
+           </TagCreateSelect>
+           <TagCreateButton onClick={() => {
+             const tag = tags?.find((e) => e.tag_id === currentTag);
+             const alreadyThere = selectedTags.find((e) => e.tag_id === currentTag);
+             if (tag?.tag_id && !alreadyThere?.tag_id) {
+               const newTags = [...selectedTags, {...tag}];
+               setSelectedTags(newTags);
+               setPost(post => ({ ...post, tags: newTags.map(a => a.tag_id)}));
+             }
+           }}>Add Tag</TagCreateButton>
+         </TagCreate>
+          {/* This is where tags are displayed*/}
         <div>
-          {selectedTags.map((e) => {
-            return (
-              <Tag style={{marginRight: "5px", marginBottom: "5px"}}>{e.name}
-                <Close onClick={() => {
-                  let newTags = [...selectedTags];
-                  newTags = newTags.filter(function( obj ) {
-                    return obj.tag_id !== e.tag_id;
-                  });
-                  setSelectedTags(newTags);
-                  setPost(post => ({ ...post, tags: selectedTags.map(a => a.tag_id)}));
-                }}>X</Close>
-              </Tag>
-            )
-          })}
+        {selectedTags.map((e) => {
+          return (
+            <Tag style={{marginRight: "5px", marginBottom: "5px"}}>{e.name}
+              <Close onClick={() => {
+                let newTags = [...selectedTags];
+                newTags = newTags.filter(function( obj ) {
+                  return obj.tag_id !== e.tag_id;
+                });
+                setSelectedTags(newTags);
+                setPost(post => ({ ...post, tags: selectedTags.map(a => a.tag_id)}));
+              }}>X</Close>
+            </Tag>
+          )
+        })}
         </div>
-        
+        </>
+        : <></>} 
         Private:
         <input
           type="checkbox"
