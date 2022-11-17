@@ -26,10 +26,7 @@ def enabled() -> IEnabled:
 
 @__debug.get('/echo')
 def echo() -> IEcho:
-    try:
-        value = request.args['value']
-    except KeyError:
-        raise http_errors.BadRequest('echo route requires a `value` argument')
+    value = request.args['value']
 
     to_print = f'{Fore.MAGENTA}[ECHO]\t\t{value}{Fore.RESET}'
     # Print it to both stdout and stderr to ensure it is seen across all logs
@@ -47,7 +44,7 @@ def clear() -> dict:
 
 
 @__debug.post('/shutdown')
-def shutdown() -> dict:
+def shutdown() -> dict:  # pragma: no cover
     print("Initiated server shutdown")
     # TODO
     return {}
@@ -110,16 +107,17 @@ def unsafe_login() -> IAuthInfo:
 
 
 # Dummy debug containing no routes
+# We ignore coverage for these since it is only used when not testing
 __dummy_debug = Blueprint('dummy_debug', 'debug')
 
 
 @__dummy_debug.get('/enabled')
-def not_enabled() -> IEnabled:
+def not_enabled() -> IEnabled:  # pragma: no cover
     return {"value": False}
 
 
 @__dummy_debug.route('/<path:path>')
-def debug_not_found(path) -> tuple[IErrorInfo, int]:
+def debug_not_found(path) -> tuple[IErrorInfo, int]:  # pragma: no cover
     return {
         "code": 404,
         "heading": "Not found",
@@ -131,5 +129,5 @@ def debug_not_found(path) -> tuple[IErrorInfo, int]:
 # Only export the debug routes if debugging
 if debug_active():
     debug = __debug
-else:
+else:  # pragma: no cover
     debug = __dummy_debug

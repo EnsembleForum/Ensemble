@@ -14,6 +14,15 @@ from .helpers import get, delete, post
 URL = f"{URL}/debug"
 
 
+def enabled() -> bool:
+    """
+    ## GET `debug/enabled`
+
+    Returns whether debugging routes are enabled
+    """
+    return cast(bool, get(None, f"{URL}/enabled", {})["value"])
+
+
 def echo(value: str) -> IEcho:
     """
     ## GET `debug/echo`

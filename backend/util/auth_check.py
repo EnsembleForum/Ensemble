@@ -73,8 +73,6 @@ def do_auth_check(
                         password_param: password,
                     }
                 )
-            case t:
-                raise http_errors.BadRequest(f"Invalid request type {t}")
     # Check for basic errors
     except requests.ConnectionError:
         raise http_errors.BadRequest(
@@ -92,7 +90,7 @@ def do_auth_check(
         # Give helpful errors for the status code
         try:
             description = f"({http_errors.codes[c]})"
-        except KeyError:
+        except KeyError:  # pragma: no cover (we already cover most of them)
             description = ""
         raise http_errors.BadRequest(
             f"Auth server failed to process request - gave status code {c} "

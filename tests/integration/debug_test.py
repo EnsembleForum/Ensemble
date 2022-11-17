@@ -4,7 +4,7 @@
 Tests for debug routes
 """
 import pytest
-from ensemble_request.debug import echo, fail
+from ensemble_request.debug import echo, fail, enabled
 from backend.util import http_errors
 
 
@@ -12,6 +12,11 @@ from backend.util import http_errors
 def test_echo():
     """Test that we can echo things"""
     assert echo("Hello, world") == {"value": "Hello, world"}
+
+
+def test_enabled():
+    """Make sure debugging is enabled"""
+    assert enabled()
 
 
 def test_fail():

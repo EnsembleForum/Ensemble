@@ -116,7 +116,12 @@ def test_change_permission_group(
 
 
 @pytest.mark.core
-def test_change_permissions(
+@pytest.mark.parametrize(
+    'value',
+    [True, False]
+)
+def test_change_permissions_true(
+    value: bool,
     simple_users: ISimpleUsers,
     permission_groups: IPermissionGroups,
 ):
@@ -124,7 +129,7 @@ def test_change_permissions(
     set_permissions(
         simple_users['admin']['token'],
         simple_users['user']['user_id'],
-        [{"permission_id": p.value, "value": True} for p in Permission],
+        [{"permission_id": p.value, "value": value} for p in Permission],
         permission_groups['user']['group_id'],
     )
     perms = get_permissions(
@@ -133,4 +138,4 @@ def test_change_permissions(
     )
     assert perms['group_id'] == permission_groups['user']['group_id']
     for v in perms['permissions']:
-        assert v['value'] is True
+        assert v['value'] is value
