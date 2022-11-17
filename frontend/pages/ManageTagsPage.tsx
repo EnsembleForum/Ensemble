@@ -5,143 +5,116 @@ import { useNavigate } from "react-router-dom";
 import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button, } from "theme-ui";
 import { ApiFetch } from "../App";
 import { Prettify } from "../global_functions";
-import { APIcall, loginForm, usersRegister, userToAdd } from "../interfaces";
+import { APIcall, loginForm, tag, usersRegister, userToAdd } from "../interfaces";
+import { theme } from "../theme";
 import { StyledButton } from "./GlobalProps";
 
 
 interface Props { }
 
-const LoginLayout = styled.div`
-  height: 90vh;
+const Layout = styled.div`
+  height: 70vh;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
 
-const StyledForm = styled(Box)`
-  border: 1px solid black;
+const Tag = styled.div`
+  padding: 3px;
+  height: 16px;
+  font-size: 14px;
+  color: white;
+  border-radius: 5px;
+  font-weight: bold;
+  display: inline-block;
+  background-color: ${theme.colors?.primary};
+`
+const Close = styled.span`
+  border-left: 1px solid white;
+  padding-left: 4px;
+  margin-left: 4px;
+  &:hover {
+    cursor: pointer;
+  }
+`
+const TagBox = styled.div`
+  width: 40vw;
+  height: 40vh;
+  overflow: auto;
+  border: 3px solid lightgrey;
+  border-radius: 10px;
   padding: 10px;
-  border-radius: 2%;
-  p {
-    margin: 0 0 5px 0;
-  }
-`;
-
-const StyledButtons = styled(Box)`
-  display: flex;
-  justify-content: space-evenly;
-`;
-
-const StyledTable = styled.table`
-  margin-top: 50px;
-  border: 1px solid black;
-  border-radius: 2px;
-  border-spacing:0;
-  border-collapse: collapse; 
-  width: 50%;
   * {
-    border: 1px solid black;
-    padding: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
   }
-  tr > th {
-    background-color: grey;
-  }
-  &:nth-child(3) {
-    background-color: lightgrey;
-  }
-`;
-
+  margin-bottom: 5px;
+`
+const TagCreate = styled.div`
+  display: flex;
+`
+const TagCreateInput = styled(Input)`
+  border-radius: 10px 0 0 10px;
+`
+const TagCreateButton = styled(StyledButton)`
+  padding: 10px 24px 10px 10px;
+  border: 1px solid black;
+  border-left: 0;
+  border-radius: 0px 10px 10px 0px;
+`
 
 const ManageTagsPage = (props: Props) => {
   const navigate = useNavigate();
-  const defaultState: userToAdd = {
-    name_first: '',
-    name_last: '',
-    email: '',
-    username: '',
-  };
-  const permissions = ["admin", "moderator", "user"]
-  const [registerList, setRegisterList] = React.useState([] as userToAdd[]);
-  const [registerDetails, setRegisterDetails] = React.useState<userToAdd>(defaultState);
-  const [groupPermission, setGroupPermission] = React.useState(3);
-  // 1 admin, 2 mod, 3 students
-  const onSubmit = (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    // Here we would call api, which would reroute
-    const postObject: usersRegister = { users: registerList, group_id: groupPermission };
-    const api: APIcall = {
-      method: "POST",
-      path: "admin/users/register",
-      body: postObject,
+  const [newTag, setNewTag] = React.useState<string>();
+  const [tags, setTags] = React.useState<tag[]>();
+  const [update, setUpdate] = React.useState<boolean>(false);
+  async function getTags() {
+    const tagCall : APIcall = {
+      method: "GET",
+      path: "tags/tags_list",
     }
-    ApiFetch(api)
-      .then((data) => {
-        void data;
-        setRegisterList([]);
-        navigate("/admin");
-      })
+    const tags = await ApiFetch(tagCall) as {tags: tag[]};
+    setTags(tags.tags);
   }
-  const resetGroupPermission = (e: { preventDefault: () => void; target: { value: string; }; }) => {
-    e.preventDefault();
-    setGroupPermission(parseInt(e.target.value));
-    setRegisterDetails(defaultState);
+  async function createTag() {
+    const tagCall : APIcall = {
+      method: "POST",
+      path: "tags/new_tag",
+      body: {tag_name: newTag}
+    }
+    await ApiFetch(tagCall);
+    setUpdate(!update);
   }
-  const resetUser = (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    setRegisterList(registerList => [...registerList, registerDetails]);
-    setRegisterDetails(defaultState);
+  async function deleteTag(tag_id: number) {
+    const tagCall : APIcall = {
+      method: "DELETE",
+      path: "tags/delete_tag",
+      params: {tag_id: tag_id.toString()}
+    }
+    await ApiFetch(tagCall);
+    setUpdate(!update);
   }
+
+  React.useEffect(() => {
+    getTags();
+  }, [update]);
   return (
-    <LoginLayout>
-      <StyledForm id="test" as="form" onSubmit={onSubmit}>
-        <Label>Permission Group</Label>
-        <p><small>Changing permission group will reset user list</small></p>
-        <Select name="permission" id="permission" mb={3} value={groupPermission} onChange={resetGroupPermission}>
-          <option value="1">1: Admin</option>
-          <option value="2">2: Moderator</option>
-          <option value="3">3: User</option>
-        </Select>
-        {Object.keys(registerDetails).map((eachKey) => {
+    <Layout>
+      <TagBox>
+        {tags?.map((tag) => {
           return (
-            <>
-              <Label htmlFor={eachKey} key={eachKey}>{Prettify(eachKey)}</Label>
-              <Input type="text" key={eachKey + "e"} name={eachKey} id={eachKey} mb={3} value={registerDetails[eachKey]} onChange={(e) => setRegisterDetails(registerDetails => ({ ...registerDetails, [eachKey]: e.target.value }))} />
-            </>
+            <Tag>{tag.name}<Close onClick={()=>{deleteTag(tag.tag_id)}}>X</Close></Tag>
           )
         })}
-        <StyledButtons>
-          <StyledButton onClick={resetUser}>Add {permissions[groupPermission - 1]}</StyledButton>
-          <StyledButton type="submit">Submit</StyledButton>
-        </StyledButtons>
-      </StyledForm>
-
-      <StyledTable>
-        <tr>
-          {Object.keys(registerDetails).map((eachKey) => {
-            return (
-              <th>{Prettify(eachKey)}</th>
-            )
-          })}
-        </tr>
-        {registerList.map((user) => {
-          return (
-            <tr>
-              {Object.keys(user).map((eachKey) => {
-                return (
-                  <td>
-                    {user[eachKey]}
-                  </td>
-                )
-              })
-              }
-            </tr>
-          )
-        })
-        }
-      </StyledTable>
-    </LoginLayout>
+      </TagBox>
+      <TagCreate>
+        <TagCreateInput value={newTag} onChange={(e) => {setNewTag(e.target.value)}} placeholder="New Tag"></TagCreateInput>
+        <TagCreateButton onClick={createTag}>Create</TagCreateButton>
+      </TagCreate>
+    </Layout>
   );
+  
 };
 
 export default ManageTagsPage;
