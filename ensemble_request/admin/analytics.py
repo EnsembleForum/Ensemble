@@ -13,9 +13,6 @@ def get_analytics(token: JWT) -> IAllStats:
 
     Returns the analytics about the activity on the forum
 
-    ## Permissions
-    * `ViewAnalytics`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -39,6 +36,11 @@ def get_analytics(token: JWT) -> IAllStats:
             * top_repliers: list[{"user_id": int, "count": int}]
             * top_me_too:  list[{"user_id": int, "count": int}]
             * top_thanks:  list[{"user_id": int, "count": int}]
+
+    ## Errors
+
+    ### 403
+    * User doesn't have permission `ViewAnalytics`
     """
     return cast(IAllStats, get(
         token,

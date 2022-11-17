@@ -18,10 +18,7 @@ users = Blueprint('users', 'users')
 @users.post('/register')
 @uses_token
 def register(user: User, *_) -> IUserIdList:
-    """
-    ## TODO:
-    * Improve error messages to be more helpful to user
-    """
+    # TODO: Improve error messages to be more helpful to user
     user.permissions.assert_can(Permission.AddUsers)
 
     data = json.loads(request.data)

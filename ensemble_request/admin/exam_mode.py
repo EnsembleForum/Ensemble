@@ -13,15 +13,17 @@ def exam_is_enabled(token: JWT) -> IExamModeInfo:
 
     Get whether exam mode is on
 
-    ## Permissions
-    * `PostView`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ## Returns
     Object containing
     * `is_enabled` (`bool`): Whether exam mode is enabled
+
+    ## Errors
+
+    ### 403
+    * User does not have permission `PostView`
     """
     return cast(
         IExamModeInfo,
@@ -39,15 +41,17 @@ def toggle_exam_mode(token: JWT) -> IExamModeInfo:
 
     Toggles whether exam mode is on
 
-    ## Permissions
-    * `SetExamMode`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ## Returns
     Object containing
     * `is_enabled` (`bool`): Whether exam mode is on
+
+    ## Errors
+
+    ### 403
+    * User does not have permission `SetExamMode`
     """
     return cast(
         IExamModeInfo,

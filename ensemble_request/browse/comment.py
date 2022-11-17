@@ -29,9 +29,6 @@ def view(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
 
     Get the detailed info of a comment
 
-    ## Permissions
-    * `PostView`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -48,6 +45,14 @@ def view(token: JWT, comment_id: CommentId) -> ICommentFullInfo:
     * `user_reacted` (`bool`): True if the user has reacted to this reply
     * `accepted` (`bool`): True if the comment is marked as an answer,
                            False otherwise
+
+    ## Errors
+
+    ### 400
+    * Invalid comment ID
+
+    ### 403
+    * User does not have permission `PostView`
     """
     return __cast(
         ICommentFullInfo,
@@ -67,9 +72,6 @@ def create(token: JWT, post_id: PostId, text: str) -> ICommentId:
 
     Creates a new comment on a post
 
-    ## Permissions
-    * `PostComment`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -80,6 +82,15 @@ def create(token: JWT, post_id: PostId, text: str) -> ICommentId:
     ## Returns
     Object containing:
     * `comment_id` (`int`): identifier of the comment
+
+    ## Errors
+
+    ### 400
+    * Empty comment contents
+    * Invalid post ID
+
+    ### 403
+    * User does not have permission `PostComment`
     """
     return __cast(
         ICommentId,
@@ -104,9 +115,6 @@ def edit(
 
     Edits the text of the comment
 
-    ## Permissions
-    * `PostCreate`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -114,6 +122,17 @@ def edit(
     * `comment_id` (`int`): identifier of the comment
     * `text` (`str`): new text of the comment
                         (should be given the old text if unedited)
+
+    ## Errors
+
+    ### 400
+    * Invalid comment ID
+    * Cannot edit a deleted comment
+    * Empty text
+
+    ### 403
+    * User does not have permission `PostCreate`
+    * User attempting to edit another user's comment
     """
     __put(
         token,
@@ -131,14 +150,20 @@ def delete(token: JWT, comment_id: CommentId):
 
     Deletes a comment.
 
-    ## Permissions
-    * `DeletePosts`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ## Params
     * `comment_id` (`int`): identifier of the comment
+
+    ## Errors
+
+    ### 400
+    * Invalid comment ID
+
+    ### 403
+    * User does not have permission `DeletePosts` if they aren't the comment
+      author
     """
     __delete(
         token,
@@ -154,9 +179,6 @@ def react(token: JWT, comment_id: CommentId) -> IUserReacted:
     Reacts to a comment if user has not reacted to that comment
     Un-reacts to a comment if the user has reacted to that comment
 
-    ## Permissions
-    * `PostView`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -165,6 +187,14 @@ def react(token: JWT, comment_id: CommentId) -> IUserReacted:
 
     ## Returns
     * `user_reacted` (`bool`): Whether the user reacted to the comment
+
+    ## Errors
+
+    ### 400
+    * Invalid comment ID
+
+    ### 403
+    * User does not have permission `PostView`
     """
     return __cast(
         IUserReacted,
@@ -182,8 +212,15 @@ def accept(token: JWT, comment_id: CommentId) -> ICommentAccepted:
 
     Toggles whether a comment is marked as accepted
 
-    ## Permissions
-    * `PostView`
+    ## Errors
+
+    ### 400
+    * Invalid comment ID
+
+    ### 403
+    * User does not have permission `PostView`
+    * User is not author of post containing comment, or user does not have
+      permission `CommentAccept`
     """
     return __cast(
         ICommentAccepted,

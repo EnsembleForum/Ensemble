@@ -31,9 +31,6 @@ def list(token: JWT, search_term: str = "") -> IPostBasicInfoList:
 
     Get a list of posts visible to the give user
 
-    ## Permissions
-    * `PostView`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -59,6 +56,11 @@ def list(token: JWT, search_term: str = "") -> IPostBasicInfoList:
             * `reported`: (`bool`): whether this post is reported. This is
               always false if the user performing the request doesn't have
               permission to view reported posts.
+
+    ## Errors
+
+    ### 403
+    * User does not have permission `PostView`
     """
     return __cast(
         IPostBasicInfoList,
@@ -77,9 +79,6 @@ def view(token: JWT, post_id: PostId) -> IPostFullInfo:
     # GET `/browse/post/view`
 
     Get the detailed info of a post.
-
-    ## Permissions
-    * `PostView`
 
     ## Header
     * `Authorization` (`str`): JWT of the user
@@ -108,6 +107,15 @@ def view(token: JWT, post_id: PostId) -> IPostFullInfo:
     * `reported`: (`bool`): whether this post is reported. This is always false
       if the user performing the request doesn't have permission to view
       reported posts.
+
+    ## Errors
+
+    ### 400
+    * Invalid post ID
+
+    ### 403
+    * User does not have permission `PostView`
+    * User does not have permission to view this post
     """
     return __cast(
         IPostFullInfo,
@@ -134,22 +142,30 @@ def create(
 
     Create a new post on the forum
 
-    ## Permissions
-    * `PostCreate`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `heading` (`str`): heading of the post
     * `text` (`str`): text of the post
-    * `tags` (`list[int]`): tags attached to the new post (ignore for sprint 1)
+    * `tags` (`list[int]`): tags IDs
     * `private` (`bool`): whether the post is private
     * `anonymous` (`bool`): whether the author is anonymous
 
     ## Returns
     Object containing:
     * `post_id` (`int`): identifier of the post
+
+    ## Errors
+
+    ### 400
+    * Empty post heading
+    * Empty post text
+    * Invalid tag ID
+
+    ### 403
+    * User does not have permission `PostCreate`
+    * User does not have permission `PostOverrideExam` when exam mode is active
     """
     return __cast(
         IPostId,
@@ -179,9 +195,6 @@ def edit(
 
     Edits the heading/text/tags of the post
 
-    ## Permissions
-    * `PostCreate`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -191,7 +204,20 @@ def edit(
                         (should be given the old heading if unedited)
     * `text` (`str`): new text of the post
                         (should be given the old text if unedited)
-    * `tags` (`list[int]`): new tags of the post (ignore for sprint 1)
+    * `tags` (`list[int]`): list of new tag IDs for the post
+
+    ## Errors
+
+    ### 400
+    * Invalid post ID
+    * Invalid tag IDs
+    * Empty new post heading
+    * Empty new post text
+    * Cannot edit a deleted post
+
+    ### 403
+    * User does not have permission `PostViewCreate`
+    * User cannot edit another user's post
     """
     __put(
         token,
@@ -211,14 +237,21 @@ def delete(token: JWT, post_id: PostId):
 
     Deletes a post.
 
-    ## Permissions
-    * `DeletePosts`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ## Params
     * `post_id` (`int`): identifier of the post
+
+    ## Errors
+
+    ### 400
+    * Invalid post ID
+
+    ### 403
+    * User does not have permission `PostCreate`
+    * User attempting to delete post they didn't author without `DeletePosts`
+      permission
     """
     __delete(
         token,
@@ -234,9 +267,6 @@ def react(token: JWT, post_id: PostId) -> IUserReacted:
     Reacts to a post if user has not reacted to that post
     Un-reacts to a post if the user has reacted to that post
 
-    ## Permissions
-    * `PostView`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -245,6 +275,14 @@ def react(token: JWT, post_id: PostId) -> IUserReacted:
 
     ## Returns
     * `user_reacted` (`bool`): Whether the user reacted to the post
+
+    ## Errors
+
+    ### 400
+    * Invalid post ID
+
+    ### 403
+    * User does not have permission `PostView`
     """
     return __cast(
         IUserReacted,
@@ -265,14 +303,19 @@ def close(
 
     Close or un-close a post
 
-    ## Permissions
-    * `ClosePosts`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `post_id` (`int`): identifier of the post
+
+    ## Errors
+
+    ### 400
+    * Invalid post ID
+
+    ### 403
+    * User does not have permission `ClosePosts`
     """
     return __cast(
         IPostClosed,
@@ -295,14 +338,19 @@ def report(
 
     Report a post
 
-    ## Permissions
-    * `ReportPosts`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `post_id` (`int`): identifier of the post
+
+    ## Errors
+
+    ### 400
+    * Invalid post ID
+
+    ### 403
+    * User does not have permission `ReportPosts`
     """
     __put(
         token,
@@ -320,16 +368,22 @@ def unreport(
     """
     # PUT `/browse/post/unreport`
 
-    Un-report a post
-
-    ## Permissions
-    * `ViewReports`
+    Un-report a post. This action should be taken by moderators if they find
+    that a report is invalid.
 
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ## Body
     * `post_id` (`int`): identifier of the post
+
+    ## Errors
+
+    ### 400
+    * Invalid post ID
+
+    ### 403
+    * User does not have permission `ViewReports`
     """
     __put(
         token,
