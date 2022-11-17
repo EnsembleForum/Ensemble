@@ -103,7 +103,7 @@ def react(user: User, *_) -> IUserReacted:
     reply = Reply(data["reply_id"])
     reply.react(user)
 
-    if user != reply.author:
+    if user != reply.author and reply.has_reacted(user):
         NotificationReacted.create(
             reply.author,
             reply,

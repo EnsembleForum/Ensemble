@@ -176,3 +176,63 @@ def test_not_notified_own_reply(
         notifications.list(basic_server_setup['token'])['notifications']
         == []
     )
+
+
+def test_not_notified_unreact_post(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
+    """
+    Do users receive a notification when someone reacts to their post?
+    """
+    browse.post.react(simple_users['user']['token'], make_posts['post1_id'])
+    browse.post.react(simple_users['user']['token'], make_posts['post1_id'])
+
+    assert len(
+        notifications.list(simple_users['admin']['token'])['notifications']
+    ) == 1
+
+
+def test_not_notified_unreact_comment(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
+    """
+    Do users receive a notification when someone reacts to their comment?
+    """
+    comment = browse.comment.create(
+        simple_users['admin']['token'],
+        make_posts['post1_id'],
+        "This is a comment",
+    )['comment_id']
+    browse.comment.react(simple_users['user']['token'], comment)
+    browse.comment.react(simple_users['user']['token'], comment)
+
+    assert len(
+        notifications.list(simple_users['admin']['token'])['notifications']
+    ) == 1
+
+
+def test_not_notified_unreact_reply(
+    simple_users: ISimpleUsers,
+    make_posts: IMakePosts,
+):
+    """
+    Do users receive a notification when someone reacts to their reply?
+    """
+    comment = browse.comment.create(
+        simple_users['admin']['token'],
+        make_posts['post1_id'],
+        "This is a comment",
+    )['comment_id']
+    reply = browse.reply.create(
+        simple_users['admin']['token'],
+        comment,
+        "This is a reply",
+    )['reply_id']
+    browse.reply.react(simple_users['user']['token'], reply)
+    browse.reply.react(simple_users['user']['token'], reply)
+
+    assert len(
+        notifications.list(simple_users['admin']['token'])['notifications']
+    ) == 1

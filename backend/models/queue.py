@@ -104,6 +104,8 @@ class Queue:
             raise http_errors.BadRequest(
                 "There is already a queue with that name")
         row = self._get()
+        if row.immutable:
+            raise http_errors.BadRequest('Cannot rename immutable queues')
         row.name = new_name
         row.save().run_sync()
 

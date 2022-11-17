@@ -19,7 +19,8 @@ from ensemble_request.taskboard import (
 from tests.integration.conftest import (
     ISimpleUsers,
     IBasicServerSetup,
-    IMakeQueues
+    IMakeQueues,
+    IDefaultQueues,
 )
 
 
@@ -56,12 +57,25 @@ def test_empty_name(
         )
 
 
+def test_rename_immutable(
+    basic_server_setup: IBasicServerSetup,
+    default_queues: IDefaultQueues,
+):
+    """Do we fail if we rename an immutable queue"""
+    with pytest.raises(BadRequest):
+        queue_edit(
+            basic_server_setup['token'],
+            default_queues['main'],
+            "Not main",
+        )
+
+
 @pytest.mark.core
 def test_success(
     basic_server_setup: IBasicServerSetup,
     make_queues: IMakeQueues,
 ):
-    """Do we fail if we use an empty name"""
+    """Can we rename queues"""
     queue_edit(
         basic_server_setup['token'],
         make_queues['queue1_id'],

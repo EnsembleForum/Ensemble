@@ -9,6 +9,7 @@ Tests for editing a user profile
 * Can't edit invalid profile (for all profile edit routes)
 * Can't edit own profile if no permission (for all profile edit routes)
 * Can set pronouns to None
+* Can't set email to another user's email
 """
 
 from typing import Any, Callable, cast
@@ -215,3 +216,29 @@ def test_set_null_pronouns(basic_server_setup: IBasicServerSetup):
         basic_server_setup['token'],
         basic_server_setup['user_id'],
     )['pronouns'] is None
+
+
+def test_set_duplicate_email(simple_users: ISimpleUsers):
+    """Do we get an error if we try to set a user's email to a duplicate?"""
+    with pytest.raises(http_errors.BadRequest):
+        profile_edit_email(
+            simple_users['user']['token'],
+            simple_users['user']['user_id'],
+            # Email for user <= email for mod, gives error
+            profile(
+                simple_users['user']['token'],
+                simple_users['mod']['user_id']
+            )['email']
+        )
+
+
+def test_set_duplicate_own_email(basic_server_setup: IBasicServerSetup):
+    """Do we get an error if we try to set a user's email to the same?"""
+    profile_edit_email(
+        basic_server_setup['token'],
+        basic_server_setup['user_id'],
+        profile(
+            basic_server_setup['token'],
+            basic_server_setup['user_id']
+        )['email']
+    )
