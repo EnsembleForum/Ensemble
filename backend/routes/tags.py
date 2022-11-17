@@ -33,16 +33,7 @@ def get_tags_list(user: User, *_) -> ITagList:
 
 @tags.post("/new_tag")
 @uses_token
-def create_tag(user: User, *_) -> ITagId:
-    """
-    Creating a new tag
-
-    ### Args:
-    * `new_tag_name` (`str`): new tag name
-
-    ### Returns:
-    * `ITagId`: ID of tag
-    """
+def new_tag(user: User, *_) -> ITagId:
     user.permissions.assert_can(Permission.ManageTags)
     data = json.loads(request.data)
     tag_name = data["tag_name"]
@@ -54,15 +45,6 @@ def create_tag(user: User, *_) -> ITagId:
 @tags.delete("/delete_tag")
 @uses_token
 def delete_tag(user: User, *_) -> dict:
-    """
-    Deleting the existence of a tag from a database
-
-    ### Args:
-    * `user` (`User`): user (who is an admin) deleting tags
-
-    ### Returns:
-    * `dict`: {}
-    """
     user.permissions.assert_can(Permission.ManageTags)
     data = (request.args)
     tag_id = TagId(data["tag_id"])

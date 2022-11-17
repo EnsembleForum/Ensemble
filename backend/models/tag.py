@@ -63,7 +63,7 @@ class Tag:
         """
         return [
             Tag(p["id"]) for p in
-            TTag.select().order_by(TTag.id, ascending=False).run_sync()
+            TTag.select().order_by(TTag.name).run_sync()
         ]
 
     def _get(self) -> TTag:

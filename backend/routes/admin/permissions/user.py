@@ -30,7 +30,7 @@ def set_permissions(user: User, *_) -> dict:
     group = PermissionGroup(PermissionGroupId(data['group_id']))
 
     if target_user == user:
-        raise BadRequest("Users cannot set their own permissions")
+        raise BadRequest("User attempting to set their own permissions")
 
     target_user.permissions.update_allowed(map_permissions_user(permissions))
     target_user.permissions.parent = group

@@ -70,7 +70,7 @@ def edit(user: User, *_) -> dict:
 
     if user != reply.author:
         raise http_errors.Forbidden(
-            "Attempting to edit another user's comment")
+            "Attempting to edit another user's reply")
 
     if reply.deleted:
         raise http_errors.BadRequest("Cannot edit a deleted reply")

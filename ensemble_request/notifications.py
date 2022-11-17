@@ -67,6 +67,14 @@ def seen(token: JWT, notification_id: NotificationId, value: bool):
     ## Errors
     * `BadRequest`: invalid notification ID
     * `Forbidden`: cannot see notifications not belonging to user
+
+    ## Errors
+
+    ### 400
+    * Invalid notification ID
+
+    ### 403
+    * Cannot see notifications belonging to another user
     """
     put(
         token,

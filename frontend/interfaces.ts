@@ -198,3 +198,8 @@ export interface analytics {
     "top_thanks": {"user_id": number, "count": number}[],
   }}[]
 }
+
+export interface tag {
+  tag_id: number,
+  name: string
+}

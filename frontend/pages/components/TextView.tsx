@@ -3,10 +3,10 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { Input, Textarea } from "theme-ui";
 import { ApiFetch, getCurrentUser, getPermission } from "../../App";
-import { APIcall, userView } from "../../interfaces";
+import { APIcall, tag, userView } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";
-import { StyledButton } from "../GlobalProps";
+import { StyledButton, Tag } from "../GlobalProps";
 import AuthorView from "./AuthorView";
 import ReactTooltip from 'react-tooltip';
 
@@ -29,11 +29,11 @@ interface Props {
   accepted?: boolean,
   deleted?: boolean,
   reported?: boolean,
-  showCloseButton?: boolean,
-  showAcceptButton?: boolean,
-  showDeleteButton?: boolean,
-  showReportButton?: boolean
-  showUnreportButton?: boolean,
+  showCloseButton?: boolean | null,
+  showAcceptButton?: boolean | null,
+  showDeleteButton?: boolean | null,
+  showReportButton?: boolean | null,
+  showUnreportButton?: boolean | null,
   focus?: boolean,
 }
 
@@ -157,6 +157,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   const [editHeading, setEditHeading] = React.useState<string>(props.heading as string);
   const [editText, setEditText] = React.useState<string>(props.text as string);
   const [toggleEdit, setToggleEdit] = React.useState<boolean>(false);
+  const [tags, setTags] = React.useState<tag[]>([]);
   const { commentCount, setCommentCount } = React.useContext(CommentContext);
   let [searchParams, setSearchParams] = useSearchParams();
   function updatePosts() {
@@ -167,7 +168,17 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
       setSearchParams({postId: '0'+postId})
     }
   }
-
+  async function getTags() {
+    const tagCall : APIcall = {
+      method: "GET",
+      path: "tags/tags_list",
+    }
+    const tags = await ApiFetch(tagCall) as {tags: tag[]};
+    setTags(tags.tags);
+  }
+  React.useEffect(() => {
+    getTags();
+  }, [])
 
   const routes = {
     "post": ["browse/comment/create", "✋ ", "browse/post/react", "post_id", "post_id", "browse/post/edit"],
@@ -216,9 +227,15 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
   }
 
 
-  let tags = <></>;
+  let tagComponent = <></>;
   if (props.tags) {
-    tags = <>Tags: {props.tags.map((each) => {return <>{each} </>})}</>
+    tagComponent = <div style={{marginBottom: "10px"}}>{ tags ? props.tags.map((tag) => {
+      const x = tags.find((e) => { return (e.tag_id === tag) });
+      if (x !== undefined) {
+        return <Tag style={{marginRight: "5px", marginTop: "5px"}}>{x.name}</Tag>
+      } 
+      return <></>
+    }) : <></>}</div>
   }
 
   function react() {
@@ -459,7 +476,7 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
           <Col>
             {toggleEdit ? <></> : heading}
             <Row>
-              {author}{queue}
+              {toggleEdit ? <></> :author}{toggleEdit ? <></> :queue}
             </Row>
           </Col>
           <Col>
@@ -475,11 +492,12 @@ const TextView = React.forwardRef((props: Props, customRef: any) => {
           {
             toggleEdit ? <>
               {editHeadingBox}
-              {tags}
+              <Row>{author}{queue}</Row>
+              {tagComponent}
               {editBox}
               {activeEditButton}
             </> : <>
-              {toggleEdit ? <></> : tags}
+              {toggleEdit ? <></> : tagComponent}
               { toggleEdit ? editBox : <p>{props.text}</p> }
               { props.userReacted ? activeReactButton : reactButton}
               { getCurrentUser().user_id === props.author ? ( toggleEdit ? activeEditButton : editButton ) : <></> }

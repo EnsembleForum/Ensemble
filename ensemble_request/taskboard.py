@@ -20,9 +20,6 @@ def queue_list(token: JWT) -> IQueueList:
 
     Get a list of queues
 
-    ## Permissions
-    * `ManageQueues`
-
     ## Header
     * `Authorization` (`JWT`): JWT of the user
 
@@ -33,6 +30,11 @@ def queue_list(token: JWT) -> IQueueList:
             * `queue_id` (`int`): ID of the queue
             * `view_only` (`bool`): whether this queue is view only
             * `following` (`bool`): whether the user follows this queue
+
+    ## Errors
+
+    ### 403
+    * User does not have permission `ViewTaskboard`
     """
     return cast(
         IQueueList,
@@ -50,9 +52,6 @@ def queue_create(token: JWT, queue_name: str) -> IQueueId:
 
     Creates a new queue
 
-    ## Permissions
-    * `ManageQueues`
-
     ## Header
     * `Authorization` (`JWT`): JWT of the user
 
@@ -62,6 +61,15 @@ def queue_create(token: JWT, queue_name: str) -> IQueueId:
     ## Returns
     Object containing:
     * `queue_id` (`int`): ID of the new queue
+
+    ## Errors
+
+    ### 400
+    * Empty queue name
+    * Duplicate queue name
+
+    ### 403
+    * User does not have permission `ManageQueues`
     """
     return cast(
         IQueueId,
@@ -81,14 +89,19 @@ def queue_delete(token: JWT, queue_id: QueueId):
 
     Delete a queue
 
-    ## Permissions
-    * `ManageQueues`
-
     ## Header
     * `Authorization` (`JWT`): JWT of the user
 
     ## Params
     * `queue_id` (`int`): ID of the queue to delete
+
+    ## Errors
+
+    ### 400
+    * Invalid queue ID
+
+    ### 403
+    * User does not have permission `ManageQueues`
     """
     delete(
         token,
@@ -105,15 +118,22 @@ def queue_edit(token: JWT, queue_id: QueueId, new_name: str):
 
     Rename a queue.
 
-    ## Permissions
-    * `ManageQueues`
-
     ## Headers
     * `Authorization` (`JWT`): JWT of the user
 
     ## Body
     * `queue_id` (`int`): the ID of the queue to edit
     * `new_name` (`str`): the new name of the queue
+
+    ## Errors
+
+    ### 400
+    * Invalid queue ID
+    * Empty queue name
+    * Duplicate queue name
+
+    ### 403
+    * User does not have permission `ManageQueues`
     """
     put(
         token,
@@ -146,6 +166,14 @@ def queue_post_list(token: JWT, queue_id: QueueId) -> IQueueFullInfo:
     * `posts`: (`list[int]`): list of post IDs in this queue
     * `view_only` (`bool`): whether this queue is view only
     * `following` (`bool`): whether the user follows this queue
+
+    ## Errors
+
+    ### 400
+    * Invalid queue ID
+
+    ### 403
+    * User does not have permission `FollowQueue`
     """
     return cast(
         IQueueFullInfo,
@@ -174,6 +202,15 @@ def queue_post_add(token: JWT, queue_id: QueueId, post_id: PostId):
     ## Params
     * `queue_id` (`int`): ID of the queue to send the post to
     * `post_id` (`int`): ID of post whose queue is being changed
+
+    ## Errors
+
+    ### 400
+    * Invalid queue ID
+    * Cannot move to or from view-only queues
+
+    ### 403
+    * User does not have permission `TaskboardDelegate`
     """
     put(
         token,
@@ -200,6 +237,14 @@ def queue_follow(token: JWT, queue_id: QueueId):
 
     ## Params
     * `queue_id` (`int`): ID of the queue to follow
+
+    ## Errors
+
+    ### 400
+    * Invalid queue ID
+
+    ### 403
+    * User does not have permission `QueueFollow`
     """
     put(
         token,

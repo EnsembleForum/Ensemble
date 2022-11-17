@@ -3,11 +3,11 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button, Input } from "theme-ui";
 import { ApiFetch, getPermission } from "../../App";
-import { APIcall, postListItem } from "../../interfaces";
+import { APIcall, postListItem, tag } from "../../interfaces";
 import { theme } from "../../theme";
 import AuthorView from "./AuthorView";
 import ReactTooltip from 'react-tooltip';
-import { StyledButton } from "../GlobalProps";
+import { StyledButton, Tag } from "../GlobalProps";
 
 // Declaring and typing our props
 interface Props { }
@@ -60,7 +60,9 @@ const PostListView = (props: Props) => {
   const [posts, setPosts] = React.useState<postListItem[]>();
   let [searchParams, setSearchParams] = useSearchParams();
   let [searchTerm, setSearchTerm] = React.useState<string>('');
+  let [tags, setTags] = React.useState<tag[]>([]);
   React.useEffect(()=>{
+    getTags();
     const api: APIcall = {
       method: "GET",
       path: "browse/post/list",
@@ -76,7 +78,14 @@ const PostListView = (props: Props) => {
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, searchTerm])
-
+  async function getTags() {
+    const tagCall : APIcall = {
+      method: "GET",
+      path: "tags/tags_list",
+    }
+    const tags = await ApiFetch(tagCall) as {tags: tag[]};
+    setTags(tags.tags);
+  }
   const searchBar = 
   <div style={{padding: "10px", display: "flex"}}>
     <Searchbar placeholder="Search" value={searchTerm} onChange={(e)=>{
@@ -129,7 +138,13 @@ const PostListView = (props: Props) => {
                 <Post style={styles}  onClick={() => setSearchParams({postId: each.post_id.toString()})}>
                   <Heading>{each.heading}</Heading>
                   <AuthorView userId={each.author}/>
-                  <div>Tags: {each.tags}</div>
+                  <div>{ tags && each.tags ? each.tags.map((tag) => {
+                    const x = tags.find((e) => { return (e.tag_id === tag) });
+                    if (x !== undefined) {
+                      return <Tag style={{marginRight: "5px", marginTop: "5px"}}>{x.name}</Tag>
+                    } 
+                    return <></>
+                  }) : <></>}</div>
                 </Post>
               );
             }
