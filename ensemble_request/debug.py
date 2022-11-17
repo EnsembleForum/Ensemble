@@ -4,7 +4,7 @@
 Functions that shadow server routes starting at /debug
 """
 from typing import cast, NoReturn
-from backend.types.debug import IEcho
+from backend.types.debug import IEcho, IEnabled
 from backend.types.admin import RequestType
 from backend.types.auth import IAuthInfo
 from .consts import URL
@@ -14,13 +14,13 @@ from .helpers import get, delete, post
 URL = f"{URL}/debug"
 
 
-def enabled() -> bool:
+def enabled() -> IEnabled:
     """
     ## GET `debug/enabled`
 
     Returns whether debugging routes are enabled
     """
-    return cast(bool, get(None, f"{URL}/enabled", {})["value"])
+    return cast(IEnabled, get(None, f"{URL}/enabled", {}))
 
 
 def echo(value: str) -> IEcho:
@@ -49,22 +49,16 @@ def clear() -> None:
     delete(None, f"{URL}/clear", {})
 
 
-def shutdown() -> None:
-    """
-    ## POST `debug/shutdown`
-
-    Initiate a server shutdown.
-
-    Currently this route is unused and unimplemented.
-    """
-    post(None, f"{URL}/shutdown", {})
-
-
 def fail() -> NoReturn:
     """
     ## GET `debug/fail`
 
     Raise a 500 error. Used to test the custom error handling.
+
+    ## Errors
+
+    ### 500
+    * Intentional error
     """
     get(None, f"{URL}/fail", {})
     # If we reach this point then we have problems
@@ -121,6 +115,14 @@ def unsafe_init(
     * `permissions`: List of objects, each containing:
             * `permission_id` (`int`): ID of the permission
             * `value` (`bool`): whether the permission is granted
+
+    ## Errors
+
+    ### 400
+    * Auth server request type not one of get, post, put, delete
+
+    ### 403
+    * Forum already initialised
     """
     return cast(IAuthInfo, post(None, f"{URL}/unsafe_init", {
         "address": address,
@@ -161,6 +163,11 @@ def unsafe_login(username: str) -> IAuthInfo:
     * `permissions`: List of objects, each containing:
             * `permission_id` (`int`): ID of the permission
             * `value` (`bool`): whether the permission is granted
+
+    ## Errors
+
+    ### 400
+    * Username not registered
     """
     return cast(IAuthInfo, post(
         None,

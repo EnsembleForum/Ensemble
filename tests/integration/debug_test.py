@@ -16,7 +16,7 @@ def test_echo():
 
 def test_enabled():
     """Make sure debugging is enabled"""
-    assert enabled()
+    assert enabled()["value"]
 
 
 def test_fail():

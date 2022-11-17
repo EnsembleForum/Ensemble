@@ -35,6 +35,11 @@ def profile(token: JWT, user_id: UserId) -> IUserProfile:
 
     Note that this will eventually contain more properties such as pronouns and
     the like.
+
+    ## Errors
+
+    ### 400
+    * Invalid user ID
     """
     return cast(IUserProfile, get(
         token,
@@ -59,6 +64,17 @@ def profile_edit_name_first(
     ### Params
     * `user_id` (`int`): user ID for user we're editing the profile of
     * `name_first` (`str`): user's new first name
+
+    ## Errors
+
+    ### 400
+    * Invalid user ID
+    * Empty first name
+
+    ### 403
+    * User does not have permission `EditProfile` if editing their own profile
+    * User does not have permission `ManageUserProfile` if editing another
+      user's profile
     """
     put(
         token,
@@ -86,6 +102,17 @@ def profile_edit_name_last(
     ### Params
     * `user_id` (`int`): user ID for user we're editing the profile of
     * `name_last` (`str`): user's new last name
+
+    ## Errors
+
+    ### 400
+    * Invalid user ID
+    * Empty last name
+
+    ### 403
+    * User does not have permission `EditProfile` if editing their own profile
+    * User does not have permission `ManageUserProfile` if editing another
+      user's profile
     """
     put(
         token,
@@ -113,6 +140,17 @@ def profile_edit_email(
     ### Params
     * `user_id` (`int`): user ID for user we're editing the profile of
     * `email` (`str`): user's new email
+
+    ## Errors
+
+    ### 400
+    * Invalid user ID
+    * Invalid email
+
+    ### 403
+    * User does not have permission `EditProfile` if editing their own profile
+    * User does not have permission `ManageUserProfile` if editing another
+      user's profile
     """
     put(
         token,
@@ -140,6 +178,17 @@ def profile_edit_pronouns(
     ### Params
     * `user_id` (`int`): user ID for user we're editing the profile of
     * `pronouns` (`Optional[str]`): user's new pronouns
+
+    ## Errors
+
+    ### 400
+    * Invalid user ID
+    * Empty pronouns (use `null` instead)
+
+    ### 403
+    * User does not have permission `EditProfile` if editing their own profile
+    * User does not have permission `ManageUserProfile` if editing another
+      user's profile
     """
     put(
         token,
