@@ -6,6 +6,7 @@ Tests for notifications when closing posts
 * Users get notified when their post is closed
 * User doesn't get notified if they close their own post
 """
+from datetime import datetime
 import jestspectation as expect
 from ..conftest import ISimpleUsers, IMakePosts, IBasicServerSetup
 from ensemble_request import notifications, browse
@@ -23,6 +24,10 @@ def test_closed_post_notification(
         {
             "notification_id": expect.Any(int),
             "seen": False,
+            "timestamp": expect.FloatApprox(
+                datetime.now().timestamp(),
+                magnitude=2
+            ),
             "user_from": None,
             "heading": "A mod closed your post",
             "body": make_posts['head1'],

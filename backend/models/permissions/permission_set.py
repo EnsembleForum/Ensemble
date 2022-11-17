@@ -208,10 +208,12 @@ class PermissionGroup(PermissionSet):
             return True
         elif action.value in row.disallowed:
             return False
-        # IDEA: Could have a global permission which also applies to users that
-        # have not logged in?
-        else:
-            return False
+        else:  # pragma: no cover
+            # This should never happen - if we reach this post then the
+            # permissions are configured incorrectly
+            # IDEA: Could have a global permission which also applies to users
+            # that have not logged in, to allow for public access?
+            assert False
 
     def update_allowed(self, actions: dict[Permission, bool]):
         """
