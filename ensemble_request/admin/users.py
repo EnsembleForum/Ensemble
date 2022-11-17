@@ -18,6 +18,8 @@ def register(
     group_id: PermissionGroupId
 ) -> IUserIdList:
     """
+    ### POST `/admin/users/register`
+
     Register a collection of users
 
     ## Permissions
@@ -53,6 +55,8 @@ def register(
 
 def all(token: JWT) -> IUserBasicInfoList:
     """
+    ### GET `/admin/users/all`
+
     Returns a list of basic info about all forum users
 
     ## Permissions

@@ -43,13 +43,6 @@ def clear() -> dict:
     return {}
 
 
-@__debug.post('/shutdown')
-def shutdown() -> dict:  # pragma: no cover
-    print("Initiated server shutdown")
-    # TODO
-    return {}
-
-
 @__debug.get('/fail')
 def fail() -> NoReturn:
     raise Exception("You brought this upon yourself.")

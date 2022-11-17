@@ -4,7 +4,7 @@
 Functions that shadow server routes starting at /debug
 """
 from typing import cast, NoReturn
-from backend.types.debug import IEcho
+from backend.types.debug import IEcho, IEnabled
 from backend.types.admin import RequestType
 from backend.types.auth import IAuthInfo
 from .consts import URL
@@ -14,13 +14,13 @@ from .helpers import get, delete, post
 URL = f"{URL}/debug"
 
 
-def enabled() -> bool:
+def enabled() -> IEnabled:
     """
     ## GET `debug/enabled`
 
     Returns whether debugging routes are enabled
     """
-    return cast(bool, get(None, f"{URL}/enabled", {})["value"])
+    return cast(IEnabled, get(None, f"{URL}/enabled", {}))
 
 
 def echo(value: str) -> IEcho:
@@ -47,17 +47,6 @@ def clear() -> None:
     Clear the database.
     """
     delete(None, f"{URL}/clear", {})
-
-
-def shutdown() -> None:
-    """
-    ## POST `debug/shutdown`
-
-    Initiate a server shutdown.
-
-    Currently this route is unused and unimplemented.
-    """
-    post(None, f"{URL}/shutdown", {})
 
 
 def fail() -> NoReturn:

@@ -154,7 +154,7 @@ def groups_create(
 
 def groups_list(token: JWT) -> IPermissionGroupList:
     """
-    ### POST `/admin/permissions/groups/list`
+    ### GET `/admin/permissions/groups/list`
 
     List available permission groups
 
@@ -224,6 +224,8 @@ def groups_remove(
     transfer_group_id: PermissionGroupId,
 ) -> None:
     """
+    ### DELETE `/admin/permissions/groups/remove`
+
     Remove an existing permission group
 
     ## Permissions

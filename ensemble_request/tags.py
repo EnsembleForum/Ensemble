@@ -69,9 +69,9 @@ def tags_list(token: JWT) -> ITagList:
     )
 
 
-def create_tag(token: JWT, tag_name: str) -> ITagBasicInfo:
+def new_tag(token: JWT, tag_name: str) -> ITagBasicInfo:
     """
-    ## PUT `/tags/new_tag`
+    ## POST `/tags/new_tag`
 
     Create a new tag
 

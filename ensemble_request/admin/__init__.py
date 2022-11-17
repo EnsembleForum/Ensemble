@@ -50,7 +50,7 @@ def init(
     name_last: str,
 ) -> IAuthInfo:
     """
-    ## GET `/admin/init`
+    ## POST `/admin/init`
 
     Initialise the forum.
 
