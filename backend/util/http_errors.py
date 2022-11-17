@@ -74,7 +74,8 @@ class HTTPException(Exception):
         # Only include traceback if we're debugging
         if debug_active():
             trace = "\n".join(traceback.format_exception(self))
-        else:
+        # No coverage because we always debug during tests
+        else:  # pragma: no cover
             trace = None
         return {
             "code": self.code,

@@ -92,11 +92,76 @@ def test_cant_connect_to_auth_server():
     """
     with pytest.raises(http_errors.BadRequest):
         init(
+            address="http://localhost:6969/login",  # Bad server
+            request_type="get",
+            username_param="username",
+            password_param="password",
+            success_regex="true",
+            username="admin1",
+            password="admin1",
+            email="admin@example.com",
+            name_first="Dee",
+            name_last="Snuts",
+        )
+
+
+def test_invalid_route_auth_server():
+    """
+    Do we get a 400 error when we give an invalid URL to the correct server?
+    """
+    with pytest.raises(http_errors.BadRequest):
+        init(
             address=f"{AUTH_URL}/not_login",  # Bad URL
             request_type="get",
             username_param="username",
             password_param="password",
             success_regex="true",
+            username="admin1",
+            password="admin1",
+            email="admin@example.com",
+            name_first="Dee",
+            name_last="Snuts",
+        )
+
+
+@pytest.mark.parametrize(
+    'req_type',
+    [
+        'post',
+        'put',
+        'delete',
+    ]
+)
+def test_incorrect_request_type_auth_server(req_type):
+    """
+    Do we get a 400 error when we give an invalid URL to the correct server?
+    """
+    with pytest.raises(http_errors.BadRequest):
+        init(
+            address=f"{AUTH_URL}/login",
+            request_type=req_type,
+            username_param="username",
+            password_param="password",
+            success_regex="true",
+            username="admin1",
+            password="admin1",
+            email="admin@example.com",
+            name_first="Dee",
+            name_last="Snuts",
+        )
+
+
+def test_invalid_regex():
+    """
+    Do we get a 400 error when we give an invalid regex for the success_regex?
+    """
+    with pytest.raises(http_errors.BadRequest):
+        init(
+            address=f"{AUTH_URL}/login",
+            request_type="get",
+            username_param="username",
+            password_param="password",
+            success_regex="*",  # Bad regex, fails to compile
             username="admin1",
             password="admin1",
             email="admin@example.com",
@@ -232,3 +297,11 @@ def test_init_user_created():
     )
     # Test we can log in with their account
     login("admin1", "admin1")
+
+
+def test_login_with_no_config():
+    """
+    Do we get an error if we try to log in when there's no auth configuration?
+    """
+    with pytest.raises(http_errors.BadRequest):
+        login("admin1", "admin1")

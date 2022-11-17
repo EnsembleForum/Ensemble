@@ -7,6 +7,7 @@ Tests for notifications that a post was reported
 * Admin who makes report doesn't get notified
 * Mod whose post is reported doesn't get notified
 """
+from datetime import datetime
 import jestspectation as expect
 from ensemble_request import notifications, browse
 from ..conftest import ISimpleUsers, IBasicServerSetup, IMakePosts, IAllUsers
@@ -23,6 +24,10 @@ def test_mod_notified(
     )
     expected = expect.Equals([{
         "notification_id": expect.Any(int),
+        "timestamp": expect.FloatApprox(
+            datetime.now().timestamp(),
+            magnitude=2
+        ),
         "seen": False,
         "user_from": None,
         "heading": "Post reported",

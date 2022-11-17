@@ -3,6 +3,7 @@
 
 Model for notifications.
 """
+from datetime import datetime
 from ..tables import TNotification
 from ..user import User
 from ..post import Post
@@ -136,6 +137,7 @@ class Notification:
                 TNotification.reply: reply.id if reply is not None else None,
                 TNotification.seen: False,
                 TNotification.queue: queue.id if queue is not None else None,
+                TNotification.timestamp: datetime.now(),
             }
         ).save().run_sync()[0]
         return cast(NotificationId, val["id"])
@@ -183,6 +185,13 @@ class Notification:
         row = self._get()
         row.seen = new_val
         row.save().run_sync()
+
+    @property
+    def timestamp(self) -> int:
+        """
+        Time when the notification was sent
+        """
+        return int(self._get().timestamp.timestamp())
 
     @property
     def _user_from(self) -> Optional[User]:

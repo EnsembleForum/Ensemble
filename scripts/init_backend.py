@@ -31,8 +31,8 @@ try:
         username="admin1",
         password="admin1",
         email="admin1@example.com",
-        name_first="Bophades",
-        name_last="Nuts",
+        name_first="Ada",
+        name_last="Lovelace",
     )
 except requests.ConnectionError:
     print("❗ Couldn't connect to server - is it running?")
