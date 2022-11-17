@@ -303,4 +303,5 @@ def test_login_with_no_config():
     """
     Do we get an error if we try to log in when there's no auth configuration?
     """
-    login("admin1", "admin1")
+    with pytest.raises(http_errors.BadRequest):
+        login("admin1", "admin1")
