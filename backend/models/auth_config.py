@@ -118,11 +118,13 @@ class AuthConfig:
         """
         return self._get().address
 
-    @address.setter
-    def address(self, new_address: str):
-        row = self._get()
-        row.address = new_address
-        row.save([TAuthConfig.address]).run_sync()
+    # TODO: When we introduce routes to modify the existing auth config,
+    # uncomment these
+    # @address.setter
+    # def address(self, new_address: str):
+    #     row = self._get()
+    #     row.address = new_address
+    #     row.save([TAuthConfig.address]).run_sync()
 
     @property
     def request_type(self) -> RequestType:
@@ -131,11 +133,11 @@ class AuthConfig:
         """
         return cast(RequestType, self._get().request_type)
 
-    @request_type.setter
-    def request_type(self, new_request_type: RequestType):
-        row = self._get()
-        row.request_type = new_request_type
-        row.save([TAuthConfig.request_type]).run_sync()
+    # @request_type.setter
+    # def request_type(self, new_request_type: RequestType):
+    #     row = self._get()
+    #     row.request_type = new_request_type
+    #     row.save([TAuthConfig.request_type]).run_sync()
 
     @property
     def username_param(self) -> str:
@@ -144,11 +146,11 @@ class AuthConfig:
         """
         return self._get().username_param
 
-    @username_param.setter
-    def username_param(self, new_username_param: RequestType):
-        row = self._get()
-        row.username_param = new_username_param
-        row.save([TAuthConfig.username_param]).run_sync()
+    # @username_param.setter
+    # def username_param(self, new_username_param: RequestType):
+    #     row = self._get()
+    #     row.username_param = new_username_param
+    #     row.save([TAuthConfig.username_param]).run_sync()
 
     @property
     def password_param(self) -> str:
@@ -157,11 +159,11 @@ class AuthConfig:
         """
         return self._get().password_param
 
-    @password_param.setter
-    def password_param(self, new_password_param: str):
-        row = self._get()
-        row.password_param = new_password_param
-        row.save([TAuthConfig.password_param]).run_sync()
+    # @password_param.setter
+    # def password_param(self, new_password_param: str):
+    #     row = self._get()
+    #     row.password_param = new_password_param
+    #     row.save([TAuthConfig.password_param]).run_sync()
 
     @property
     def success_regex(self) -> str:
@@ -170,8 +172,8 @@ class AuthConfig:
         """
         return self._get().success_regex
 
-    @success_regex.setter
-    def success_regex(self, new_success_regex: str):
-        row = self._get()
-        row.success_regex = new_success_regex
-        row.save([TAuthConfig.success_regex]).run_sync()
+    # @success_regex.setter
+    # def success_regex(self, new_success_regex: str):
+    #     row = self._get()
+    #     row.success_regex = new_success_regex
+    #     row.save([TAuthConfig.success_regex]).run_sync()
