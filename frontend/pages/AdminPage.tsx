@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { Prettify } from "../global_functions";
-import { pageList } from "../interfaces";
+import { APIcall, pageList } from "../interfaces";
 import { theme } from "../theme";
 import AnalyticsPage from "./AnalyticsPage";
 import Navbar, { StyledNavbar } from "./components/Navbar";
@@ -11,6 +11,8 @@ import ManagePermissionsPage from "./ManagePermissionsPage";
 import ManageTagsPage from "./ManageTagsPage";
 import UsersRegisterPage from "./UsersRegisterPage";
 import { StyledButton } from "./GlobalProps";
+import { ApiFetch } from "../App";
+import { useSearchParams } from "react-router-dom";
 
 
 interface Props {
@@ -45,12 +47,25 @@ const Max = styled.div`
 
 const AdminPage = (props: Props) => {
   const [currPage, setCurrPage] = React.useState<string>(props.page);
+  let [searchParams, setSearchParams] = useSearchParams();
   let pages: pageList = {
     "register_users": <UsersRegisterPage />,
     "analytics": <AnalyticsPage />,
     "manage_user_permissions": <ManagePermissionsPage/>,
     "manage_tags": <ManageTagsPage/>,
   };
+  function toggleExamMode() {
+    const call : APIcall = {
+      method: "PUT",
+      path: "admin/exam_mode/toggle"
+    }
+    ApiFetch(call).then((data) => {
+      const d = data as {is_enabled: boolean};
+      const da = d.is_enabled ? "true" : "false";
+      searchParams.set("exam_mode", da);
+      setSearchParams(searchParams);
+    })
+  }
   return (
     <Max>
       <Navbar page="admin" />
@@ -62,7 +77,7 @@ const AdminPage = (props: Props) => {
           }
           return (<a key={key} style={(key === currPage) ? { filter: "brightness(95%)" } : { filter: "brightness(100%)" }} onClick={(e) => { setCurrPage(key) }}>{Prettify(key)}</a>)
         })}
-        <StyledButton>Exam Mode</StyledButton>
+        <StyledButton onClick={() => {toggleExamMode()}}>Exam Mode</StyledButton>
       </AdminPanel>
       {pages[currPage]}
     </Max>

@@ -102,6 +102,7 @@ const UsersRegisterPage = (props: Props) => {
     e.preventDefault();
     setGroupPermission(parseInt(e.target.value));
     setRegisterDetails(defaultState);
+    setRegisterList([])
   }
   const resetUser = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
