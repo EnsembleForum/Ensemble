@@ -42,6 +42,20 @@ def register(
     ## Returns
     * `user_ids`: list of
           * `int`: ID for the user
+
+    ## Errors
+
+    ### 400
+    * Duplicate usernames in given data
+    * Duplicate emails in given data
+    * Username empty
+    * Username not alphanumeric
+    * User with username already exists
+    * User with email already exists
+    * Empty first/last name
+
+    ### 403
+    * User does not have permission `AddUsers`
     """
     return cast(IUserIdList, post(
         token,
@@ -59,9 +73,6 @@ def all(token: JWT) -> IUserBasicInfoList:
 
     Returns a list of basic info about all forum users
 
-    ## Permissions
-    * `ViewAllUsers`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -71,6 +82,11 @@ def all(token: JWT) -> IUserBasicInfoList:
             * `name_last` (`str`): Last name
             * `username` (`str`): Username
             * `user_id` (`int`): ID of the user
+
+    ## Errors
+
+    ### 403
+    * User does not have permission `ViewAllUsers`
     """
     return cast(IUserBasicInfoList, get(
         token,

@@ -79,6 +79,16 @@ def init(
     * `permissions`: List of objects, each containing:
             * `permission_id` (`int`): ID of the permission
             * `value` (`bool`): whether the permission is granted
+
+    ## Errors
+
+    ### 400
+    * Auth server request type not one of get, post, put, delete
+    * Authentication with admin's username and password failed
+    * Authentication succeeded with an incorrect password
+
+    ### 403
+    * Forum already initialised
     """
     return cast(IAuthInfo, post(None, f"{URL}/init", {
         "address": address,

@@ -30,6 +30,15 @@ def login(username: str, password: str) -> IAuthInfo:
     * `permissions`: List of objects, each containing:
             * `permission_id` (`int`): ID of the permission
             * `value` (`bool`): whether the permission is granted
+
+    ## Errors
+
+    ### 400
+    * User provided valid token, so they're already logged in
+    * Username and password correct, but their account hasn't been registered
+
+    ### 403
+    * Incorrect username or past
     """
     return cast(IAuthInfo, post(
         None,

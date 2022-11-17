@@ -54,6 +54,11 @@ def fail() -> NoReturn:
     ## GET `debug/fail`
 
     Raise a 500 error. Used to test the custom error handling.
+
+    ## Errors
+
+    ### 500
+    * Intentional error
     """
     get(None, f"{URL}/fail", {})
     # If we reach this point then we have problems
@@ -110,6 +115,14 @@ def unsafe_init(
     * `permissions`: List of objects, each containing:
             * `permission_id` (`int`): ID of the permission
             * `value` (`bool`): whether the permission is granted
+
+    ## Errors
+
+    ### 400
+    * Auth server request type not one of get, post, put, delete
+
+    ### 403
+    * Forum already initialised
     """
     return cast(IAuthInfo, post(None, f"{URL}/unsafe_init", {
         "address": address,
@@ -150,6 +163,11 @@ def unsafe_login(username: str) -> IAuthInfo:
     * `permissions`: List of objects, each containing:
             * `permission_id` (`int`): ID of the permission
             * `value` (`bool`): whether the permission is granted
+
+    ## Errors
+
+    ### 400
+    * Username not registered
     """
     return cast(IAuthInfo, post(
         None,

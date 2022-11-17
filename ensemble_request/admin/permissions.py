@@ -67,6 +67,11 @@ def get_permissions(token: JWT, user_id: UserId) -> IPermissionUser:
                     * `None`: permission inherited
     * `group_id` (`int`): the ID of the permission group this user inherits
       their permissions from
+
+    ## Errors
+
+    ### 403
+    * User does not have permission `ManageUserPermissions`
     """
     return cast(IPermissionUser, get(
         token,
@@ -102,6 +107,15 @@ def set_permissions(
                     * `None`: permission inherited
     * `group_id`: the ID of the permission group this user inherits their
       permissions from
+
+    ## Errors
+
+    ### 400
+    * User attempting to set their own permissions
+    * Not all permission values specified
+
+    ### 403
+    * User does not have permission `ManageUserPermissions`
     """
     put(
         token,
@@ -124,9 +138,6 @@ def groups_create(
 
     Create a new permission group
 
-    ## Permissions
-    * `ManagePermissionGroups`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -141,6 +152,16 @@ def groups_create(
     ## Returns
     Object containing:
     * `group_id` (`int`): ID for new group
+
+    ## Errors
+
+    ### 400
+    * A permission group with the given name already exists
+    * Not all permission values specified
+    * Name of permission group is empty
+
+    ### 403
+    * User does not have permission `ManagePermissionGroups`
     """
     return cast(IGroupId, post(
         token,
@@ -158,9 +179,6 @@ def groups_list(token: JWT) -> IPermissionGroupList:
 
     List available permission groups
 
-    ## Permissions
-    * `ManagePermissionGroups`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -173,6 +191,11 @@ def groups_list(token: JWT) -> IPermissionGroupList:
             * `permissions`: object containing mappings, with possible values:
                     * `True`: permission allowed
                     * `False`: permission denied
+
+    ## Errors
+
+    ### 403
+    * User does not have permission `ManagePermissionGroups`
     """
     return cast(IPermissionGroupList, get(
         token,
@@ -192,9 +215,6 @@ def groups_edit(
 
     Edit an existing permission group
 
-    ## Permissions
-    * `ManagePermissionGroups`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
@@ -206,6 +226,19 @@ def groups_edit(
             * `value`: one of
                     * `True`: permission allowed
                     * `False`: permission denied
+
+    ## Errors
+
+    ### 400
+    * Permission group with given ID not found
+    * A permission group with the given new name already exists and isn't this
+      group
+    * Not all permission values specified
+    * New name of permission group is empty
+    * Cannot edit immutable permission groups (ie Administrator)
+
+    ### 403
+    * User does not have permission `ManagePermissionGroups`
     """
     put(
         token,
@@ -228,14 +261,21 @@ def groups_remove(
 
     Remove an existing permission group
 
-    ## Permissions
-    * `ManagePermissionGroups`
-
     ## Header
     * `Authorization` (`str`): JWT of the user
 
     ## Params
     * `group_id` (`int`): permission group ID
+
+    ## Errors
+
+    ### 400
+    * Permission group with given ID not found
+    * Cannot transfer users to the same permission group
+    * Cannot remove immutable permission groups
+
+    ### 403
+    * User does not have permission `ManagePermissionGroups`
     """
     delete(
         token,

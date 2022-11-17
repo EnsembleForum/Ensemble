@@ -20,16 +20,24 @@ def get_tag(token: JWT, tag_id: TagId) -> ITagBasicInfo:
 
     Get the info of a tag
 
-    ## Permissions
-    * `PostView`
-
     ## Header
     * `Authorization` (`JWT`): JWT of the user
+
+    ## Params
+    * `tag_id` (`int`): ID of tag to view
 
     ## Returns
     Object containing:
         * `tag_id` (`int`): ID of the tag
         * `name` (`str`): name of the tag
+
+    ## Errors
+
+    ### 400
+    * Invalid tag ID
+
+    ### 403
+    * User does not have permission `PostView`
     """
     return cast(
         ITagBasicInfo,
@@ -47,9 +55,6 @@ def tags_list(token: JWT) -> ITagList:
 
     Get a list of all tags
 
-    ## Permissions
-    * `PostView`
-
     ## Header
     * `Authorization` (`JWT`): JWT of the user
 
@@ -58,6 +63,11 @@ def tags_list(token: JWT) -> ITagList:
     * `tags`: list of objects containing:
             * `tag_id` (`int`): ID of the tag
             * `name` (`str`): name of the tag
+
+    ## Errors
+
+    ### 403
+    * User does not have permission `PostView`
     """
     return cast(
         ITagList,
@@ -75,14 +85,20 @@ def new_tag(token: JWT, tag_name: str) -> ITagBasicInfo:
 
     Create a new tag
 
-    ## Permissions
-    * `ManageTags`
-
     ## Headers
     * `Authorization` (`JWT`): JWT of the user
 
     ## Body
     * `tag_name` (`str`): name of the new tag
+
+    ## Errors
+
+    ### 400
+    * Empty tag name
+    * Tag with that name already exists
+
+    ### 403
+    * User does not have permission `ManageTags`
     """
 
     return cast(
@@ -101,14 +117,19 @@ def delete_tag(token: JWT, tag_id: TagId):
 
     Delete a tag
 
-    ## Permissions
-    * `ManageTags`
-
     ## Headers
     * `Authorization` (`JWT`): JWT of the user
 
-    ## Body
+    ## Params
     * `tag_id` (`int`): identifier of the new tag
+
+    ## Errors
+
+    ### 400
+    * Invalid tag ID
+
+    ### 403
+    * User does not have permission `ManageTags`
     """
     delete(
         token,
