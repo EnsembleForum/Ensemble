@@ -101,7 +101,7 @@ const CreatePostView = (props: Props) => {
       path: "tags/tags_list",
     }
     const tags = await ApiFetch(tagCall) as {tags: tag[]};
-    if (tags) {
+    if (tags && tags.tags.length > 0) {
       setTags(tags.tags);
       setCurrentTag(tags.tags[0].tag_id);
     }

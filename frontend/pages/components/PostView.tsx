@@ -92,6 +92,7 @@ const PostView = (props: Props) => {
             text={currentPost.text} 
             author={currentPost.author} 
             reacts={currentPost.me_too} 
+            tags={currentPost.tags}
             id={parseInt(searchParams.get("postId") as string)} 
             userReacted={currentPost.user_reacted} 
             type="post" private={currentPost.private} 

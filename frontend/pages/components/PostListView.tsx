@@ -138,8 +138,12 @@ const PostListView = (props: Props) => {
                 <Post style={styles}  onClick={() => setSearchParams({postId: each.post_id.toString()})}>
                   <Heading>{each.heading}</Heading>
                   <AuthorView userId={each.author}/>
-                  <div>{ tags ? each.tags.map((tag) => {
-                    return <Tag style={{marginRight: "5px", marginTop: "5px"}}>{tags.find((e) => { return (e.tag_id === tag) }).name}</Tag>
+                  <div>{ tags && each.tags ? each.tags.map((tag) => {
+                    const x = tags.find((e) => { return (e.tag_id === tag) });
+                    if (x !== undefined) {
+                      return <Tag style={{marginRight: "5px", marginTop: "5px"}}>{x.name}</Tag>
+                    } 
+                    return <></>
                   }) : <></>}</div>
                 </Post>
               );
