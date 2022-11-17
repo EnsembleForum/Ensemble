@@ -17,8 +17,13 @@ export const StyledForm = styled(Box)`
   border-radius: 2%;
 `;
 
-export const Tag = styled.span`
-  height: 10px;
-  font-weight: 700;
-  background-color: ${theme.colors?.highlight};
-`;
+export const Tag = styled.div`
+  padding: 3px;
+  height: 16px;
+  font-size: 14px;
+  color: white;
+  border-radius: 5px;
+  font-weight: bold;
+  display: inline-block;
+  background-color: ${theme.colors?.primary};
+`

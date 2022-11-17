@@ -8,11 +8,13 @@ import Navbar, { StyledNavbar } from "./components/Navbar";
 import InitPage from "./InitPage";
 import TaskboardPage from "./TaskboardPage";
 import ManagePermissionsPage from "./ManagePermissionsPage";
+import ManageTagsPage from "./ManageTagsPage";
 import UsersRegisterPage from "./UsersRegisterPage";
+import { StyledButton } from "./GlobalProps";
 
 
 interface Props {
-  page: "initialise_forum" | "register_users";
+  page: "initialise_forum" | "register_users" | "manage_user_permissions" | "manage_tags"
 }
 
 const AdminPanel = styled(StyledNavbar)`
@@ -44,10 +46,10 @@ const Max = styled.div`
 const AdminPage = (props: Props) => {
   const [currPage, setCurrPage] = React.useState<string>(props.page);
   let pages: pageList = {
-    //"initialise_forum": <InitPage />,
     "register_users": <UsersRegisterPage />,
     "analytics": <AnalyticsPage />,
-    "manage_user_permissions": <ManagePermissionsPage/>
+    "manage_user_permissions": <ManagePermissionsPage/>,
+    "manage_tags": <ManageTagsPage/>,
   };
   return (
     <Max>
@@ -60,6 +62,7 @@ const AdminPage = (props: Props) => {
           }
           return (<a key={key} style={(key === currPage) ? { filter: "brightness(95%)" } : { filter: "brightness(100%)" }} onClick={(e) => { setCurrPage(key) }}>{Prettify(key)}</a>)
         })}
+        <StyledButton>Exam Mode</StyledButton>
       </AdminPanel>
       {pages[currPage]}
     </Max>
