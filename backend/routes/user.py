@@ -9,6 +9,8 @@ from flask import Blueprint, request
 from backend.models import Permission, User
 from backend.types.user import IUserProfile
 from backend.types.identifiers import UserId
+from backend.util import http_errors
+from backend.util.exceptions import MatchNotFound
 from backend.util.tokens import uses_token
 
 
@@ -102,6 +104,12 @@ def edit_email(user: User, *_) -> dict:
     data = json.loads(request.data)
     email: str = data['email']
     subject = User(UserId(data['user_id']))
+
+    try:
+        if User.from_email(email) != user:
+            raise http_errors.BadRequest("Duplicate email")
+    except MatchNotFound:
+        pass
 
     if user == subject:
         user.permissions.assert_can(Permission.EditProfile)
