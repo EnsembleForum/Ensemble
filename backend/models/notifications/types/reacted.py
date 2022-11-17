@@ -78,6 +78,7 @@ class NotificationReacted(Notification):
         return {
             "notification_id": self.id,
             "user_from": None,
+            "timestamp": self.timestamp,
             "seen": self.seen,
             "heading": action,
             "body": title,

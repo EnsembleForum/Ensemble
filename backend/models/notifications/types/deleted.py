@@ -77,6 +77,7 @@ class NotificationDeleted(Notification):
             post_id = self._post.id
         return {
             "notification_id": self.id,
+            "timestamp": self.timestamp,
             "seen": self.seen,
             "user_from": None,
             "heading": f"Your {type} was deleted",
