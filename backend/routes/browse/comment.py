@@ -104,7 +104,7 @@ def react(user: User, *_) -> IUserReacted:
     comment = Comment(data["comment_id"])
     comment.react(user)
 
-    if user != comment.author:
+    if user != comment.author and comment.has_reacted(user):
         NotificationReacted.create(
             comment.author,
             comment,

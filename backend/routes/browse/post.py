@@ -130,7 +130,7 @@ def react(user: User, *_) -> IUserReacted:
     post = Post(data["post_id"])
     post.react(user)
 
-    if user != post.author:
+    if user != post.author and post.has_reacted(user):
         NotificationReacted.create(
             post.author,
             post,
