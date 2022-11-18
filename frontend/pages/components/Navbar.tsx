@@ -122,7 +122,7 @@ const Navbar = (props: Props) => {
           setTimeout(() => {setUpdate(!update)}, 5000);
         });
     }
-  }, [update, searchParams.get("newnewNotifs")]);
+  }, [update]);
 
 
   const logout = (
