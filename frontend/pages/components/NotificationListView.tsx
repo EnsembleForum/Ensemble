@@ -70,8 +70,6 @@ const NotificationsListView = (props: Props) => {
       body: {notification_id: id, value: true}
     }
     await ApiFetch(api);
-    searchParams.set("newnewNotifs", notifications.filter(each => { return each.seen }).length.toString())
-    setSearchParams(searchParams);
     setSeen(!seen);
   }
 
