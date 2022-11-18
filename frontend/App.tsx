@@ -47,8 +47,14 @@ export function ApiFetch<T>(apiCall: APIcall) {
         }
       })
       .catch((err) => {
-        alert(err);
-        console.log(err);
+        if (err.description === "Token invalidated") {
+          const currentUser = getCurrentUser();
+          currentUser.logged_in = false;
+          setCurrentUser(currentUser);
+        } else {
+          alert(err);
+          console.log(err);
+        }
       });
   });
 }
