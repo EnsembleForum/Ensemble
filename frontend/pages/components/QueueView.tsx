@@ -1,12 +1,10 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, IconButton, Input, Select, Text } from "theme-ui";
+import React from "react";
+import { Input } from "theme-ui";
 import { APIcall, postView, queueListPosts } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
-import QueueContext, { UpdateContext } from "../queueContext";
-import AuthorView from "./AuthorView";
+import { UpdateContext } from "../queueContext";
 import QueueItemView from "./QueueItemView";
 import ReactTooltip from 'react-tooltip';
 import { ApiFetch, getPermission } from "../../App";

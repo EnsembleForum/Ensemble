@@ -1,13 +1,11 @@
-import styled from '@emotion/styled';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { SERVER_PATH } from './constants';
-import { APIcall, currentUser, requestOptions, userPermission } from './interfaces';
+import { APIcall, currentUser, requestOptions } from './interfaces';
 import AdminPage from './pages/AdminPage';
 import BrowsePage from './pages/BrowsePage';
 import InitPage from './pages/InitPage';
 import LoginPage from './pages/LoginPage';
-import PasswordResetPage from './pages/PasswordResetPage';
 import TaskboardPage from './pages/TaskboardPage';
 import UserProfilePage from './pages/UserProfilePage';
 import NotificationsPage from './pages/NotificationsPage';
@@ -114,7 +112,6 @@ function PassThrough() {
           <Route path="/" element={<Navigate to="/browse" />}></Route>
           <Route path='/admin/init' element={ getLoggedIn() ? <Navigate to="/browse" /> : <Navigate to="/login" />} />
           <Route path='/login' element={<LoginPage />} />
-          <Route path='/password_reset' element={<PasswordResetPage />} />
           <Route path='/profile' element={<UserProfilePage />} />
           <Route path='/browse' element={<BrowsePage />}/>
           {getPermission(20) ? <Route path='/taskboard' element={<TaskboardPage />} /> : <></>}

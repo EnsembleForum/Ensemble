@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import React from "react";
 import { ApiFetch, getPermission } from "../App";
 import { APIcall, postView, queueList, queueListPosts } from "../interfaces";
 import { theme } from "../theme";
@@ -8,7 +8,7 @@ import QueueView from "./components/QueueView";
 import { StyledButton } from "./GlobalProps";
 import QueueContext, { UpdateContext } from "./queueContext";
 import ReactTooltip from 'react-tooltip';
-import { Box, Input, Label } from "theme-ui";
+import { Box, Input } from "theme-ui";
 
 interface Props { }
 

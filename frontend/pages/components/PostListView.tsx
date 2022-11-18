@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { Button, Input } from "theme-ui";
+import { Input } from "theme-ui";
 import { ApiFetch, getPermission } from "../../App";
 import { APIcall, postListItem, tag } from "../../interfaces";
 import { theme } from "../../theme";

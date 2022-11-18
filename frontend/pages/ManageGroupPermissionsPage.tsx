@@ -4,7 +4,6 @@ import { ApiFetch } from '../App'
 import { APIcall, permissionGroup, permissionType } from '../interfaces'
 import ItemList from './components/ItemList'
 import UserPermissionGroupView from './components/UserPermissionGroupView'
-import UserPermissionsView from './components/UserPermissionsView'
 import styled from "@emotion/styled";
 import { theme } from '../theme';
 import GroupPermissionsView from './components/GroupPermissionView'

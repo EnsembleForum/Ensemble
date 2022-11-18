@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
-import { Box, IconButton, Text } from "theme-ui";
+import React from "react";
+import { Box } from "theme-ui";
 import { exampleTest } from "../interfaces";
 
 // Declaring and typing our props
