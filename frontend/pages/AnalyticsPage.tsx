@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
-import { Box, IconButton, Text } from "theme-ui";
+import React from "react";
 import { ApiFetch } from "../App";
 import { Prettify } from "../global_functions";
-import { analytics, APIcall, exampleTest } from "../interfaces";
+import { analytics, APIcall } from "../interfaces";
 import AuthorView from "./components/AuthorView";
 
 // Declaring and typing our props

@@ -1,11 +1,9 @@
 import styled from "@emotion/styled";
-import { stripBasename } from "@remix-run/router";
-import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { IconButton, Text, Box, Label, Input, Checkbox, Select, Textarea, Flex, Button, } from "theme-ui";
+import { Input } from "theme-ui";
 import { ApiFetch } from "../App";
-import { Prettify } from "../global_functions";
-import { APIcall, loginForm, tag, usersRegister, userToAdd } from "../interfaces";
+import { APIcall, tag } from "../interfaces";
 import { theme } from "../theme";
 import { StyledButton } from "./GlobalProps";
 

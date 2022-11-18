@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Label, Input, Select } from "theme-ui";
 import { ApiFetch, setCurrentUser } from "../App";
 import { Prettify } from "../global_functions";
-import { APIcall, currentUser, initSchema, loginForm } from "../interfaces";
+import { APIcall, currentUser, initSchema } from "../interfaces";
 import { StyledButton } from "./GlobalProps";
 
 interface Props { }

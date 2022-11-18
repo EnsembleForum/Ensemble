@@ -5,8 +5,6 @@ import { APIcall, pageList } from "../interfaces";
 import { theme } from "../theme";
 import AnalyticsPage from "./AnalyticsPage";
 import Navbar, { StyledNavbar } from "./components/Navbar";
-import InitPage from "./InitPage";
-import TaskboardPage from "./TaskboardPage";
 import ManagePermissionsPage from "./ManagePermissionsPage";
 import ManageTagsPage from "./ManageTagsPage";
 import UsersRegisterPage from "./UsersRegisterPage";

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { ReactElement } from 'react'
-import { Checkbox, Flex, Label } from 'theme-ui'
+import { Checkbox, Flex } from 'theme-ui'
 import { permissionHolder, permissionType, userPermission } from "../../interfaces"
 type Props = {
   permissionHolder: permissionHolder,

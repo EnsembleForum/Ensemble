@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ApiFetch, getCurrentUser, getLoggedIn, getPermission, setCurrentUser } from "../../App";
 import { Prettify } from "../../global_functions";
-import { APIcall, notification, notifications } from "../../interfaces";
+import { APIcall, notification } from "../../interfaces";
 import { theme } from "../../theme";
 import { StyledButton } from "../GlobalProps";
 

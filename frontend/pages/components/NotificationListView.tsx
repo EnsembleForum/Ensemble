@@ -1,12 +1,10 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { Button, Input } from "theme-ui";
-import { ApiFetch, getPermission } from "../../App";
-import { APIcall, notification, notifications, postListItem } from "../../interfaces";
+import { ApiFetch } from "../../App";
+import { APIcall, notification } from "../../interfaces";
 import { theme } from "../../theme";
 import AuthorView from "./AuthorView";
-import ReactTooltip from 'react-tooltip';
 import { StyledButton } from "../GlobalProps";
 
 // Declaring and typing our props

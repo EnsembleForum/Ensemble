@@ -1,10 +1,8 @@
 import styled from "@emotion/styled";
-import React, { JSXElementConstructor, MouseEvent, ReactElement } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, IconButton, Select, Text } from "theme-ui";
 import { ApiFetch, getPermission } from "../../App";
-import { APIcall, postView, queueListPosts } from "../../interfaces";
-import { theme } from "../../theme";
+import { APIcall, postView } from "../../interfaces";
 import { StyledButton } from "../GlobalProps";
 import QueueContext, { UpdateContext } from "../queueContext";
 import AuthorView from "./AuthorView";

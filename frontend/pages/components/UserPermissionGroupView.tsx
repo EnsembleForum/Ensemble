@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { Select } from 'theme-ui'
-import { permissionGroup, userPermissionsDetails } from '../../interfaces'
+import { permissionGroup } from '../../interfaces'
 
 type Props = {
   groupId: number|null,

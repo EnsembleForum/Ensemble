@@ -380,3 +380,15 @@ ensemble.browse.post.create(
     "Make sure you don't miss the deadline!",
     []
 )
+
+ensemble.auth.logout(ada["token"])
+ensemble.auth.logout(guido["token"])
+ensemble.auth.logout(dennis["token"])
+ensemble.auth.logout(charles["token"])
+ensemble.auth.logout(alan["token"])
+ensemble.auth.logout(margaret["token"])
+ensemble.auth.logout(brian["token"])
+ensemble.auth.logout(linus["token"])
+ensemble.auth.logout(grace["token"])
+ensemble.auth.logout(tim["token"])
+ensemble.auth.logout(richard["token"])

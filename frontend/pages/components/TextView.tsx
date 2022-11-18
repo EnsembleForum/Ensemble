@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { Input, Textarea } from "theme-ui";
-import { ApiFetch, getCurrentUser, getPermission } from "../../App";
+import { ApiFetch, getCurrentUser } from "../../App";
 import { APIcall, tag, userView } from "../../interfaces";
 import { theme } from "../../theme";
 import CommentContext from "../commentContext";

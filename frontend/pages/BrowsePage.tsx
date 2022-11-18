@@ -1,8 +1,6 @@
 import styled from "@emotion/styled";
-import React, { createContext, JSXElementConstructor, MouseEvent, ReactElement, useEffect } from "react";
+import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { ApiFetch } from "../App";
-import { APIcall, postListItem } from "../interfaces";
 import CreatePostView from "./components/CreatePostView";
 import Navbar from "./components/Navbar";
 import PostListView from "./components/PostListView";

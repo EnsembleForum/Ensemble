@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { ApiFetch, getCurrentUser, getPermission } from "../../App";
 import { APIcall, commentView, postView, replyView } from "../../interfaces";
 import TextView from "./TextView";
