@@ -6,7 +6,7 @@ from .tables import TReply, TComment, TCommentReacts
 from .user import User
 from .reply import Reply
 from backend.models.permissions import Permission
-from backend.models.queue import Queue
+from backend.models.post_queue import Queue
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
 from backend.types.identifiers import CommentId
