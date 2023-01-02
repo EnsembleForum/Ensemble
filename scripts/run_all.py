@@ -6,7 +6,7 @@ Run the backend and frontend servers
 from _helpers import backend, mock_auth, frontend
 
 auth = mock_auth()
-flask = backend(live_output=True)
+flask = backend(live_output=True, debug=True)
 npm = frontend()
 
 try:
