@@ -31,16 +31,16 @@ student performance or moderation.
 Some examples of key players in the education forum space failing to meet user
 needs are Moodle and its poor user experience and interface design. Moodle’s
 forum functionality is arguably difficult to find and has a confusing structure
-using a ‘blog-like format’ (Moodle, 2022).
+using a ‘blog-like format’.
 
-Further, edStem’s lack of a proper Q&A management system, leaves students and
+Further, edStem’s lack of a proper Q&A management system leaves students and
 tutors alike frustrated in their struggle to be heard. Students are able to
-post questions, but answering of these questions is done by leaving comments
-(Ed Help, n.d). As students and tutors engage in conversation via comments,
-they are only aware of these comments when they receive an email and/or forum
-notification (Ed Help, n.d). This makes it easy for students and tutors to be
-inundated with notifications, leaving questions unanswered as the progression
-of the conversation is lost in a sea of notifications.
+post questions, but answering of these questions is done by leaving comments.
+As students and tutors engage in conversation via comments, they are only aware
+of these comments when they receive an email and/or forum notification. This
+makes it easy for students and tutors to be inundated with notifications,
+leaving questions unanswered as the progression of the conversation is lost in
+a sea of noise.
 
 As our group noticed the limitations these forums had and the frustration
 experienced by course staff and students alike - being both students and
