@@ -1,7 +1,7 @@
 """
-# Scripts / Run
+# Scripts / Run backend
 
-Run the server
+Run the backend server
 """
 import sys
 from _helpers import backend, mock_auth, coverage_report

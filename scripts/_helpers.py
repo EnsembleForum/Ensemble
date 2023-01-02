@@ -161,7 +161,7 @@ def backend(debug=False, auto_reload=False, live_output=False, coverage=False):
     if flask.poll() is not None:
         print("❗ Server crashed during startup")
         sys.exit(1)
-    print("✅ Server started")
+    print("✅ Backend started")
     return flask
 
 
@@ -204,3 +204,11 @@ def coverage_report():
         [sys.executable, '-u', '-m', 'coverage', 'report'],
         live_output=True
     ).wait()
+
+
+def frontend():
+    print("✅ Frontend starting")
+    return Task(
+        'frontend',
+        ['npm', 'start'],
+    )
