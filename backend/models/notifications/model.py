@@ -9,7 +9,7 @@ from ..user import User
 from ..post import Post
 from ..comment import Comment
 from ..reply import Reply
-from ..queue import Queue
+from ..post_queue import Queue
 from . import NotificationType
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.types.identifiers import NotificationId

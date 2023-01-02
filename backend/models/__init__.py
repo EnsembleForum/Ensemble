@@ -14,7 +14,7 @@ from .auth_config import AuthConfig
 from .analytics import Analytics
 from .notifications import Notification
 from .exam_mode import ExamMode
-from .queue import Queue
+from .post_queue import Queue
 from .tag import Tag
 
 

@@ -8,7 +8,7 @@ from backend.types.auth import IAuthInfo
 from backend.models.auth_config import AuthConfig
 from backend.models.permissions import PermissionGroup, Permission
 from backend.models.token import Token
-from backend.models.queue import Queue
+from backend.models.post_queue import Queue
 from backend.models.exam_mode import ExamMode
 from backend.models.user import User
 from backend.util import http_errors

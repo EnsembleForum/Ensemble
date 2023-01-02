@@ -20,7 +20,7 @@ import subprocess
 import signal
 import sys
 import time
-from typing import Callable
+from typing import Callable, Optional
 
 # Load environment variables
 dotenv.load_dotenv('.flaskenv')
@@ -51,8 +51,8 @@ class Task:
         name: str,
         args: list[str],
         live_output: bool = False,
-        env: dict[str, str] = None,
-        wait_for: Callable[[], bool] = None,
+        env: Optional[dict[str, str]] = None,
+        wait_for: Optional[Callable[[], bool]] = None,
     ):
         wait_for = lambda: True
         self.process = None

@@ -17,7 +17,7 @@ class Permission(Enum):
     each permission to our users, we need a better way to store this.
     """
     @property
-    def value(self) -> PermissionId:
+    def value(self) -> PermissionId:  # type: ignore
         return cast(PermissionId, super().value)
 
     # Viewing
