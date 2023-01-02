@@ -2,25 +2,25 @@
 
 ## Tooling
 
-* *VS Code with the following extensions
+* VS Code with the following extensions
 
-  * *Python
+  * Python
 
-  * *Python Indent
+  * Python Indent
 
-  * *AutoDocstring
+  * AutoDocstring
 
-  * *MyPy
+  * MyPy
 
-  * *Code Spell Checker
+  * Code Spell Checker
 
-  * *Todo Tree
+  * Todo Tree
 
-  * *SQLite Viewer
+  * SQLite Viewer
 
-* *Python 3.10.7 or newer (note that Python 3.10.0 will not work)
+* Python 3.10.7 or newer (note that Python 3.10.0 will not work)
 
-* *NodeJS 16 or newer
+* NodeJS 16 or newer
 
 ## Main Setup
 
@@ -51,6 +51,14 @@
 
 ### Backend
 
+#### A note on debugging
+
+We have built a number of debugging features into the backend. In order to
+increase the security of the backend, these features are disabled unless the
+`ENSEMBLE_DEBUG` environment variable is set. Note that the scripts for running
+the backend will set this environment variable. To run the server in a
+production environment, use the command `flask run`.
+
 #### In VS Code
 
 1. Start the server by choosing the "Backend & mock.auth" option in the Run and
@@ -79,7 +87,7 @@ This will send all the output to files in the `output/` directory.
 
 #### For deployment
 
-TODO
+Don't.
 
 ### Frontend
 
