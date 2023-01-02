@@ -1,52 +1,26 @@
-# Development Setup
+
+# Setup
 
 ## Tooling
 
-- VS Code with the following extensions
+* Python 3.10.7 or newer (not that Python 3.10.0 will not work)
 
-  - Python
+* NodeJS 16 or newer
 
-  - Python Indent
-
-  - AutoDocstring
-
-  - MyPy
-
-  - Code Spell Checker
-
-  - Todo Tree
-
-  - SQLite Viewer
-
-- Python 3.10.7 or newer (note that Python 3.10.0 will not work)
-
-- JS/TS dependencies
+* A POSIX-compliant system
 
 ## Main Setup
 
-1. Git clone the project
+1. Git clone the project and cd into its main directory
 
-## Back-end
+2. Create a virtual environment by running `python -m venv .venv`
 
-1. In VS Code's integrated terminal, create a virtual environment
-   `python -m venv .venv`
+3. Activate the virtual environment using `source ./.venv/bin/activate`
 
-2. When VS Code gives the popup, choose to activate the virtual environment
+4. Install Python dependencies using `pip install -r requirements.txt`
 
-3. Restart the terminal
+5. Install NodeJS dependencies using `npm i`
 
-4. Install the dependencies `pip install -r requirements.txt`
+## Running Ensemble
 
-TODO: Database setup
-
-## Front-end
-
-1. Navigate to the base repository folder in a terminal
-
-2. Install the dependencies `npm i`
-
-3. To run the application on localhost:3000 run `npm start`
-
-4. If you see the error `ERROR in [eslint] Plugin "react" was conflicted between "package.json » eslint-config-react-app » ...base.js and "BaseConfig » ...\base.js".`, in VSCode click file > open and open the `capstone-project-h18a-ensemble` folder before running npm start in terminal. This seems to be a windows specific problem to do with pathname case sensitivity. (Previous solution was to save package.json while the app is running)
-
-5. To test the frontend (does not require npm start) run `npm test`
+`python scripts/run_all.py`
