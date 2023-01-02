@@ -1,5 +1,5 @@
 
-# Miguel Guthridge (z5312085)
+# Miguel Guthridge
 
 ## Week 1
 
