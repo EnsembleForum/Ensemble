@@ -203,6 +203,18 @@ class TNotification(_BaseTable):
     """Queue the notification is related to"""
 
 
+class TReport(_BaseTable):
+    """
+    Table mapping users to post reports
+    """
+
+    user = ForeignKey(TUser)
+    """User who made the report"""
+
+    post = ForeignKey(TPost)
+    """Post that was reported"""
+
+
 class TExamMode(_BaseTable):
     """
     Table storing whether exam mode is on or off

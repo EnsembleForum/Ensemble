@@ -73,7 +73,10 @@ class IPostFullInfo(TypedDict):
     * `anonymous` (`bool`):
     * `closed` (`bool`):
     * `deleted` (`bool`):
-    * `reported` (`bool`):
+    * `report_count` (`int`): the number of people who have reported the post,
+      or zero if the viewer doesn't have permission to view reports
+    * `user_reported` (`bool`): whether the user viewing the post has clicked
+      report
     * `user_reacted` (`bool`):
     * `answered` (`Optional[CommentId]`): ID of chosen answer if answered else
       none
@@ -92,7 +95,8 @@ class IPostFullInfo(TypedDict):
     anonymous: bool
     closed: bool
     deleted: bool
-    reported: bool
+    report_count: int
+    user_reported: bool
     answered: Optional[CommentId]
     queue: str
 

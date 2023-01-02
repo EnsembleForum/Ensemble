@@ -336,7 +336,7 @@ def report(
     """
     # PUT `/browse/post/report`
 
-    Report a post
+    Toggle whether a post has been reported
 
     ## Header
     * `Authorization` (`str`): JWT of the user
@@ -368,8 +368,8 @@ def unreport(
     """
     # PUT `/browse/post/unreport`
 
-    Un-report a post. This action should be taken by moderators if they find
-    that a report is invalid.
+    Remove all reports on a post. This action should be taken by moderators if
+    they find that a report is invalid.
 
     ## Header
     * `Authorization` (`str`): JWT of the user

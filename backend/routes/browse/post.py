@@ -162,7 +162,7 @@ def report_post(user: User, *_):
     user.permissions.assert_can(Permission.ReportPosts)
     data = json.loads(request.data)
     post = Post(data["post_id"])
-    post.queue = Queue.get_reported_queue()
+    post.report(user)
 
     for u in User.all_where(
         lambda u: u.permissions.can(Permission.ViewReports)
@@ -179,9 +179,6 @@ def unreport_post(user: User, *_):
     user.permissions.assert_can(Permission.ViewReports)
     data = json.loads(request.data)
     post = Post(data["post_id"])
-    if post.answered is not None:
-        post.queue = Queue.get_answered_queue()
-    else:
-        post.queue = Queue.get_main_queue()
+    post.unreport()
 
     return {}
