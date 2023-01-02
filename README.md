@@ -3,6 +3,9 @@
 
 A next-gen education-centred forum designed for teachers and students alike.
 
+To learn about the project, including its motivation, design, tech stack,
+and usage, visit [the documentation](docs/README.md).
+
 This is our capstone project, made with <3 for
 [UNSW's COMP3900 course](https://www.handbook.unsw.edu.au/undergraduate/courses/2022/COMP3900/).
 
@@ -26,11 +29,3 @@ security flaws or other issues with our design which could lead to bad things
 happening. Unless you review this code and make sure it meets your needs for
 security and reliability, you should not use it except for demonstration and
 testing purposes.
-
-## Quick Links
-
-* [How to use Ensemble](docs/usage/README.md)
-
-* [Overview of the code in Ensemble](docs/code/README.md)
-
-* [Information about contributions](docs/contributions/README.md)
