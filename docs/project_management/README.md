@@ -45,3 +45,6 @@ confident that Ensemble is an excellent forum that is well-developed and
 contains a rich amount of features to assist students and staff alike, as seen
 in the functionality table. To view these incomplete stories, see
 [incomplete_stories.md](./incomplete_stories.md).
+
+To see the list of completed stories, see
+[functionality.md](./functionality.md).
