@@ -1,6 +1,8 @@
 
 # Scripts
 
+* `run_all` - start the backend and frontend.
+
 * `run_backend` - start the backend.
 
 * `pytest_core` - start the backend, run core tests, then kill the backend.
