@@ -15,7 +15,7 @@ from ensemble_request.browse import (
     post,
     comment,
 )
-from resources import consts
+from backend import consts
 from ensemble_request.taskboard import queue_post_list, queue_list
 from tests.integration.helpers import get_queue
 from tests.integration.conftest import ISimpleUsers, IMakePosts

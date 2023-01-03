@@ -13,7 +13,7 @@ Tests for comment_view/accept
 import pytest
 from backend.util import http_errors
 from ensemble_request import browse
-from resources import consts
+from backend import consts
 from ensemble_request.taskboard import queue_post_list, queue_list
 from tests.integration.helpers import get_queue
 from tests.integration.conftest import IAllUsers, ISimpleUsers, IMakePosts

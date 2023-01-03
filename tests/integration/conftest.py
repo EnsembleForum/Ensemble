@@ -5,7 +5,7 @@ Configuration for tests
 """
 import pytest
 from typing import TypedDict
-from resources import consts
+from backend import consts
 from backend.types.identifiers import PostId, QueueId
 from backend.types.permissions import IPermissionGroup
 from backend.types.auth import IAuthInfo

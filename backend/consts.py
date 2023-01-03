@@ -1,7 +1,8 @@
 """
 # Resources / Consts
 
-Constants used within the server, used to avoid buggy code
+Constants used within the server, used to avoid buggy code when we refactor
+things.
 """
 
 MAIN_QUEUE = "Main"
