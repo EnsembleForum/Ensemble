@@ -11,6 +11,7 @@ Helper code for the scripts
 
 import sys
 from pathlib import Path
+from typing import Optional
 # Add the top directory to the path so Python doesn't have a hissy fit
 sys.path.append(str(Path(__file__).parent.parent))
 import dotenv
@@ -124,8 +125,15 @@ def coverage_report():
     ).wait()
 
 
-def frontend():
+def frontend(backend_url: Optional[str] = None):
     print("✅ Frontend starting")
+    if backend_url is not None:
+        env = {
+            "backend_url": backend_url,
+        }
+    else:
+        env = {}
     return Subtask(
         ['npm', 'start'],
+        env=env
     )
