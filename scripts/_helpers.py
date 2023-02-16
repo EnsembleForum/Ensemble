@@ -206,9 +206,16 @@ def coverage_report():
     ).wait()
 
 
-def frontend():
+def frontend(backend_url: Optional[str] = None):
     print("✅ Frontend starting")
+    if backend_url is not None:
+        env = {
+            "backend_url": backend_url,
+        }
+    else:
+        env = {}
     return Task(
         'frontend',
         ['npm', 'start'],
+        env=env
     )
