@@ -24,3 +24,7 @@
 ## Running Ensemble
 
 `python scripts/run_all.py`
+
+You can specify the URL that the backend is based on, as follows:
+
+`python scripts/run_all.py --backend=api.some.website.example.com`
