@@ -3,6 +3,7 @@
 
 Run the backend and frontend servers
 """
+import sys
 from _helpers import backend, mock_auth, frontend
 
 backend_url = None
