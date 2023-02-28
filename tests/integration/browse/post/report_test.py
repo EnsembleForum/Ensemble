@@ -14,7 +14,7 @@ Tests for post_view/unreport
 """
 import pytest
 from backend.util import http_errors
-from resources import consts
+from backend import consts
 from tests.integration.conftest import (
     ISimpleUsers,
     IBasicServerSetup,

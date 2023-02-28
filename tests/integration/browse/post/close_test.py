@@ -13,7 +13,7 @@ Tests for post.view/close
     un-closing sends it back to main queue
 """
 import pytest
-from resources import consts
+from backend import consts
 from backend.util import http_errors
 from tests.integration.conftest import (
     ISimpleUsers,

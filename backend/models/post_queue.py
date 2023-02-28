@@ -7,7 +7,7 @@ from backend.types.identifiers import QueueId
 from backend.util.validators import assert_valid_str_field
 from backend.util import http_errors
 from backend.types.queue import IQueueFullInfo, IQueueBasicInfo
-from resources import consts
+from backend import consts
 from typing import cast, TYPE_CHECKING
 from .user import User
 if TYPE_CHECKING:

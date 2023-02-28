@@ -21,7 +21,7 @@ from tests.integration.conftest import (
     IMakeQueues,
     IMakePosts
 )
-from resources import consts
+from backend import consts
 
 
 def test_no_permission(

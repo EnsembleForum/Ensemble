@@ -1,7 +1,7 @@
 """
 # Backend / Models / Post
 """
-from .tables import TComment, TPost, TPostReacts, TPostTags
+from .tables import TComment, TPost, TPostReacts, TPostTags, TReport
 from .user import User
 from .tag import Tag
 from .comment import Comment
@@ -177,13 +177,6 @@ class Post:
         Whether this post is deleted or not
         """
         return self.queue == Queue.get_deleted_queue()
-
-    @property
-    def reported(self) -> bool:
-        """
-        Whether this post is reported or not
-        """
-        return self.queue == Queue.get_reported_queue()
 
     def _get(self) -> TPost:
         """
@@ -425,13 +418,44 @@ class Post:
         else:
             return True
 
-    def reported_perspective(self, user: User) -> bool:
+    def report(self, user: User):
         """
-        Returns whether the post should view as reported from the given user's
-        perspective. Only mods and admins should be able to view reported posts
-        by default.
+        Toggle whether the given user has reported the post
         """
-        return self.reported and user.permissions.can(Permission.ViewReports)
+        if self.user_reported(user):
+            TReport.delete().where(
+                TReport.user == user.id
+                & TReport.post == self.id
+            ).run_sync()
+        else:
+            TReport(user=user.id, post=self.id).save().run_sync()
+
+    def unreport(self):
+        """
+        Remove all reports of this post
+        """
+        TReport.delete().where(TReport.post == self.id).run_sync()
+
+    def user_reported(self, user: User) -> bool:
+        """
+        Returns whether this user has reported the post
+        """
+        return TReport.exists().where(
+            TReport.user == user.id
+            & TReport.post == self.id
+        ).run_sync()
+
+    def report_count(self, user: User) -> int:
+        """
+        Returns the report count, or zero if the given user doesn't have
+        permission to view reports
+        """
+        if not user.permissions.can(Permission.ViewReports):
+            return 0
+        else:
+            return TReport.count().where(
+                TReport.post.id == self.id
+            ).run_sync()
 
     def basic_info(self, user: User) -> IPostBasicInfo:
         """
@@ -449,7 +473,7 @@ class Post:
             "private": self.private,
             "closed": self.closed,
             "deleted": self.deleted,
-            "reported": self.reported_perspective(user),
+            "reported": self.report_count(user) > 0,
             "anonymous": self.anonymous,
             "answered": self.answered is not None,
         }
@@ -474,7 +498,8 @@ class Post:
             "anonymous": self.anonymous,
             "closed": self.closed,
             "deleted": self.deleted,
-            "reported": self.reported_perspective(user),
+            "report_count": self.report_count(user),
+            "user_reported": self.user_reported(user),
             "user_reacted": self.has_reacted(user),
             "answered": self.answered.id if self.answered else None,
             "queue": self.queue.name

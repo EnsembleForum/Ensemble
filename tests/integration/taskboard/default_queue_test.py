@@ -8,7 +8,7 @@ Tests for the default queue
 * All new posts are added to the default queue
 """
 import pytest
-from resources import consts
+from backend import consts
 from backend.util.http_errors import BadRequest
 from tests.integration.helpers import get_queue
 from ensemble_request.taskboard import (

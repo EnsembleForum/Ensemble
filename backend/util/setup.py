@@ -3,7 +3,7 @@
 
 Code used to initialise the server
 """
-from resources import consts
+from backend import consts
 from backend.types.auth import IAuthInfo
 from backend.models.auth_config import AuthConfig
 from backend.models.permissions import PermissionGroup, Permission
