@@ -32,7 +32,7 @@ class InvalidInput(http_errors.BadRequest):
     """
 
 
-class PermissionError(http_errors.Forbidden):
+class MissingPermissionError(http_errors.Forbidden):
     """
     User doesn't have permission to perform a certain action.
 

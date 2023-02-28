@@ -5,7 +5,7 @@ from .tables import TComment, TPost, TPostReacts, TPostTags, TReport
 from .user import User
 from .tag import Tag
 from .comment import Comment
-from .queue import Queue
+from .post_queue import Queue
 from .permissions import Permission
 from backend.util.db_queries import get_by_id, assert_id_exists
 from backend.util.validators import assert_valid_str_field

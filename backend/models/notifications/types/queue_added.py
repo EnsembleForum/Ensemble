@@ -4,7 +4,7 @@
 Notification for "A new post was added to a queue you follow"
 """
 from backend.models.post import Post
-from backend.models.queue import Queue
+from backend.models.post_queue import Queue
 from .. import NotificationType
 from .. import Notification
 from ...user import User

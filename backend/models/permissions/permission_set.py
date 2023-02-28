@@ -11,7 +11,7 @@ from .permission import Permission
 from ..tables import TPermissionGroup, TPermissionUser, TUser
 from backend.util.db_queries import assert_id_exists, get_by_id
 from backend.util.validators import assert_valid_str_field
-from backend.util.exceptions import PermissionError
+from backend.util.exceptions import MissingPermissionError
 from backend.util.http_errors import BadRequest
 from backend.types.identifiers import UserPermissionId, PermissionGroupId
 from backend.types.permissions import (
@@ -68,7 +68,7 @@ class PermissionSet:
         * `action` (`Permission`): permission to check
         """
         if not self.can(action):
-            raise PermissionError(
+            raise MissingPermissionError(
                 f"You don't have the {action.name} permission"
             )
 

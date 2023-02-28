@@ -11,7 +11,7 @@
 
 * For test files, file should be named like `something_test.py`
 
-* For test functions, should be named like `def something_test(): ...`
+* For test functions, should be named like `def test_something(): ...`
 
 ## TypeScript
 
