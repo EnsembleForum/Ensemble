@@ -11,7 +11,7 @@ dnspython==2.2.1
 docstring-parser==0.12
 email-validator==1.3.0
 flake8==6.0.0
-Flask==2.2.2
+Flask==2.3.2
 Flask-Cors==3.0.10
 fuzzywuzzy==0.18.0
 idna==3.4
