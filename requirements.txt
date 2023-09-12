@@ -28,7 +28,7 @@ mypy-extensions==0.4.3
 packaging==21.3
 pathspec==0.10.1
 pdoc==12.3.0
-piccolo==0.103.0
+piccolo==0.121.0
 platformdirs==2.5.2
 pluggy==1.0.0
 py==1.11.0
